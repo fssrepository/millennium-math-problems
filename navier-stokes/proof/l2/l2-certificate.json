@@ -28,6 +28,20 @@
     "conditional_bound": "integral D^4 Z^2 dt <= (sup Q) E(0)/(2 nu)",
     "uniform_Q_closes_L4": true
   },
+  "dyadic_tail_scaling": {
+    "low_advecting_gap_decay": "1/2",
+    "low_advected_gap_decay": "1/2",
+    "low_target_gap_decay": "3/2",
+    "L4_density_gap_decay": "2",
+    "L4_density_enstrophy_power": "2",
+    "frequency_tail_summable": true,
+    "energy_identity_closes_time_integral": false,
+    "post_young_gap_decay": "2",
+    "post_young_enstrophy_power": "3",
+    "moving_gap_log_enstrophy_slope": "1",
+    "moving_gap_remaining_enstrophy_power": "1",
+    "moving_gap_closes_far_tail": true
+  },
   "fourier_galerkin": {
     "cutoff": 3,
     "modes": 342,

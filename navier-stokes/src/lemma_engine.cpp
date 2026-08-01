@@ -6,6 +6,7 @@
 #include "parallel_executor.hpp"
 #include "lemma_adversary.hpp"
 #include "lemma_reporter.hpp"
+#include "moving_gap_controller.hpp"
 #include "projective_family.hpp"
 #include "spectral_adjoint.hpp"
 #include "spectral_dynamics.hpp"
@@ -15,9 +16,11 @@
 #include "state_analysis.hpp"
 #include "trajectory_analyzer.hpp"
 #include "triad_commutator.hpp"
+#include "triad_tail_envelope.hpp"
 #include "triad_verifier.hpp"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <complex>
 #include <cstddef>
@@ -366,6 +369,8 @@ int run(const Options& options, std::ostream& out) {
         ScalingAnalyzer::analyze_concentration();
     const StrongL4Reduction strong_l4 =
         ScalingAnalyzer::analyze_strong_l4_reduction();
+    const DyadicTailScaling dyadic_tail =
+        ScalingAnalyzer::analyze_dyadic_tail();
     const TriadCertificate triads =
         TriadVerifier::analyze(
             options.triad_cutoff, options.triad_samples, options.seed);
@@ -397,6 +402,28 @@ int run(const Options& options, std::ostream& out) {
         strong_l4.exact_density_factorization;
     report.uniform_q_closes_l4 =
         strong_l4.closes_integrated_l4_from_uniform_q;
+    report.dyadic_advecting_gap_decay =
+        dyadic_tail.low_advecting_gap_decay.str();
+    report.dyadic_target_gap_decay =
+        dyadic_tail.low_target_gap_decay.str();
+    report.dyadic_l4_density_gap_decay =
+        dyadic_tail.l4_density_gap_decay.str();
+    report.dyadic_l4_density_enstrophy_power =
+        dyadic_tail.l4_density_enstrophy_power.str();
+    report.dyadic_tail_summable =
+        dyadic_tail.frequency_tail_is_summable;
+    report.dyadic_energy_closes_time_integral =
+        dyadic_tail.energy_identity_closes_time_integral;
+    report.dyadic_post_young_gap_decay =
+        dyadic_tail.post_young_gap_decay.str();
+    report.dyadic_post_young_enstrophy_power =
+        dyadic_tail.post_young_enstrophy_power.str();
+    report.moving_gap_log_enstrophy_slope =
+        dyadic_tail.moving_gap_log_enstrophy_slope.str();
+    report.moving_gap_remaining_enstrophy_power =
+        dyadic_tail.moving_gap_remaining_enstrophy_power.str();
+    report.moving_gap_closes_far_tail =
+        dyadic_tail.moving_gap_closes_far_tail;
     report.triad_cutoff = options.triad_cutoff;
     report.triad_modes = triads.modes;
     report.triad_samples = triads.samples;
@@ -433,6 +460,9 @@ int run(const Options& options, std::ostream& out) {
                         concentration.integrated_candidate_scale_critical &&
                         strong_l4.exact_density_factorization &&
                         strong_l4.closes_integrated_l4_from_uniform_q &&
+                        dyadic_tail.frequency_tail_is_summable &&
+                        !dyadic_tail.energy_identity_closes_time_integral &&
+                        dyadic_tail.moving_gap_closes_far_tail &&
                         !scaling.closing_candidate_exists &&
                         triads.maximum_normalized_energy_residual < 1e-15L &&
                         triads.maximum_divergence_residual < 1e-15L &&
@@ -449,6 +479,8 @@ bool self_test(std::ostream& out) {
         ScalingAnalyzer::analyze_concentration();
     const StrongL4Reduction strong_l4 =
         ScalingAnalyzer::analyze_strong_l4_reduction();
+    const DyadicTailScaling dyadic_tail =
+        ScalingAnalyzer::analyze_dyadic_tail();
     const bool rational_ok = Rational(1, 2) + Rational(1, 3) == Rational(5, 6) &&
                              Rational(3, 4) * Rational(8, 9) == Rational(2, 3);
     const bool scaling_ok = scaling.has_absorbable_candidate &&
@@ -462,6 +494,40 @@ bool self_test(std::ostream& out) {
         concentration.integrated_candidate_scale_critical;
     const bool strong_l4_ok = strong_l4.exact_density_factorization &&
                               strong_l4.closes_integrated_l4_from_uniform_q;
+    const bool dyadic_tail_scaling_ok =
+        dyadic_tail.low_advecting_gap_decay == Rational(1, 2) &&
+        dyadic_tail.low_advected_gap_decay == Rational(1, 2) &&
+        dyadic_tail.low_target_gap_decay == Rational(3, 2) &&
+        dyadic_tail.l4_density_gap_decay == Rational(2) &&
+        dyadic_tail.l4_density_enstrophy_power == Rational(2) &&
+        dyadic_tail.l4_density_palinstrophy_power == Rational(0) &&
+        dyadic_tail.young_palinstrophy_conjugate == Rational(4, 3) &&
+        dyadic_tail.young_remainder_conjugate == Rational(4) &&
+        dyadic_tail.post_young_gap_decay == Rational(2) &&
+        dyadic_tail.post_young_enstrophy_power == Rational(3) &&
+        dyadic_tail.post_young_inverse_viscosity_power == Rational(3) &&
+        dyadic_tail.moving_gap_remaining_enstrophy_power == Rational(1) &&
+        dyadic_tail.frequency_tail_is_summable &&
+        !dyadic_tail.energy_identity_closes_time_integral &&
+        dyadic_tail.moving_gap_closes_far_tail;
+    const std::array<Real, 7> moving_gap_enstrophies{
+        0.0L, 0.25L, 1.0L, 1.1L, 4.0L, 4.1L, 1024.0L};
+    bool moving_gap_controller_ok = true;
+    for (const Real enstrophy : moving_gap_enstrophies) {
+        const MovingGapDecision decision =
+            MovingGapController::decide(enstrophy, 2);
+        moving_gap_controller_ok = moving_gap_controller_ok &&
+            decision.minimum_gap ==
+                2 + decision.logarithmic_gap &&
+            decision.normalized_cubic_remainder_ratio <=
+                1.0L + 1e-15L &&
+            decision.base_weighted_remainder_ratio <=
+                0.0625L + 1e-15L;
+    }
+    moving_gap_controller_ok = moving_gap_controller_ok &&
+        MovingGapController::decide(1.1L, 2).minimum_gap == 3 &&
+        MovingGapController::decide(4.0L, 2).minimum_gap == 4 &&
+        MovingGapController::decide(4.1L, 2).minimum_gap == 5;
     const TriadCertificate triads = TriadVerifier::analyze(2, 2, 7);
     const bool triad_ok = triads.maximum_normalized_energy_residual < 1e-15L &&
                           triads.maximum_divergence_residual < 1e-15L &&
@@ -803,12 +869,30 @@ bool self_test(std::ostream& out) {
         TriadLedger::analyze(partition_state);
     const TriadCommutatorReport partition_commutator =
         TriadCommutator::analyze(partition_state);
+    const TriadTailEnvelopeReport partition_tail_envelope =
+        TriadTailEnvelope::analyze(partition_state);
     const Real partition_ledger_error = std::abs(
         partition_ledger.signed_local -
         active_objective
             .evaluate(partition_state, TriadPartition::local)
             .signed_vortex_stretching) /
         std::max(1e-30L, std::abs(partition_ledger.signed_local));
+    Real tail_envelope_signed = 0.0L;
+    bool tail_envelope_bounds_ok = true;
+    for (std::size_t role = 0;
+         role < separated_low_role_count; ++role) {
+        tail_envelope_signed +=
+            partition_tail_envelope.signed_stretching_by_low_role[role];
+        tail_envelope_bounds_ok = tail_envelope_bounds_ok &&
+            partition_tail_envelope.maximum_amplitude_bound_ratio[role] <=
+                1.0L + 1e-14L &&
+            partition_tail_envelope
+                    .maximum_normalized_frequency_ratio[role] <=
+                1.0L + 1e-14L;
+    }
+    const Real tail_envelope_partition_error = std::abs(
+        tail_envelope_signed - partition_ledger.signed_nonlocal) /
+        std::max(1e-30L, std::abs(partition_ledger.signed_nonlocal));
     const bool partition_parallel_ok =
         partition_parallel_forward_error < 1e-14L &&
         partition_parallel_vjp_error < 1e-14L &&
@@ -818,7 +902,9 @@ bool self_test(std::ostream& out) {
                 .relative_unweighted_cancellation_residual < 1e-14L &&
         partition_commutator.relative_weighted_identity_residual < 1e-14L &&
         partition_commutator.maximum_frequency_gain_ratio <=
-            1.0L + 1e-14L;
+            1.0L + 1e-14L &&
+        tail_envelope_bounds_ok &&
+        tail_envelope_partition_error < 1e-14L;
     const SpectralState partition_plus_state =
         active_dynamics.add_increment(
             partition_state, partition_tangent,
@@ -1013,6 +1099,25 @@ bool self_test(std::ostream& out) {
         << ")\n"
         << "strong L4 reduction test: " << (strong_l4_ok ? "PASS" : "FAIL")
         << " (integral D4Z2 <= sup(Q)*E0/(2nu))\n"
+        << "dyadic tail scaling test: "
+        << (dyadic_tail_scaling_ok ? "PASS" : "FAIL")
+        << " (gap decay=" << dyadic_tail.low_advecting_gap_decay.str()
+        << ", remaining Z power="
+        << dyadic_tail.l4_density_enstrophy_power.str()
+        << ", energy closure="
+        << (dyadic_tail.energy_identity_closes_time_integral
+                ? "YES"
+                : "no")
+        << ", moving-gap remainder Z^"
+        << dyadic_tail.moving_gap_remaining_enstrophy_power.str()
+        << ")\n"
+        << "moving gap controller test: "
+        << (moving_gap_controller_ok ? "PASS" : "FAIL")
+        << " (m(1.1)="
+        << MovingGapController::decide(1.1L, 2).minimum_gap
+        << ", m(4.1)="
+        << MovingGapController::decide(4.1L, 2).minimum_gap
+        << ")\n"
         << "spectral triad test: " << (triad_ok ? "PASS" : "FAIL")
         << " (energy residual="
         << static_cast<double>(triads.maximum_normalized_energy_residual) << ")\n"
@@ -1069,6 +1174,8 @@ bool self_test(std::ostream& out) {
         << ", frequency_gain="
         << static_cast<double>(
                partition_commutator.maximum_frequency_gain_ratio)
+        << ", tail_envelope="
+        << static_cast<double>(tail_envelope_partition_error)
         << ", local=" << static_cast<double>(local_integral_gradient_error)
         << ", nonlocal="
         << static_cast<double>(nonlocal_integral_gradient_error)
@@ -1103,6 +1210,8 @@ bool self_test(std::ostream& out) {
         << " (energy residual="
         << static_cast<double>(evolution.energy_balance_residual) << ")\n";
     return rational_ok && scaling_ok && concentration_ok && strong_l4_ok &&
+           dyadic_tail_scaling_ok &&
+           moving_gap_controller_ok &&
            triad_ok && fft_ok && fft_adjoint_ok && adjoint_ok && q_gradient_ok &&
            trajectory_gradient_ok && q_gain_gradient_ok &&
            q_increase_gradient_ok && q_increase_constraints_ok &&

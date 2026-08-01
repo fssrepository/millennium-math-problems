@@ -37,6 +37,27 @@ void LemmaReporter::write_console(const LemmaReport& report, std::ostream& out) 
         << (report.exact_strong_l4_factorization ? "verified" : "FAILED")
         << "\n  uniform trajectory Q closes L4 via E:    "
         << (report.uniform_q_closes_l4 ? "verified" : "FAILED") << "\n\n"
+        << "Dyadic far-tail scaling\n"
+        << "  advecting/advected gap decay:           2^(-"
+        << report.dyadic_advecting_gap_decay << " m)\n"
+        << "  target gap decay:                       2^(-"
+        << report.dyadic_target_gap_decay << " m)\n"
+        << "  fourth-power density gap decay:         2^(-"
+        << report.dyadic_l4_density_gap_decay << " m)\n"
+        << "  remaining density Z power:              "
+        << report.dyadic_l4_density_enstrophy_power << '\n'
+        << "  frequency-gap series:                   "
+        << (report.dyadic_tail_summable ? "summable" : "NOT SUMMABLE")
+        << "\n  closes in time from energy identity:     "
+        << (report.dyadic_energy_closes_time_integral ? "YES" : "no")
+        << "\n  post-Young remainder:                    2^(-"
+        << report.dyadic_post_young_gap_decay << " m) Z^"
+        << report.dyadic_post_young_enstrophy_power
+        << "\n  moving gap m~log2(Z) leaves Z power:     "
+        << report.moving_gap_remaining_enstrophy_power
+        << "\n  moving gap closes geometric far tail:    "
+        << (report.moving_gap_closes_far_tail ? "verified" : "FAILED")
+        << "\n\n"
         << "Fourier-Galerkin triad checks\n"
         << "  modes / samples:                        " << report.triad_modes
         << " / " << report.triad_samples << '\n'
@@ -101,6 +122,32 @@ void LemmaReporter::write_json(const LemmaReport& report, std::ostream& out) {
         << "    \"conditional_bound\": \"integral D^4 Z^2 dt <= (sup Q) E(0)/(2 nu)\",\n"
         << "    \"uniform_Q_closes_L4\": "
         << (report.uniform_q_closes_l4 ? "true" : "false") << "\n  },\n"
+        << "  \"dyadic_tail_scaling\": {\n"
+        << "    \"low_advecting_gap_decay\": \""
+        << report.dyadic_advecting_gap_decay
+        << "\",\n    \"low_advected_gap_decay\": \""
+        << report.dyadic_advecting_gap_decay
+        << "\",\n    \"low_target_gap_decay\": \""
+        << report.dyadic_target_gap_decay
+        << "\",\n    \"L4_density_gap_decay\": \""
+        << report.dyadic_l4_density_gap_decay
+        << "\",\n    \"L4_density_enstrophy_power\": \""
+        << report.dyadic_l4_density_enstrophy_power
+        << "\",\n    \"frequency_tail_summable\": "
+        << (report.dyadic_tail_summable ? "true" : "false")
+        << ",\n    \"energy_identity_closes_time_integral\": "
+        << (report.dyadic_energy_closes_time_integral ? "true" : "false")
+        << ",\n    \"post_young_gap_decay\": \""
+        << report.dyadic_post_young_gap_decay
+        << "\",\n    \"post_young_enstrophy_power\": \""
+        << report.dyadic_post_young_enstrophy_power
+        << "\",\n    \"moving_gap_log_enstrophy_slope\": \""
+        << report.moving_gap_log_enstrophy_slope
+        << "\",\n    \"moving_gap_remaining_enstrophy_power\": \""
+        << report.moving_gap_remaining_enstrophy_power
+        << "\",\n    \"moving_gap_closes_far_tail\": "
+        << (report.moving_gap_closes_far_tail ? "true" : "false")
+        << "\n  },\n"
         << "  \"fourier_galerkin\": {\n"
         << "    \"cutoff\": " << report.triad_cutoff << ",\n"
         << "    \"modes\": " << report.triad_modes << ",\n"

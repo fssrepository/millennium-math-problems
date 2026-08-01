@@ -12,6 +12,7 @@ add_executable(navier_stokes_lab
     src/lemma_cli.cpp
     src/lemma_engine.cpp
     src/lemma_reporter.cpp
+    src/moving_gap_controller.cpp
     src/adversary_reporter.cpp
     src/family_reporter.cpp
     src/proof_scaling.cpp
@@ -26,6 +27,7 @@ add_executable(navier_stokes_lab
     src/triad_commutator.cpp
     src/triad_ledger.cpp
     src/triad_partition.cpp
+    src/triad_tail_envelope.cpp
     src/triad_verifier.cpp
 )
 target_include_directories(navier_stokes_lab PRIVATE src)

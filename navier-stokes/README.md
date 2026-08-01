@@ -94,6 +94,10 @@ source file:
 - `TriadCommutator` pairs low-advecting interactions with their exact
   reality/incompressibility partners and certifies the resulting low/high
   frequency gain after enstrophy weighting;
+- `TriadTailEnvelope` verifies the low-advecting, low-advected, and low-target
+  frequency/amplitude bounds and reconstructs the separated signed ledger;
+- `MovingGapController` implements the logarithmic gap choice that turns the
+  post-Young far-tail remainder from `Z^3` into a linear `Z` term;
 - `TriadVerifier` owns direct interaction analysis, detailed triad
   cancellation, local/nonlocal flux partitioning, and certificate aggregation;
 - `StateAnalyzer` and `StateFamilyAnalyzer` measure shell decay, active modes,

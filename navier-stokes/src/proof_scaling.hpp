@@ -76,11 +76,34 @@ struct StrongL4Reduction {
     bool closes_integrated_l4_from_uniform_q = true;
 };
 
+struct DyadicTailScaling {
+    Rational low_advecting_gap_decay{1, 2};
+    Rational low_advected_gap_decay{1, 2};
+    Rational low_target_gap_decay{3, 2};
+    Rational vortex_enstrophy_power{3, 4};
+    Rational vortex_palinstrophy_power{3, 4};
+    Rational l4_density_gap_decay{2};
+    Rational l4_density_enstrophy_power{2};
+    Rational l4_density_palinstrophy_power{0};
+    Rational energy_time_integrable_enstrophy_power{1};
+    Rational young_palinstrophy_conjugate{4, 3};
+    Rational young_remainder_conjugate{4};
+    Rational post_young_gap_decay{2};
+    Rational post_young_enstrophy_power{3};
+    Rational post_young_inverse_viscosity_power{3};
+    Rational moving_gap_log_enstrophy_slope{1};
+    Rational moving_gap_remaining_enstrophy_power{1};
+    bool frequency_tail_is_summable = true;
+    bool energy_identity_closes_time_integral = false;
+    bool moving_gap_closes_far_tail = true;
+};
+
 class ScalingAnalyzer {
 public:
     static ScalingCertificate analyze_monomials(int denominator);
     static ConcentrationScaling analyze_concentration();
     static StrongL4Reduction analyze_strong_l4_reduction();
+    static DyadicTailScaling analyze_dyadic_tail();
 };
 
 }  // namespace lemma

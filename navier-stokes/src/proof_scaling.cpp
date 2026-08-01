@@ -112,6 +112,38 @@ StrongL4Reduction ScalingAnalyzer::analyze_strong_l4_reduction() {
     return result;
 }
 
+DyadicTailScaling ScalingAnalyzer::analyze_dyadic_tail() {
+    DyadicTailScaling result;
+    const Rational four(4);
+    result.l4_density_gap_decay =
+        four * result.low_advecting_gap_decay;
+    result.l4_density_enstrophy_power =
+        four * result.vortex_enstrophy_power - Rational(1);
+    result.l4_density_palinstrophy_power =
+        four * result.vortex_palinstrophy_power - Rational(3);
+    result.frequency_tail_is_summable =
+        Rational(0) < result.l4_density_gap_decay;
+    result.energy_identity_closes_time_integral =
+        result.l4_density_enstrophy_power <=
+            result.energy_time_integrable_enstrophy_power &&
+        result.l4_density_palinstrophy_power <= Rational(0);
+    result.post_young_gap_decay =
+        result.young_remainder_conjugate *
+        result.low_advecting_gap_decay;
+    result.post_young_enstrophy_power =
+        result.young_remainder_conjugate *
+        result.vortex_enstrophy_power;
+    result.post_young_inverse_viscosity_power =
+        result.young_remainder_conjugate - Rational(1);
+    result.moving_gap_remaining_enstrophy_power =
+        result.post_young_enstrophy_power -
+        result.post_young_gap_decay *
+            result.moving_gap_log_enstrophy_slope;
+    result.moving_gap_closes_far_tail =
+        result.moving_gap_remaining_enstrophy_power <= Rational(1);
+    return result;
+}
+
 ScalingCertificate ScalingAnalyzer::analyze_monomials(int denominator) {
     if (denominator < 4 || denominator > 100000) {
         throw std::invalid_argument(

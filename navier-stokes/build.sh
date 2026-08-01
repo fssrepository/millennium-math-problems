@@ -19,6 +19,7 @@ mkdir -p build
   src/gradient_adversary.cpp src/initial_sobolev_constraint.cpp \
   src/main.cpp src/lemma_cli.cpp \
   src/lemma_engine.cpp src/lemma_reporter.cpp \
+  src/moving_gap_controller.cpp \
   src/adversary_reporter.cpp \
   src/family_reporter.cpp \
   src/proof_scaling.cpp src/spectral_adjoint.cpp src/spectral_dynamics.cpp \
@@ -28,6 +29,7 @@ mkdir -p build
   src/triad_commutator.cpp \
   src/triad_ledger.cpp \
   src/triad_partition.cpp \
+  src/triad_tail_envelope.cpp \
   src/triad_verifier.cpp \
   -o build/navier_stokes_lab
 build/navier_stokes_lab self-test

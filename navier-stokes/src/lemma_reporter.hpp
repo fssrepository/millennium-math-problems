@@ -26,6 +26,17 @@ struct LemmaReport {
     bool integrated_l4_scale_critical = false;
     bool exact_strong_l4_factorization = false;
     bool uniform_q_closes_l4 = false;
+    std::string dyadic_advecting_gap_decay;
+    std::string dyadic_target_gap_decay;
+    std::string dyadic_l4_density_gap_decay;
+    std::string dyadic_l4_density_enstrophy_power;
+    bool dyadic_tail_summable = false;
+    bool dyadic_energy_closes_time_integral = false;
+    std::string dyadic_post_young_gap_decay;
+    std::string dyadic_post_young_enstrophy_power;
+    std::string moving_gap_log_enstrophy_slope;
+    std::string moving_gap_remaining_enstrophy_power;
+    bool moving_gap_closes_far_tail = false;
     int triad_cutoff = 0;
     int triad_modes = 0;
     int triad_samples = 0;

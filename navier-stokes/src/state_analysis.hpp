@@ -1,8 +1,10 @@
 #pragma once
 
 #include "spectral_objective.hpp"
+#include "moving_gap_controller.hpp"
 #include "triad_commutator.hpp"
 #include "triad_ledger.hpp"
+#include "triad_tail_envelope.hpp"
 
 #include <iosfwd>
 #include <string>
@@ -56,6 +58,8 @@ struct StateAnalysisReport {
     StaticObjective objective;
     TriadLedgerReport triad_ledger;
     TriadCommutatorReport triad_commutator;
+    TriadTailEnvelopeReport triad_tail_envelope;
+    MovingGapDecision moving_gap;
     std::vector<StateShellAnalysis> shells;
     std::vector<StateModeAnalysis> top_modes;
     std::vector<StateLineSample> q_line_profile;

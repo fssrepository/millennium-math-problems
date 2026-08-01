@@ -325,9 +325,38 @@ abs(|k|^2-|q|^2) <= |p|(|k|+|q|).
 ```
 
 Thus the low-advecting gap-`m` block has an exact one-factor `2^-m`
-commutator gain relative to its raw two-derivative weight. The C++ certificate
-checks the weighted identity at `2.61e-20` relative error in self-test. On the
-K7 gap-three extremizer, the pairing reduces absolute low-advecting stretching
-from `3.53962e-4` to `2.58109e-5`. The remaining proof work is to place this
-gain in a time-integrable Littlewood-Paley sum and derive corresponding bounds
-for the low-advected and low-target roles; no closure claim is made yet.
+commutator gain relative to its raw two-derivative weight. The low-advected
+role has its derivative on the unique low wave, while the low-target role has
+the low enstrophy weight and gains two low/high factors. `TriadTailEnvelope`
+reconstructs the full separated signed ledger from these three roles with
+`3.21e-19` relative error in self-test and verifies every termwise amplitude
+and normalized frequency inequality with ratio at most one.
+
+The resulting shell candidate is
+
+```text
+|V_gap>=m| <= C (2^(-m/2)+2^(-3m/2)) Z^(3/4) P^(3/4).       (FT-1)
+```
+
+Its fixed-gap fourth-power density is bounded by `C 2^(-2m) Z^2`, which is
+not time-integrable from the energy inequality. Candidate F004 records this
+obstruction. Applying Young before taking the fourth power instead gives
+
+```text
+|V_gap>=m| <= (nu/4) P + C nu^(-3) 2^(-2m) Z^3.
+```
+
+The state-dependent split
+
+```text
+m(t) = m0 + ceil(log2(max(1,Z(t))))
+```
+
+reduces the cubic remainder to `C nu^(-3) 2^(-2m0) Z(t)` without assuming a
+future bound for `Z`. `MovingGapController` checks the integer inequality and
+the scaling certificate checks the exact Young exponents. This conditionally
+closes only the dynamically selected far tail. The active L4 task is to write
+a conventional cutoff-independent Littlewood-Paley proof of (FT-1), with all
+constants, and to control the remaining local/transition block of
+`O(log Z(t))` dyadic gaps. See
+`proof/l4/lemmas/dynamic-far-tail/README.md`.

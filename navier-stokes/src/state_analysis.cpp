@@ -73,8 +73,11 @@ StateAnalysisReport SpectralStateAnalyzer::analyze(
     report.cutoff = SpectralStateOps::cutoff(state);
     report.modes = static_cast<int>(state.waves.size());
     report.objective = objective.evaluate(state);
+    report.moving_gap = MovingGapController::decide(
+        report.objective.enstrophy, 2);
     report.triad_ledger = TriadLedger::analyze(state);
     report.triad_commutator = TriadCommutator::analyze(state);
+    report.triad_tail_envelope = TriadTailEnvelope::analyze(state);
     report.triad_ledger_objective_residual = std::abs(
         report.triad_ledger.signed_total -
         report.objective.signed_vortex_stretching);
@@ -223,6 +226,10 @@ void StateAnalysisReporter::write_console(const StateAnalysisReport& report,
         << static_cast<double>(report.projected_q_gradient_norm)
         << " retraction_gradient_error="
         << static_cast<double>(report.retraction_gradient_relative_error)
+        << " moving_gap=" << report.moving_gap.minimum_gap
+        << " moving_gap_remainder_ratio="
+        << static_cast<double>(
+               report.moving_gap.base_weighted_remainder_ratio)
         << "\n\nshell,modes,active,energy,energy_fraction,enstrophy,palinstrophy,"
            "q_gradient_norm\n";
     for (const StateShellAnalysis& shell : report.shells) {
@@ -258,6 +265,9 @@ void StateAnalysisReporter::write_console(const StateAnalysisReport& report,
            "maximum_frequency_gain_ratio\n";
     for (const TriadCommutatorGapRow& gap :
          report.triad_commutator.gaps) {
+        if (gap.pairs == 0) {
+            continue;
+        }
         out << gap.dyadic_gap << ',' << gap.pairs << ','
             << static_cast<double>(gap.signed_paired_stretching) << ','
             << static_cast<double>(gap.absolute_unpaired_stretching) << ','
@@ -274,6 +284,43 @@ void StateAnalysisReporter::write_console(const StateAnalysisReport& report,
             << ','
             << static_cast<double>(gap.maximum_frequency_gain_ratio)
             << '\n';
+    }
+    out << "\ntail_gap,low_role,terms,signed_stretching,"
+           "absolute_stretching,amplitude_envelope,envelope_efficiency,"
+           "maximum_amplitude_ratio,maximum_frequency_ratio\n";
+    for (const TriadTailEnvelopeGapRow& gap :
+         report.triad_tail_envelope.gaps) {
+        for (std::size_t role_index = 0;
+             role_index < separated_low_role_count; ++role_index) {
+            if (gap.terms_by_low_role[role_index] == 0) {
+                continue;
+            }
+            const auto role = static_cast<TriadLowRole>(role_index);
+            out << gap.dyadic_gap << ','
+                << TriadLedger::low_role_name(role) << ','
+                << gap.terms_by_low_role[role_index] << ','
+                << static_cast<double>(
+                       gap.signed_stretching_by_low_role[role_index])
+                << ','
+                << static_cast<double>(
+                       gap.absolute_stretching_by_low_role[role_index])
+                << ','
+                << static_cast<double>(
+                       gap.amplitude_envelope_by_low_role[role_index])
+                << ','
+                << static_cast<double>(
+                       gap.absolute_stretching_by_low_role[role_index] /
+                       std::max(
+                           1e-30L,
+                           gap.amplitude_envelope_by_low_role[role_index]))
+                << ','
+                << static_cast<double>(
+                       gap.maximum_amplitude_bound_ratio[role_index])
+                << ','
+                << static_cast<double>(
+                       gap.maximum_normalized_frequency_ratio[role_index])
+                << '\n';
+        }
     }
     out << "\ntop_mode,kx,ky,kz,energy,q_gradient_norm\n";
     for (std::size_t rank = 0; rank < report.top_modes.size(); ++rank) {
@@ -322,6 +369,16 @@ void StateAnalysisReporter::write_json(const StateAnalysisReport& report,
         << static_cast<double>(report.retraction_gradient_relative_error)
         << ", \"triad_ledger_objective_residual\": "
         << static_cast<double>(report.triad_ledger_objective_residual)
+        << ", \"moving_gap\": {\"base_gap\": "
+        << report.moving_gap.base_gap
+        << ", \"logarithmic_gap\": "
+        << report.moving_gap.logarithmic_gap
+        << ", \"minimum_gap\": "
+        << report.moving_gap.minimum_gap
+        << ", \"base_weighted_remainder_ratio\": "
+        << static_cast<double>(
+               report.moving_gap.base_weighted_remainder_ratio)
+        << '}'
         << ",\n  \"triad_gap_ledger\": [\n";
     for (std::size_t gap_index = 0;
          gap_index < report.triad_ledger.gaps.size(); ++gap_index) {
@@ -403,6 +460,41 @@ void StateAnalysisReporter::write_json(const StateAnalysisReport& report,
             << (index + 1 == report.triad_commutator.gaps.size()
                     ? ""
                     : ", ");
+    }
+    out << "]},\n  \"triad_tail_envelope\": {\"gaps\": [";
+    bool first_envelope_row = true;
+    for (const TriadTailEnvelopeGapRow& gap :
+         report.triad_tail_envelope.gaps) {
+        for (std::size_t role_index = 0;
+             role_index < separated_low_role_count; ++role_index) {
+            if (gap.terms_by_low_role[role_index] == 0) {
+                continue;
+            }
+            const auto role = static_cast<TriadLowRole>(role_index);
+            out << (first_envelope_row ? "" : ", ")
+                << "{\"dyadic_gap\": " << gap.dyadic_gap
+                << ", \"low_role\": \""
+                << TriadLedger::low_role_name(role)
+                << "\", \"terms\": "
+                << gap.terms_by_low_role[role_index]
+                << ", \"signed_stretching\": "
+                << static_cast<double>(
+                       gap.signed_stretching_by_low_role[role_index])
+                << ", \"absolute_stretching\": "
+                << static_cast<double>(
+                       gap.absolute_stretching_by_low_role[role_index])
+                << ", \"amplitude_envelope\": "
+                << static_cast<double>(
+                       gap.amplitude_envelope_by_low_role[role_index])
+                << ", \"maximum_amplitude_bound_ratio\": "
+                << static_cast<double>(
+                       gap.maximum_amplitude_bound_ratio[role_index])
+                << ", \"maximum_normalized_frequency_ratio\": "
+                << static_cast<double>(
+                       gap.maximum_normalized_frequency_ratio[role_index])
+                << '}';
+            first_envelope_row = false;
+        }
     }
     out << "]},\n  \"shells\": [\n";
     for (std::size_t index = 0; index < report.shells.size(); ++index) {

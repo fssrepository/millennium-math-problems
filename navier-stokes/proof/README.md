@@ -47,3 +47,7 @@ fine-time-step, projection-controlled `K=3,...,6` far-tail adversary.
 `l4/analysis/gap-tail-min3-h4-cap100/` tests the next dyadic tail
 `high/low > 8` with a parameterized exact objective. It records fine-time-step
 checks and both downward projections and zero-padded upward cutoff controls.
+
+`l4/lemmas/dynamic-far-tail/` contains the current human-checkable proof draft:
+the three-role paraproduct envelope, the fixed-gap obstruction, and the
+moving-gap Young closure that leaves the logarithmic transition/local block.

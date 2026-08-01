@@ -61,8 +61,28 @@ gap-three state, pairing reduces the absolute low-advecting contribution from
 is `2.05e-20`, and its maximum normalized frequency inequality ratio is
 `0.8512`. This is exact finite Fourier algebra, not an empirical fit.
 
-The commutator covers the dominant low-advecting role. The low-advected and
-low-target roles still need compatible estimates before L4.1a can close.
+`TriadTailEnvelope` now covers all three placements of the unique low wave.
+For the K7 gap-three state its exact finite-mode ledger is:
+
+| low-wave role | signed stretching | absolute stretching | coefficient-free envelope | max amplitude ratio | max frequency ratio |
+|---|---:|---:|---:|---:|---:|
+| advecting | `2.36079e-5` | `2.58109e-5` | `7.82340e-5` | `0.98347` | `0.80623` |
+| advected | `3.38163e-5` | `3.46702e-5` | `1.39892e-4` | `0.94175` | `1.00000` |
+| target | `-5.14118e-7` | `5.26813e-7` | `1.72405e-5` | `0.11416` | `1.00000` |
+
+The three signed rows sum to the complete gap-three stretching. The finite
+certificate verifies the amplitude and frequency inequalities term by term;
+it does not supply the cutoff-independent shell summation.
+
+For this state `Z=1.14701`. With base gap two, the dynamic rule
+
+```text
+m(Z) = 2 + ceil(log2(max(1,Z)))
+```
+
+selects gap three and gives
+`2^(-2m) Z^3 / Z = 0.0205569 <= 2^(-4)`. This is one state-level check of the
+algebraic moving-gap inequality, not a trajectory regularity assumption.
 
 For comparison, the separately optimized `gap>=2` integral is
 `3.21556e-11`. The current gap-three value is smaller by a factor of about
