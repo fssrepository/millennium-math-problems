@@ -32,6 +32,26 @@ void add_scaled(ComplexVector& target, const ComplexVector& source,
 
 }  // namespace
 
+bool HelicalSectorSelection::includes_spread(
+    WaveVector first, WaveVector second, WaveVector third) const {
+    const SpectralInteger minimum = std::min({
+        norm_squared(first), norm_squared(second), norm_squared(third)});
+    const SpectralInteger maximum = std::max({
+        norm_squared(first), norm_squared(second), norm_squared(third)});
+    const SpectralInteger difference = maximum - minimum;
+    switch (spread) {
+        case HelicalLocalSpread::all:
+            return true;
+        case HelicalLocalSpread::equal:
+            return difference == 0;
+        case HelicalLocalSpread::narrow:
+            return 4 * difference <= maximum;
+        case HelicalLocalSpread::broad:
+            return 4 * difference > maximum;
+    }
+    return false;
+}
+
 HelicalSectorObjectiveValue HelicalSectorObjective::evaluate(
     const SpectralState& state, HelicalSectorSelection selection) {
     if (selection.sector_mask == 0U) {
@@ -52,6 +72,9 @@ HelicalSectorObjectiveValue HelicalSectorObjective::evaluate(
          SpectralStateOps::interactions(state)) {
         const auto [p_index, q_index, k_index] = interaction;
         if (!TriadPartitioner::is_local(
+                state.waves[p_index], state.waves[q_index],
+                state.waves[k_index]) ||
+            !selection.includes_spread(
                 state.waves[p_index], state.waves[q_index],
                 state.waves[k_index])) {
             continue;
@@ -109,6 +132,9 @@ SpectralIncrement HelicalSectorObjective::signed_stretching_gradient(
          SpectralStateOps::interactions(state)) {
         const auto [p_index, q_index, k_index] = interaction;
         if (!TriadPartitioner::is_local(
+                state.waves[p_index], state.waves[q_index],
+                state.waves[k_index]) ||
+            !selection.includes_spread(
                 state.waves[p_index], state.waves[q_index],
                 state.waves[k_index])) {
             continue;

@@ -101,3 +101,23 @@ The remaining analytical target is unchanged: prove a trajectory-restricted,
 cutoff-independent bound for the heterochiral coefficient using only the
 initial smooth datum, viscosity, and finite time. A universal static bound is
 not a substitute for that dynamic statement.
+
+The initial and final cutoff-scan diagnostics also rule out two simple
+explanations for the observed saturation. The branch is helicity-balanced
+(`E_plus/E_minus` is approximately `0.5/0.5`), and its heterochiral
+signed-to-absolute interaction ratio changes only from `0.20255` to `0.20220`.
+It is neither a nearly one-sign helical state nor a state with vanishing
+heterochiral interactions.
+
+`HelicalGapLedger` further resolves this state as
+
+```text
+gap       heterochiral signed V     signed/absolute
+0            -2.269337e-1              2.02551e-1
+1             3.452355e-4              1.95093e-1
+2            -4.607628e-9              4.42653e-3
+```
+
+Thus the current endpoint routes the open estimate specifically to the gap-zero
+heterochiral block. Complete-triad energy symmetrization of that block is
+developed in `../local-triad-symmetry/README.md`.

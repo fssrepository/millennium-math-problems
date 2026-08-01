@@ -66,6 +66,41 @@ equal                               -3.26e-21       6.66e-21
 The replayable detailed certificate is
 `../../analysis/helical-heterochiral-cutoff/K3.json`.
 
+## Broad-spread adversary
+
+The exact sector objective and its checkpointed RK4 adjoint accept the same
+frequency-spread mask. Here
+
+```text
+narrow: 4(max |k_i|^2-min |k_i|^2) <= max |k_i|^2,
+broad:  the strict complementary inequality inside gap zero.
+```
+
+The broad masked gradient agrees with central differences at approximately
+`1.1e-11`. Eight steps on each of twelve parallel K3 starts increase its
+trajectory objective from `4.39053937751e-6` to `4.39098016662e-6`. On the
+winning state, evaluation without further optimization gives
+
+```text
+all local heterochiral     4.39089290346e-6
+broad-spread               4.39098016662e-6
+narrow-spread              2.71299915671e-27
+equal-frequency            8.00967140430e-89
+```
+
+The fourth-power objectives are not additive, but the scale separation is
+decisive: the current local extremum is a broad-spread extremum. Its same-state
+cutoff scan is
+
+```text
+K:       3                  4                  5                  6
+J: 4.39098016662e-6   4.39098438285e-6   4.39098438272e-6   4.39098438272e-6
+```
+
+with final adjacent relative difference `2.66e-15`. See
+`../../adversary/helical-heterochiral-broad-spread-cutoff-K3-K6.json` and
+`../../analysis/helical-heterochiral-broad-spread/K3.json`.
+
 ## What remains open
 
 `LS-1` removes every equal-frequency local triad, but it does not yet close

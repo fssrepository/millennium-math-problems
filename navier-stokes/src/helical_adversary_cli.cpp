@@ -32,6 +32,23 @@ HelicalSectorSelection parse_selection(const std::string& selection) {
         "--selection must be homochiral or heterochiral");
 }
 
+HelicalLocalSpread parse_spread(const std::string& spread) {
+    if (spread == "all") {
+        return HelicalLocalSpread::all;
+    }
+    if (spread == "equal") {
+        return HelicalLocalSpread::equal;
+    }
+    if (spread == "narrow") {
+        return HelicalLocalSpread::narrow;
+    }
+    if (spread == "broad") {
+        return HelicalLocalSpread::broad;
+    }
+    throw std::invalid_argument(
+        "--spread must be all, equal, narrow, or broad");
+}
+
 void ensure_parent_directory(const std::string& path) {
     const std::filesystem::path parent =
         std::filesystem::path(path).parent_path();
@@ -42,7 +59,7 @@ void ensure_parent_directory(const std::string& path) {
 
 void write_state(const SpectralState& state, const std::string& path,
                  const std::string& mode, const std::string& selection,
-                 SpectralReal objective) {
+                 const std::string& spread, SpectralReal objective) {
     ensure_parent_directory(path);
     std::ofstream output(path);
     if (!output) {
@@ -53,6 +70,7 @@ void write_state(const SpectralState& state, const std::string& path,
            << " energy=" << static_cast<double>(
                   SpectralStateOps::energy(state))
            << " mode=" << mode << " selection=" << selection
+           << " spread=" << spread
            << " objective=" << static_cast<double>(objective) << '\n'
            << "kx\tky\tkz\tux_re\tux_im\tuy_re\tuy_im\tuz_re\tuz_im\n";
     for (std::size_t index = 0; index < state.waves.size(); ++index) {
@@ -89,6 +107,8 @@ HelicalAdversaryCliOptions HelicalAdversaryCli::parse(
             options.selection = next_value(index, name);
         } else if (name == "--mode") {
             options.mode = next_value(index, name);
+        } else if (name == "--spread") {
+            options.spread = next_value(index, name);
         } else if (name == "--cutoff") {
             options.cutoff = std::stoi(next_value(index, name));
         } else if (name == "--iterations") {
@@ -126,6 +146,7 @@ void HelicalAdversaryCli::print_help(std::ostream& out) {
         << "  --certificate PATH    write optimization JSON\n"
         << "  --selection NAME      heterochiral or homochiral\n"
         << "  --mode NAME           trajectory or static\n"
+        << "  --spread NAME         all, equal, narrow, or broad local triads\n"
         << "  --cutoff K            project/lift input to cutoff K\n"
         << "  --iterations N        exact-gradient iterations (0 evaluates only)\n"
         << "  --line-search N       line-search trials per iteration\n"
@@ -155,7 +176,8 @@ int run_helical_adversary(
             "iterations/mutation must be nonnegative; restarts/workers positive");
     }
     const HelicalSectorSelection selection =
-        parse_selection(options.selection);
+        parse_selection(options.selection).with_spread(
+            parse_spread(options.spread));
     SpectralState state = SpectralStateReader::read_tsv(options.state_path);
     const SpectralReal energy = SpectralStateOps::energy(state);
     const int input_cutoff = SpectralStateOps::cutoff(state);
@@ -265,7 +287,7 @@ int run_helical_adversary(
     evaluations = results[winner].evaluations;
 
     write_state(optimized, options.state_output_path, options.mode,
-                options.selection, final_objective);
+                options.selection, options.spread, final_objective);
     ensure_parent_directory(options.certificate_path);
     std::ofstream certificate(options.certificate_path);
     if (!certificate) {
@@ -279,6 +301,7 @@ int run_helical_adversary(
         << "  \"output_state\": \"" << options.state_output_path << "\",\n"
         << "  \"mode\": \"" << options.mode << "\",\n"
         << "  \"selection\": \"" << options.selection << "\",\n"
+        << "  \"spread\": \"" << options.spread << "\",\n"
         << "  \"cutoff\": " << target_cutoff << ",\n"
         << "  \"iterations\": " << options.iterations << ",\n"
         << "  \"restarts\": " << options.restarts << ",\n"
@@ -303,6 +326,7 @@ int run_helical_adversary(
         << "\n}\n";
     out << std::setprecision(12)
         << "helical " << options.mode << " " << options.selection
+        << " spread=" << options.spread
         << " cutoff=" << target_cutoff
         << " objective=" << static_cast<double>(initial_objective)
         << " -> " << static_cast<double>(final_objective)

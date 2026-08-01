@@ -12,6 +12,7 @@ struct HelicalCutoffScanOptions {
     std::string state_path;
     std::string certificate_path;
     std::string selection = "heterochiral";
+    std::string spread = "all";
     int minimum_cutoff = 3;
     int maximum_cutoff = 5;
     int trajectory_steps = 10;

@@ -31,6 +31,23 @@ HelicalSectorSelection selection_from_name(const std::string& name) {
         "--selection must be heterochiral or homochiral");
 }
 
+HelicalLocalSpread spread_from_name(const std::string& name) {
+    if (name == "all") {
+        return HelicalLocalSpread::all;
+    }
+    if (name == "equal") {
+        return HelicalLocalSpread::equal;
+    }
+    if (name == "narrow") {
+        return HelicalLocalSpread::narrow;
+    }
+    if (name == "broad") {
+        return HelicalLocalSpread::broad;
+    }
+    throw std::invalid_argument(
+        "--spread must be all, equal, narrow, or broad");
+}
+
 void create_parent(const std::string& path) {
     const std::filesystem::path parent =
         std::filesystem::path(path).parent_path();
@@ -72,6 +89,8 @@ HelicalCutoffScanOptions HelicalCutoffScan::parse(
             options.certificate_path = next(index, name);
         } else if (name == "--selection") {
             options.selection = next(index, name);
+        } else if (name == "--spread") {
+            options.spread = next(index, name);
         } else if (name == "--min-cutoff") {
             options.minimum_cutoff = std::stoi(next(index, name));
         } else if (name == "--max-cutoff") {
@@ -101,6 +120,7 @@ void HelicalCutoffScan::print_help(std::ostream& out) {
         << "  --state PATH          input replayable Fourier-state TSV\n"
         << "  --certificate PATH    write aggregate cutoff JSON\n"
         << "  --selection NAME      heterochiral or homochiral\n"
+        << "  --spread NAME         all, equal, narrow, or broad local triads\n"
         << "  --min-cutoff K        first Galerkin cutoff\n"
         << "  --max-cutoff K        last Galerkin cutoff\n"
         << "  --trajectory-steps N  RK4 steps at every cutoff\n"
@@ -125,7 +145,8 @@ int HelicalCutoffScan::run(
         throw std::invalid_argument("invalid helical cutoff-scan options");
     }
     const HelicalSectorSelection selection =
-        selection_from_name(options.selection);
+        selection_from_name(options.selection).with_spread(
+            spread_from_name(options.spread));
     const SpectralState base = SpectralStateReader::read_tsv(
         options.state_path);
     const int base_cutoff = SpectralStateOps::cutoff(base);
@@ -194,6 +215,7 @@ int HelicalCutoffScan::run(
         << "{\n  \"schema\": \"navier-stokes-helical-cutoff-scan-v1\",\n"
         << "  \"input_state\": \"" << options.state_path << "\",\n"
         << "  \"selection\": \"" << options.selection << "\",\n"
+        << "  \"spread\": \"" << options.spread << "\",\n"
         << "  \"minimum_cutoff\": " << options.minimum_cutoff << ",\n"
         << "  \"maximum_cutoff\": " << options.maximum_cutoff << ",\n"
         << "  \"workers\": " << executor.threads() << ",\n"
@@ -250,6 +272,7 @@ int HelicalCutoffScan::run(
 
     out << std::setprecision(12)
         << "helical cutoff scan " << options.selection
+        << " spread=" << options.spread
         << " K=" << options.minimum_cutoff << ".."
         << options.maximum_cutoff << " horizon="
         << static_cast<double>(horizon) << '\n';

@@ -13,6 +13,7 @@ struct HelicalAdversaryCliOptions {
     std::string state_output_path;
     std::string certificate_path;
     std::string selection = "heterochiral";
+    std::string spread = "all";
     std::string mode = "trajectory";
     int cutoff = 0;
     int iterations = 8;

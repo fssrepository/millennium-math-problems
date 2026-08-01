@@ -103,6 +103,8 @@ LocalTriadSymmetryReport LocalTriadSymmetrizer::analyze(
         }
     }
     SpectralReal reconstruction_scale = 0.0L;
+    std::map<std::array<SpectralInteger, 3>,
+             LocalTriadSymmetryReport::SignatureRow> signatures;
     for (const auto& [key, group] : groups) {
         const std::array<SpectralInteger, 3> wave2{
             norm_squared(key[0]), norm_squared(key[1]),
@@ -152,7 +154,25 @@ LocalTriadSymmetryReport LocalTriadSymmetrizer::analyze(
         ++report.local_triads;
         report.signed_local_enstrophy_transfer += weighted;
         reconstruction_scale += raw_weighted_absolute;
+        auto& signature = signatures[wave2];
+        signature.squared_lengths = wave2;
+        ++signature.triads;
+        signature.signed_enstrophy_transfer += weighted;
+        signature.absolute_group_enstrophy_transfer += std::abs(weighted);
+        signature.frequency_spread_envelope += spread_envelope;
     }
+
+    report.signatures.reserve(signatures.size());
+    for (const auto& [lengths, signature] : signatures) {
+        static_cast<void>(lengths);
+        report.signatures.push_back(signature);
+    }
+    std::sort(
+        report.signatures.begin(), report.signatures.end(),
+        [](const auto& left, const auto& right) {
+            return std::abs(left.signed_enstrophy_transfer) >
+                std::abs(right.signed_enstrophy_transfer);
+        });
 
     const TriadLedgerReport direct = TriadLedger::analyze(state);
     report.local_reconstruction_residual = relative_residual(

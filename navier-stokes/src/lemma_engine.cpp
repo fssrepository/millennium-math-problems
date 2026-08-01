@@ -831,6 +831,8 @@ bool self_test(std::ostream& out) {
         HelicalSectorSelection::homochiral();
     const HelicalSectorSelection heterochiral_selection =
         HelicalSectorSelection::heterochiral();
+    const HelicalSectorSelection broad_heterochiral_selection =
+        heterochiral_selection.with_spread(HelicalLocalSpread::broad);
     const HelicalSectorObjectiveValue homochiral_value =
         HelicalSectorObjective::evaluate(
             helical_state, homochiral_selection);
@@ -873,6 +875,44 @@ bool self_test(std::ostream& out) {
         std::max(1e-30L, std::max(
             std::abs(helical_critical_directional),
             std::abs(helical_critical_finite_difference)));
+    const SpectralIncrement broad_helical_signed_gradient =
+        HelicalSectorObjective::signed_stretching_gradient(
+            helical_state, broad_heterochiral_selection);
+    const Real broad_helical_signed_directional = increment_inner_product(
+        broad_helical_signed_gradient, helical_direction_state.velocity);
+    const Real broad_helical_signed_finite_difference =
+        (HelicalSectorObjective::evaluate(
+             helical_plus, broad_heterochiral_selection)
+             .signed_local_stretching -
+         HelicalSectorObjective::evaluate(
+             helical_minus, broad_heterochiral_selection)
+             .signed_local_stretching) /
+        (2.0L * helical_gradient_step);
+    const Real broad_helical_signed_gradient_error = std::abs(
+        broad_helical_signed_directional -
+        broad_helical_signed_finite_difference) /
+        std::max(1e-30L, std::max(
+            std::abs(broad_helical_signed_directional),
+            std::abs(broad_helical_signed_finite_difference)));
+    const SpectralIncrement broad_helical_critical_gradient =
+        HelicalSectorObjective::critical_integrand_gradient(
+            helical_state, broad_heterochiral_selection);
+    const Real broad_helical_critical_directional = increment_inner_product(
+        broad_helical_critical_gradient, helical_direction_state.velocity);
+    const Real broad_helical_critical_finite_difference =
+        (HelicalSectorObjective::evaluate(
+             helical_plus, broad_heterochiral_selection)
+             .critical_integrand -
+         HelicalSectorObjective::evaluate(
+             helical_minus, broad_heterochiral_selection)
+             .critical_integrand) /
+        (2.0L * helical_gradient_step);
+    const Real broad_helical_critical_gradient_error = std::abs(
+        broad_helical_critical_directional -
+        broad_helical_critical_finite_difference) /
+        std::max(1e-30L, std::max(
+            std::abs(broad_helical_critical_directional),
+            std::abs(broad_helical_critical_finite_difference)));
     const Real helical_sector_partition_error = std::abs(
         homochiral_value.signed_local_stretching +
         heterochiral_value.signed_local_stretching -
@@ -882,7 +922,9 @@ bool self_test(std::ostream& out) {
     const bool helical_sector_objective_ok =
         helical_sector_partition_error < 1e-15L &&
         helical_signed_gradient_error < 1e-9L &&
-        helical_critical_gradient_error < 1e-9L;
+        helical_critical_gradient_error < 1e-9L &&
+        broad_helical_signed_gradient_error < 1e-9L &&
+        broad_helical_critical_gradient_error < 1e-9L;
     HelicalSectorAdversaryOptions helical_adversary_options;
     helical_adversary_options.iterations = 3;
     helical_adversary_options.line_search_steps = 16;
@@ -1579,6 +1621,10 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(helical_signed_gradient_error)
         << ", critical="
         << static_cast<double>(helical_critical_gradient_error)
+        << ", broad="
+        << static_cast<double>(broad_helical_signed_gradient_error)
+        << "/"
+        << static_cast<double>(broad_helical_critical_gradient_error)
         << ")\n"
         << "helical sector adversary test: "
         << (helical_adversary_ok ? "PASS" : "FAIL")

@@ -4,6 +4,7 @@
 
 #include <array>
 #include <cstddef>
+#include <vector>
 
 namespace lemma {
 
@@ -25,6 +26,14 @@ struct LocalTriadSymmetryReport {
     SpectralReal local_reconstruction_residual = 0.0L;
     SpectralReal maximum_frequency_spread_bound_ratio = 0.0L;
     std::array<LocalTriadSpreadBin, local_spread_bin_count> spread_bins{};
+    struct SignatureRow {
+        std::array<SpectralInteger, 3> squared_lengths{};
+        std::size_t triads = 0;
+        SpectralReal signed_enstrophy_transfer = 0.0L;
+        SpectralReal absolute_group_enstrophy_transfer = 0.0L;
+        SpectralReal frequency_spread_envelope = 0.0L;
+    };
+    std::vector<SignatureRow> signatures;
 };
 
 class LocalTriadSymmetrizer {

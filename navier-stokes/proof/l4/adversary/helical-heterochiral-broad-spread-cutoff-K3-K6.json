@@ -1,0 +1,22 @@
+{
+  "schema": "navier-stokes-helical-cutoff-scan-v1",
+  "input_state": "proof/l4/states/helical-heterochiral-broad-spread/dynamic/K3.tsv",
+  "selection": "heterochiral",
+  "spread": "broad",
+  "minimum_cutoff": 3,
+  "maximum_cutoff": 6,
+  "workers": 12,
+  "trajectory_steps": 10,
+  "viscosity": 0.100000000000000006,
+  "time_step": 0.00100000000000000002,
+  "time_horizon": 0.0100000000000000002,
+  "convergence_tolerance": 9.99999999999999955e-07,
+  "last_adjacent_relative_difference": 2.6636214688483335e-15,
+  "numerically_converged": true,
+  "samples": [
+    {"cutoff": 3, "objective": 4.39098016662229247e-06, "mean_density": 0.00043909801666222923, "previous_relative_difference": 0, "initial_positive_helical_energy": 0.499999957352136093, "initial_negative_helical_energy": 0.500000042647863907, "initial_heterochiral_signed_local": -0.22665253111510747, "initial_heterochiral_absolute_local": 1.1187360062715006, "initial_heterochiral_cancellation_ratio": 0.202596975376246435, "final_positive_helical_energy": 0.498782689114291911, "final_negative_helical_energy": 0.498782766431939639, "final_heterochiral_signed_local": -0.227359954770841421, "final_heterochiral_absolute_local": 1.1241922953572181, "final_heterochiral_cancellation_ratio": 0.202242939850959064},
+    {"cutoff": 4, "objective": 4.39098438285213237e-06, "mean_density": 0.000439098438285213206, "previous_relative_difference": 9.6020151119132633e-07, "initial_positive_helical_energy": 0.499999957352136093, "initial_negative_helical_energy": 0.500000042647863907, "initial_heterochiral_signed_local": -0.22665253111510747, "initial_heterochiral_absolute_local": 1.1187360062715006, "initial_heterochiral_cancellation_ratio": 0.202596975376246435, "final_positive_helical_energy": 0.498782689113833055, "final_negative_helical_energy": 0.498782766431591251, "final_heterochiral_signed_local": -0.22736006750379073, "final_heterochiral_absolute_local": 1.12419256990403316, "final_heterochiral_cancellation_ratio": 0.202242990738854767},
+    {"cutoff": 5, "objective": 4.39098438272104978e-06, "mean_density": 0.000439098438272104985, "previous_relative_difference": 2.98526297769186285e-11, "initial_positive_helical_energy": 0.499999957352136093, "initial_negative_helical_energy": 0.500000042647863907, "initial_heterochiral_signed_local": -0.22665253111510747, "initial_heterochiral_absolute_local": 1.1187360062715006, "initial_heterochiral_cancellation_ratio": 0.202596975376246435, "final_positive_helical_energy": 0.498782689113832722, "final_negative_helical_energy": 0.498782766431591085, "final_heterochiral_signed_local": -0.227360067502238805, "final_heterochiral_absolute_local": 1.12419256991494465, "final_heterochiral_cancellation_ratio": 0.20224299073551133},
+    {"cutoff": 6, "objective": 4.39098438272103792e-06, "mean_density": 0.000439098438272103792, "previous_relative_difference": 2.6636214688483335e-15, "initial_positive_helical_energy": 0.499999957352136093, "initial_negative_helical_energy": 0.500000042647863907, "initial_heterochiral_signed_local": -0.22665253111510747, "initial_heterochiral_absolute_local": 1.1187360062715006, "initial_heterochiral_cancellation_ratio": 0.202596975376246435, "final_positive_helical_energy": 0.498782689113832722, "final_negative_helical_energy": 0.498782766431591085, "final_heterochiral_signed_local": -0.227360067502236585, "final_heterochiral_absolute_local": 1.12419256991499128, "final_heterochiral_cancellation_ratio": 0.202242990735500922}
+  ]
+}

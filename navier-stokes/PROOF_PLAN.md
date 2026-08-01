@@ -397,3 +397,32 @@ task is no longer another lift of this same branch: it is to encode and
 falsify candidate dynamic mechanisms (sector cancellation, relative-helicity
 coercivity, or time-integrated shell transfer) that could produce that factor.
 See `proof/l4/lemmas/local-helicity/README.md`.
+
+The first two mechanisms are now excluded on the converged branch: it has
+balanced positive/negative helical energy and a nonvanishing heterochiral
+signed-to-absolute ratio near `0.202`. `HelicalGapLedger` places
+`-0.226934` of signed heterochiral transfer in gap zero, `3.45e-4` in gap one,
+and only `-4.61e-9` in gap two.
+
+For the remaining gap-zero block, complete-triad symmetrization proves the
+cutoff-independent identity
+
+```text
+|V_triad| <= (max |k_i|^2-min |k_i|^2) sum_i |T_i|.          (LS-1)
+```
+
+Equal-frequency triads therefore contribute exactly zero. The K3 endpoint,
+however, places `-0.207019` of its total `-0.226938` local transfer in the
+squared-frequency-spread interval `(1/4,1/2]`. Consequently LS-1 is a genuine
+partial lemma but supplies no small scale factor on the dominant broad-spread
+class. The restart point is now a dynamic/time-integrated estimate for those
+broad-spread gap-zero triads. See
+`proof/l4/lemmas/local-triad-symmetry/README.md`.
+
+The objective/adjoint now masks this exact broad class. A 12-restart K3 search
+reaches `4.39098e-6`; the narrow and equal-frequency objectives on the same
+state are only `2.71e-27` and `8.01e-89`. The broad same-state K3--K6 scan has
+last relative difference `2.66e-15`. This removes cutoff and optimizer
+artifacts from the current branch and isolates the analytical gap still
+further: prove a trajectory-integrated estimate specifically for broad-spread,
+gap-zero heterochiral triads.

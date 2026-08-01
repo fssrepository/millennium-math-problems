@@ -148,7 +148,7 @@ cutoff scan:
 ./build/navier_stokes_lab helical-adversary \
   --state proof/l4/states/helical-heterochiral-local-integral/dynamic/K3.tsv \
   --state-output /tmp/helical-K3.tsv --certificate /tmp/helical-K3.json \
-  --selection heterochiral --mode trajectory \
+  --selection heterochiral --spread broad --mode trajectory \
   --cutoff 3 --iterations 8 --trajectory-steps 10 \
   --restarts 12 --workers 12 --restart-mutation 0.03 \
   --nu 0.1 --dt 0.001
@@ -161,6 +161,8 @@ cutoff scan:
 
 Setting `--iterations 0` evaluates an adversary state without optimizing it,
 which separates cutoff effects from optimizer progress.
+The spread mask is `all`, `equal`, `narrow` (relative squared-frequency spread
+at most `1/4`), or `broad` (its gap-zero complement).
 
 These are ordinary non-virtual C++ classes. The numerical kernels do not use
 RTTI, `std::function`, `shared_ptr`, or exceptions for control flow. Class

@@ -415,6 +415,23 @@ void StateAnalysisReporter::write_console(const StateAnalysisReport& report,
         << ',' << static_cast<double>(report.local_triad_symmetry
                                           .maximum_frequency_spread_bound_ratio)
         << '\n';
+    out << "\nlocal_triad_signature,k2_a,k2_b,k2_c,triads,"
+           "signed_enstrophy_transfer,absolute_group_transfer,"
+           "frequency_spread_envelope\n";
+    const std::size_t signature_count = std::min<std::size_t>(
+        16, report.local_triad_symmetry.signatures.size());
+    for (std::size_t index = 0; index < signature_count; ++index) {
+        const auto& signature =
+            report.local_triad_symmetry.signatures[index];
+        out << index + 1 << ',' << signature.squared_lengths[0] << ','
+            << signature.squared_lengths[1] << ','
+            << signature.squared_lengths[2] << ',' << signature.triads << ','
+            << static_cast<double>(signature.signed_enstrophy_transfer) << ','
+            << static_cast<double>(
+                   signature.absolute_group_enstrophy_transfer) << ','
+            << static_cast<double>(signature.frequency_spread_envelope)
+            << '\n';
+    }
     out << "\ntop_mode,kx,ky,kz,energy,q_gradient_norm\n";
     for (std::size_t rank = 0; rank < report.top_modes.size(); ++rank) {
         const StateModeAnalysis& mode = report.top_modes[rank];
@@ -699,6 +716,27 @@ void StateAnalysisReporter::write_json(const StateAnalysisReport& report,
             << '}'
             << (index + 1 ==
                         report.local_triad_symmetry.spread_bins.size()
+                    ? ""
+                    : ", ");
+    }
+    out << "], \"signatures\": [";
+    for (std::size_t index = 0;
+         index < report.local_triad_symmetry.signatures.size(); ++index) {
+        const auto& signature =
+            report.local_triad_symmetry.signatures[index];
+        out << "{\"squared_lengths\": ["
+            << signature.squared_lengths[0] << ", "
+            << signature.squared_lengths[1] << ", "
+            << signature.squared_lengths[2] << "], \"triads\": "
+            << signature.triads << ", \"signed_enstrophy_transfer\": "
+            << static_cast<double>(signature.signed_enstrophy_transfer)
+            << ", \"absolute_group_enstrophy_transfer\": "
+            << static_cast<double>(
+                   signature.absolute_group_enstrophy_transfer)
+            << ", \"frequency_spread_envelope\": "
+            << static_cast<double>(signature.frequency_spread_envelope)
+            << '}'
+            << (index + 1 == report.local_triad_symmetry.signatures.size()
                     ? ""
                     : ", ");
     }
