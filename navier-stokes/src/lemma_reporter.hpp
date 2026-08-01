@@ -50,6 +50,18 @@ struct LemmaReport {
     FarTailClosureCertificate far_tail_closure;
     TransitionBlockScalingReport transition_block_scaling;
     HelicalTriadCertificate helical_triad_certificate;
+    long double helical_adversary_initial_objective = 0.0L;
+    long double helical_adversary_final_objective = 0.0L;
+    int helical_adversary_accepted_steps = 0;
+    int helical_adversary_evaluations = 0;
+    int helical_adversary_restarts = 0;
+    int helical_adversary_threads = 0;
+    long double helical_trajectory_initial_objective = 0.0L;
+    long double helical_trajectory_final_objective = 0.0L;
+    int helical_trajectory_accepted_steps = 0;
+    int helical_trajectory_evaluations = 0;
+    int helical_trajectory_restarts = 0;
+    int helical_trajectory_threads = 0;
     int triad_cutoff = 0;
     int triad_modes = 0;
     int triad_samples = 0;

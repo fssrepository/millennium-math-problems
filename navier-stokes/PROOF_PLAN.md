@@ -373,6 +373,10 @@ only `-3.71e-6`; the heterochiral sectors carry the signed extremum. This is
 not an exact identity: pure positive- and negative-helicity states have
 nonzero homochiral local stretching, so F006 rejects universal homochiral
 cancellation. The next computational target is a sector-selective local
-objective; the next analytical target is a quantitative heterochiral
-depletion statement strong enough to supply the missing `Z^(-1/2)` factor.
+objective; its exact static and checkpointed trajectory gradients now pass at
+`6.71e-12` and `3.56e-13`. Twelve parallel restarts reach static critical
+density `1.33682e-4` and short-time critical integral `5.07257e-8`. The next
+computational step is cutoff continuation of this branch; the next analytical
+target is a quantitative heterochiral depletion statement strong enough to
+supply the missing `Z^(-1/2)` factor.
 See `proof/l4/lemmas/local-helicity/README.md`.

@@ -43,6 +43,22 @@ max |V_local,homochiral| = 6.35947e-3.
 
 Therefore candidate F006, exact homochiral cancellation, is rejected. The
 surviving analytical direction is narrower: identify a quantitative dynamic
-depletion of the heterochiral local sectors, or reject that proposal with a
-sector-targeted adversary. The finite endpoint pattern is routing evidence,
-not a regularity proof.
+depletion of the heterochiral local sectors.
+
+## Sector-targeted adversary
+
+`HelicalSectorObjective` has an analytic gradient for the homochiral and
+heterochiral local critical densities. Its central-difference errors are
+`5.77e-12` for signed stretching and `6.71e-12` for the critical density.
+Twelve parallel fixed-energy heterochiral restarts with eight accepted steps
+raise the best static critical density from `6.04266e-9` to `1.33682e-4`.
+
+`HelicalSectorAdjoint` differentiates the trapezoidal time integral through
+every full Navier-Stokes RK4 step. Its trajectory-gradient error is
+`3.56e-13`. The first 12-restart, four-step trajectory search raises the
+heterochiral local critical integral from `1.91932e-11` to `5.07257e-8`.
+
+These searches show that the heterochiral target is numerically active rather
+than automatically depleted. The next cutoff continuation must determine
+whether it approaches a smooth projective branch or grows with resolution.
+The finite endpoint pattern is routing evidence, not a regularity proof.

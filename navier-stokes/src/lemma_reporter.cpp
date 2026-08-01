@@ -135,6 +135,24 @@ void LemmaReporter::write_console(const LemmaReport& report, std::ostream& out) 
                     .nonzero_pure_homochiral_local_seen
                 ? "REJECTED"
                 : "not rejected")
+        << "\n  heterochiral adversary objective:        "
+        << static_cast<double>(report.helical_adversary_initial_objective)
+        << " -> "
+        << static_cast<double>(report.helical_adversary_final_objective)
+        << "\n  heterochiral accepted steps/evaluations: "
+        << report.helical_adversary_accepted_steps << " / "
+        << report.helical_adversary_evaluations
+        << "\n  heterochiral restarts / CPU workers:     "
+        << report.helical_adversary_restarts << " / "
+        << report.helical_adversary_threads
+        << "\n  heterochiral trajectory integral:       "
+        << static_cast<double>(report.helical_trajectory_initial_objective)
+        << " -> "
+        << static_cast<double>(report.helical_trajectory_final_objective)
+        << "\n  trajectory steps/evaluations/restarts:   "
+        << report.helical_trajectory_accepted_steps << " / "
+        << report.helical_trajectory_evaluations << " / "
+        << report.helical_trajectory_restarts
         << "\n\n"
         << "Fourier-Galerkin triad checks\n"
         << "  modes / samples:                        " << report.triad_modes
@@ -379,6 +397,34 @@ void LemmaReporter::write_json(const LemmaReport& report, std::ostream& out) {
                     .all_reconstruction_checks_hold
                 ? "true"
                 : "false")
+        << "\n  },\n"
+        << "  \"helical_sector_adversary\": {\n"
+        << "    \"selection\": \"heterochiral-local\",\n"
+        << "    \"initial_critical_integrand\": "
+        << static_cast<double>(report.helical_adversary_initial_objective)
+        << ",\n    \"final_critical_integrand\": "
+        << static_cast<double>(report.helical_adversary_final_objective)
+        << ",\n    \"accepted_steps\": "
+        << report.helical_adversary_accepted_steps
+        << ",\n    \"evaluations\": "
+        << report.helical_adversary_evaluations
+        << ",\n    \"restarts\": " << report.helical_adversary_restarts
+        << ",\n    \"threads\": " << report.helical_adversary_threads
+        << "\n  },\n"
+        << "  \"helical_trajectory_adversary\": {\n"
+        << "    \"selection\": \"heterochiral-local-integral\",\n"
+        << "    \"initial_critical_integral\": "
+        << static_cast<double>(report.helical_trajectory_initial_objective)
+        << ",\n    \"final_critical_integral\": "
+        << static_cast<double>(report.helical_trajectory_final_objective)
+        << ",\n    \"accepted_steps\": "
+        << report.helical_trajectory_accepted_steps
+        << ",\n    \"evaluations\": "
+        << report.helical_trajectory_evaluations
+        << ",\n    \"restarts\": "
+        << report.helical_trajectory_restarts
+        << ",\n    \"threads\": "
+        << report.helical_trajectory_threads
         << "\n  },\n"
         << "  \"fourier_galerkin\": {\n"
         << "    \"cutoff\": " << report.triad_cutoff << ",\n"

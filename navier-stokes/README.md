@@ -101,6 +101,9 @@ source file:
   frequency/amplitude bounds and reconstructs the separated signed ledger;
 - `HelicalTriadLedger` reconstructs local and total stretching from all eight
   curl-eigenmode sign sectors and produces pure-helicity counterexamples;
+- `HelicalSectorObjective`, `HelicalSectorAdjoint`, and the two helical
+  adversaries provide exact static and checkpointed trajectory gradients for
+  sector-selective local searches;
 - `MovingGapController` implements the logarithmic gap choice that turns the
   post-Young far-tail remainder from `Z^3` into a linear `Z` term;
 - `DyadicShellBounds` isolates the cutoff-independent scalar shell sums,

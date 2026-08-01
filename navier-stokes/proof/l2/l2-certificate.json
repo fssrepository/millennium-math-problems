@@ -112,6 +112,24 @@
     "nonzero_pure_homochiral_local_seen": true,
     "all_reconstruction_checks_hold": true
   },
+  "helical_sector_adversary": {
+    "selection": "heterochiral-local",
+    "initial_critical_integrand": 6.04265697714726343e-09,
+    "final_critical_integrand": 0.000133682283706457888,
+    "accepted_steps": 8,
+    "evaluations": 108,
+    "restarts": 12,
+    "threads": 12
+  },
+  "helical_trajectory_adversary": {
+    "selection": "heterochiral-local-integral",
+    "initial_critical_integral": 1.91931884238557911e-11,
+    "final_critical_integral": 5.07257490656636648e-08,
+    "accepted_steps": 4,
+    "evaluations": 60,
+    "restarts": 12,
+    "threads": 12
+  },
   "fourier_galerkin": {
     "cutoff": 3,
     "modes": 342,
