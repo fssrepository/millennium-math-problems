@@ -1,0 +1,13 @@
+{
+  "schema": "navier-stokes-state-analysis-v1",
+  "state": "proof/l4/states/nonlocal-integral-h4-cap100-K3-convergence128/dynamic/K3.tsv",
+  "cutoff": 3, "modes": 342, "active_modes": 342, "highest_active_shell": 3,
+  "E": 1, "Z": 1.57766532467218057, "P": 4.21820845601827976, "Q": 0.000145401751450470262,
+  "divergence_residual": 5.76521192461569365e-17, "reality_residual": 0, "homogeneous_H3_squared": 18.1265072135323528, "homogeneous_H4_squared": 100, "projected_q_gradient_norm": 0.00126352734372786124, "retraction_directional_derivative": 0.00126352734366349671, "retraction_gradient_relative_error": 5.09404120711018146e-11,
+  "shells": [
+    {"shell": 0, "modes": 0, "active_modes": 0, "energy": 0, "enstrophy": 0, "palinstrophy": 0, "q_gradient_norm": 0},
+    {"shell": 1, "modes": 26, "active_modes": 26, "energy": 0.896944502927026766, "enstrophy": 1.04618364585813683, "palinstrophy": 1.37095753063389081, "q_gradient_norm": 0.000553171373586371128},
+    {"shell": 2, "modes": 98, "active_modes": 98, "energy": 0.102430969331105529, "enstrophy": 0.524964646278165858, "palinstrophy": 2.77858118048913605, "q_gradient_norm": 0.000806834133573765852},
+    {"shell": 3, "modes": 218, "active_modes": 218, "energy": 0.000624527741867738728, "enstrophy": 0.00651703253587777778, "palinstrophy": 0.068669744895253057, "q_gradient_norm": 0.000850933686013358105}
+  ]
+}

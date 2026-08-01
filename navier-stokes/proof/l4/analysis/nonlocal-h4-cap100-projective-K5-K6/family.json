@@ -1,0 +1,10 @@
+{
+  "schema": "navier-stokes-state-family-analysis-v1",
+  "state_directory": "proof/l4/states/nonlocal-integral-h4-cap100-projective-K5-K6/dynamic",
+  "top_shell_energy_fitted_exponent": -32.9992056079854876,
+  "maximum_projection_residual": 0.0942356194012117371,
+  "rows": [
+    {"cutoff": 5, "modes": 1330, "E": 1, "Z": 1.61397782452950933, "P": 4.32304254795939791, "homogeneous_H3_squared": 18.2873302015236376, "homogeneous_H4_squared": 100, "Q": 0.000117252463033487361, "top_shell_energy": 4.47504354812099266e-07, "projection_residual": 0},
+    {"cutoff": 6, "modes": 2196, "E": 1, "Z": 1.62842449128239131, "P": 4.42510643319059316, "homogeneous_H3_squared": 18.7073402341773409, "homogeneous_H4_squared": 99.9665570884682921, "Q": 0.000125199560633901382, "top_shell_energy": 1.09113640843290938e-09, "projection_residual": 0.0942356194012117371}
+  ]
+}

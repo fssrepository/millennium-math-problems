@@ -1,0 +1,16 @@
+{
+  "schema": "navier-stokes-state-family-analysis-v1",
+  "state_directory": "proof/l4/states/q-increase-continuation/dynamic",
+  "top_shell_energy_fitted_exponent": -5.06806386328450031,
+  "maximum_projection_residual": 0.135954598056863024,
+  "rows": [
+    {"cutoff": 1, "modes": 26, "E": 1, "Z": 1.1706856358190143, "P": 1.53987037926893033, "homogeneous_H3_squared": 2.36168028160442356, "homogeneous_H4_squared": 4.25562133258239506, "Q": 6.56197182650680515e-05, "top_shell_energy": 1, "projection_residual": 0},
+    {"cutoff": 2, "modes": 124, "E": 1, "Z": 1.28528605608292268, "P": 2.13674180959308613, "homogeneous_H3_squared": 5.38847583089730264, "homogeneous_H4_squared": 21.2586337815048338, "Q": 0.000132315491121308182, "top_shell_energy": 0.0158891605480389123, "projection_residual": 0.135954598056863024},
+    {"cutoff": 3, "modes": 342, "E": 0.999999999999999889, "Z": 1.36770495958024507, "P": 2.70959244808465316, "homogeneous_H3_squared": 10.1674391559267825, "homogeneous_H4_squared": 76.4953226044607959, "Q": 0.000137370753376409835, "top_shell_energy": 0.00110242004083531344, "projection_residual": 0.0727183418358803707},
+    {"cutoff": 4, "modes": 728, "E": 1, "Z": 1.39097905830824931, "P": 3.14427016780368929, "homogeneous_H3_squared": 26.6644284960974538, "homogeneous_H4_squared": 795.557256041826349, "Q": 0.000132682080845996525, "top_shell_energy": 0.000280654685168246331, "projection_residual": 0.0315008468860964869},
+    {"cutoff": 5, "modes": 1330, "E": 1, "Z": 1.3922948444921377, "P": 3.33303360759797451, "homogeneous_H3_squared": 51.2368469492155398, "homogeneous_H4_squared": 3017.70468264909323, "Q": 0.000131566237846183321, "top_shell_energy": 0.000123919455660762571, "projection_residual": 0.0173575858782376406},
+    {"cutoff": 6, "modes": 2196, "E": 1, "Z": 1.39237396324154639, "P": 3.49769363496037489, "homogeneous_H3_squared": 87.6116582996466775, "homogeneous_H4_squared": 8145.89496243765188, "Q": 0.00012180928524812758, "top_shell_energy": 7.2096253357154113e-05, "projection_residual": 0.0112349190931253888},
+    {"cutoff": 7, "modes": 3374, "E": 1, "Z": 1.39173273993176627, "P": 3.57222302251294943, "homogeneous_H3_squared": 126.328271601400488, "homogeneous_H4_squared": 16537.5973021447717, "Q": 0.000118831328644598393, "top_shell_energy": 4.19346142930964e-05, "projection_residual": 0.00808957703673898222},
+    {"cutoff": 8, "modes": 4912, "E": 1, "Z": 1.39121276277802441, "P": 3.61903221846670275, "homogeneous_H3_squared": 169.917979910995626, "homogeneous_H4_squared": 29519.9566664870326, "Q": 0.000117098658870066534, "top_shell_energy": 2.56623931741851709e-05, "projection_residual": 0.00591218023081034778}
+  ]
+}

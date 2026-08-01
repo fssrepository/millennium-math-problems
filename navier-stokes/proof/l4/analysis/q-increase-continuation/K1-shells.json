@@ -1,0 +1,11 @@
+{
+  "schema": "navier-stokes-state-analysis-v1",
+  "state": "proof/l4/states/q-increase-continuation/dynamic/K1.tsv",
+  "cutoff": 1, "modes": 26, "active_modes": 26, "highest_active_shell": 1,
+  "E": 1, "Z": 1.22200046721037969, "P": 1.74350403309582691, "Q": 1.87108693450603578e-05,
+  "divergence_residual": 8.38369516711914652e-05, "reality_residual": 2.81776864048775177, "projected_q_gradient_norm": 0.000417435385930749832, "retraction_directional_derivative": 0.000283832904262275494, "retraction_gradient_relative_error": 0.320055477258073651,
+  "shells": [
+    {"shell": 0, "modes": 0, "active_modes": 0, "energy": 0, "enstrophy": 0, "palinstrophy": 0, "q_gradient_norm": 0},
+    {"shell": 1, "modes": 26, "active_modes": 26, "energy": 1, "enstrophy": 1.22200046721037969, "palinstrophy": 1.74350403309582691, "q_gradient_norm": 0.000421072235324007442}
+  ]
+}

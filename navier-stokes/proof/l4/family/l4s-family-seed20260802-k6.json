@@ -1,0 +1,27 @@
+{
+  "schema": "navier-stokes-projective-family-v2",
+  "initial_family": "deterministic divergence-free analytic Fourier field",
+  "seed": 20260802,
+  "seed_count": 1,
+  "spectral_decay": 0.800000000000000044,
+  "viscosity": 0.100000000000000006,
+  "time": 0.0100000000000000002,
+  "threads": 12,
+  "backend": "auto",
+  "runs": [
+    {"seed": 20260802, "cutoff": 1, "modes": 26, "E0": 0.528960698713440647, "Z0": 1.02225417166541122, "integral_D4Z2": 2.12483825219551101e-17, "max_D4Z": 2.28003414311412362e-15, "max_local_D4Z": 2.28003414311412322e-15, "max_nonlocal_D4Z": 0, "q_enstrophy_envelope": 2.32569548284174475e-17, "energy_identity_envelope": 6.03024226716073768e-15, "envelope_utilization": 0.00352363662695091666, "factorization_violation": 0, "dt_relative_error": 1.8539094204271401e-05, "dt_absolute_error": 3.9392576526291971e-22, "max_Z": 1.02225417166541122, "max_omega_inf": 1.97048140590896637, "max_holder_half": 0.890559507647663673, "local_integral": 2.12483825219551101e-17, "nonlocal_integral": 0, "projection_residual": 0},
+    {"seed": 20260802, "cutoff": 2, "modes": 124, "E0": 0.850808575080122531, "Z0": 2.93651384715578567, "integral_D4Z2": 2.87182333143136852e-13, "max_D4Z": 1.27265064613517877e-11, "max_local_D4Z": 4.98770238906689906e-10, "max_nonlocal_D4Z": 7.69232444231644982e-11, "q_enstrophy_envelope": 3.71846018670115476e-13, "energy_identity_envelope": 5.41391041406534356e-11, "envelope_utilization": 0.00530452687944442045, "factorization_violation": 0, "dt_relative_error": 0.000150345297711074243, "dt_absolute_error": 4.31765133737658125e-17, "max_Z": 2.93651384715578567, "max_omega_inf": 4.59354587722591123, "max_holder_half": 1.01368653001131093, "local_integral": 1.38496310715232747e-11, "nonlocal_integral": 2.06636160668083186e-12, "projection_residual": 0},
+    {"seed": 20260802, "cutoff": 3, "modes": 342, "E0": 0.958905627236761648, "Z0": 4.28853971528562194, "integral_D4Z2": 3.77698821032023512e-14, "max_D4Z": 1.89745099594135949e-12, "max_local_D4Z": 3.76322549819064272e-12, "max_nonlocal_D4Z": 3.03982147778719201e-11, "q_enstrophy_envelope": 8.07659794277904376e-14, "energy_identity_envelope": 9.09738218707083645e-12, "envelope_utilization": 0.0041517308305328484, "factorization_violation": 0, "dt_relative_error": 0.00158240153101973447, "dt_absolute_error": 5.97671192665422593e-17, "max_Z": 4.28853971528562194, "max_omega_inf": 4.62620277776949962, "max_holder_half": 1.19559590800692095, "local_integral": 1.1731851402697132e-13, "nonlocal_integral": 1.05372305429040491e-12, "projection_residual": 0},
+    {"seed": 20260802, "cutoff": 4, "modes": 728, "E0": 0.989937278143519062, "Z0": 4.94571294750299817, "integral_D4Z2": 7.52987077254803855e-16, "max_D4Z": 9.08492062695911476e-14, "max_local_D4Z": 6.13731602670198719e-12, "max_nonlocal_D4Z": 1.2148138563919782e-11, "q_enstrophy_envelope": 4.4508322078152428e-15, "energy_identity_envelope": 4.49675079880090906e-13, "envelope_utilization": 0.00167451368987490534, "factorization_violation": 0, "dt_relative_error": 0.0172908633459063245, "dt_absolute_error": 1.30197966540462215e-17, "max_Z": 4.94571294750299817, "max_omega_inf": 5.00236660171788738, "max_holder_half": 1.3231090408290016, "local_integral": 2.17810585800353154e-13, "nonlocal_integral": 3.91752588026369144e-13, "projection_residual": 0},
+    {"seed": 20260802, "cutoff": 5, "modes": 1330, "E0": 0.998101579832698649, "Z0": 5.20539558839254912, "integral_D4Z2": 1.49357908597650941e-14, "max_D4Z": 1.09613456863543054e-12, "max_local_D4Z": 1.39434517042144187e-12, "max_nonlocal_D4Z": 1.13707941920450815e-11, "q_enstrophy_envelope": 5.64577379425036617e-14, "energy_identity_envelope": 5.47026822332128346e-12, "envelope_utilization": 0.00273035804644635892, "factorization_violation": 0, "dt_relative_error": 0.00686998520866504304, "dt_absolute_error": 1.02608662286300748e-16, "max_Z": 5.20539558839254912, "max_omega_inf": 6.19624619222135653, "max_holder_half": 1.40949941881798058, "local_integral": 4.37715626735121763e-14, "nonlocal_integral": 3.42894428801799993e-13, "projection_residual": 0},
+    {"seed": 20260802, "cutoff": 6, "modes": 2196, "E0": 1, "Z0": 5.29014472135633884, "integral_D4Z2": 4.44266535625293054e-15, "max_D4Z": 4.44417834693324182e-13, "max_local_D4Z": 1.21227936038818709e-12, "max_nonlocal_D4Z": 6.20508716663063074e-12, "q_enstrophy_envelope": 2.32495738755088663e-14, "energy_identity_envelope": 2.22208917346662061e-12, "envelope_utilization": 0.00199931911342786026, "factorization_violation": 0, "dt_relative_error": 0.0133941336594871757, "dt_absolute_error": 5.95056535860249669e-17, "max_Z": 5.29014472135633884, "max_omega_inf": 5.96129442848510305, "max_holder_half": 1.54508541275279998, "local_integral": 3.70440212336225275e-14, "nonlocal_integral": 1.61075031527654694e-13, "projection_residual": 0}
+  ],
+  "family_summaries": [
+    {"seed": 20260802, "last_cutoff_increment": -1.04931255035121651e-14, "last_cutoff_relative_increment": 2.36189869415741072, "max_Q_growth_ratio": 194.917184041081072, "max_Q_cutoff_log_slope": 2.94268000905316818, "max_Q_over_cutoffs": 1.27265064613517877e-11, "tail_record_growth_ratio": 1, "tail_record_log_slope": 0}
+  ],
+  "worst_last_cutoff_relative_increment": 2.36189869415741072,
+  "worst_tail_record_growth_ratio": 1,
+  "worst_tail_record_log_slope": 0,
+  "strong_L4_reduction": "sup_N,t Q_N times E0/(2 nu) bounds integral D_N^4 Z_N^2 dt",
+  "logical_status": "finite projective convergence evidence; not an infinite-cutoff proof"
+}

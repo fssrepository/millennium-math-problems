@@ -1,0 +1,16 @@
+{
+  "schema": "navier-stokes-projective-family-v1",
+  "initial_family": "deterministic divergence-free analytic Fourier field",
+  "seed": 20260801,
+  "spectral_decay": 0.800000000000000044,
+  "viscosity": 0.100000000000000006,
+  "time": 0.100000000000000006,
+  "runs": [
+    {"cutoff": 1, "modes": 26, "E0": 0.467212677328871839, "Z0": 0.811158871548780858, "integral_D4Z2": 9.60825149082097614e-11, "dt_relative_error": 8.02689914502801555e-06, "max_Z": 0.811158871548780858, "max_omega_inf": 1.88174670844642522, "max_holder_half": 0.887261558010478124, "local_integral": 9.60825149082097614e-11, "nonlocal_integral": 0, "projection_residual": 0},
+    {"cutoff": 2, "modes": 124, "E0": 0.846101261987577402, "Z0": 3.04814284865932095, "integral_D4Z2": 2.4364912514666603e-11, "dt_relative_error": 0.000264890772787806938, "max_Z": 3.04814284865932095, "max_omega_inf": 3.43421494798199722, "max_holder_half": 1.05550179014126777, "local_integral": 1.52942006110735722e-12, "nonlocal_integral": 7.39318724062755659e-11, "projection_residual": 0},
+    {"cutoff": 3, "modes": 342, "E0": 0.964102942378464722, "Z0": 4.53807795053371166, "integral_D4Z2": 1.18310045828285345e-09, "dt_relative_error": 8.29166352725171576e-05, "max_Z": 4.53807795053371166, "max_omega_inf": 4.786641742034214, "max_holder_half": 1.19682656099501705, "local_integral": 1.94944897102813145e-11, "nonlocal_integral": 2.09812538069295196e-10, "projection_residual": 0},
+    {"cutoff": 4, "modes": 728, "E0": 1, "Z0": 5.29807552917507607, "integral_D4Z2": 1.47704597429913932e-09, "dt_relative_error": 0.00013901414724240503, "max_Z": 5.29807552917507607, "max_omega_inf": 5.44599431356119101, "max_holder_half": 1.32314154684828633, "local_integral": 3.40346073965377594e-11, "nonlocal_integral": 2.09765164493047844e-10, "projection_residual": 0}
+  ],
+  "last_cutoff_relative_increment": 0.199009049908391383,
+  "logical_status": "finite projective convergence evidence; not an infinite-cutoff proof"
+}

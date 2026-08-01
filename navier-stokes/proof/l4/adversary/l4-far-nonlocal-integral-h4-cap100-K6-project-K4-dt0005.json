@@ -1,0 +1,15 @@
+{
+  "schema": "navier-stokes-l4-adversary-v2",
+  "candidate": "cutoff-uniform trajectory bound on Q=D^4 Z",
+  "optimizer": {"restarts": 1, "generations": 1, "dynamic_generations": 0, "dynamic_objective": "critical-far-nonlocal-integral", "dynamic_optimizer": "gradient", "gradient_method": "lbfgs", "sobolev_order": 4, "sobolev_cap": 100, "mutation": 0.0200000000000000004, "seed": 20260801},
+  "threads": 4,
+  "backend": "auto",
+  "evolution": {"viscosity": 0.100000000000000006, "time": 0.0100000000000000002, "requested_dt": 0.00050000000000000001},
+  "results": [
+    {"cutoff": 4, "modes": 728, "evaluations": 2, "accepted_mutations": 1, "E": 1, "Z": 4.10918421422636992, "P": 45.0198808723681125, "V": 0.0605813485247649886, "D": 0.00120772754634109131, "Q": 8.74241662048898536e-12, "critical_integrand": 3.59242003711035877e-11, "dynamic_integral_D4Z2": 1.49157511801346699e-10, "dynamic_coarse_integral_D4Z2": 1.49162681096935585e-10, "dynamic_dt_relative_error": 3.46566225626975764e-05, "dynamic_search_initial_objective": 3.20285262988005596e-11, "dynamic_search_final_objective": 3.20285262988005596e-11, "dynamic_max_D4Z": 1.67744267062647456e-08, "dynamic_initial_D4Z": 9.6453863075832498e-09, "dynamic_final_D4Z": 1.67744267062647456e-08, "dynamic_log_Q_gain": 0.553375808608102204, "dynamic_max_local_D4Z": 2.2724664056510418e-11, "dynamic_max_nonlocal_D4Z": 2.64626280482466995e-08, "dynamic_max_near_nonlocal_D4Z": 9.1191482696859359e-10, "dynamic_max_far_nonlocal_D4Z": 2.78945790294274565e-09, "dynamic_max_positive_dlogQ_over_k0Z": 48.0903920222879293, "dynamic_q_derivative_refinement_error": 7.44982135930192012e-06, "dynamic_max_Z": 1.1520575069699619, "dynamic_max_omega_inf": 2.41947744805188458, "dynamic_max_holder_half_coherence": 0.695916041045193001, "dynamic_max_stretch_alignment": 0.814839386129025178, "dynamic_geometry_samples": 6, "dynamic_integral_abs_local_V": 2.98148622664783956e-05, "dynamic_integral_abs_nonlocal_V": 0.000208244465258609316, "dynamic_integral_abs_total_V": 0.000178429602992130913, "dynamic_integral_local_D4Z2": 1.27128615923291677e-13, "dynamic_integral_nonlocal_D4Z2": 2.74490373915227916e-10, "dynamic_integral_near_nonlocal_D4Z2": 8.22535838718004092e-12, "dynamic_integral_far_nonlocal_D4Z2": 3.20285475813096019e-11, "dynamic_max_V_partition_residual": 2.82909004382936313e-19, "dynamic_final_E": 0.997699166044765828, "dynamic_energy_balance_residual": 6.8388882565875779e-12, "dynamic_evaluations": 2, "dynamic_accepted_mutations": 0, "dynamic_accepted_gradient_steps": 0, "dynamic_final_sobolev_value": 99.9316196469136457, "dynamic_gradient_trace": []}
+  ],
+  "Q_growth_ratio": 1,
+  "Q_cutoff_log_slope": 0,
+  "embedding_monotonicity": true,
+  "logical_status": "finite adversarial evidence only; derive an analytic family before rejection"
+}

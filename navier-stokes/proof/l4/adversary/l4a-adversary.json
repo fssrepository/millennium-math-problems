@@ -1,0 +1,15 @@
+{
+  "schema": "navier-stokes-l4-adversary-v1",
+  "candidate": "cutoff-uniform pointwise bound on Q=D^4 Z at fixed energy",
+  "optimizer": {"restarts": 6, "generations": 300, "dynamic_generations": 24, "mutation": 0.149999999999999994, "seed": 20260801},
+  "evolution": {"viscosity": 0.100000000000000006, "time": 0.100000000000000006, "requested_dt": 0.00200000000000000004},
+  "results": [
+    {"cutoff": 1, "modes": 26, "evaluations": 1806, "accepted_mutations": 224, "E": 1, "Z": 1.45209538828888007, "P": 2.50833302660805124, "V": 0.217617773566986306, "D": 0.0825389815501623436, "Q": 6.7395603932080209e-05, "critical_integrand": 9.78648456607175693e-05, "dynamic_integral_D4Z2": 1.03543526429829024e-05, "dynamic_max_D4Z": 7.46394890781984467e-05, "dynamic_max_Z": 1.44773099918072123, "dynamic_final_E": 0.971954527697184156, "dynamic_energy_balance_residual": 6.04143215009759961e-09, "dynamic_evaluations": 25, "dynamic_accepted_mutations": 2},
+    {"cutoff": 2, "modes": 124, "evaluations": 1806, "accepted_mutations": 179, "E": 1, "Z": 1.4570622190146103, "P": 2.53981986597447307, "V": 0.222340212232564172, "D": 0.0833311271197745423, "Q": 7.02598343365027245e-05, "critical_integrand": 0.000102372950125943568, "dynamic_integral_D4Z2": 8.55139214961187732e-06, "dynamic_max_D4Z": 7.15276472175874613e-05, "dynamic_max_Z": 1.45292931965412753, "dynamic_final_E": 0.971847078251581453, "dynamic_energy_balance_residual": 8.30121992539521074e-09, "dynamic_evaluations": 26, "dynamic_accepted_mutations": 1},
+    {"cutoff": 3, "modes": 342, "evaluations": 1806, "accepted_mutations": 166, "E": 1, "Z": 1.43573506145936292, "P": 2.46796973371209116, "V": 0.217305241039563557, "D": 0.0841413739207422101, "Q": 7.19635705293570363e-05, "critical_integrand": 0.00010332062135680163, "dynamic_integral_D4Z2": 8.53977069704997565e-06, "dynamic_max_D4Z": 7.15276472175874613e-05, "dynamic_max_Z": 1.45292931965412753, "dynamic_final_E": 0.971846996293962762, "dynamic_energy_balance_residual": 8.31789907320589416e-09, "dynamic_evaluations": 26, "dynamic_accepted_mutations": 0}
+  ],
+  "Q_growth_ratio": 1.06777840587169948,
+  "Q_cutoff_log_slope": 0.0596937013608605099,
+  "embedding_monotonicity": true,
+  "logical_status": "finite adversarial evidence only; rerun and derive an analytic family before rejection"
+}

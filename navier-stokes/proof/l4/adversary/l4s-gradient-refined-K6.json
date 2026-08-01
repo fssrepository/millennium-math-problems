@@ -1,0 +1,15 @@
+{
+  "schema": "navier-stokes-l4-adversary-v2",
+  "candidate": "cutoff-uniform trajectory bound on Q=D^4 Z",
+  "optimizer": {"restarts": 1, "generations": 1, "dynamic_generations": 32, "dynamic_objective": "max-q", "dynamic_optimizer": "gradient", "mutation": 0.200000000000000011, "seed": 20260801},
+  "threads": 12,
+  "backend": "auto",
+  "evolution": {"viscosity": 0.100000000000000006, "time": 0.0100000000000000002, "requested_dt": 0.00200000000000000004},
+  "results": [
+    {"cutoff": 6, "modes": 2196, "evaluations": 2, "accepted_mutations": 1, "E": 1, "Z": 13.9978056283930421, "P": 612.67457863362597, "V": 0.114615608407268574, "D": 0.000128610491965139799, "Q": 3.82970707149488609e-15, "critical_integrand": 5.36074952004677515e-14, "dynamic_integral_D4Z2": 5.7876180570360252e-06, "dynamic_coarse_integral_D4Z2": 5.78760636518607829e-06, "dynamic_dt_relative_error": 2.02014884730930953e-06, "dynamic_max_D4Z": 0.000478891912458912741, "dynamic_max_local_D4Z": 0.000256342854781481443, "dynamic_max_nonlocal_D4Z": 2.2276540707270554e-07, "dynamic_max_positive_dlogQ_over_k0Z": 0, "dynamic_q_derivative_refinement_error": 1.17214182481376333e-07, "dynamic_max_Z": 1.21537614423922458, "dynamic_max_omega_inf": 2.21722961519636064, "dynamic_max_holder_half_coherence": 0.39016125723431061, "dynamic_max_stretch_alignment": 0.81552100560167029, "dynamic_geometry_samples": 3, "dynamic_integral_abs_local_V": 0.00210459115279434212, "dynamic_integral_abs_nonlocal_V": 0.00035770747807802836, "dynamic_integral_abs_total_V": 0.00246229863087237032, "dynamic_integral_local_D4Z2": 3.08896840687804869e-06, "dynamic_integral_nonlocal_D4Z2": 2.57834163560657274e-09, "dynamic_max_V_partition_residual": 6.65429083362978346e-18, "dynamic_final_E": 0.997577668849471078, "dynamic_energy_balance_residual": 2.18566857924544362e-10, "dynamic_evaluations": 98, "dynamic_accepted_mutations": 0, "dynamic_accepted_gradient_steps": 32}
+  ],
+  "Q_growth_ratio": 1,
+  "Q_cutoff_log_slope": 0,
+  "embedding_monotonicity": true,
+  "logical_status": "finite adversarial evidence only; derive an analytic family before rejection"
+}

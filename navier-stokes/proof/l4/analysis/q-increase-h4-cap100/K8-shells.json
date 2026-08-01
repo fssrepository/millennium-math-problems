@@ -1,0 +1,18 @@
+{
+  "schema": "navier-stokes-state-analysis-v1",
+  "state": "proof/l4/states/q-increase-h4-cap100/dynamic/K8.tsv",
+  "cutoff": 8, "modes": 4912, "active_modes": 1330, "highest_active_shell": 5,
+  "E": 1, "Z": 1.10028082310125019, "P": 1.47579739758498296, "Q": 0.00018609221767220389,
+  "divergence_residual": 7.29461730851924205e-17, "reality_residual": 0, "homogeneous_H3_squared": 5.72690425633702027, "homogeneous_H4_squared": 99.9999999975356246, "projected_q_gradient_norm": 0.00955863529631786717, "retraction_directional_derivative": 0.00955863528252118115, "retraction_gradient_relative_error": 1.44337401431560518e-09,
+  "shells": [
+    {"shell": 0, "modes": 0, "active_modes": 0, "energy": 0, "enstrophy": 0, "palinstrophy": 0, "q_gradient_norm": 0},
+    {"shell": 1, "modes": 26, "active_modes": 26, "energy": 0.99666438850225525, "enstrophy": 1.07805592860301402, "palinstrophy": 1.24259652342854077, "q_gradient_norm": 0.00150793296774279781},
+    {"shell": 2, "modes": 98, "active_modes": 98, "energy": 0.00305919565098388075, "enstrophy": 0.0159761829919548085, "palinstrophy": 0.08431881154278216, "q_gradient_norm": 0.00122129517680389862},
+    {"shell": 3, "modes": 218, "active_modes": 218, "energy": 0.000265495876034550814, "enstrophy": 0.00588669144618870783, "palinstrophy": 0.136626460584911402, "q_gradient_norm": 0.00839022112026761684},
+    {"shell": 4, "modes": 386, "active_modes": 386, "energy": 1.09199210008605069e-05, "enstrophy": 0.00036201788197880115, "palinstrophy": 0.012255504191980137, "q_gradient_norm": 0.00415217186801072804},
+    {"shell": 5, "modes": 602, "active_modes": 602, "energy": 4.97254405350299556e-11, "enstrophy": 2.17811385916065887e-09, "palinstrophy": 9.7836768449832884e-08, "q_gradient_norm": 0.000318612762137877458},
+    {"shell": 6, "modes": 866, "active_modes": 0, "energy": 0, "enstrophy": 0, "palinstrophy": 0, "q_gradient_norm": 5.0014267335873178e-05},
+    {"shell": 7, "modes": 1178, "active_modes": 0, "energy": 0, "enstrophy": 0, "palinstrophy": 0, "q_gradient_norm": 1.55722843648766804e-05},
+    {"shell": 8, "modes": 1538, "active_modes": 0, "energy": 0, "enstrophy": 0, "palinstrophy": 0, "q_gradient_norm": 2.56011273745985439e-06}
+  ]
+}
