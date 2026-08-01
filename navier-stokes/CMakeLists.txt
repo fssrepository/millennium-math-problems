@@ -8,6 +8,7 @@ find_package(Threads REQUIRED)
 find_package(OpenMP)
 
 add_executable(navier_stokes_lab
+    src/dynamic_adversary.cpp
     src/dyadic_shell_bounds.cpp
     src/far_tail_closure.cpp
     src/gradient_adversary.cpp
@@ -25,6 +26,14 @@ add_executable(navier_stokes_lab
     src/lemma_engine.cpp
     src/lemma_reporter.cpp
     src/local_triad_symmetrizer.cpp
+    src/local_signature_adversary.cpp
+    src/local_signature_density.cpp
+    src/local_signature_factor_adversary.cpp
+    src/local_signature_gradient_adversary.cpp
+    src/local_signature_geometry.cpp
+    src/local_signature_objective.cpp
+    src/local_signature_state_factory.cpp
+    src/local_signature_trajectory.cpp
     src/moving_gap_controller.cpp
     src/orthogonal_triad_geometry.cpp
     src/periodic_shell_geometry.cpp

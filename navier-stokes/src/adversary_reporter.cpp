@@ -35,11 +35,16 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
         << ", gradient_method=" << report.gradient_method
         << ", minimum_dyadic_gap=" << report.minimum_dyadic_gap
         << ", H" << report.sobolev_order << "_cap="
-        << static_cast<double>(report.sobolev_cap) << ")\n"
+        << static_cast<double>(report.sobolev_cap)
+        << ", critical_density_shift="
+        << static_cast<double>(report.critical_density_shift)
+        << ", dynamic_restarts=" << report.dynamic_restarts << ")\n"
         << "cutoff,steps,int_D4Z2_refined,int_local_D4Z2,int_nonlocal_D4Z2,"
            "int_near_nonlocal_D4Z2,int_far_nonlocal_D4Z2,"
            "int_selected_gap_tail_D4Z2,"
            "dt_relative_error,search_obj_initial,search_obj_final,"
+           "initial_local_density,final_local_density,initial_Z,"
+           "local_log_gain,local_log_gain_over_Tk0Z,"
            "initial_D4Z,final_D4Z,log_Q_gain,max_D4Z,max_local_D4Z,max_nonlocal_D4Z,"
            "max_positive_dlogQ_over_k0Z,q_derivative_error,strong_L4_envelope,"
            "envelope_use,max_Z,max_omega_inf,max_holder_half,"
@@ -57,6 +62,15 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
             << static_cast<double>(row.dynamic_dt_relative_error) << ','
             << static_cast<double>(row.dynamic_search_initial_objective) << ','
             << static_cast<double>(row.dynamic_search_final_objective) << ','
+            << static_cast<double>(
+                   row.dynamic_initial_local_critical_density) << ','
+            << static_cast<double>(
+                   row.dynamic_final_local_critical_density) << ','
+            << static_cast<double>(row.dynamic_initial_enstrophy) << ','
+            << static_cast<double>(
+                   row.dynamic_local_critical_log_gain) << ','
+            << static_cast<double>(
+                   row.dynamic_local_log_gain_rate_ratio) << ','
             << static_cast<double>(row.dynamic_initial_q) << ','
             << static_cast<double>(row.dynamic_final_q) << ','
             << static_cast<double>(row.dynamic_log_q_gain) << ','
@@ -76,6 +90,7 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
             << static_cast<double>(row.dynamic_final_energy) << ','
             << static_cast<double>(row.dynamic_energy_balance_residual)
             << "  # dynamic_evals=" << row.dynamic_evaluations
+            << ", winning_restart=" << row.dynamic_winning_restart
             << ", accepted_mutations=" << row.dynamic_accepted_mutations
             << ", accepted_gradient="
             << row.dynamic_accepted_gradient_steps
@@ -100,6 +115,7 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
         << "  \"schema\": \"navier-stokes-l4-adversary-v2\",\n"
         << "  \"candidate\": \"cutoff-uniform trajectory bound on Q=D^4 Z\",\n"
         << "  \"optimizer\": {\"restarts\": " << report.restarts
+        << ", \"dynamic_restarts\": " << report.dynamic_restarts
         << ", \"generations\": " << report.generations
         << ", \"dynamic_generations\": " << report.dynamic_generations
         << ", \"dynamic_objective\": \"" << report.dynamic_objective << "\""
@@ -109,6 +125,8 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
         << ", \"sobolev_order\": " << report.sobolev_order
         << ", \"sobolev_cap\": "
         << static_cast<double>(report.sobolev_cap)
+        << ", \"critical_density_shift\": "
+        << static_cast<double>(report.critical_density_shift)
         << ", \"mutation\": " << static_cast<double>(report.mutation)
         << ", \"seed\": " << report.seed << "},\n"
         << "  \"threads\": " << report.workers << ",\n"
@@ -142,6 +160,18 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
             << static_cast<double>(row.dynamic_search_initial_objective)
             << ", \"dynamic_search_final_objective\": "
             << static_cast<double>(row.dynamic_search_final_objective)
+            << ", \"dynamic_initial_local_critical_density\": "
+            << static_cast<double>(
+                   row.dynamic_initial_local_critical_density)
+            << ", \"dynamic_final_local_critical_density\": "
+            << static_cast<double>(
+                   row.dynamic_final_local_critical_density)
+            << ", \"dynamic_initial_Z\": "
+            << static_cast<double>(row.dynamic_initial_enstrophy)
+            << ", \"dynamic_local_critical_log_gain\": "
+            << static_cast<double>(row.dynamic_local_critical_log_gain)
+            << ", \"dynamic_local_log_gain_over_Tk0Z\": "
+            << static_cast<double>(row.dynamic_local_log_gain_rate_ratio)
             << ", \"dynamic_max_D4Z\": "
             << static_cast<double>(row.dynamic_maximum_q)
             << ", \"dynamic_initial_D4Z\": "
@@ -196,12 +226,24 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
             << ", \"dynamic_energy_balance_residual\": "
             << static_cast<double>(row.dynamic_energy_balance_residual)
             << ", \"dynamic_evaluations\": " << row.dynamic_evaluations
+            << ", \"dynamic_winning_restart\": "
+            << row.dynamic_winning_restart
             << ", \"dynamic_accepted_mutations\": "
             << row.dynamic_accepted_mutations
             << ", \"dynamic_accepted_gradient_steps\": "
             << row.dynamic_accepted_gradient_steps
             << ", \"dynamic_final_sobolev_value\": "
             << static_cast<double>(row.dynamic_sobolev_value)
+            << ", \"dynamic_restart_objectives\": [";
+        for (std::size_t restart = 0;
+             restart < row.dynamic_restart_objectives.size(); ++restart) {
+            out << static_cast<double>(
+                       row.dynamic_restart_objectives[restart])
+                << (restart + 1 == row.dynamic_restart_objectives.size()
+                        ? ""
+                        : ", ");
+        }
+        out << "]"
             << ", \"dynamic_gradient_trace\": [";
         for (std::size_t trace_index = 0;
              trace_index < row.dynamic_gradient_trace.size();

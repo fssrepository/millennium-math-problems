@@ -81,8 +81,12 @@ source file:
 - `SpectralFftOperator` implements the dealiased forward, tangent, and adjoint
   pseudospectral kernels and is checked against direct triad summation;
 - `SpectralObjective`, `SpectralAdjoint`, and `GradientAdversary` provide the
-  exact `Q=D^4 Z` and `integral D^4 Z^2 dt` gradients, checkpointed reverse
-  RK4 passes, and fixed-energy Riemannian gradient search;
+  exact `Q=D^4 Z`, `integral D^4 Z^2 dt`, endpoint critical-density increase,
+  and shifted log-gain gradients, checkpointed reverse RK4 passes, and
+  fixed-energy Riemannian gradient search;
+- `DynamicAdversary` owns one complete forward/adjoint optimization context,
+  while `DynamicAdversaryEnsemble` runs independent contexts concurrently and
+  refines only the winning trajectory with a halved time step;
 - `InitialSobolevConstraint` projects search directions and retracts trials
   onto a cutoff-independent initial homogeneous Sobolev cap;
 - `TrajectoryAnalyzer` evolves and samples trajectories, including the
@@ -107,6 +111,17 @@ source file:
 - `OrthogonalTriadGeometry` proves and enumerates the bounded-degree lattice
   graph for equal-length orthogonal waves and certifies its subcritical
   `K^(-1/2)` transfer-to-viscosity scaling;
+- `LocalSignatureGeometry` extends the degree bound to every fixed
+  squared-length triple, square-sums the signature transfers, and certifies
+  that an effective-signature exponent below one is viscosity-subcritical;
+- `LocalSignatureObjective` supplies central-difference-certified analytic
+  gradients for signed amplification and absolute local transfer;
+- `LocalSignatureDensity` owns the exact coupled critical factorization, while
+  `LocalSignatureFactorAdversary` falsifies pointwise factor-correlation
+  mechanisms with parallel one-step RK4 probes;
+- `LocalSignatureGradientAdversary` runs 12-worker targeted counterexample
+  searches, while `LocalSignatureTrajectoryAnalyzer` verifies the exact
+  dynamic signature factorization across Galerkin cutoffs;
 - `HelicalSectorObjective`, `HelicalSectorAdjoint`, and the two helical
   adversaries provide exact static and checkpointed trajectory gradients for
   sector-selective local searches;
@@ -139,10 +154,13 @@ source file:
 `lemma_engine.cpp` now coordinates proof runs and keeps the integrated
 self-test; state construction, trajectory diagnostics, triad verification,
 forward dynamics, the discrete adjoint, constrained optimization, CLI, and
-report generation are separate compilation units. The next mathematical task
-is a cutoff-independent paraproduct estimate for the measured dyadic tail.
-This keeps rebuilds dependency-free and makes each layer independently
-replaceable.
+report generation are separate compilation units. Pointwise bounds for both
+raw signature participation and signed amplification have been adversarially
+rejected. The next mathematical task is a trajectory-integrated estimate for
+the exact coupled density `A_sig^4 R^2/(Z P^3)` for each fixed smooth initial
+datum. The far dyadic tail and every fixed local signature family already have
+cutoff-independent closures. This keeps rebuilds dependency-free and makes
+each layer independently replaceable.
 
 The helical local target has its own replayable optimizer and same-state
 cutoff scan:
@@ -219,6 +237,7 @@ strong quarter-depletion quantity `Q = D^4 Z` at fixed unit energy:
 ```bash
 ./build/navier_stokes_lab adversary \
   --cutoffs 1,2,3 --restarts 4 --generations 80 \
+  --dynamic-restarts 1 \
   --dynamic-generations 24 --dynamic-objective max-q \
   --dynamic-optimizer gradient \
   --nu 0.1 --evolve-time 0.1 --dt 0.002 \
@@ -239,6 +258,12 @@ each iteration. `max-q` remains available for the stronger L4-S route.
 `hybrid` runs both. The command then directly integrates `D^4 Z^2`. Cutoff
 growth attacks the strong pointwise lemma; growth of the dynamic integral
 attacks the weaker time-integrated L4-A candidate.
+
+`--dynamic-restarts N` launches genuinely independent dynamic adjoint
+optimizations. Additional starts alternate between Sobolev-retracted
+perturbations of the warm continuation and retracted random states. Their
+final objectives and the winning restart are recorded in the JSON artifact;
+the winning state alone receives the refined `dt/2` trajectory check.
 
 The two terms of the local/nonlocal proof split can be attacked directly:
 

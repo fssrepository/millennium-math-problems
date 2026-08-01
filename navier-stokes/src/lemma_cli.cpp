@@ -83,6 +83,9 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
                 parse_cutoffs(next_value(argc, argv, index, name), "adversary");
         } else if (name == "--restarts") {
             options.restarts = std::stoi(next_value(argc, argv, index, name));
+        } else if (name == "--dynamic-restarts") {
+            options.dynamic_restarts =
+                std::stoi(next_value(argc, argv, index, name));
         } else if (name == "--generations") {
             options.generations = std::stoi(next_value(argc, argv, index, name));
         } else if (name == "--dynamic-generations") {
@@ -113,6 +116,9 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
         } else if (name == "--sobolev-cap") {
             options.sobolev_cap =
                 std::stod(next_value(argc, argv, index, name));
+        } else if (name == "--critical-density-shift") {
+            options.critical_density_shift =
+                std::stod(next_value(argc, argv, index, name));
         } else if (name == "--dynamic-objective") {
             options.dynamic_objective = next_value(argc, argv, index, name);
         } else if (name == "--dynamic-optimizer") {
@@ -131,6 +137,7 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
         }
     }
     if (options.restarts < 1 || options.restarts > 10000 ||
+        options.dynamic_restarts < 1 || options.dynamic_restarts > 10000 ||
         options.generations < 1 || options.generations > 1000000 ||
         options.dynamic_generations < 0 ||
         options.dynamic_generations > 1000000 ||
@@ -143,6 +150,8 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
         options.minimum_dyadic_gap < 1 ||
         options.minimum_dyadic_gap > 30 ||
         !(options.sobolev_cap >= 0.0) || !std::isfinite(options.sobolev_cap) ||
+        !(options.critical_density_shift >= 0.0) ||
+        !std::isfinite(options.critical_density_shift) ||
         ((options.sobolev_order == 0) != (options.sobolev_cap == 0.0))) {
         throw std::invalid_argument(
             "adversary numeric parameters are outside their range");
@@ -150,6 +159,8 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
     validate_threads(options.threads);
     if (options.dynamic_objective != "critical-integral" &&
         options.dynamic_objective != "critical-local-integral" &&
+        options.dynamic_objective != "critical-local-increase" &&
+        options.dynamic_objective != "critical-local-log-gain" &&
         options.dynamic_objective != "critical-nonlocal-integral" &&
         options.dynamic_objective != "critical-near-nonlocal-integral" &&
         options.dynamic_objective != "critical-far-nonlocal-integral" &&
@@ -159,7 +170,7 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
         options.dynamic_objective != "q-gain" &&
         options.dynamic_objective != "q-increase") {
         throw std::invalid_argument(
-            "--dynamic-objective must be critical-integral, critical-local-integral, critical-nonlocal-integral, critical-near-nonlocal-integral, critical-far-nonlocal-integral, critical-gap-tail-integral, max-q, terminal-q, q-gain, or q-increase");
+            "--dynamic-objective must be critical-integral, critical-local-integral, critical-local-increase, critical-local-log-gain, critical-nonlocal-integral, critical-near-nonlocal-integral, critical-far-nonlocal-integral, critical-gap-tail-integral, max-q, terminal-q, q-gain, or q-increase");
     }
     if (options.dynamic_optimizer != "gradient" &&
         options.dynamic_optimizer != "mutate" &&
@@ -234,6 +245,7 @@ void LemmaCli::print_adversary_help(std::ostream& out) {
     out << "L4 static adversary options:\n"
         << "  --cutoffs A,B,C       Fourier cutoffs (default 1,2,3)\n"
         << "  --restarts N          independent hill climbs (default 4)\n"
+        << "  --dynamic-restarts N  independent dynamic adjoint starts (default 1)\n"
         << "  --generations N       mutations per restart (default 80)\n"
         << "  --dynamic-generations N  dynamic optimizer iterations (default 24)\n"
         << "  --mutation VALUE      initial mutation radius (default 0.20)\n"
@@ -247,7 +259,8 @@ void LemmaCli::print_adversary_help(std::ostream& out) {
         << "  --dynamic-warm-state PATH  replay a TSV as first dynamic warm start\n"
         << "  --sobolev-order M     homogeneous initial H^M constraint\n"
         << "  --sobolev-cap VALUE   cutoff-independent squared H^M cap\n"
-        << "  --dynamic-objective NAME  total/local/nonlocal/near/far/gap-tail critical integral, max-q, terminal-q, q-increase, or q-gain\n"
+        << "  --critical-density-shift VALUE  additive shift for local log-gain\n"
+        << "  --dynamic-objective NAME  critical integral partition, local critical increase/log-gain, max-q, terminal-q, q-increase, or q-gain\n"
         << "  --minimum-dyadic-gap M  tail objective selects triads with gap >= M\n"
         << "  --dynamic-optimizer NAME  gradient, mutate, or hybrid\n"
         << "  --gradient-method NAME  steepest or projected lbfgs\n"

@@ -1,6 +1,7 @@
 #include "lemma_engine.hpp"
 #include "adversary_reporter.hpp"
 #include "dyadic_shell_bounds.hpp"
+#include "dynamic_adversary.hpp"
 #include "family_reporter.hpp"
 #include "far_tail_closure.hpp"
 #include "gradient_adversary.hpp"
@@ -17,6 +18,9 @@
 #include "orthogonal_triad_geometry.hpp"
 #include "lemma_adversary.hpp"
 #include "lemma_reporter.hpp"
+#include "local_signature_geometry.hpp"
+#include "local_signature_density.hpp"
+#include "local_signature_objective.hpp"
 #include "local_triad_symmetrizer.hpp"
 #include "moving_gap_controller.hpp"
 #include "projective_family.hpp"
@@ -72,196 +76,6 @@ struct AdversaryResult {
     int accepted_mutations = 0;
     int evaluations = 0;
 };
-
-struct DynamicAdversaryResult {
-    SpectralState state;
-    StaticObjective initial_objective;
-    EvolutionResult evolution;
-    EvolutionResult refined_evolution;
-    Real time_step_relative_error = 0.0L;
-    Real search_initial_objective = 0.0L;
-    Real search_final_objective = 0.0L;
-    std::vector<GradientIterationRecord> gradient_trace;
-    int accepted_mutations = 0;
-    int accepted_gradient_steps = 0;
-    int evaluations = 0;
-};
-
-Real dynamic_objective_value(const EvolutionResult& evolution,
-                             const std::string& objective) {
-    if (objective == "critical-integral") {
-        return evolution.integral_critical;
-    }
-    if (objective == "critical-local-integral") {
-        return evolution.integral_local_critical;
-    }
-    if (objective == "critical-nonlocal-integral") {
-        return evolution.integral_nonlocal_critical;
-    }
-    if (objective == "critical-near-nonlocal-integral") {
-        return evolution.integral_near_nonlocal_critical;
-    }
-    if (objective == "critical-far-nonlocal-integral") {
-        return evolution.integral_far_nonlocal_critical;
-    }
-    if (objective == "critical-gap-tail-integral") {
-        return evolution.integral_selected_gap_tail_critical;
-    }
-    if (objective == "max-q") {
-        return evolution.maximum_energy_level_quantity;
-    }
-    if (objective == "terminal-q") {
-        return evolution.final_energy_level_quantity;
-    }
-    if (objective == "q-gain") {
-        if (!(evolution.initial_energy_level_quantity > 1e-30L) ||
-            !(evolution.final_energy_level_quantity > 1e-30L)) {
-            return -std::numeric_limits<Real>::infinity();
-        }
-        return std::log(evolution.final_energy_level_quantity /
-                        evolution.initial_energy_level_quantity);
-    }
-    if (objective == "q-increase") {
-        return evolution.final_energy_level_quantity -
-               evolution.initial_energy_level_quantity;
-    }
-    throw std::invalid_argument("unknown dynamic objective: " + objective);
-}
-
-DynamicAdversaryResult optimize_dynamic(
-    const SpectralState& primary_start, const SpectralState* secondary_start,
-    int generations, Real mutation, Real viscosity, Real final_time, Real dt,
-    std::uint64_t seed, const std::string& objective,
-    const std::string& optimizer, const std::string& gradient_method,
-    int sobolev_order, Real sobolev_cap, int minimum_dyadic_gap) {
-    if (generations < 0) {
-        throw std::invalid_argument("--dynamic-generations cannot be negative");
-    }
-    std::mt19937_64 generator(seed ^ 0xd1b54a32d192ed03ULL ^
-                              static_cast<std::uint64_t>(SpectralStateOps::cutoff(primary_start)));
-    DynamicAdversaryResult result;
-    const InitialSobolevConstraint sobolev(sobolev_order, sobolev_cap);
-    const bool collect_search_partition =
-        objective == "critical-local-integral" ||
-        objective == "critical-nonlocal-integral" ||
-        objective == "critical-near-nonlocal-integral" ||
-        objective == "critical-far-nonlocal-integral" ||
-        objective == "critical-gap-tail-integral";
-    result.state = primary_start;
-    result.initial_objective = active_trajectory_analyzer.evaluate_static(result.state);
-    result.evolution = active_trajectory_analyzer.evolve(
-        result.state, viscosity, final_time, dt,
-        collect_search_partition, minimum_dyadic_gap);
-    ++result.evaluations;
-    bool result_admissible = sobolev.admissible(result.state);
-
-    if (secondary_start != nullptr) {
-        const int target_cutoff = SpectralStateOps::cutoff(primary_start);
-        const int source_cutoff = SpectralStateOps::cutoff(*secondary_start);
-        SpectralState secondary = source_cutoff <= target_cutoff
-            ? SpectralStateFactory::lift(
-                  *secondary_start, target_cutoff, generator)
-            : SpectralStateFactory::project(
-                  *secondary_start, target_cutoff);
-        const EvolutionResult secondary_evolution =
-            active_trajectory_analyzer.evolve(
-                secondary, viscosity, final_time, dt,
-                collect_search_partition, minimum_dyadic_gap);
-        ++result.evaluations;
-        const bool secondary_admissible = sobolev.admissible(secondary);
-        if (secondary_admissible &&
-            (!result_admissible ||
-             dynamic_objective_value(secondary_evolution, objective) >
-                 dynamic_objective_value(result.evolution, objective))) {
-            result.state = std::move(secondary);
-            result.initial_objective = active_trajectory_analyzer.evaluate_static(result.state);
-            result.evolution = secondary_evolution;
-            result_admissible = true;
-        }
-    }
-    if (!result_admissible) {
-        throw std::invalid_argument(
-            "no dynamic start satisfies the configured Sobolev cap");
-    }
-    result.search_initial_objective =
-        dynamic_objective_value(result.evolution, objective);
-
-    const bool use_mutations = optimizer == "mutate" || optimizer == "hybrid";
-    const bool use_gradient = optimizer == "gradient" || optimizer == "hybrid";
-    for (int generation = 0; use_mutations && generation < generations;
-         ++generation) {
-        const Real progress = generations > 1
-                                  ? static_cast<Real>(generation) /
-                                        static_cast<Real>(generations - 1)
-                                  : 0.0L;
-        const Real radius = mutation * (0.5L - 0.4L * progress);
-        SpectralState candidate =
-            SpectralStateFactory::mutate(
-                result.state, radius, generator, generation % 4 != 0);
-        if (!sobolev.admissible(candidate)) {
-            continue;
-        }
-        const EvolutionResult evolution =
-            active_trajectory_analyzer.evolve(
-                candidate, viscosity, final_time, dt,
-                collect_search_partition, minimum_dyadic_gap);
-        ++result.evaluations;
-        if (evolution.finite &&
-            dynamic_objective_value(evolution, objective) >
-                dynamic_objective_value(result.evolution, objective)) {
-            result.state = std::move(candidate);
-            result.initial_objective = active_trajectory_analyzer.evaluate_static(result.state);
-            result.evolution = evolution;
-            ++result.accepted_mutations;
-        }
-    }
-    if (use_gradient && generations > 0) {
-        const int trajectory_steps = std::max(
-            1, static_cast<int>(std::ceil(final_time / dt)));
-        GradientSearchOptions gradient_options;
-        gradient_options.iterations = generations;
-        gradient_options.line_search_steps = 16;
-        gradient_options.trajectory_steps = trajectory_steps;
-        gradient_options.viscosity = viscosity;
-        gradient_options.time_step =
-            final_time / static_cast<Real>(trajectory_steps);
-        gradient_options.initial_step = mutation;
-        gradient_options.objective = objective;
-        gradient_options.method = gradient_method;
-        gradient_options.sobolev_order = sobolev_order;
-        gradient_options.sobolev_cap = sobolev_cap;
-        gradient_options.minimum_dyadic_gap = minimum_dyadic_gap;
-        const GradientSearchResult gradient =
-            active_gradient_adversary.maximize_q(
-                result.state, gradient_options);
-        result.state = gradient.state;
-        result.initial_objective = active_trajectory_analyzer.evaluate_static(result.state);
-        result.evolution =
-            active_trajectory_analyzer.evolve(
-                result.state, viscosity, final_time, dt,
-                collect_search_partition, minimum_dyadic_gap);
-        result.evaluations += gradient.trajectory_evaluations + 1;
-        result.accepted_gradient_steps = gradient.accepted_steps;
-        result.gradient_trace = gradient.trace;
-    }
-    result.search_final_objective =
-        dynamic_objective_value(result.evolution, objective);
-    result.refined_evolution = active_trajectory_analyzer.evolve(
-        result.state, viscosity, final_time, 0.5L * dt, true,
-        minimum_dyadic_gap);
-    const Real refined_objective =
-        dynamic_objective_value(result.refined_evolution, objective);
-    const Real coarse_objective =
-        dynamic_objective_value(result.evolution, objective);
-    const Real objective_difference =
-        std::abs(refined_objective - coarse_objective);
-    result.time_step_relative_error = refined_objective != 0.0L
-        ? objective_difference / std::abs(refined_objective)
-        : (objective_difference == 0.0L
-               ? 0.0L
-               : std::numeric_limits<Real>::infinity());
-    return result;
-}
 
 AdversaryResult optimize_static_depletion(int cutoff, int restarts, int generations,
                                           Real mutation, std::uint64_t seed,
@@ -353,24 +167,14 @@ AdversaryResult optimize_static_depletion_parallel(
 }
 
 void write_spectral_state(const std::string& path, const AdversaryResult& result) {
-    std::ofstream state_file(path);
-    if (!state_file) {
-        throw std::runtime_error("cannot open adversarial state file: " + path);
-    }
-    state_file << "# cutoff=" << result.cutoff << " energy=" << std::setprecision(20)
-               << static_cast<double>(result.objective.energy)
-               << " Q=D^4*Z=" << static_cast<double>(result.objective.energy_level_quantity)
-               << '\n'
-               << "kx\tky\tkz\tux_re\tux_im\tuy_re\tuy_im\tuz_re\tuz_im\n";
-    for (std::size_t index = 0; index < result.state.waves.size(); ++index) {
-        const WaveVector wave = result.state.waves[index];
-        state_file << wave.x << '\t' << wave.y << '\t' << wave.z;
-        for (const Complex component : result.state.velocity[index]) {
-            state_file << '\t' << static_cast<double>(component.real()) << '\t'
-                       << static_cast<double>(component.imag());
-        }
-        state_file << '\n';
-    }
+    std::ostringstream metadata;
+    metadata << std::setprecision(20)
+             << "cutoff=" << result.cutoff
+             << " energy=" << static_cast<double>(result.objective.energy)
+             << " Q=D^4*Z="
+             << static_cast<double>(
+                    result.objective.energy_level_quantity);
+    SpectralStateWriter::write_tsv(path, result.state, metadata.str());
 }
 
 }  // namespace
@@ -732,6 +536,10 @@ bool self_test(std::ostream& out) {
         OrthogonalTriadGeometry::certify(5);
     const OrthogonalTriadClosure orthogonal_closure =
         OrthogonalTriadGeometry::analyze_closure();
+    const LocalSignatureGeometryCertificate local_signature_geometry =
+        LocalSignatureGeometry::certify(3);
+    const SignatureFamilyClosure signature_family_closure =
+        LocalSignatureGeometry::analyze_closure();
     SpectralState positive_helical_state =
         HelicalTriadLedger::project_helicity(helical_state, 1);
     SpectralStateOps::normalize_energy(positive_helical_state);
@@ -762,6 +570,18 @@ bool self_test(std::ostream& out) {
         local_symmetry.local_reconstruction_residual < 1e-15L &&
         local_symmetry.maximum_frequency_spread_bound_ratio <=
             1.0L + 1e-15L &&
+        local_symmetry.coherent_signature_count > 0 &&
+        local_symmetry.effective_coherent_signature_count >= 1.0L &&
+        local_symmetry.effective_coherent_signature_count <=
+            static_cast<Real>(local_symmetry.signatures.size()) +
+                1e-12L &&
+        local_symmetry.dominant_coherent_signature_fraction > 0.0L &&
+        local_symmetry.dominant_coherent_signature_fraction <= 1.0L &&
+        local_symmetry.signed_signature_cancellation_ratio <=
+            1.0L + 1e-15L &&
+        local_symmetry.signed_signature_amplification <=
+            std::sqrt(local_symmetry.effective_coherent_signature_count) +
+                1e-15L &&
         local_symmetry.local_triads > 0;
     const bool orthogonal_geometry_ok =
         orthogonal_geometry.all_degree_bounds_hold &&
@@ -776,6 +596,30 @@ bool self_test(std::ostream& out) {
         orthogonal_closure.high_frequency_absorbable_from_energy &&
         orthogonal_closure.orthogonal_degree_is_subcritical &&
         orthogonal_closure.generic_local_degree_is_supercritical;
+    const bool local_signature_geometry_ok =
+        local_signature_geometry.all_fixed_signature_degree_bounds_hold &&
+        local_signature_geometry.maximum_input_degree_ratio <= 1.0L &&
+        local_signature_geometry.maximum_target_degree_ratio <= 1.0L &&
+        signature_family_closure.finite_signature_family
+                .transfer_frequency_power == Rational(7, 2) &&
+        signature_family_closure.finite_signature_family
+                .energy_level_high_frequency_absorption &&
+        signature_family_closure.critical_signature_family
+                .transfer_frequency_power == Rational(4) &&
+        !signature_family_closure.critical_signature_family
+                .energy_level_high_frequency_absorption &&
+        signature_family_closure.dense_signature_family
+                .transfer_frequency_power == Rational(9, 2) &&
+        !signature_family_closure.dense_signature_family
+                .energy_level_high_frequency_absorption &&
+        signature_family_closure.square_summed_fixed_signature_bound &&
+        signature_family_closure.effective_count_replaces_raw_count &&
+        signature_family_closure.critical_signed_amplification_power ==
+            Rational(1, 2) &&
+        signature_family_closure
+            .signed_amplification_preserves_cancellation &&
+        signature_family_closure
+                .closing_requires_sublinear_signature_count;
     const bool pure_helical_ok =
         positive_helical.negative_helical_energy < 1e-15L &&
         negative_helical.positive_helical_energy < 1e-15L &&
@@ -845,6 +689,56 @@ bool self_test(std::ostream& out) {
     const SpectralState helical_minus = active_dynamics.add_increment(
         helical_state, helical_direction_state.velocity,
         -helical_gradient_step);
+    const LocalSignatureObjectiveValue local_signature_objective =
+        LocalSignatureObjective::evaluate(helical_state);
+    const LocalSignatureDensitySample local_signature_density =
+        LocalSignatureDensity::evaluate(helical_state);
+    const SpectralIncrement local_signature_gradient =
+        LocalSignatureObjective::signed_amplification_gradient(
+            helical_state);
+    const Real local_signature_directional = increment_inner_product(
+        local_signature_gradient, helical_direction_state.velocity);
+    const Real local_signature_finite_difference =
+        (LocalSignatureObjective::evaluate(helical_plus)
+             .signed_amplification -
+         LocalSignatureObjective::evaluate(helical_minus)
+             .signed_amplification) /
+        (2.0L * helical_gradient_step);
+    const Real local_signature_gradient_error = std::abs(
+        local_signature_directional -
+        local_signature_finite_difference) /
+        std::max(1e-30L, std::max(
+            std::abs(local_signature_directional),
+            std::abs(local_signature_finite_difference)));
+    const Real local_signature_objective_error = std::abs(
+        local_signature_objective.signed_amplification -
+        local_symmetry.signed_signature_amplification) /
+        std::max(1e-30L,
+                 local_symmetry.signed_signature_amplification);
+    const SpectralIncrement local_signature_transfer_gradient =
+        LocalSignatureObjective::absolute_signed_transfer_gradient(
+            helical_state);
+    const Real local_signature_transfer_directional =
+        increment_inner_product(
+            local_signature_transfer_gradient,
+            helical_direction_state.velocity);
+    const Real local_signature_transfer_finite_difference =
+        (std::abs(LocalSignatureObjective::evaluate(helical_plus)
+                      .signed_local_transfer) -
+         std::abs(LocalSignatureObjective::evaluate(helical_minus)
+                      .signed_local_transfer)) /
+        (2.0L * helical_gradient_step);
+    const Real local_signature_transfer_gradient_error = std::abs(
+        local_signature_transfer_directional -
+        local_signature_transfer_finite_difference) /
+        std::max(1e-30L, std::max(
+            std::abs(local_signature_transfer_directional),
+            std::abs(local_signature_transfer_finite_difference)));
+    const bool local_signature_objective_ok =
+        local_signature_objective_error < 1e-15L &&
+        local_signature_density.factorization_residual < 1e-15L &&
+        local_signature_gradient_error < 1e-9L &&
+        local_signature_transfer_gradient_error < 1e-9L;
     const HelicalSectorSelection homochiral_selection =
         HelicalSectorSelection::homochiral();
     const HelicalSectorSelection heterochiral_selection =
@@ -1385,6 +1279,70 @@ bool self_test(std::ostream& out) {
     const Real configurable_tail_integral_gradient_error =
         partition_integral_gradient_error(
             TriadSelection::dyadic_tail(1));
+    const QTrajectoryGradient local_increase_gradient =
+        active_adjoint.critical_increase_gradient(
+            partition_state, adjoint_viscosity, adjoint_dt,
+            trajectory_steps, TriadPartition::local);
+    const Real local_increase_directional = increment_inner_product(
+        local_increase_gradient.initial_gradient, partition_tangent);
+    auto local_critical_increase = [&](SpectralState state) {
+        const Real initial = active_objective
+            .evaluate(state, TriadPartition::local)
+            .critical_integrand;
+        for (int step = 0; step < trajectory_steps; ++step) {
+            active_dynamics.rk4_step(
+                state, adjoint_viscosity, adjoint_dt);
+        }
+        return active_objective
+                   .evaluate(state, TriadPartition::local)
+                   .critical_integrand -
+               initial;
+    };
+    const Real local_increase_finite_difference =
+        (local_critical_increase(partition_plus_state) -
+         local_critical_increase(partition_minus_state)) /
+        (2.0L * finite_difference_step);
+    const Real local_increase_gradient_error = std::abs(
+        local_increase_directional -
+        local_increase_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(std::abs(local_increase_directional),
+                     std::abs(local_increase_finite_difference)));
+    constexpr Real local_log_gain_shift = 1e-6L;
+    const QTrajectoryGradient local_log_gain_gradient =
+        active_adjoint.critical_log_gain_gradient(
+            partition_state, adjoint_viscosity, adjoint_dt,
+            trajectory_steps, TriadPartition::local,
+            local_log_gain_shift);
+    const Real local_log_gain_directional = increment_inner_product(
+        local_log_gain_gradient.initial_gradient, partition_tangent);
+    auto local_critical_log_gain = [&](SpectralState state) {
+        const Real initial = active_objective
+            .evaluate(state, TriadPartition::local)
+            .critical_integrand;
+        for (int step = 0; step < trajectory_steps; ++step) {
+            active_dynamics.rk4_step(
+                state, adjoint_viscosity, adjoint_dt);
+        }
+        const Real terminal = active_objective
+            .evaluate(state, TriadPartition::local)
+            .critical_integrand;
+        return std::log(
+            (terminal + local_log_gain_shift) /
+            (initial + local_log_gain_shift));
+    };
+    const Real local_log_gain_finite_difference =
+        (local_critical_log_gain(partition_plus_state) -
+         local_critical_log_gain(partition_minus_state)) /
+        (2.0L * finite_difference_step);
+    const Real local_log_gain_gradient_error = std::abs(
+        local_log_gain_directional -
+        local_log_gain_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(std::abs(local_log_gain_directional),
+                     std::abs(local_log_gain_finite_difference)));
     const EvolutionResult configurable_tail_evolution =
         active_trajectory_analyzer.evolve(
             partition_state, adjoint_viscosity,
@@ -1462,6 +1420,8 @@ bool self_test(std::ostream& out) {
         near_nonlocal_integral_gradient_error < 1e-9L &&
         far_nonlocal_integral_gradient_error < 1e-9L &&
         configurable_tail_integral_gradient_error < 1e-9L &&
+        local_increase_gradient_error < 1e-9L &&
+        local_log_gain_gradient_error < 1e-9L &&
         configurable_tail_trajectory_error < 1e-14L &&
         far_partition_static_gradient_error < 1e-9L;
     GradientSearchOptions gradient_options;
@@ -1510,6 +1470,24 @@ bool self_test(std::ostream& out) {
                               adversary.objective.energy_level_quantity >= 0.0L;
     const EvolutionResult evolution =
         active_trajectory_analyzer.evolve(adversary.state, 0.1L, 0.002L, 0.001L);
+    DynamicAdversaryOptions dynamic_class_options;
+    dynamic_class_options.generations = 0;
+    dynamic_class_options.viscosity = 0.1L;
+    dynamic_class_options.final_time = 0.002L;
+    dynamic_class_options.time_step = 0.001L;
+    dynamic_class_options.objective = "critical-integral";
+    dynamic_class_options.seed = 17;
+    const DynamicAdversaryEnsemble dynamic_class_adversary("direct", 2);
+    const DynamicAdversaryResult dynamic_class_result =
+        dynamic_class_adversary.optimize(
+            adversary.state, nullptr, dynamic_class_options, 2);
+    const bool dynamic_class_ok =
+        dynamic_class_result.refined_evolution.finite &&
+        dynamic_class_result.restart_objectives.size() == 2 &&
+        dynamic_class_result.winning_restart >= 0 &&
+        dynamic_class_result.winning_restart < 2 &&
+        std::isfinite(dynamic_class_result.search_final_objective) &&
+        dynamic_class_result.time_step_relative_error < 1e-4L;
     const QDerivativeDiagnostic q_derivative =
         active_trajectory_analyzer.evaluate_q_derivative(adversary.state, 0.1L);
     const bool q_derivative_ok = q_derivative.valid &&
@@ -1621,6 +1599,12 @@ bool self_test(std::ostream& out) {
         << ", spread="
         << static_cast<double>(
                local_symmetry.maximum_frequency_spread_bound_ratio)
+        << ", effective signatures="
+        << static_cast<double>(
+               local_symmetry.effective_coherent_signature_count)
+        << ", signed amplification="
+        << static_cast<double>(
+               local_symmetry.signed_signature_amplification)
         << ")\n"
         << "orthogonal triad closure test: "
         << (orthogonal_geometry_ok ? "PASS" : "FAIL")
@@ -1632,6 +1616,39 @@ bool self_test(std::ostream& out) {
                orthogonal_geometry.maximum_target_degree_ratio)
         << ", high-frequency power="
         << orthogonal_closure.transfer_to_viscosity_frequency_power.str()
+        << ")\n"
+        << "local signature closure test: "
+        << (local_signature_geometry_ok ? "PASS" : "FAIL")
+        << " (input degree="
+        << static_cast<double>(
+               local_signature_geometry.maximum_input_degree_ratio)
+        << ", target degree="
+        << static_cast<double>(
+               local_signature_geometry.maximum_target_degree_ratio)
+        << ", finite="
+        << signature_family_closure.finite_signature_family
+               .transfer_frequency_power.str()
+        << ", critical="
+        << signature_family_closure.critical_signature_family
+               .transfer_frequency_power.str()
+        << ", dense="
+        << signature_family_closure.dense_signature_family
+               .transfer_frequency_power.str()
+        << ")\n"
+        << "local signature objective gradient test: "
+        << (local_signature_objective_ok ? "PASS" : "FAIL")
+        << " (ledger="
+        << static_cast<double>(local_signature_objective_error)
+        << ", gradient="
+        << static_cast<double>(local_signature_gradient_error)
+        << ", transfer gradient="
+        << static_cast<double>(local_signature_transfer_gradient_error)
+        << ", factorization="
+        << static_cast<double>(
+               local_signature_density.factorization_residual)
+        << ", A_sig="
+        << static_cast<double>(
+               local_signature_objective.signed_amplification)
         << ")\n"
         << "pure helical local test: "
         << (pure_helical_ok ? "PASS" : "FAIL")
@@ -1740,6 +1757,10 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(far_nonlocal_integral_gradient_error)
         << ", configurable_tail="
         << static_cast<double>(configurable_tail_integral_gradient_error)
+        << ", local_increase="
+        << static_cast<double>(local_increase_gradient_error)
+        << ", local_log_gain="
+        << static_cast<double>(local_log_gain_gradient_error)
         << ", tail_trajectory="
         << static_cast<double>(configurable_tail_trajectory_error)
         << ", far_static="
@@ -1757,6 +1778,10 @@ bool self_test(std::ostream& out) {
         << "static adversary test: " << (adversary_ok ? "PASS" : "FAIL")
         << " (Q=" << static_cast<double>(adversary.objective.energy_level_quantity)
         << ")\n"
+        << "dynamic adversary ensemble test: "
+        << (dynamic_class_ok ? "PASS" : "FAIL")
+        << " (restarts=" << dynamic_class_result.restart_objectives.size()
+        << ", winner=" << dynamic_class_result.winning_restart << ")\n"
         << "Q directional derivative test: "
         << (q_derivative_ok ? "PASS" : "FAIL")
         << " (refinement error="
@@ -1771,7 +1796,8 @@ bool self_test(std::ostream& out) {
            transition_block_scaling_ok &&
            moving_gap_controller_ok &&
            triad_ok && helical_ok && helical_gap_ok && local_symmetry_ok &&
-           orthogonal_geometry_ok && pure_helical_ok && fft_ok &&
+           orthogonal_geometry_ok && local_signature_geometry_ok &&
+           local_signature_objective_ok && pure_helical_ok && fft_ok &&
            helical_sector_objective_ok && helical_adversary_ok &&
            helical_trajectory_adjoint_ok &&
            helical_trajectory_adversary_ok && fft_adjoint_ok && adjoint_ok &&
@@ -1780,7 +1806,7 @@ bool self_test(std::ostream& out) {
            q_increase_gradient_ok && q_increase_constraints_ok &&
            critical_integral_gradient_ok &&
            partition_integral_gradients_ok && gradient_search_ok &&
-           adversary_ok && q_derivative_ok && evolution_ok;
+           adversary_ok && dynamic_class_ok && q_derivative_ok && evolution_ok;
 }
 
 int run_adversary(const AdversaryOptions& options, std::ostream& out) {
@@ -1799,6 +1825,23 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
             SpectralStateReader::read_tsv(options.dynamic_warm_state);
     }
     const LemmaAdversary adversary(options.threads);
+    const DynamicAdversaryEnsemble dynamic_adversary(
+        options.backend, adversary.threads());
+    DynamicAdversaryOptions dynamic_options;
+    dynamic_options.generations = options.dynamic_generations;
+    dynamic_options.mutation = static_cast<Real>(options.mutation);
+    dynamic_options.viscosity = static_cast<Real>(options.viscosity);
+    dynamic_options.final_time = static_cast<Real>(options.evolution_time);
+    dynamic_options.time_step = static_cast<Real>(options.time_step);
+    dynamic_options.seed = options.seed;
+    dynamic_options.objective = options.dynamic_objective;
+    dynamic_options.optimizer = options.dynamic_optimizer;
+    dynamic_options.gradient_method = options.gradient_method;
+    dynamic_options.sobolev_order = options.sobolev_order;
+    dynamic_options.sobolev_cap = static_cast<Real>(options.sobolev_cap);
+    dynamic_options.critical_density_shift =
+        static_cast<Real>(options.critical_density_shift);
+    dynamic_options.minimum_dyadic_gap = options.minimum_dyadic_gap;
     for (const int cutoff : options.cutoffs) {
         SpectralState warm_start;
         const SpectralState* warm_start_pointer = nullptr;
@@ -1828,19 +1871,9 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
         } else if (!replayed_dynamic_warm_state.waves.empty()) {
             dynamic_warm_start = &replayed_dynamic_warm_state;
         }
-        active_galerkin.set_compute_threads(adversary.threads());
-        DynamicAdversaryResult dynamic = optimize_dynamic(
-            result.state, dynamic_warm_start, options.dynamic_generations,
-            static_cast<Real>(options.mutation),
-            static_cast<Real>(options.viscosity),
-            static_cast<Real>(options.evolution_time),
-            static_cast<Real>(options.time_step), options.seed,
-            options.dynamic_objective, options.dynamic_optimizer,
-            options.gradient_method,
-            options.sobolev_order,
-            static_cast<Real>(options.sobolev_cap),
-            options.minimum_dyadic_gap);
-        active_galerkin.set_compute_threads(1);
+        DynamicAdversaryResult dynamic = dynamic_adversary.optimize(
+            result.state, dynamic_warm_start, dynamic_options,
+            options.dynamic_restarts);
         if (!options.state_prefix.empty()) {
             AdversaryResult dynamic_state;
             dynamic_state.cutoff = cutoff;
@@ -1900,7 +1933,10 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
     report.minimum_dyadic_gap = options.minimum_dyadic_gap;
     report.sobolev_order = options.sobolev_order;
     report.sobolev_cap = static_cast<Real>(options.sobolev_cap);
+    report.critical_density_shift =
+        static_cast<Real>(options.critical_density_shift);
     report.restarts = options.restarts;
+    report.dynamic_restarts = options.dynamic_restarts;
     report.generations = options.generations;
     report.dynamic_generations = options.dynamic_generations;
     report.mutation = static_cast<Real>(options.mutation);
@@ -1958,6 +1994,26 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
             dynamic.search_initial_objective;
         row.dynamic_search_final_objective =
             dynamic.search_final_objective;
+        row.dynamic_initial_local_critical_density =
+            evolution.initial_local_critical_integrand;
+        row.dynamic_final_local_critical_density =
+            evolution.final_local_critical_integrand;
+        row.dynamic_initial_enstrophy = evolution.initial_enstrophy;
+        if (evolution.initial_local_critical_integrand > 1e-30L &&
+            evolution.final_local_critical_integrand > 1e-30L) {
+            row.dynamic_local_critical_log_gain = std::log(
+                evolution.final_local_critical_integrand /
+                evolution.initial_local_critical_integrand);
+            const Real initial_frequency = std::sqrt(
+                evolution.initial_enstrophy /
+                std::max(1e-30L, evolution.initial_energy));
+            const Real normalization = options.evolution_time *
+                initial_frequency * evolution.initial_enstrophy;
+            if (normalization > 1e-30L) {
+                row.dynamic_local_log_gain_rate_ratio =
+                    row.dynamic_local_critical_log_gain / normalization;
+            }
+        }
         row.dynamic_maximum_q = evolution.maximum_energy_level_quantity;
         row.dynamic_initial_q = evolution.initial_energy_level_quantity;
         row.dynamic_final_q = evolution.final_energy_level_quantity;
@@ -2002,6 +2058,10 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
             evolution.integral_absolute_total_vortex;
         row.dynamic_geometry_samples = evolution.geometry_samples;
         row.dynamic_evaluations = dynamic.evaluations;
+        row.dynamic_winning_restart = dynamic.winning_restart;
+        row.dynamic_restart_objectives.assign(
+            dynamic.restart_objectives.begin(),
+            dynamic.restart_objectives.end());
         row.dynamic_accepted_mutations = dynamic.accepted_mutations;
         row.dynamic_accepted_gradient_steps =
             dynamic.accepted_gradient_steps;

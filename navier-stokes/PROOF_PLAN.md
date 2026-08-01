@@ -458,3 +458,137 @@ Unrestricted local interactions have `d=3` and power `9/2`; viscosity has
 power `4`; the critical degree is `d=2`; the controlled orthogonal family has
 `d=1` and power `7/2`. A closing extension must therefore produce effective
 degree `d<2` on the unresolved broad class.
+
+The extension to all fixed squared-length signatures is now proved. Every
+ordered `(r,s,t)` family has input and target degree at most `2(2K+1)`. More
+importantly, summing the squared per-signature estimates before Cauchy gives
+
+```text
+(sum_sigma |V_sigma|^2)^(1/2) <= C K^(7/2) E_K^(3/2).
+```
+
+With
+`N_eff=(sum_sigma |V_sigma|)^2/sum_sigma |V_sigma|^2`, the entire local block
+is bounded by `C sqrt(N_eff) K^(7/2) E_K^(3/2)`. Therefore
+`N_eff=O(K^mu)` closes exactly when `mu<1`. Replay of the broad K3 endpoint
+gives `N_eff=1.1902068038` and dominant coherent fraction `0.912689851446`,
+despite 106 signatures above the numerical threshold. This is a sharper
+restart point than raw signature counting, but the unrestricted pointwise
+claim has now been rejected. A 12-worker flat-spectrum search reaches
+`N_eff=1748.62` at K6 and has finite-range slope `4.223`; energy and
+incompressibility alone do not force sublinear participation. The viable
+target retains inter-signature signs. With
+
+```text
+A_sig=|sum V_sigma|/(sum |V_sigma|^2)^(1/2),
+```
+
+the square-summed lemma closes whenever `A_sig=O(K^alpha)`, `alpha<1/2`.
+The same K1--K6 search gives K6 maxima `2.33549` (flat) and `2.73471`
+(outer-half-flat), but this random screen is not adversarial enough. The exact
+analytic-gradient search raises the flat values to `4.59, 10.09, 19.65,
+32.01, 49.39` on K2--K6, with exponent `2.168`, and rejects pointwise LSF-4.
+
+The remaining identity preserves the coupled magnitude:
+
+```text
+V^4/(Z P^3) = A_sig^4 (sum_sigma |V_sigma|^2)^2/(Z P^3).
+```
+
+On the broad same-state K3--K6 trajectory, its factorization residual is below
+`3.1e-19`, its critical integral is `4.39122e-6`, and the last cutoff
+difference is `1.51e-15`; halving the RK4 step changes it by only `4.44e-7`
+relatively. The analytical restart point is a
+trajectory-integrated bound for this product tied to a fixed smooth initial
+datum; neither factor has a sufficient pointwise bound by itself. See
+`proof/l4/lemmas/local-signature-families/README.md`.
+
+The coupled local objective has now also passed a true independent dynamic
+multistart screen. Twelve concurrent exact-adjoint starts with eight L-BFGS
+steps at each cutoff give
+
+```text
+K:          3             4             5             6
+J_local: 4.392286e-6  4.392821e-6  4.392876e-6  4.392883e-6
+top E:   2.475e-7     2.130e-8     3.557e-11    1.133e-13
+```
+
+The smooth continuation wins every cutoff; at K6 an independent competitor
+is only `2.91e-5` lower relatively. This removes the former single-dynamic-
+start weakness but remains finite evidence. The restart point stays the same:
+prove or falsify a cutoff-uniform trajectory estimate for the coupled product,
+next under longer time horizons and lower viscosity. See
+`proof/l4/analysis/local-signature-coupled-integral/README.md`.
+
+The first longer-horizon local multistart at K6 gives
+`J_local(0.02)/(2J_local(0.01))=0.9974002` and normalized log-Q gain
+`0.9655509`. Thus the current branch accumulates the critical integral
+slightly slower than linearly; no accelerating short-time branch appears.
+Lower-viscosity continuation remains the next finite falsification check.
+
+At the same K6 horizon, reducing viscosity from `0.1` to `0.02` changes the
+optimized local integral by a factor `1.0038754`, while the log-Q gain grows by
+`1.3093501`. Twelve independent starts again select the smooth continuation,
+with the next branch only `2.43e-5` lower. This still does not prove the
+uniform lemma, but neither time nor viscosity continuation has produced a
+short-time concentration obstruction. The next diagnostic is the timewise
+correlation inside the exact coupled signature factorization.
+
+That correlation is nearly perfect on the optimized branch:
+`corr(log A_sig^4, log(R^2/(ZP^3)))` lies between `-0.999980` and
+`-0.999978` on its K3--K6 trajectories, and is `-0.999848` on the
+lower-viscosity K6 trajectory. However, a 240-state parallel one-step
+adversary finds 41 states in which both factors grow simultaneously. The same
+counts survive halving the RK4 probe step. F009 therefore rejects universal
+factor antimonotonicity. Any viable proof must derive a trajectory-integrated
+estimate tied to the fixed smooth datum, not a pointwise sign identity.
+
+The coupled density is not pointwise monotone either. An exact discrete
+endpoint adjoint for
+
+```text
+C_local(u(T))-C_local(u(0)),
+C_local=|V_local|^4/(ZP^3),
+```
+
+passes its centered-difference test at `5.23e-12`. Twelve-start projected
+L-BFGS searches at `T=0.001` find positive increases
+`9.64805e-7, 1.09941e-6, 1.12519e-6, 1.13495e-6` on K3--K6. Time-step errors
+are below `2.5e-14`; top-shell energy decays with fitted exponent `-8.18`, and
+the K5-to-K6 projection residual is `1.74e-3`. F010 therefore rejects the
+nonincreasing-density route. The increase is already flattening in cutoff, so
+the data identify a real transient-growth mechanism but not a singularity or
+a failure of the time-integrated lemma. The next machine task is horizon
+continuation of the refined K6 branch; the analytical restart point remains a
+cutoff-uniform integral estimate rather than a pointwise sign argument.
+
+The first horizon continuation resolves that diagnostic. At K6,
+`Delta C_local(0.002)/(2 Delta C_local(0.001))=0.999368654`, so the positive
+short-time growth is nearly linear rather than accelerating. The signature
+factor correlation on this endpoint-optimized trajectory is `+0.999994857`,
+with both factors peaking at the final sample and factorization residual
+`2.32e-19`. This shows that the strong anticorrelation selected by the
+integral maximizer is branch-dependent even at substantial critical density.
+The next falsification axis is lower viscosity; absent accelerated or cutoff
+growth, the proof restart remains an integrated estimate exploiting more than
+pointwise factor signs.
+
+Reducing viscosity fivefold to `nu=0.02` at K6 and `T=0.002` lowers the
+optimized absolute increase by a factor `0.909393069` and its logarithmic gain
+by a factor `0.823480963`. The endpoint error under time-step halving is
+`2.00e-15`. Thus neither horizon nor viscosity continuation reveals an
+accelerating branch. The engine now differentiates the more lemma-directed
+objective `log(C_local(T)/C_local(0))`; its central-difference error is
+`2.08e-11`, and cutoff searches report the normalized average
+`log(C(T)/C(0))/(T k0 Z(0))` directly.
+
+The unshifted objective immediately exposes a zero-set obstruction rather than
+a high-density extremizer. It drives `C_local(0)` to the `1e-30` numerical
+guard and reaches log gain `31.81` at K6, with projected gradient `3.8e7`.
+Consequently a purely multiplicative estimate is not a stable analytical
+restart point near vanishing local transfer. The exact adjoint and CLI now
+support an additive density shift `B` and optimize
+`log((C_local(T)+B)/(C_local(0)+B))`; the shifted gradient passes centered
+differences at `2.79e-10`. The next finite test uses `B=1e-4`, comparable to
+the high-density branch, before any shifted inequality is considered as a
+lemma candidate.

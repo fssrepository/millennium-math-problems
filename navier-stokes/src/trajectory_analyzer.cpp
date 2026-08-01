@@ -337,6 +337,8 @@ EvolutionResult TrajectoryAnalyzer::evolve(
     result.initial_energy = before.energy;
     result.initial_enstrophy = before.enstrophy;
     result.initial_energy_level_quantity = before.energy_level_quantity;
+    result.initial_critical_integrand = before.critical_integrand;
+    result.final_critical_integrand = before.critical_integrand;
     result.maximum_energy_level_quantity = before.energy_level_quantity;
     result.maximum_critical_integrand = before.critical_integrand;
     result.maximum_enstrophy = before.enstrophy;
@@ -370,6 +372,12 @@ EvolutionResult TrajectoryAnalyzer::evolve(
             energy_level_quantity_from_stretching(
                 partition_before.local, before.enstrophy,
                 before.palinstrophy);
+        result.initial_local_critical_integrand =
+            critical_integrand_from_stretching(
+                partition_before.local, before.enstrophy,
+                before.palinstrophy);
+        result.final_local_critical_integrand =
+            result.initial_local_critical_integrand;
         result.maximum_nonlocal_energy_level_quantity =
             energy_level_quantity_from_stretching(
                 partition_before.nonlocal, before.enstrophy,
@@ -423,6 +431,8 @@ EvolutionResult TrajectoryAnalyzer::evolve(
                 critical_integrand_from_stretching(
                     partition_after.local, after.enstrophy,
                     after.palinstrophy);
+            result.final_local_critical_integrand =
+                local_critical_after;
             const SpectralReal nonlocal_critical_before =
                 critical_integrand_from_stretching(
                     partition_before.nonlocal, before.enstrophy,
@@ -550,6 +560,7 @@ EvolutionResult TrajectoryAnalyzer::evolve(
             after.energy_level_quantity);
         result.maximum_critical_integrand = std::max(
             result.maximum_critical_integrand, after.critical_integrand);
+        result.final_critical_integrand = after.critical_integrand;
         result.maximum_enstrophy =
             std::max(result.maximum_enstrophy, after.enstrophy);
         result.finite = result.finite && std::isfinite(after.energy) &&

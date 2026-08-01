@@ -18,6 +18,7 @@ struct Options {
 struct AdversaryOptions {
     std::vector<int> cutoffs{1, 2, 3};
     int restarts = 4;
+    int dynamic_restarts = 1;
     int generations = 80;
     int dynamic_generations = 24;
     double mutation = 0.20;
@@ -31,6 +32,7 @@ struct AdversaryOptions {
     std::string dynamic_warm_state;
     int sobolev_order = 0;
     double sobolev_cap = 0.0;
+    double critical_density_shift = 0.0;
     std::string dynamic_objective = "critical-integral";
     std::string dynamic_optimizer = "gradient";
     std::string gradient_method = "steepest";

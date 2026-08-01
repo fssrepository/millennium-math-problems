@@ -130,7 +130,9 @@ SpectralIncrement lbfgs_ascent_direction(
 
 TriadSelection objective_selection(
     const std::string& objective, int minimum_dyadic_gap) {
-    if (objective == "critical-local-integral") {
+    if (objective == "critical-local-integral" ||
+        objective == "critical-local-increase" ||
+        objective == "critical-local-log-gain") {
         return TriadPartition::local;
     }
     if (objective == "critical-nonlocal-integral") {
@@ -165,6 +167,7 @@ SpectralReal GradientAdversary::objective_value(
         objective_.evaluate(state).energy_level_quantity;
     SpectralReal previous_integrand =
         objective_.evaluate(state, selection).critical_integrand;
+    const SpectralReal initial_integrand = previous_integrand;
     SpectralReal critical_integral = 0.0L;
     SpectralReal maximum_q = initial_q;
     for (int step = 0; step < options.trajectory_steps; ++step) {
@@ -192,6 +195,20 @@ SpectralReal GradientAdversary::objective_value(
     if (options.objective == "q-increase") {
         return terminal_q - initial_q;
     }
+    if (options.objective == "critical-local-increase") {
+        return previous_integrand - initial_integrand;
+    }
+    if (options.objective == "critical-local-log-gain") {
+        const SpectralReal shifted_initial =
+            initial_integrand + options.critical_density_shift;
+        const SpectralReal shifted_terminal =
+            previous_integrand + options.critical_density_shift;
+        if (!(shifted_initial > 1e-30L) ||
+            !(shifted_terminal > 1e-30L)) {
+            return -std::numeric_limits<SpectralReal>::infinity();
+        }
+        return std::log(shifted_terminal / shifted_initial);
+    }
     if (options.objective == "critical-integral" ||
         options.objective == "critical-local-integral" ||
         options.objective == "critical-nonlocal-integral" ||
@@ -213,6 +230,11 @@ GradientSearchResult GradientAdversary::maximize_q(
     }
     if (!(options.initial_step > 0.0L)) {
         throw std::invalid_argument("gradient-search step must be positive");
+    }
+    if (!(options.critical_density_shift >= 0.0L) ||
+        !std::isfinite(options.critical_density_shift)) {
+        throw std::invalid_argument(
+            "critical density shift must be finite and nonnegative");
     }
     if (options.method != "steepest" && options.method != "lbfgs") {
         throw std::invalid_argument(
@@ -260,6 +282,15 @@ GradientSearchResult GradientAdversary::maximize_q(
             trajectory = adjoint_.q_increase_gradient(
                 result.state, options.viscosity, options.time_step,
                 options.trajectory_steps);
+        } else if (options.objective == "critical-local-increase") {
+            trajectory = adjoint_.critical_increase_gradient(
+                result.state, options.viscosity, options.time_step,
+                options.trajectory_steps, TriadPartition::local);
+        } else if (options.objective == "critical-local-log-gain") {
+            trajectory = adjoint_.critical_log_gain_gradient(
+                result.state, options.viscosity, options.time_step,
+                options.trajectory_steps, TriadPartition::local,
+                options.critical_density_shift);
         } else if (options.objective == "critical-integral" ||
                    options.objective == "critical-local-integral" ||
                    options.objective == "critical-nonlocal-integral" ||
