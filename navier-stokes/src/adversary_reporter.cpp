@@ -35,7 +35,8 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
         << ", H" << report.sobolev_order << "_cap="
         << static_cast<double>(report.sobolev_cap) << ")\n"
         << "cutoff,steps,int_D4Z2_refined,int_local_D4Z2,int_nonlocal_D4Z2,"
-           "dt_relative_error,initial_D4Z,final_D4Z,log_Q_gain,max_D4Z,max_local_D4Z,max_nonlocal_D4Z,"
+           "dt_relative_error,search_obj_initial,search_obj_final,"
+           "initial_D4Z,final_D4Z,log_Q_gain,max_D4Z,max_local_D4Z,max_nonlocal_D4Z,"
            "max_positive_dlogQ_over_k0Z,q_derivative_error,strong_L4_envelope,"
            "envelope_use,max_Z,max_omega_inf,max_holder_half,"
            "max_stretch_alignment,nonlocal_V_fraction,V_partition_residual,"
@@ -46,6 +47,8 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
             << static_cast<double>(row.dynamic_local_integral) << ','
             << static_cast<double>(row.dynamic_nonlocal_integral) << ','
             << static_cast<double>(row.dynamic_dt_relative_error) << ','
+            << static_cast<double>(row.dynamic_search_initial_objective) << ','
+            << static_cast<double>(row.dynamic_search_final_objective) << ','
             << static_cast<double>(row.dynamic_initial_q) << ','
             << static_cast<double>(row.dynamic_final_q) << ','
             << static_cast<double>(row.dynamic_log_q_gain) << ','
@@ -116,6 +119,10 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
             << static_cast<double>(row.dynamic_coarse_integral)
             << ", \"dynamic_dt_relative_error\": "
             << static_cast<double>(row.dynamic_dt_relative_error)
+            << ", \"dynamic_search_initial_objective\": "
+            << static_cast<double>(row.dynamic_search_initial_objective)
+            << ", \"dynamic_search_final_objective\": "
+            << static_cast<double>(row.dynamic_search_final_objective)
             << ", \"dynamic_max_D4Z\": "
             << static_cast<double>(row.dynamic_maximum_q)
             << ", \"dynamic_initial_D4Z\": "

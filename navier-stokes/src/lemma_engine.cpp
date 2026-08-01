@@ -531,6 +531,8 @@ struct DynamicAdversaryResult {
     EvolutionResult evolution;
     EvolutionResult refined_evolution;
     Real time_step_relative_error = 0.0L;
+    Real search_initial_objective = 0.0L;
+    Real search_final_objective = 0.0L;
     int accepted_mutations = 0;
     int accepted_gradient_steps = 0;
     int evaluations = 0;
@@ -602,6 +604,8 @@ DynamicAdversaryResult optimize_dynamic(
         throw std::invalid_argument(
             "no dynamic start satisfies the configured Sobolev cap");
     }
+    result.search_initial_objective =
+        dynamic_objective_value(result.evolution, objective);
 
     const bool use_mutations = optimizer == "mutate" || optimizer == "hybrid";
     const bool use_gradient = optimizer == "gradient" || optimizer == "hybrid";
@@ -654,6 +658,8 @@ DynamicAdversaryResult optimize_dynamic(
         result.evaluations += gradient.trajectory_evaluations + 1;
         result.accepted_gradient_steps = gradient.accepted_steps;
     }
+    result.search_final_objective =
+        dynamic_objective_value(result.evolution, objective);
     result.refined_evolution =
         evolve_galerkin(result.state, viscosity, final_time, 0.5L * dt, true);
     result.time_step_relative_error =
@@ -1726,6 +1732,10 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
         row.dynamic_local_integral = evolution.integral_local_critical;
         row.dynamic_nonlocal_integral = evolution.integral_nonlocal_critical;
         row.dynamic_dt_relative_error = dynamic.time_step_relative_error;
+        row.dynamic_search_initial_objective =
+            dynamic.search_initial_objective;
+        row.dynamic_search_final_objective =
+            dynamic.search_final_objective;
         row.dynamic_maximum_q = evolution.maximum_energy_level_quantity;
         row.dynamic_initial_q = evolution.initial_energy_level_quantity;
         row.dynamic_final_q = evolution.final_energy_level_quantity;
