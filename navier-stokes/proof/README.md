@@ -33,3 +33,9 @@ records the improved low-mode-to-high-mode projected L-BFGS continuation. Its
 iteration traces distinguish optimizer progress from genuine cutoff gain. The
 matching state-family analysis is under
 `l4/analysis/critical-integral-h4-cap100-projective-lbfgs-K3-K8/`.
+
+`l4/analysis/partitioned-critical-integrals/` records the first adversaries
+that maximize the exact local and nonlocal L4-A pieces separately. It includes
+the replayable `K=3` shell analyses and an initial-`H4` cap sweep. The data
+invalidate the branch-specific assumption that the nonlocal term is always
+negligible; they do not prove either partitioned lemma.

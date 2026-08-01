@@ -2,8 +2,14 @@
 
 #include "spectral_fft_operator.hpp"
 
+#include <algorithm>
 #include <cstddef>
 #include <stdexcept>
+#include <vector>
+
+#ifdef NS_HAVE_OPENMP
+#include <omp.h>
+#endif
 
 namespace lemma {
 namespace {
@@ -40,6 +46,49 @@ void add_scaled_increment(SpectralIncrement& target,
     }
 }
 
+template <typename Accumulator>
+SpectralIncrement reduce_interactions(
+    const SpectralState& state, int requested_threads,
+    Accumulator accumulate) {
+    const std::vector<InteractionIndex>& interactions =
+        SpectralStateOps::interactions(state);
+    SpectralIncrement result(state.waves.size());
+#ifdef NS_HAVE_OPENMP
+    const int worker_count = std::max(
+        1, std::min(requested_threads,
+                    static_cast<int>(interactions.size())));
+    if (worker_count > 1) {
+        std::vector<SpectralIncrement> partials(
+            static_cast<std::size_t>(worker_count),
+            SpectralIncrement(state.waves.size()));
+#pragma omp parallel num_threads(worker_count)
+        {
+            SpectralIncrement& partial =
+                partials[static_cast<std::size_t>(omp_get_thread_num())];
+#pragma omp for schedule(static)
+            for (std::ptrdiff_t interaction_index = 0;
+                 interaction_index <
+                 static_cast<std::ptrdiff_t>(interactions.size());
+                 ++interaction_index) {
+                accumulate(
+                    interactions[static_cast<std::size_t>(interaction_index)],
+                    partial);
+            }
+        }
+        for (const SpectralIncrement& partial : partials) {
+            add_scaled_increment(result, partial, 1.0L);
+        }
+        return result;
+    }
+#else
+    static_cast<void>(requested_threads);
+#endif
+    for (const InteractionIndex interaction : interactions) {
+        accumulate(interaction, result);
+    }
+    return result;
+}
+
 }  // namespace
 
 SpectralDynamics::SpectralDynamics(const SpectralGalerkin& configuration)
@@ -52,22 +101,22 @@ SpectralIncrement SpectralDynamics::advection_direct(
 
 SpectralIncrement SpectralDynamics::advection_direct_partition(
     const SpectralState& state, TriadPartition partition) const {
-    SpectralIncrement advection_result(state.waves.size());
     const SpectralComplex imaginary_unit{0.0L, 1.0L};
-    for (const InteractionIndex interaction :
-         SpectralStateOps::interactions(state)) {
+    SpectralIncrement advection_result = reduce_interactions(
+        state, configuration_.compute_threads(),
+        [&](InteractionIndex interaction, SpectralIncrement& partial) {
         if (!TriadPartitioner::includes(state, interaction, partition)) {
-            continue;
+            return;
         }
         const auto [p_index, q_index, target_index] = interaction;
         const ComplexVector& up = state.velocity[p_index];
         const SpectralComplex coefficient =
             imaginary_unit * wave_dot(state.waves[q_index], up);
         for (std::size_t direction = 0; direction < 3; ++direction) {
-            advection_result[target_index][direction] +=
+            partial[target_index][direction] +=
                 coefficient * state.velocity[q_index][direction];
         }
-    }
+    });
     for (std::size_t index = 0; index < state.waves.size(); ++index) {
         advection_result[index] = project_divergence_free(
             state.waves[index], advection_result[index]);
@@ -146,12 +195,12 @@ SpectralIncrement SpectralDynamics::advection_vjp_direct_partition(
     require_matching_increment(state, output_cotangent);
     SpectralIncrement cotangent = output_cotangent;
     project_increment(cotangent, state);
-    SpectralIncrement result(state.waves.size());
     const SpectralComplex minus_imaginary_unit{0.0L, -1.0L};
-    for (const InteractionIndex interaction :
-         SpectralStateOps::interactions(state)) {
+    SpectralIncrement result = reduce_interactions(
+        state, configuration_.compute_threads(),
+        [&](InteractionIndex interaction, SpectralIncrement& partial) {
         if (!TriadPartitioner::includes(state, interaction, partition)) {
-            continue;
+            return;
         }
         const auto [p_index, q_index, target_index] = interaction;
         const ComplexVector& target_cotangent = cotangent[target_index];
@@ -163,17 +212,17 @@ SpectralIncrement SpectralDynamics::advection_vjp_direct_partition(
                 component == 0   ? state.waves[q_index].x
                 : component == 1 ? state.waves[q_index].y
                                  : state.waves[q_index].z);
-            result[p_index][component] +=
+            partial[p_index][component] +=
                 wave_component * first_coefficient;
         }
         const SpectralComplex second_coefficient =
             minus_imaginary_unit * std::conj(wave_dot(
                 state.waves[q_index], state.velocity[p_index]));
         for (std::size_t component = 0; component < 3; ++component) {
-            result[q_index][component] +=
+            partial[q_index][component] +=
                 second_coefficient * target_cotangent[component];
         }
-    }
+    });
     project_increment(result, state);
     return result;
 }

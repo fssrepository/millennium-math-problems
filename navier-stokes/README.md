@@ -85,6 +85,8 @@ source file:
 - `TrajectoryAnalyzer` evolves and samples trajectories, including the
   critical integral, energy balance, local/nonlocal stretching, geometry, and
   time-step refinement diagnostics;
+- `TriadPartitioner` owns the single exact scale-ratio classification used by
+  forward objectives, adjoints, trajectory sampling, and proof checks;
 - `TriadVerifier` owns direct interaction analysis, detailed triad
   cancellation, local/nonlocal flux partitioning, and certificate aggregation;
 - `StateAnalyzer` and `StateFamilyAnalyzer` measure shell decay, active modes,
@@ -178,6 +180,25 @@ each iteration. `max-q` remains available for the stronger L4-S route.
 `hybrid` runs both. The command then directly integrates `D^4 Z^2`. Cutoff
 growth attacks the strong pointwise lemma; growth of the dynamic integral
 attacks the weaker time-integrated L4-A candidate.
+
+The two terms of the local/nonlocal proof split can be attacked directly:
+
+```bash
+./build/navier_stokes_lab adversary \
+  --cutoffs 3 --dynamic-generations 16 \
+  --dynamic-objective critical-nonlocal-integral \
+  --dynamic-optimizer gradient --gradient-method lbfgs \
+  --sobolev-order 4 --sobolev-cap 100 \
+  --nu 0.1 --evolve-time 0.01 --dt 0.002 \
+  --threads 12 --certificate proof/l4/adversary/nonlocal.json
+```
+
+`critical-local-integral` selects the complementary objective. These masked
+objectives currently use exact direct triad sums; the total objective retains
+the dealiased FFT backend. Their deterministic trajectory-gradient errors are
+`4.23e-12` and `3.25e-12` against central differences. The first cap sweep and
+its limitations are recorded under
+`proof/l4/analysis/partitioned-critical-integrals/`.
 
 Long searches can resume from a saved state without repeating lower cutoffs:
 
@@ -317,4 +338,5 @@ regularity lemma for smooth 3D Navier–Stokes solutions.
 The tests cover the Helmholtz projection, divergence reduction, time stepping,
 the discrete energy inequality, exact rational scaling, spectral triads,
 direct/FFT agreement, JVP/VJP duality, central-difference gradient checks,
-checkpointed reverse RK4, and fixed-energy projected gradient ascent.
+checkpointed reverse RK4, the shared local/nonlocal triad classifier, and
+fixed-energy projected L-BFGS ascent with a steepest-gradient recovery path.

@@ -756,6 +756,30 @@ bool self_test(std::ostream& out) {
     SpectralStateOps::normalize_energy(partition_tangent_state);
     const SpectralIncrement& partition_tangent =
         partition_tangent_state.velocity;
+    active_galerkin.set_compute_threads(1);
+    const SpectralIncrement serial_partition_advection =
+        active_dynamics.advection_direct_partition(
+            partition_state, TriadPartition::nonlocal);
+    const SpectralIncrement serial_partition_vjp =
+        active_dynamics.advection_vjp_direct_partition(
+            partition_state, partition_tangent,
+            TriadPartition::nonlocal);
+    active_galerkin.set_compute_threads(4);
+    const SpectralIncrement parallel_partition_advection =
+        active_dynamics.advection_direct_partition(
+            partition_state, TriadPartition::nonlocal);
+    const SpectralIncrement parallel_partition_vjp =
+        active_dynamics.advection_vjp_direct_partition(
+            partition_state, partition_tangent,
+            TriadPartition::nonlocal);
+    active_galerkin.set_compute_threads(1);
+    const Real partition_parallel_forward_error = increment_relative_error(
+        parallel_partition_advection, serial_partition_advection);
+    const Real partition_parallel_vjp_error = increment_relative_error(
+        parallel_partition_vjp, serial_partition_vjp);
+    const bool partition_parallel_ok =
+        partition_parallel_forward_error < 1e-14L &&
+        partition_parallel_vjp_error < 1e-14L;
     const SpectralState partition_plus_state =
         active_dynamics.add_increment(
             partition_state, partition_tangent,
@@ -813,7 +837,7 @@ bool self_test(std::ostream& out) {
             WaveVector{1, 0, 0}, WaveVector{2, 0, 0},
             WaveVector{3, 0, 0}, TriadPartition::nonlocal);
     const bool partition_integral_gradients_ok =
-        triad_partition_ok &&
+        triad_partition_ok && partition_parallel_ok &&
         local_integral_gradient_error < 1e-9L &&
         nonlocal_integral_gradient_error < 1e-9L;
     GradientSearchOptions gradient_options;
@@ -923,6 +947,10 @@ bool self_test(std::ostream& out) {
         << "partitioned L4 integral gradient test: "
         << (partition_integral_gradients_ok ? "PASS" : "FAIL")
         << " (classification=" << (triad_partition_ok ? "exact" : "FAILED")
+        << ", parallel_forward="
+        << static_cast<double>(partition_parallel_forward_error)
+        << ", parallel_vjp="
+        << static_cast<double>(partition_parallel_vjp_error)
         << ", local=" << static_cast<double>(local_integral_gradient_error)
         << ", nonlocal="
         << static_cast<double>(nonlocal_integral_gradient_error) << ")\n"

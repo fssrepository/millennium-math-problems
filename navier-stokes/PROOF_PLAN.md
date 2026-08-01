@@ -198,6 +198,52 @@ The corresponding squared initial `H4` norms remain between `13.76` and
 `K=8`; the maximum adjacent projection residual is `2.22e-4`. Thus this branch
 is consistent with a smooth projective limit, and its cutoff gain is already
 below `2e-11` after `K=4`. The evidence rejects neither L4-A nor global
-regularity. It instead routes the analytical work toward the local-frequency
-term: the measured nonlocal fourth-power integral is roughly three orders of
-magnitude below the local term on this branch.
+regularity. On this total-objective branch the measured nonlocal fourth-power
+integral is roughly three orders of magnitude below the local term, but the
+separate nonlocal adjoint shows that this is not a universal statement.
+
+The engine now differentiates `J_local` and `J_nonlocal` separately. Their
+directional gradients agree with central differences to `4.23e-12` and
+`3.25e-12`. At `K=3`, `E(0)=1`, `nu=0.1`, `T=0.01`, and initial
+`H4^2 <= 100`, maximizing `J_local` gives `J_local=4.38853e-6` and essentially
+zero `J_nonlocal`; maximizing `J_nonlocal` instead gives
+`J_nonlocal=2.10177e-7` and drives the initial state close to the H4 boundary.
+The latter state places `9.26%` of its energy above shell one, compared with
+`0.2645%` for the local extremizer.
+
+A seven-point initial-H4 cap sweep from `25` through `400` initially produced a
+log-log slope `0.889697878`, but this value is rejected as an optimizer artifact.
+Longer optimization raised the cap-100 objective by about `7.7x`; the other cap
+points were not converged to the same standard. The sweep cannot currently
+support a cap exponent. The explicit analytical candidate remains
+
+```text
+L4.1-H:
+sup_N integral_0^T |V_N,nonlocal|^4/(Z_N P_N^3) dt
+    <= C(E(0), nu, T, ||u_0||_H4).
+```
+
+The constant may depend on the fixed smooth datum but not on cutoff. The proof
+must propagate an initial frequency envelope using only non-circular estimates;
+assuming a uniform high-Sobolev solution bound would assume the desired
+regularity.
+
+Optimizer progress was separated from cutoff growth by repeatedly projecting a
+high-cutoff winner down to `K=3`, finishing the low-mode optimization, and then
+lifting it one cutoff at a time. The refined nonlocal values are
+
+```text
+K:              3             4             5
+J_nonlocal: 1.61848084e-6  1.62065350e-6  1.62074608e-6
+increment:       -          2.1727e-9      9.2579e-11
+top shell E:  6.2453e-4     1.0462e-6      4.5120e-9
+```
+
+The K4-to-K5 relative gain is `5.71e-5`, and direct projection checks show that
+the earlier apparent K3-to-K6 growth was almost entirely continued low-mode
+optimization. This branch is consistent with a smooth cutoff limit, but it is
+not a proof or a global maximum. Computationally, the next checks are
+independent multistarts and continuation in `T` and `nu` for the separately
+optimized partition. Analytically, the next step is a dyadic paraproduct ledger
+that isolates the low-high-high term and states exactly which summable
+frequency envelope would close its time integral.

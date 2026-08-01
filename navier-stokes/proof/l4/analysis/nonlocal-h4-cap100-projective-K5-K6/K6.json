@@ -1,0 +1,16 @@
+{
+  "schema": "navier-stokes-state-analysis-v1",
+  "state": "proof/l4/states/nonlocal-integral-h4-cap100-projective-K5-K6/dynamic/K6.tsv",
+  "cutoff": 6, "modes": 2196, "active_modes": 2196, "highest_active_shell": 6,
+  "E": 1, "Z": 1.62842449128239131, "P": 4.42510643319059316, "Q": 0.000125199560633901382,
+  "divergence_residual": 7.48581821712981327e-17, "reality_residual": 0, "homogeneous_H3_squared": 18.7073402341773409, "homogeneous_H4_squared": 99.9665570884682921, "projected_q_gradient_norm": 0.00109727692405378022, "retraction_directional_derivative": 0.00109727692393757174, "retraction_gradient_relative_error": 1.05906211597686179e-10,
+  "shells": [
+    {"shell": 0, "modes": 0, "active_modes": 0, "energy": 0, "enstrophy": 0, "palinstrophy": 0, "q_gradient_norm": 0},
+    {"shell": 1, "modes": 26, "active_modes": 26, "energy": 0.889618626355768272, "enstrophy": 1.06439975338978443, "palinstrophy": 1.44898277144421761, "q_gradient_norm": 0.00049326125147610637},
+    {"shell": 2, "modes": 98, "active_modes": 98, "energy": 0.109719385982994994, "enstrophy": 0.557119206701197078, "palinstrophy": 2.90320151096690449, "q_gradient_norm": 0.000556961276176790986},
+    {"shell": 3, "modes": 218, "active_modes": 218, "energy": 0.000659116613075550893, "enstrophy": 0.0068546141672796131, "palinstrophy": 0.0720078527411736058, "q_gradient_norm": 0.000702566533336433565},
+    {"shell": 4, "modes": 386, "active_modes": 386, "energy": 2.83944151241200413e-06, "enstrophy": 5.00083344232706239e-05, "palinstrophy": 0.000887548265937406909, "q_gradient_norm": 0.000455812677520813208},
+    {"shell": 5, "modes": 602, "active_modes": 602, "energy": 3.05155123694277455e-08, "enstrophy": 8.64091478106612985e-07, "palinstrophy": 2.4909379512133689e-05, "q_gradient_norm": 0.00010753064975089749},
+    {"shell": 6, "modes": 866, "active_modes": 866, "energy": 1.09113640843290938e-09, "enstrophy": 4.4598228827685378e-08, "palinstrophy": 1.84039284795351937e-06, "q_gradient_norm": 1.6615391522372485e-05}
+  ]
+}
