@@ -78,6 +78,7 @@ StateAnalysisReport SpectralStateAnalyzer::analyze(
     report.triad_ledger = TriadLedger::analyze(state);
     report.triad_commutator = TriadCommutator::analyze(state);
     report.triad_tail_envelope = TriadTailEnvelope::analyze(state);
+    report.helical_triad_ledger = HelicalTriadLedger::analyze(state);
     report.triad_ledger_objective_residual = std::abs(
         report.triad_ledger.signed_total -
         report.objective.signed_vortex_stretching);
@@ -322,6 +323,53 @@ void StateAnalysisReporter::write_console(const StateAnalysisReport& report,
                 << '\n';
         }
     }
+    out << "\nhelical_sector,advecting_sign,advected_sign,target_sign,"
+           "signed_total,absolute_total,signed_local,absolute_local\n";
+    for (std::size_t sector = 0; sector < helical_sector_count; ++sector) {
+        const HelicalSectorRow& row =
+            report.helical_triad_ledger.sectors[sector];
+        out << sector << ',' << row.advecting_sign << ','
+            << row.advected_sign << ',' << row.target_sign << ','
+            << static_cast<double>(row.signed_total_stretching) << ','
+            << static_cast<double>(row.absolute_total_stretching) << ','
+            << static_cast<double>(row.signed_local_stretching) << ','
+            << static_cast<double>(row.absolute_local_stretching) << '\n';
+    }
+    out << "helical_summary,positive_energy,negative_energy,helicity,"
+           "homochiral_local,heterochiral_local,homochiral_absolute_local,"
+           "heterochiral_absolute_local,velocity_residual,total_residual,"
+           "local_residual\n"
+        << "helical_summary,"
+        << static_cast<double>(
+               report.helical_triad_ledger.positive_helical_energy)
+        << ','
+        << static_cast<double>(
+               report.helical_triad_ledger.negative_helical_energy)
+        << ',' << static_cast<double>(report.helical_triad_ledger.helicity)
+        << ','
+        << static_cast<double>(
+               report.helical_triad_ledger.homochiral_local_stretching)
+        << ','
+        << static_cast<double>(
+               report.helical_triad_ledger.heterochiral_local_stretching)
+        << ','
+        << static_cast<double>(
+               report.helical_triad_ledger
+                   .homochiral_absolute_local_stretching)
+        << ','
+        << static_cast<double>(
+               report.helical_triad_ledger
+                   .heterochiral_absolute_local_stretching)
+        << ','
+        << static_cast<double>(report.helical_triad_ledger
+                                   .relative_velocity_reconstruction_residual)
+        << ','
+        << static_cast<double>(report.helical_triad_ledger
+                                   .relative_total_reconstruction_residual)
+        << ','
+        << static_cast<double>(report.helical_triad_ledger
+                                   .relative_local_reconstruction_residual)
+        << '\n';
     out << "\ntop_mode,kx,ky,kz,energy,q_gradient_norm\n";
     for (std::size_t rank = 0; rank < report.top_modes.size(); ++rank) {
         const StateModeAnalysis& mode = report.top_modes[rank];
@@ -495,6 +543,54 @@ void StateAnalysisReporter::write_json(const StateAnalysisReport& report,
                 << '}';
             first_envelope_row = false;
         }
+    }
+    out << "]},\n  \"helical_triad_ledger\": {"
+        << "\"positive_helical_energy\": "
+        << static_cast<double>(
+               report.helical_triad_ledger.positive_helical_energy)
+        << ", \"negative_helical_energy\": "
+        << static_cast<double>(
+               report.helical_triad_ledger.negative_helical_energy)
+        << ", \"helicity\": "
+        << static_cast<double>(report.helical_triad_ledger.helicity)
+        << ", \"homochiral_local_stretching\": "
+        << static_cast<double>(
+               report.helical_triad_ledger.homochiral_local_stretching)
+        << ", \"heterochiral_local_stretching\": "
+        << static_cast<double>(
+               report.helical_triad_ledger.heterochiral_local_stretching)
+        << ", \"homochiral_absolute_local_stretching\": "
+        << static_cast<double>(report.helical_triad_ledger
+                                   .homochiral_absolute_local_stretching)
+        << ", \"heterochiral_absolute_local_stretching\": "
+        << static_cast<double>(report.helical_triad_ledger
+                                   .heterochiral_absolute_local_stretching)
+        << ", \"relative_velocity_reconstruction_residual\": "
+        << static_cast<double>(report.helical_triad_ledger
+                                   .relative_velocity_reconstruction_residual)
+        << ", \"relative_total_reconstruction_residual\": "
+        << static_cast<double>(report.helical_triad_ledger
+                                   .relative_total_reconstruction_residual)
+        << ", \"relative_local_reconstruction_residual\": "
+        << static_cast<double>(report.helical_triad_ledger
+                                   .relative_local_reconstruction_residual)
+        << ", \"sectors\": [";
+    for (std::size_t sector = 0; sector < helical_sector_count; ++sector) {
+        const HelicalSectorRow& row =
+            report.helical_triad_ledger.sectors[sector];
+        out << "{\"sector\": " << sector
+            << ", \"advecting_sign\": " << row.advecting_sign
+            << ", \"advected_sign\": " << row.advected_sign
+            << ", \"target_sign\": " << row.target_sign
+            << ", \"signed_total_stretching\": "
+            << static_cast<double>(row.signed_total_stretching)
+            << ", \"absolute_total_stretching\": "
+            << static_cast<double>(row.absolute_total_stretching)
+            << ", \"signed_local_stretching\": "
+            << static_cast<double>(row.signed_local_stretching)
+            << ", \"absolute_local_stretching\": "
+            << static_cast<double>(row.absolute_local_stretching) << '}'
+            << (sector + 1 == helical_sector_count ? "" : ", ");
     }
     out << "]},\n  \"shells\": [\n";
     for (std::size_t index = 0; index < report.shells.size(); ++index) {

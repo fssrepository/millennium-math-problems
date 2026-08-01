@@ -73,6 +73,57 @@ void LemmaReporter::write_console(const LemmaReport& report, std::ostream& out) 
         << (report.dyadic_shell_bounds.all_bounds_hold
                 ? "verified"
                 : "FAILED")
+        << "\n  hard-shell lattice count constant:       "
+        << static_cast<double>(
+               report.periodic_shell_geometry.lattice_count_constant)
+        << "\n  hard-shell L2-to-Linf constant:          "
+        << static_cast<double>(
+               report.periodic_shell_geometry
+                   .l2_to_linf_bernstein_constant)
+        << "\n  high-shell 5/2-overlap constants:        "
+        << static_cast<double>(
+               report.periodic_shell_geometry.one_gain_overlap_constant)
+        << " / "
+        << static_cast<double>(
+               report.periodic_shell_geometry.three_gain_overlap_constant)
+        << "\n  explicit FT-1 constants (one/three):     "
+        << static_cast<double>(
+               report.periodic_shell_geometry.ft1_one_gain_constant)
+        << " / "
+        << static_cast<double>(
+               report.periodic_shell_geometry.ft1_three_gain_constant)
+        << "\n  periodic shell geometry:                "
+        << (report.periodic_shell_geometry.all_bounds_hold
+                ? "verified"
+                : "FAILED")
+        << "\n  direct FT-1 Fourier samples / max ratio: "
+        << report.periodic_tail_bound.samples << " / "
+        << static_cast<double>(
+               report.periodic_tail_bound.maximum_bound_ratio)
+        << "\n  explicit periodic FT-1 regression:       "
+        << (report.periodic_tail_bound.all_bounds_hold
+                ? "verified"
+                : "FAILED")
+        << "\n  moving-tail Young samples / max ratio:   "
+        << report.far_tail_closure.samples << " / "
+        << static_cast<double>(
+               report.far_tail_closure.maximum_normalized_remainder_ratio)
+        << "\n  cutoff-independent moving-tail closure: "
+        << (report.far_tail_closure.all_bounds_hold
+                ? "verified"
+                : "FAILED")
+        << "\n  transition remainder after Young:        log(1+Z)^"
+        << report.transition_block_scaling.post_young_logarithm_power.str()
+        << " Z^"
+        << report.transition_block_scaling.post_young_enstrophy_power.str()
+        << "\n  required local pointwise depletion:      Z^(-"
+        << report.transition_block_scaling
+               .required_pointwise_depletion_power.str()
+        << ")\n  log-band count closes transition block:  "
+        << (report.transition_block_scaling
+                    .energy_identity_closes_transition_block
+                ? "YES"
+                : "no")
         << "\n\n"
         << "Fourier-Galerkin triad checks\n"
         << "  modes / samples:                        " << report.triad_modes
@@ -190,6 +241,102 @@ void LemmaReporter::write_json(const LemmaReport& report, std::ostream& out) {
                report.dyadic_shell_bounds.maximum_three_gain_tail_ratio)
         << ",\n    \"all_bounds_hold\": "
         << (report.dyadic_shell_bounds.all_bounds_hold ? "true" : "false")
+        << "\n  },\n"
+        << "  \"periodic_shell_geometry\": {\n"
+        << "    \"maximum_enumerated_shell\": "
+        << report.periodic_shell_geometry.maximum_enumerated_shell
+        << ",\n    \"overlap_samples\": "
+        << report.periodic_shell_geometry.overlap_samples
+        << ",\n    \"seed\": " << report.periodic_shell_geometry.seed
+        << ",\n    \"lattice_count_constant\": "
+        << static_cast<double>(
+               report.periodic_shell_geometry.lattice_count_constant)
+        << ",\n    \"l2_to_linf_bernstein_constant\": "
+        << static_cast<double>(
+               report.periodic_shell_geometry
+                   .l2_to_linf_bernstein_constant)
+        << ",\n    \"gradient_bernstein_constant\": "
+        << static_cast<double>(
+               report.periodic_shell_geometry.gradient_bernstein_constant)
+        << ",\n    \"separated_high_shell_neighbor_width\": "
+        << report.periodic_shell_geometry.separated_high_shell_neighbor_width
+        << ",\n    \"one_gain_overlap_constant\": "
+        << static_cast<double>(
+               report.periodic_shell_geometry.one_gain_overlap_constant)
+        << ",\n    \"three_gain_overlap_constant\": "
+        << static_cast<double>(
+               report.periodic_shell_geometry.three_gain_overlap_constant)
+        << ",\n    \"ft1_one_gain_constant\": "
+        << static_cast<double>(
+               report.periodic_shell_geometry.ft1_one_gain_constant)
+        << ",\n    \"ft1_three_gain_constant\": "
+        << static_cast<double>(
+               report.periodic_shell_geometry.ft1_three_gain_constant)
+        << ",\n    \"maximum_count_ratio\": "
+        << static_cast<double>(
+               report.periodic_shell_geometry.maximum_count_ratio)
+        << ",\n    \"maximum_one_gain_overlap_ratio\": "
+        << static_cast<double>(
+               report.periodic_shell_geometry
+                   .maximum_one_gain_overlap_ratio)
+        << ",\n    \"maximum_three_gain_overlap_ratio\": "
+        << static_cast<double>(
+               report.periodic_shell_geometry
+                   .maximum_three_gain_overlap_ratio)
+        << ",\n    \"all_bounds_hold\": "
+        << (report.periodic_shell_geometry.all_bounds_hold
+                ? "true"
+                : "false")
+        << "\n  },\n"
+        << "  \"periodic_tail_bound\": {\n"
+        << "    \"cutoff\": " << report.periodic_tail_bound.cutoff
+        << ",\n    \"minimum_gap\": "
+        << report.periodic_tail_bound.minimum_gap
+        << ",\n    \"samples\": " << report.periodic_tail_bound.samples
+        << ",\n    \"seed\": " << report.periodic_tail_bound.seed
+        << ",\n    \"maximum_bound_ratio\": "
+        << static_cast<double>(
+               report.periodic_tail_bound.maximum_bound_ratio)
+        << ",\n    \"nonzero_tail_seen\": "
+        << (report.periodic_tail_bound.nonzero_tail_seen ? "true" : "false")
+        << ",\n    \"all_bounds_hold\": "
+        << (report.periodic_tail_bound.all_bounds_hold ? "true" : "false")
+        << "\n  },\n"
+        << "  \"far_tail_closure\": {\n"
+        << "    \"base_gap\": " << report.far_tail_closure.base_gap
+        << ",\n    \"samples\": " << report.far_tail_closure.samples
+        << ",\n    \"seed\": " << report.far_tail_closure.seed
+        << ",\n    \"viscosity\": "
+        << static_cast<double>(report.far_tail_closure.viscosity)
+        << ",\n    \"maximum_normalized_remainder_ratio\": "
+        << static_cast<double>(
+               report.far_tail_closure.maximum_normalized_remainder_ratio)
+        << ",\n    \"all_bounds_hold\": "
+        << (report.far_tail_closure.all_bounds_hold ? "true" : "false")
+        << "\n  },\n"
+        << "  \"transition_block_scaling\": {\n"
+        << "    \"band_count_logarithm_power\": \""
+        << report.transition_block_scaling.band_count_logarithm_power.str()
+        << "\",\n    \"post_young_logarithm_power\": \""
+        << report.transition_block_scaling.post_young_logarithm_power.str()
+        << "\",\n    \"post_young_enstrophy_power\": \""
+        << report.transition_block_scaling.post_young_enstrophy_power.str()
+        << "\",\n    \"energy_time_integrable_enstrophy_power\": \""
+        << report.transition_block_scaling
+               .energy_time_integrable_enstrophy_power.str()
+        << "\",\n    \"required_pointwise_depletion_power\": \""
+        << report.transition_block_scaling
+               .required_pointwise_depletion_power.str()
+        << "\",\n    \"logarithmic_band_count_changes_polynomial_power\": "
+        << (report.transition_block_scaling
+                    .logarithmic_band_count_changes_polynomial_power
+                ? "true"
+                : "false")
+        << ",\n    \"energy_identity_closes_transition_block\": "
+        << (report.transition_block_scaling
+                    .energy_identity_closes_transition_block
+                ? "true"
+                : "false")
         << "\n  },\n"
         << "  \"fourier_galerkin\": {\n"
         << "    \"cutoff\": " << report.triad_cutoff << ",\n"

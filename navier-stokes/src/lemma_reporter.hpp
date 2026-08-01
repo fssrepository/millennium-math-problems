@@ -1,6 +1,10 @@
 #pragma once
 
 #include "dyadic_shell_bounds.hpp"
+#include "far_tail_closure.hpp"
+#include "periodic_shell_geometry.hpp"
+#include "periodic_tail_bound.hpp"
+#include "transition_block_scaling.hpp"
 
 #include <cstddef>
 #include <cstdint>
@@ -40,6 +44,10 @@ struct LemmaReport {
     std::string moving_gap_remaining_enstrophy_power;
     bool moving_gap_closes_far_tail = false;
     DyadicShellRandomCertificate dyadic_shell_bounds;
+    PeriodicShellGeometryCertificate periodic_shell_geometry;
+    PeriodicTailBoundCertificate periodic_tail_bound;
+    FarTailClosureCertificate far_tail_closure;
+    TransitionBlockScalingReport transition_block_scaling;
     int triad_cutoff = 0;
     int triad_modes = 0;
     int triad_samples = 0;

@@ -2,9 +2,13 @@
 #include "adversary_reporter.hpp"
 #include "dyadic_shell_bounds.hpp"
 #include "family_reporter.hpp"
+#include "far_tail_closure.hpp"
 #include "gradient_adversary.hpp"
+#include "helical_triad_ledger.hpp"
 #include "proof_scaling.hpp"
 #include "parallel_executor.hpp"
+#include "periodic_shell_geometry.hpp"
+#include "periodic_tail_bound.hpp"
 #include "lemma_adversary.hpp"
 #include "lemma_reporter.hpp"
 #include "moving_gap_controller.hpp"
@@ -16,6 +20,7 @@
 #include "spectral_state.hpp"
 #include "state_analysis.hpp"
 #include "trajectory_analyzer.hpp"
+#include "transition_block_scaling.hpp"
 #include "triad_commutator.hpp"
 #include "triad_tail_envelope.hpp"
 #include "triad_verifier.hpp"
@@ -375,6 +380,19 @@ int run(const Options& options, std::ostream& out) {
     const DyadicShellRandomCertificate dyadic_shell_bounds =
         DyadicShellBounds::verify_random(
             32, 2, 512, options.seed ^ UINT64_C(0xd1a61c5e11));
+    const PeriodicShellGeometryCertificate periodic_shell_geometry =
+        PeriodicShellGeometry::certify(
+            5, 512, options.seed ^ UINT64_C(0x5e1106e7));
+    const PeriodicTailBoundCertificate periodic_tail_bound =
+        PeriodicTailBound::verify_random(
+            3, 2, 4, options.seed ^ UINT64_C(0xfa47a11),
+            periodic_shell_geometry);
+    const FarTailClosureCertificate far_tail_closure =
+        FarTailClosure::verify_random(
+            0.1L, 2, 512, options.seed ^ UINT64_C(0xc105ed),
+            periodic_shell_geometry);
+    const TransitionBlockScalingReport transition_block_scaling =
+        TransitionBlockScaling::analyze();
     const TriadCertificate triads =
         TriadVerifier::analyze(
             options.triad_cutoff, options.triad_samples, options.seed);
@@ -429,6 +447,10 @@ int run(const Options& options, std::ostream& out) {
     report.moving_gap_closes_far_tail =
         dyadic_tail.moving_gap_closes_far_tail;
     report.dyadic_shell_bounds = dyadic_shell_bounds;
+    report.periodic_shell_geometry = periodic_shell_geometry;
+    report.periodic_tail_bound = periodic_tail_bound;
+    report.far_tail_closure = far_tail_closure;
+    report.transition_block_scaling = transition_block_scaling;
     report.triad_cutoff = options.triad_cutoff;
     report.triad_modes = triads.modes;
     report.triad_samples = triads.samples;
@@ -469,6 +491,11 @@ int run(const Options& options, std::ostream& out) {
                         !dyadic_tail.energy_identity_closes_time_integral &&
                         dyadic_tail.moving_gap_closes_far_tail &&
                         dyadic_shell_bounds.all_bounds_hold &&
+                        periodic_shell_geometry.all_bounds_hold &&
+                        periodic_tail_bound.all_bounds_hold &&
+                        far_tail_closure.all_bounds_hold &&
+                        !transition_block_scaling
+                             .energy_identity_closes_transition_block &&
                         !scaling.closing_candidate_exists &&
                         triads.maximum_normalized_energy_residual < 1e-15L &&
                         triads.maximum_divergence_residual < 1e-15L &&
@@ -489,6 +516,16 @@ bool self_test(std::ostream& out) {
         ScalingAnalyzer::analyze_dyadic_tail();
     const DyadicShellRandomCertificate dyadic_shell_bounds =
         DyadicShellBounds::verify_random(32, 2, 512, 1701);
+    const PeriodicShellGeometryCertificate periodic_shell_geometry =
+        PeriodicShellGeometry::certify(5, 512, 1702);
+    const PeriodicTailBoundCertificate periodic_tail_bound =
+        PeriodicTailBound::verify_random(
+            3, 2, 4, 1703, periodic_shell_geometry);
+    const FarTailClosureCertificate far_tail_closure =
+        FarTailClosure::verify_random(
+            0.1L, 2, 512, 1704, periodic_shell_geometry);
+    const TransitionBlockScalingReport transition_block_scaling =
+        TransitionBlockScaling::analyze();
     const bool rational_ok = Rational(1, 2) + Rational(1, 3) == Rational(5, 6) &&
                              Rational(3, 4) * Rational(8, 9) == Rational(2, 3);
     const bool scaling_ok = scaling.has_absorbable_candidate &&
@@ -525,6 +562,34 @@ bool self_test(std::ostream& out) {
         dyadic_shell_bounds.maximum_low_three_derivative_ratio <= 1.0L &&
         dyadic_shell_bounds.maximum_one_gain_tail_ratio <= 1.0L &&
         dyadic_shell_bounds.maximum_three_gain_tail_ratio <= 1.0L;
+    const bool periodic_shell_geometry_ok =
+        periodic_shell_geometry.all_bounds_hold &&
+        periodic_shell_geometry.lattice_count_constant == 64.0L &&
+        periodic_shell_geometry.l2_to_linf_bernstein_constant == 8.0L &&
+        periodic_shell_geometry.gradient_bernstein_constant == 16.0L &&
+        periodic_shell_geometry.separated_high_shell_neighbor_width == 1 &&
+        periodic_shell_geometry.maximum_count_ratio <= 1.0L &&
+        periodic_shell_geometry.maximum_one_gain_overlap_ratio <= 1.0L &&
+        periodic_shell_geometry.maximum_three_gain_overlap_ratio <= 1.0L;
+    const bool periodic_tail_bound_ok =
+        periodic_tail_bound.all_bounds_hold &&
+        periodic_tail_bound.nonzero_tail_seen &&
+        periodic_tail_bound.maximum_bound_ratio <= 1.0L;
+    const bool far_tail_closure_ok =
+        far_tail_closure.all_bounds_hold &&
+        far_tail_closure.maximum_normalized_remainder_ratio <= 1.0L;
+    const bool transition_block_scaling_ok =
+        transition_block_scaling.post_young_logarithm_power == Rational(4) &&
+        transition_block_scaling.post_young_enstrophy_power == Rational(3) &&
+        transition_block_scaling.required_pointwise_depletion_power ==
+            Rational(1, 2) &&
+        !transition_block_scaling
+             .logarithmic_band_count_changes_polynomial_power &&
+        !transition_block_scaling.energy_identity_closes_transition_block &&
+        TransitionBlockScaling::normalized_remainder(2.0L) <
+            TransitionBlockScaling::normalized_remainder(16.0L) &&
+        TransitionBlockScaling::normalized_remainder(16.0L) <
+            TransitionBlockScaling::normalized_remainder(256.0L);
     const std::array<Real, 7> moving_gap_enstrophies{
         0.0L, 0.25L, 1.0L, 1.1L, 4.0L, 4.1L, 1024.0L};
     bool moving_gap_controller_ok = true;
@@ -549,6 +614,19 @@ bool self_test(std::ostream& out) {
                           triads.maximum_detailed_triad_residual < 1e-15L &&
                           triads.maximum_flux_partition_residual < 1e-15L &&
                           triads.nonzero_vortex_stretching_seen;
+    std::mt19937_64 helical_generator(11);
+    SpectralState helical_state =
+        SpectralStateFactory::random(2, helical_generator);
+    SpectralStateOps::normalize_energy(helical_state);
+    const HelicalTriadReport helical =
+        HelicalTriadLedger::analyze(helical_state);
+    const bool helical_ok =
+        helical.relative_velocity_reconstruction_residual < 1e-15L &&
+        helical.relative_total_reconstruction_residual < 1e-15L &&
+        helical.relative_local_reconstruction_residual < 1e-15L &&
+        std::abs(helical.signed_local_stretching -
+                 helical.homochiral_local_stretching -
+                 helical.heterochiral_local_stretching) < 1e-15L;
     std::mt19937_64 fft_generator(19);
     SpectralState fft_state = SpectralStateFactory::random(2, fft_generator);
     SpectralStateOps::normalize_energy(fft_state);
@@ -1135,6 +1213,42 @@ bool self_test(std::ostream& out) {
         << ", three-gain="
         << static_cast<double>(dyadic_shell_bounds.maximum_three_gain_tail_ratio)
         << ")\n"
+        << "periodic shell geometry test: "
+        << (periodic_shell_geometry_ok ? "PASS" : "FAIL")
+        << " (count="
+        << static_cast<double>(periodic_shell_geometry.maximum_count_ratio)
+        << ", overlap2="
+        << static_cast<double>(
+               periodic_shell_geometry.maximum_one_gain_overlap_ratio)
+        << ", overlap1="
+        << static_cast<double>(
+               periodic_shell_geometry.maximum_three_gain_overlap_ratio)
+        << ", C1="
+        << static_cast<double>(periodic_shell_geometry.ft1_one_gain_constant)
+        << ")\n"
+        << "explicit periodic FT-1 test: "
+        << (periodic_tail_bound_ok ? "PASS" : "FAIL")
+        << " (cutoff=" << periodic_tail_bound.cutoff
+        << ", samples=" << periodic_tail_bound.samples
+        << ", max ratio="
+        << static_cast<double>(periodic_tail_bound.maximum_bound_ratio)
+        << ")\n"
+        << "moving far-tail closure test: "
+        << (far_tail_closure_ok ? "PASS" : "FAIL")
+        << " (samples=" << far_tail_closure.samples
+        << ", max remainder ratio="
+        << static_cast<double>(
+               far_tail_closure.maximum_normalized_remainder_ratio)
+        << ")\n"
+        << "transition block scaling test: "
+        << (transition_block_scaling_ok ? "PASS" : "FAIL")
+        << " (remainder=log(1+Z)^"
+        << transition_block_scaling.post_young_logarithm_power.str()
+        << " Z^"
+        << transition_block_scaling.post_young_enstrophy_power.str()
+        << ", required depletion=Z^(-"
+        << transition_block_scaling.required_pointwise_depletion_power.str()
+        << "))\n"
         << "moving gap controller test: "
         << (moving_gap_controller_ok ? "PASS" : "FAIL")
         << " (m(1.1)="
@@ -1145,6 +1259,16 @@ bool self_test(std::ostream& out) {
         << "spectral triad test: " << (triad_ok ? "PASS" : "FAIL")
         << " (energy residual="
         << static_cast<double>(triads.maximum_normalized_energy_residual) << ")\n"
+        << "helical triad ledger test: "
+        << (helical_ok ? "PASS" : "FAIL")
+        << " (velocity="
+        << static_cast<double>(
+               helical.relative_velocity_reconstruction_residual)
+        << ", total="
+        << static_cast<double>(helical.relative_total_reconstruction_residual)
+        << ", local="
+        << static_cast<double>(helical.relative_local_reconstruction_residual)
+        << ")\n"
         << "dealiased FFT/direct test: " << (fft_ok ? "PASS" : "FAIL")
         << " (relative error=" << static_cast<double>(fft_relative_error) << ")\n"
         << "FFT adjoint/direct oracle test: "
@@ -1235,8 +1359,12 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(evolution.energy_balance_residual) << ")\n";
     return rational_ok && scaling_ok && concentration_ok && strong_l4_ok &&
            dyadic_tail_scaling_ok && dyadic_shell_bounds_ok &&
+           periodic_shell_geometry_ok && periodic_tail_bound_ok &&
+           far_tail_closure_ok &&
+           transition_block_scaling_ok &&
            moving_gap_controller_ok &&
-           triad_ok && fft_ok && fft_adjoint_ok && adjoint_ok && q_gradient_ok &&
+           triad_ok && helical_ok && fft_ok && fft_adjoint_ok && adjoint_ok &&
+           q_gradient_ok &&
            trajectory_gradient_ok && q_gain_gradient_ok &&
            q_increase_gradient_ok && q_increase_constraints_ok &&
            critical_integral_gradient_ok &&

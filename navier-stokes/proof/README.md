@@ -51,3 +51,7 @@ checks and both downward projections and zero-padded upward cutoff controls.
 `l4/lemmas/dynamic-far-tail/` contains the current human-checkable proof draft:
 the three-role paraproduct envelope, the fixed-gap obstruction, and the
 moving-gap Young closure that leaves the logarithmic transition/local block.
+
+`l4/lemmas/transition-block/` records the exact scaling obstruction showing
+that counting the remaining `O(log Z)` bands does not by itself close the
+enstrophy inequality.

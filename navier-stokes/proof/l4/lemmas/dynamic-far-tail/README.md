@@ -1,14 +1,18 @@
-# Dynamic far-tail lemma draft
+# Dynamic far-tail lemma
 
-## Candidate statement
+## Cutoff-independent statement
 
 Let `Delta_j u` be periodic Littlewood-Paley blocks and let
 `V_{>=m}` contain vortex-stretching triads whose largest and smallest
-frequencies differ by more than `2^m`. For `m>=2`, the target estimate is
+frequencies differ by more than `2^m`. For `m>=2`, the hard-shell estimate is
 
 ```text
 |V_{>=m}(t)|
-  <= C (2^(-m/2) + 2^(-3m/2)) Z(t)^(3/4) P(t)^(3/4),       (FT-1)
+  <= (C1 2^(-m/2) + C3 2^(-3m/2))
+       Z(t)^(3/4) P(t)^(3/4),                              (FT-1)
+
+C1 = 192 (2+2^(5/2)) sqrt(2),
+C3 =  64 (2+2^(5/2)) sqrt(8/7).
 ```
 
 with `C` independent of the Galerkin cutoff. Here
@@ -17,9 +21,11 @@ with `C` independent of the Galerkin cutoff. Here
 Z = ||grad u||_2^2,    P = ||Delta u||_2^2.
 ```
 
-The C++ triad algebra and rational exponent checks are complete. Turning the
-shell calculation below into a conventional cutoff-independent proof with all
-projection constants stated is still open.
+The constants are independent of the Galerkin cutoff. The proof below uses
+hard Fourier shells on the `2*pi` torus with normalized Haar measure. Because
+`Delta u` is divergence-free and lies in the Galerkin space, the orthogonal
+Leray and Galerkin projections disappear from its nonlinear pairing; they add
+no operator constant.
 
 ## Exact triad decomposition
 
@@ -65,6 +71,45 @@ gains two low/high factors and produces the stronger `2^(-3m/2)` shell decay.
 nonlocal signed ledger and checks the coefficient-free Cauchy and frequency
 bounds term by term.
 
+## Periodic Fourier and shell constants
+
+For the hard shell
+
+```text
+S_j = {k in Z^3 : 2^j <= |k| < 2^(j+1)},   j>=0,
+```
+
+the containing lattice cube has at most `64*2^(3j)` points. Parseval and
+Cauchy-Schwarz therefore give
+
+```text
+sum_{k in S_j} |u_hat(k)| <= 8*2^(3j/2) a_j.
+```
+
+If a triad has gap at least two, its unique low magnitude is `L<H/4`. The
+other high magnitude is greater than `3H/4`; hence the two high waves lie in
+equal or adjacent hard shells.
+
+Using the upper shell endpoints, the low-advecting commutator, low-advected,
+and low-target frequency multipliers contribute respectively
+
+```text
+128 * 2^(5j/2) * 2^(2l),
+ 64 * 2^(5j/2) * 2^(2l),
+ 64 * 2^(7j/2) * 2^l
+```
+
+times the low and two high shell amplitudes. These constants include the
+Fourier `l1` bound above. For nonnegative shell amplitudes and `s=5/2`,
+
+```text
+sum_{|r-t|<=1} 2^(s max(r,t)) a_r a_t
+  <= (2+2^s) sum_l 2^(s l) a_l^2.
+```
+
+This follows from `2 a_r a_(r+1) <= a_r^2+a_(r+1)^2`; the coefficient of an
+interior weighted square is exactly bounded by `2+2^s`.
+
 ## Shell summation
 
 Write
@@ -92,15 +137,15 @@ sum_l 2^(5l/2) a_l^2 <= Z^(3/4) P^(1/4).
 
 The moment inequality has constant one by Holder interpolation. The first
 low-shell inequality handles the low-advecting and low-advected roles; the
-second handles the low-target role. `DyadicShellBounds` evaluates the two
-resulting finite sequence forms and verifies these cutoff-independent constants
-on deterministic random regressions. Combining them yields the scalar
-shell-summation part of (FT-1).
+second handles the low-target role. Combining the three block constants, the
+adjacent-shell constant, and these geometric sums gives exactly `C1` and `C3`
+in (FT-1).
 
-What remains here is not a numerical sequence conjecture: the vector-valued
-periodic Littlewood-Paley decomposition, bounded shell overlap, Leray
-projection, and torus Bernstein constants must be written into a conventional
-proof before (FT-1) is established.
+`PeriodicShellGeometry` checks every constant and the universal lattice cube
+bound. `DyadicShellBounds` checks the scalar forms, and `PeriodicTailBound`
+compares the complete signed Fourier tail against the final explicit right
+side. These checks are regressions for the conventional calculation above;
+the proof is the displayed finite Fourier and sequence inequalities.
 
 ## Why a fixed gap is insufficient
 
@@ -116,10 +161,11 @@ recorded as failed candidate F004.
 
 ## Moving-gap closure
 
-Apply Young directly to (FT-1):
+Set `A_m=C1*2^(-m/2)+C3*2^(-3m/2)`. Young's inequality with
+conjugates `4/3` and `4` gives
 
 ```text
-|V_{>=m}| <= (nu/4) P + C nu^(-3) 2^(-2m) Z^3.
+|V_{>=m}| <= (nu/4) P + 27/(4 nu^3) A_m^4 Z^3.
 ```
 
 Choose the split dynamically,
@@ -128,20 +174,26 @@ Choose the split dynamically,
 m(t) = m0 + ceil(log2(max(1,Z(t)))).
 ```
 
-Then
+Using `(a+b)^4 <= 8(a^4+b^4)`, the moving-gap remainder satisfies
 
 ```text
-2^(-2m(t)) Z(t)^3 <= 2^(-2m0) Z(t),
+27/(4 nu^3) A_m(t)^4 Z(t)^3 <= K(nu,m0) Z(t),
+
+K(nu,m0) = 54 nu^(-3)
+  * (C1^4 2^(-2m0) + C3^4 2^(-6m0)).
 ```
 
 so the geometric far tail contributes an absorbable palinstrophy term plus a
-linear Gronwall term. `MovingGapController` verifies this integer/logarithmic
-selection without using a bound on future enstrophy.
+linear Gronwall term. `MovingGapController` verifies the integer/logarithmic
+selection without using a bound on future enstrophy, and `FarTailClosure`
+checks the complete explicit Young remainder over logarithmically distributed
+values of `Z`.
 
-This conditionally closes the dynamically selected far tail, not the complete
-Navier-Stokes estimate. All gaps below `m(t)` remain in a local/transition
-block whose width is `O(log Z)`. Controlling that block without assuming the
-desired regularity is the next lemma.
+This closes the dynamically selected far-tail contribution uniformly in the
+Galerkin cutoff. It does not close the complete Navier-Stokes estimate. All
+gaps below `m(t)` remain in a local/transition block whose width is
+`O(log Z)`. Controlling that block without assuming the desired regularity is
+the next lemma.
 
 ## Completion checklist
 
@@ -149,9 +201,10 @@ desired regularity is the next lemma.
 - [x] exact three-role finite Fourier reconstruction;
 - [x] termwise frequency and amplitude inequalities;
 - [x] cutoff-independent scalar shell sums with explicit constants;
+- [x] periodic Fourier mode count and adjacent high-shell estimate;
+- [x] explicit cutoff-independent FT-1 constants;
 - [x] rational Young and moving-gap exponent certificate;
-- [ ] lift the scalar shell sums to a conventional vector-valued periodic
-      Littlewood-Paley proof of (FT-1), including projection constants;
+- [x] explicit moving-gap linear-enstrophy remainder;
 - [ ] cutoff-independent treatment of the `O(log Z)` transition/local block;
 - [ ] insertion into the full Galerkin enstrophy inequality and compactness
       argument.

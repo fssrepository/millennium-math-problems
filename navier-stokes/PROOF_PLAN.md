@@ -272,15 +272,14 @@ These are separate projections of the same K6 winner, so the saturation is not
 an optimizer-progress artifact. The revised analytical ledger is therefore:
 
 ```text
-L4.1a  control the geometric far tail, dyadic gap >= 2;
-L4.1b  merge gap 1 into a quasilocal transition estimate;
-L4.2   control the combined local/transition block.
+L4.1a-D  control the dynamic far tail, gap >= m(Z);
+L4.1b    control the transition gaps 1 <= gap < m(Z);
+L4.2     control the local gap-zero block.
 ```
 
-All three statements remain open. The far-tail numerics identify L4.1a as the
-first proof target because it has genuine scale separation and a rapidly
-decaying optimized frequency envelope. The code evidence is not substituted
-for the required cutoff-independent paraproduct estimate.
+`L4.1a-D` is now proved with explicit cutoff-independent hard-shell constants
+and a moving-gap Young remainder linear in `Z`; the finite numerics remain
+regressions rather than part of that proof. `L4.1b` and `L4.2` remain open.
 
 The far-tail objective is now parameterized by its minimum dyadic gap. For
 `gap >= 3` (`high/low > 8`), the absolute stopping tolerances in the optimizer
@@ -304,9 +303,9 @@ sup_N integral_0^T |V_{N,gap>=m}|^4/(Z_N P_N^3) dt
     <= C(E(0), nu, T, u_0) 2^(-alpha m),  alpha > 0,
 ```
 
-derived without assuming a uniform high-Sobolev solution bound. Establishing
-such an envelope, or producing a continuation that falsifies it, is the active
-L4.1a task.
+derived without assuming a uniform high-Sobolev solution bound. The fixed-gap
+envelope alone does not close in time, but it is now one input to the proved
+dynamic-tail split below.
 
 One exact factor in that envelope is now certified. For `k=p+q` with `p` the
 unique low advecting wave, define
@@ -332,10 +331,13 @@ reconstructs the full separated signed ledger from these three roles with
 `3.21e-19` relative error in self-test and verifies every termwise amplitude
 and normalized frequency inequality with ratio at most one.
 
-The resulting shell candidate is
+The resulting hard-shell estimate is
 
 ```text
-|V_gap>=m| <= C (2^(-m/2)+2^(-3m/2)) Z^(3/4) P^(3/4).       (FT-1)
+|V_gap>=m| <= (C1 2^(-m/2)+C3 2^(-3m/2)) Z^(3/4) P^(3/4),
+
+C1=192(2+2^(5/2))sqrt(2),
+C3=64(2+2^(5/2))sqrt(8/7).                                  (FT-1)
 ```
 
 Its fixed-gap fourth-power density is bounded by `C 2^(-2m) Z^2`, which is
@@ -356,9 +358,11 @@ reduces the cubic remainder to `C nu^(-3) 2^(-2m0) Z(t)` without assuming a
 future bound for `Z`. `MovingGapController` checks the integer inequality and
 the scaling certificate checks the exact Young exponents. `DyadicShellBounds`
 separately certifies the scalar sequence sums with constants `sqrt(2)`,
-`sqrt(8/7)`, and one for the interpolated high moment. This conditionally
-closes only the dynamically selected far tail. The active L4 task is to lift
-those scalar sums to a conventional vector-valued, periodic, cutoff-independent
-Littlewood-Paley proof of (FT-1), and to control the remaining
-local/transition block of `O(log Z(t))` dyadic gaps. See
+`sqrt(8/7)`, and one for the interpolated high moment.
+`PeriodicShellGeometry` supplies the Fourier lattice count, adjacent-shell,
+and role constants; `FarTailClosure` verifies the explicit Young remainder.
+This closes the dynamically selected far tail, uniformly in the Galerkin
+cutoff. The active L4 task is now the remaining local/transition block of
+`O(log Z(t))` dyadic gaps. Plain band counting is rejected as F005 because it
+leaves `Z^3 log(1+Z)^4`. See
 `proof/l4/lemmas/dynamic-far-tail/README.md`.

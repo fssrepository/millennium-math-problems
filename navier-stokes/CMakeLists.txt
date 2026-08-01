@@ -9,13 +9,17 @@ find_package(OpenMP)
 
 add_executable(navier_stokes_lab
     src/dyadic_shell_bounds.cpp
+    src/far_tail_closure.cpp
     src/gradient_adversary.cpp
+    src/helical_triad_ledger.cpp
     src/initial_sobolev_constraint.cpp
     src/main.cpp
     src/lemma_cli.cpp
     src/lemma_engine.cpp
     src/lemma_reporter.cpp
     src/moving_gap_controller.cpp
+    src/periodic_shell_geometry.cpp
+    src/periodic_tail_bound.cpp
     src/adversary_reporter.cpp
     src/family_reporter.cpp
     src/proof_scaling.cpp
@@ -27,6 +31,7 @@ add_executable(navier_stokes_lab
     src/spectral_state.cpp
     src/state_analysis.cpp
     src/trajectory_analyzer.cpp
+    src/transition_block_scaling.cpp
     src/triad_commutator.cpp
     src/triad_ledger.cpp
     src/triad_partition.cpp

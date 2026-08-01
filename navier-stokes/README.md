@@ -103,6 +103,11 @@ source file:
   post-Young far-tail remainder from `Z^3` into a linear `Z` term;
 - `DyadicShellBounds` isolates the cutoff-independent scalar shell sums,
   including explicit `sqrt(2)`, `sqrt(8/7)`, and Holder constants;
+- `PeriodicShellGeometry` and `PeriodicTailBound` supply explicit torus
+  lattice, adjacent-shell, and final hard-shell FT-1 constants;
+- `FarTailClosure` verifies the cutoff-independent moving-gap Young reduction,
+  while `TransitionBlockScaling` rejects logarithmic band counting as a
+  closure mechanism;
 - `TriadVerifier` owns direct interaction analysis, detailed triad
   cancellation, local/nonlocal flux partitioning, and certificate aggregation;
 - `StateAnalyzer` and `StateFamilyAnalyzer` measure shell decay, active modes,
