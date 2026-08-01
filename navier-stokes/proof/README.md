@@ -99,4 +99,9 @@ Navier--Stokes scaling as the local critical density. A cutoff-uniform bound on
 the energy identity; this differential estimate remains open. The directory
 also records the exact derivative ledger, its local/nonlocal and
 Euler/viscous decomposition, and the denominator-free polynomial obligation
-`SLD-1P` that is now the analytical restart point.
+`SLD-1P` that is now the analytical restart point. `SHELL_ENVELOPE.md` proves
+a global cutoff-independent bound for the isolated outer-slot norm, while
+`COMMUTATOR.md` combines the outer and advected slots before estimation and
+`PROJECTED_RESIDUAL.md` combines both normalization derivatives with the
+outer slot. `REDUCED_QUARTET.md` merges those identities into the current
+two-entry local polynomial obligation.

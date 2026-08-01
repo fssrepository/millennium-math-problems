@@ -671,11 +671,82 @@ the nonlinear `P'` term in the denominator-free form
 ```
 
 The proof must preserve the cross-slot cancellation recorded by the ledger;
-a separate norm bound for each slot is not an acceptable closure because it
-requires the future high-Sobolev control being sought.
+a separate norm bound for every slot is not yet a closure because it discards
+the signed quartet structure.
 On the K6 oracle, the outer negative-square source is `2.30680e-3` after SLD
 normalization, while the advecting, advected, enstrophy, and palinstrophy terms
 reduce it to `6.87169e-4`, a `70.21%` cancellation. The denominator-free
 SLD-1P evaluation agrees with the shifted-log route to `4.74e-19` relatively,
 so future quartet algebra can be regression-tested without differentiating a
 quotient.
+
+The local quartet is now resolved by target mode, exact eigenshell, hard
+shell, and dyadic annulus. On the optimized K6 state, `70.66%` of component
+cancellation occurs within one dyadic annulus and essentially none occurs
+between annuli. Control states show the opposite placement, so this is routing
+information rather than a universal cancellation lemma.
+
+One infinite-dimensional estimate has nevertheless been completed. If
+`B_L=B_local(u,u)`, elementary local-shell geometry and lattice counting give
+
+```text
+||(A^(1/2)B_L)_j||_2^2 <= 46656 R_j^7 (E_j^near)^2.
+```
+
+Three-shell overlap and interpolation
+`sum R_j^3 E_j <= sqrt(ZP)` then give the cutoff-independent global lemma
+
+```text
+||A^(1/2)B_L||_2^2 <= 7264120.5 sqrt(Z) P^(3/2).       (LQE-2)
+```
+
+This removes the former high-Sobolev concern for the isolated outer slot.
+The code certifies every geometry and summation stage; the conventional proof
+is in `proof/l4/lemmas/shifted-local-density/SHELL_ENVELOPE.md`.
+
+The outer and advected slots are also no longer independent. Transport
+skew-symmetry gives
+
+```text
+-<A B_L,B_L>-<A u,B_L(u,B_L)>
+ =-<B_L,A B_L-B_L(u,A u)>,
+```
+
+whose Fourier multiplier satisfies
+`abs(|k|^2-|q|^2)<=|p|(|k|+|q|)`. The K6 identity residual is below `2e-19`.
+The active restart point is therefore narrower: bound the remaining
+advecting-slot and nonlinear-palinstrophy combination together with this
+commutator in SLD-1P. The completed outer estimate must be reused rather than
+rederived with a higher solution norm.
+
+An alternative exact grouping has now absorbed both denominator derivatives.
+For `h=-B_L`, their combination with the outer slot is
+
+```text
+<A h,B_L-Su/(2Z)-3S A u/(2P)>
+ =-||A^(1/2)(B_L-3S A u/(4P))||_2^2
+   +S^2/(2Z)+9S^2H3/(16P^2).
+```
+
+After the common scalar coefficient is restored, this projected pairing plus
+the advecting and advected slots reconstructs the entire local quartet. The
+K6 normalized residual is `3.85e-18`. This is the current minimal algebraic
+target. Because the common coefficient contains signed `S^3`, neither the
+negative square nor its positive remainders may be discarded uniformly. The
+next lemma must be a sign-aware estimate for this three-entry combination,
+not another five-way triangle inequality.
+
+Merging that grouping with the outer--advected commutator leaves only two
+entries. Define
+
+```text
+K=-<B_L,A B_L-B_L(u,A u)>+S^2/(2Z)+3S<A B_L,A u>/(2P),
+G=<A u,B_L(-B_L,u)>.
+```
+
+The exact local polynomial numerator is `4S^3ZP(K+G)`. At K6 it equals
+`0.00264627230688`; the independent five-entry calculation agrees to
+`3.20e-19` relatively. The active local lemma is now SLD-1P-L in
+`proof/l4/lemmas/shifted-local-density/REDUCED_QUARTET.md`: prove a
+cutoff-independent upper bound for this signed two-entry expression. This is
+the next restart point after any failed computational or analytical attempt.

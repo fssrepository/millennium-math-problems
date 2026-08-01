@@ -2,6 +2,11 @@
 
 #include "local_critical_derivative_ledger.hpp"
 #include "local_quartic_identity_ledger.hpp"
+#include "local_quartic_commutator.hpp"
+#include "local_quartic_projected_residual.hpp"
+#include "local_quartic_reduced_ledger.hpp"
+#include "local_quartic_shell_ledger.hpp"
+#include "local_quartic_shell_envelope.hpp"
 #include "shifted_critical_density.hpp"
 #include "shifted_critical_density_budget.hpp"
 
@@ -26,6 +31,11 @@ struct ShiftedCriticalDensityReport {
     ShiftedCriticalDensityDiagnostic diagnostic;
     LocalCriticalDerivativeLedgerReport derivative_ledger;
     LocalQuarticIdentityReport quartic_identity;
+    LocalQuarticCommutatorReport quartic_commutator;
+    LocalQuarticProjectedResidualReport quartic_projected_residual;
+    LocalQuarticReducedReport quartic_reduced_ledger;
+    LocalQuarticShellReport quartic_shell_ledger;
+    LocalQuarticShellEnvelopeReport quartic_shell_envelope;
     ShiftedCriticalDensityBudget derivative_budget;
 };
 

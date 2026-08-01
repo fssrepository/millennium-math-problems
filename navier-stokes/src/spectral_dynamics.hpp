@@ -14,6 +14,11 @@ public:
         const SpectralState& state) const;
     [[nodiscard]] SpectralIncrement advection_direct_partition(
         const SpectralState& state, TriadSelection selection) const;
+    [[nodiscard]] SpectralIncrement advection_bilinear_direct_partition(
+        const SpectralState& state,
+        const SpectralIncrement& advecting,
+        const SpectralIncrement& advected,
+        TriadSelection selection) const;
     [[nodiscard]] SpectralIncrement advection_fft(
         const SpectralState& state) const;
     [[nodiscard]] SpectralIncrement advection_jvp_direct(

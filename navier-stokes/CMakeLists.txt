@@ -36,6 +36,11 @@ add_executable(navier_stokes_lab
     src/local_signature_trajectory.cpp
     src/local_critical_derivative_ledger.cpp
     src/local_quartic_identity_ledger.cpp
+    src/local_quartic_commutator.cpp
+    src/local_quartic_projected_residual.cpp
+    src/local_quartic_reduced_ledger.cpp
+    src/local_quartic_shell_ledger.cpp
+    src/local_quartic_shell_envelope.cpp
     src/moving_gap_controller.cpp
     src/orthogonal_triad_geometry.cpp
     src/periodic_shell_geometry.cpp
@@ -52,6 +57,7 @@ add_executable(navier_stokes_lab
     src/shifted_critical_density.cpp
     src/shifted_critical_density_budget.cpp
     src/shifted_critical_density_cli.cpp
+    src/shifted_critical_density_reporter.cpp
     src/state_analysis.cpp
     src/stretching_derivative_ledger.cpp
     src/trajectory_analyzer.cpp

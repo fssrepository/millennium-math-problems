@@ -248,6 +248,100 @@ Only the nonlinear stretching channel changes. The K7-to-K8 increment is
 `7.54e-13` absolutely, so the role decomposition itself is cutoff converged
 on this branch.
 
+## Shell-resolved local quartet
+
+`LocalQuarticShellLedger` groups the complete local-local contribution by
+target mode, exact Laplace eigenshell, hard cutoff shell, and dyadic radial
+annulus. On the optimized K6 state, cancellation within a target mode is
+`47.13%`; aggregation within one dyadic annulus raises this to `70.66%`, while
+cancellation between dyadic annuli is only `3.21e-7`. The normalized annular
+totals are
+
+```text
+j=0   +6.2714763447e-4
+j=1   +6.0016171958e-5
+j=2   +5.2074922362e-9
+j=3   -1.1029824132e-10.
+```
+
+This localization is state dependent. The critical-integral and
+local-signature control states instead cancel about `99%` between their first
+two dyadic annuli. Therefore no proof step assumes that the observed K6
+within-annulus cancellation is universal; signed shell totals or their
+positive parts must be controlled.
+
+The isolated negative-square norm now has a conventional cutoff-independent
+shell estimate. For `R_j=2^j` and three-shell neighborhood energy
+`E_j^near`, `LocalQuarticShellEnvelope` certifies
+
+```text
+||(A^(1/2)B_local)_j||_2^2
+ <= 46656 R_j^7 (E_j^near)^2,
+
+||A^(1/2)B_local||_2^2
+ <= 7264120.5 sqrt(Z) P^(3/2).                       (LQE-2)
+```
+
+The second line follows by factoring `R^7 E^2=(R^3E)(R^4E)`, bounded
+three-shell overlap, and `H^(3/2)` interpolation between `Z` and `P`. It uses
+no future norm above `H^2`. The K6 global actual-to-bound ratio is
+`5.75e-8`; the size of that slack is irrelevant to cutoff independence.
+See [SHELL_ENVELOPE.md](SHELL_ENVELOPE.md) for the human-checkable proof.
+
+`LocalQuarticCommutator` also combines the outer and advected slots exactly:
+
+```text
+-<A B_L,B_L>-<A u,B_L(u,B_L)>
+  = -<B_L,A B_L-B_L(u,A u)>.
+```
+
+The Fourier symbol is `|k|^2-|q|^2` and obeys
+`abs(|k|^2-|q|^2)<=|p|(|k|+|q|)`. At K6 the two raw values
+`-0.603413126167` and `+0.325899010744` combine to
+`-0.277514115423`; the independently evaluated identity has relative error
+`1.95e-19`. See [COMMUTATOR.md](COMMUTATOR.md).
+
+There is a second exact grouping that incorporates both denominator
+derivatives. With `h=-B_L`, the outer, enstrophy, and palinstrophy entries are
+
+```text
+4S^3/(ZP^3) <A h,
+    B_L-Su/(2Z)-3S A u/(2P)>.
+```
+
+`LocalQuarticProjectedResidual` reconstructs this pairing both by direct
+evaluation and by the completed square
+
+```text
+-||A^(1/2)(B_L-3S A u/(4P))||_2^2
+  + S^2/(2Z) + 9S^2 H3/(16P^2).
+```
+
+At K6 the normalized projected, advecting, and advected entries are
+`+1.99435e-3`, `-6.12980e-5`, and `-1.24589e-3`; their sum is the complete
+`+6.87169e-4` local source. This reduces five terms to three with
+`3.85e-18` relative error. The prefactor contains signed `S^3`, so the square
+does not have one universal favorable sign. See
+[PROJECTED_RESIDUAL.md](PROJECTED_RESIDUAL.md).
+
+Finally, combining the commutator and projected-residual identities reduces
+the full local-local polynomial numerator to
+
+```text
+K = -<B_L,A B_L-B_L(u,A u)>
+    +S^2/(2Z)+3S<A B_L,A u>/(2P),
+G = <A u,B_L(-B_L,u)>,
+
+N_local = 4S^3 ZP (K+G).                              (LQR-4)
+```
+
+`LocalQuarticReducedLedger` checks this directly against the original
+five-entry and denominator-free calculations. At K6, `K` and `G` contribute
+`+7.48467e-4` and `-6.12980e-5` after normalization. The polynomial local
+numerator is `0.00264627230688`, with `3.20e-19` relative reconstruction
+error. [REDUCED_QUARTET.md](REDUCED_QUARTET.md) states the resulting two-entry
+local lemma `SLD-1P-L`.
+
 ## Reduced proof obligation
 
 Multiplying SLD-1 by the positive denominator `Z^2 P^4` removes all quotient

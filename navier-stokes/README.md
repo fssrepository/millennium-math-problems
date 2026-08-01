@@ -131,6 +131,19 @@ source file:
 - `LocalQuarticIdentityLedger` preserves the exact negative-square outer-slot
   identity and the local/nonlocal enstrophy-transfer identities before any
   inequality discards their signs;
+- `LocalQuarticShellLedger` resolves the complete normalized local quartet by
+  target mode, exact Laplace eigenshell, hard shell, and dyadic annulus;
+- `LocalQuarticShellEnvelope` proves and certifies the cutoff-independent
+  bound `||A^(1/2)B_local||_2^2 <= 7264120.5 sqrt(Z) P^(3/2)` using only
+  elementary lattice counting, shell overlap, and `H^(3/2)` interpolation;
+- `LocalQuarticCommutator` combines the outer and advected Frechet slots into
+  the exact multiplier `|k|^2-|q|^2` and checks its duality and symbol bounds;
+- `LocalQuarticProjectedResidual` combines the outer, enstrophy, and
+  palinstrophy chain-rule entries and verifies their exact completed-square
+  representation before the remaining transport slots are estimated;
+- `LocalQuarticReducedLedger` merges both exact reductions and emits the
+  two-entry, denominator-free local SLD-1P numerator with an independent
+  polynomial reconstruction check;
 - `LocalSignatureGradientAdversary` runs 12-worker targeted counterexample
   searches, while `LocalSignatureTrajectoryAnalyzer` verifies the exact
   dynamic signature factorization across Galerkin cutoffs;

@@ -101,6 +101,17 @@ SpectralIncrement SpectralDynamics::advection_direct(
 
 SpectralIncrement SpectralDynamics::advection_direct_partition(
     const SpectralState& state, TriadSelection selection) const {
+    return advection_bilinear_direct_partition(
+        state, state.velocity, state.velocity, selection);
+}
+
+SpectralIncrement SpectralDynamics::advection_bilinear_direct_partition(
+    const SpectralState& state,
+    const SpectralIncrement& advecting,
+    const SpectralIncrement& advected,
+    TriadSelection selection) const {
+    require_matching_increment(state, advecting);
+    require_matching_increment(state, advected);
     const SpectralComplex imaginary_unit{0.0L, 1.0L};
     SpectralIncrement advection_result = reduce_interactions(
         state, configuration_.compute_threads(),
@@ -109,12 +120,12 @@ SpectralIncrement SpectralDynamics::advection_direct_partition(
             return;
         }
         const auto [p_index, q_index, target_index] = interaction;
-        const ComplexVector& up = state.velocity[p_index];
         const SpectralComplex coefficient =
-            imaginary_unit * wave_dot(state.waves[q_index], up);
+            imaginary_unit *
+            wave_dot(state.waves[q_index], advecting[p_index]);
         for (std::size_t direction = 0; direction < 3; ++direction) {
             partial[target_index][direction] +=
-                coefficient * state.velocity[q_index][direction];
+                coefficient * advected[q_index][direction];
         }
     });
     for (std::size_t index = 0; index < state.waves.size(); ++index) {
