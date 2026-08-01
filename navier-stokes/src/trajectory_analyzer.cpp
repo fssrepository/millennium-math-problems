@@ -47,6 +47,8 @@ SpectralReal real_vector_norm(const RealVector& vector) {
 struct TrajectoryAnalyzer::VortexPartition {
     SpectralReal local = 0.0L;
     SpectralReal nonlocal = 0.0L;
+    SpectralReal near_nonlocal = 0.0L;
+    SpectralReal far_nonlocal = 0.0L;
     SpectralReal absolute_local_pairs = 0.0L;
     SpectralReal absolute_nonlocal_pairs = 0.0L;
 };
@@ -93,12 +95,18 @@ TrajectoryAnalyzer::evaluate_vortex_partition(
         const SpectralReal enstrophy_transfer =
             static_cast<SpectralReal>(norm_squared(k)) *
             std::real(dot_hermitian(state.velocity[target_index], pair));
-        if (TriadPartitioner::is_local(k, p, q)) {
+        const int gap = TriadPartitioner::dyadic_gap(k, p, q);
+        if (gap == 0) {
             result.local += enstrophy_transfer;
             result.absolute_local_pairs += std::abs(enstrophy_transfer);
         } else {
             result.nonlocal += enstrophy_transfer;
             result.absolute_nonlocal_pairs += std::abs(enstrophy_transfer);
+            if (gap == 1) {
+                result.near_nonlocal += enstrophy_transfer;
+            } else {
+                result.far_nonlocal += enstrophy_transfer;
+            }
         }
     }
     return result;
@@ -373,6 +381,14 @@ EvolutionResult TrajectoryAnalyzer::evolve(
             energy_level_quantity_from_stretching(
                 partition_before.nonlocal, before.enstrophy,
                 before.palinstrophy);
+        result.maximum_near_nonlocal_energy_level_quantity =
+            energy_level_quantity_from_stretching(
+                partition_before.near_nonlocal, before.enstrophy,
+                before.palinstrophy);
+        result.maximum_far_nonlocal_energy_level_quantity =
+            energy_level_quantity_from_stretching(
+                partition_before.far_nonlocal, before.enstrophy,
+                before.palinstrophy);
         result.maximum_vortex_partition_residual =
             std::abs(before.vortex_stretching -
                      std::abs(partition_before.local +
@@ -417,6 +433,22 @@ EvolutionResult TrajectoryAnalyzer::evolve(
                 critical_integrand_from_stretching(
                     partition_after.nonlocal, after.enstrophy,
                     after.palinstrophy);
+            const SpectralReal near_nonlocal_critical_before =
+                critical_integrand_from_stretching(
+                    partition_before.near_nonlocal, before.enstrophy,
+                    before.palinstrophy);
+            const SpectralReal near_nonlocal_critical_after =
+                critical_integrand_from_stretching(
+                    partition_after.near_nonlocal, after.enstrophy,
+                    after.palinstrophy);
+            const SpectralReal far_nonlocal_critical_before =
+                critical_integrand_from_stretching(
+                    partition_before.far_nonlocal, before.enstrophy,
+                    before.palinstrophy);
+            const SpectralReal far_nonlocal_critical_after =
+                critical_integrand_from_stretching(
+                    partition_after.far_nonlocal, after.enstrophy,
+                    after.palinstrophy);
             const SpectralReal local_q_after =
                 energy_level_quantity_from_stretching(
                     partition_after.local, after.enstrophy,
@@ -425,17 +457,39 @@ EvolutionResult TrajectoryAnalyzer::evolve(
                 energy_level_quantity_from_stretching(
                     partition_after.nonlocal, after.enstrophy,
                     after.palinstrophy);
+            const SpectralReal near_nonlocal_q_after =
+                energy_level_quantity_from_stretching(
+                    partition_after.near_nonlocal, after.enstrophy,
+                    after.palinstrophy);
+            const SpectralReal far_nonlocal_q_after =
+                energy_level_quantity_from_stretching(
+                    partition_after.far_nonlocal, after.enstrophy,
+                    after.palinstrophy);
             result.integral_local_critical +=
                 0.5L * dt *
                 (local_critical_before + local_critical_after);
             result.integral_nonlocal_critical +=
                 0.5L * dt *
                 (nonlocal_critical_before + nonlocal_critical_after);
+            result.integral_near_nonlocal_critical +=
+                0.5L * dt *
+                (near_nonlocal_critical_before +
+                 near_nonlocal_critical_after);
+            result.integral_far_nonlocal_critical +=
+                0.5L * dt *
+                (far_nonlocal_critical_before +
+                 far_nonlocal_critical_after);
             result.maximum_local_energy_level_quantity = std::max(
                 result.maximum_local_energy_level_quantity, local_q_after);
             result.maximum_nonlocal_energy_level_quantity = std::max(
                 result.maximum_nonlocal_energy_level_quantity,
                 nonlocal_q_after);
+            result.maximum_near_nonlocal_energy_level_quantity = std::max(
+                result.maximum_near_nonlocal_energy_level_quantity,
+                near_nonlocal_q_after);
+            result.maximum_far_nonlocal_energy_level_quantity = std::max(
+                result.maximum_far_nonlocal_energy_level_quantity,
+                far_nonlocal_q_after);
             result.integral_absolute_local_vortex +=
                 0.5L * dt * (std::abs(partition_before.local) +
                              std::abs(partition_after.local));

@@ -4,13 +4,21 @@
 
 namespace lemma {
 
-enum class TriadPartition { all, local, nonlocal };
+enum class TriadPartition {
+    all,
+    local,
+    nonlocal,
+    near_nonlocal,
+    far_nonlocal
+};
 
 class TriadPartitioner {
 public:
     static constexpr SpectralInteger locality_ratio_squared = 4;
 
     [[nodiscard]] static bool is_local(
+        WaveVector first, WaveVector second, WaveVector third);
+    [[nodiscard]] static int dyadic_gap(
         WaveVector first, WaveVector second, WaveVector third);
     [[nodiscard]] static bool includes(
         WaveVector first, WaveVector second, WaveVector third,

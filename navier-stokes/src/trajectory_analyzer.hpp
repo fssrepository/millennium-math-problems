@@ -31,8 +31,12 @@ struct EvolutionResult {
     SpectralReal integral_absolute_total_vortex = 0.0L;
     SpectralReal integral_local_critical = 0.0L;
     SpectralReal integral_nonlocal_critical = 0.0L;
+    SpectralReal integral_near_nonlocal_critical = 0.0L;
+    SpectralReal integral_far_nonlocal_critical = 0.0L;
     SpectralReal maximum_local_energy_level_quantity = 0.0L;
     SpectralReal maximum_nonlocal_energy_level_quantity = 0.0L;
+    SpectralReal maximum_near_nonlocal_energy_level_quantity = 0.0L;
+    SpectralReal maximum_far_nonlocal_energy_level_quantity = 0.0L;
     SpectralReal maximum_vortex_partition_residual = 0.0L;
     SpectralReal maximum_vorticity_linf = 0.0L;
     SpectralReal maximum_holder_half_coherence = 0.0L;

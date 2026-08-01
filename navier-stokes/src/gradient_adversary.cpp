@@ -135,6 +135,12 @@ TriadPartition objective_partition(const std::string& objective) {
     if (objective == "critical-nonlocal-integral") {
         return TriadPartition::nonlocal;
     }
+    if (objective == "critical-near-nonlocal-integral") {
+        return TriadPartition::near_nonlocal;
+    }
+    if (objective == "critical-far-nonlocal-integral") {
+        return TriadPartition::far_nonlocal;
+    }
     return TriadPartition::all;
 }
 
@@ -183,7 +189,9 @@ SpectralReal GradientAdversary::objective_value(
     }
     if (options.objective == "critical-integral" ||
         options.objective == "critical-local-integral" ||
-        options.objective == "critical-nonlocal-integral") {
+        options.objective == "critical-nonlocal-integral" ||
+        options.objective == "critical-near-nonlocal-integral" ||
+        options.objective == "critical-far-nonlocal-integral") {
         return critical_integral;
     }
     throw std::invalid_argument("unknown gradient objective: " +
@@ -248,7 +256,11 @@ GradientSearchResult GradientAdversary::maximize_q(
                 options.trajectory_steps);
         } else if (options.objective == "critical-integral" ||
                    options.objective == "critical-local-integral" ||
-                   options.objective == "critical-nonlocal-integral") {
+                   options.objective == "critical-nonlocal-integral" ||
+                   options.objective ==
+                       "critical-near-nonlocal-integral" ||
+                   options.objective ==
+                       "critical-far-nonlocal-integral") {
             trajectory = adjoint_.critical_integral_gradient(
                 result.state, options.viscosity, options.time_step,
                 options.trajectory_steps,

@@ -87,6 +87,8 @@ source file:
   time-step refinement diagnostics;
 - `TriadPartitioner` owns the single exact scale-ratio classification used by
   forward objectives, adjoints, trajectory sampling, and proof checks;
+- `TriadLedger` resolves nonlocal stretching by dyadic gap and by whether the
+  low mode is the advecting, advected, or target Fourier factor;
 - `TriadVerifier` owns direct interaction analysis, detailed triad
   cancellation, local/nonlocal flux partitioning, and certificate aggregation;
 - `StateAnalyzer` and `StateFamilyAnalyzer` measure shell decay, active modes,
@@ -199,6 +201,12 @@ the dealiased FFT backend. Their deterministic trajectory-gradient errors are
 `4.23e-12` and `3.25e-12` against central differences. The first cap sweep and
 its limitations are recorded under
 `proof/l4/analysis/partitioned-critical-integrals/`.
+
+`critical-near-nonlocal-integral` selects the first separated dyadic band
+`2 < high/low <= 4`; `critical-far-nonlocal-integral` selects the tail
+`high/low > 4`. The latter has a nonzero K3 finite-difference gradient oracle
+error of `4.84e-13`. Its first cutoff continuation is under
+`proof/l4/analysis/far-nonlocal-h4-cap100/`.
 
 Long searches can resume from a saved state without repeating lower cutoffs:
 

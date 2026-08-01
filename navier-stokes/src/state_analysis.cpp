@@ -73,6 +73,10 @@ StateAnalysisReport SpectralStateAnalyzer::analyze(
     report.cutoff = SpectralStateOps::cutoff(state);
     report.modes = static_cast<int>(state.waves.size());
     report.objective = objective.evaluate(state);
+    report.triad_ledger = TriadLedger::analyze(state);
+    report.triad_ledger_objective_residual = std::abs(
+        report.triad_ledger.signed_total -
+        report.objective.signed_vortex_stretching);
     report.active_threshold =
         options.active_relative_tolerance * report.objective.energy;
     report.shells.resize(static_cast<std::size_t>(report.cutoff + 1));
@@ -229,6 +233,24 @@ void StateAnalysisReporter::write_console(const StateAnalysisReport& report,
             << static_cast<double>(shell.palinstrophy) << ','
             << static_cast<double>(std::sqrt(shell.q_gradient_norm2)) << '\n';
     }
+    out << "\ntriad_gap,partition,interactions,signed_stretching,"
+           "absolute_pair_stretching,cancellation_ratio,"
+           "low_advecting_abs,low_advected_abs,low_target_abs,tied_low_abs\n";
+    for (const TriadGapLedgerRow& gap : report.triad_ledger.gaps) {
+        out << gap.dyadic_gap << ','
+            << (gap.dyadic_gap == 0 ? "local" : "nonlocal") << ','
+            << gap.interactions << ','
+            << static_cast<double>(gap.signed_stretching) << ','
+            << static_cast<double>(gap.absolute_pair_stretching) << ','
+            << static_cast<double>(
+                   std::abs(gap.signed_stretching) /
+                   std::max(1e-30L, gap.absolute_pair_stretching));
+        for (const SpectralReal role_absolute :
+             gap.absolute_stretching_by_low_role) {
+            out << ',' << static_cast<double>(role_absolute);
+        }
+        out << '\n';
+    }
     out << "\ntop_mode,kx,ky,kz,energy,q_gradient_norm\n";
     for (std::size_t rank = 0; rank < report.top_modes.size(); ++rank) {
         const StateModeAnalysis& mode = report.top_modes[rank];
@@ -274,7 +296,45 @@ void StateAnalysisReporter::write_json(const StateAnalysisReport& report,
         << static_cast<double>(report.retraction_directional_derivative)
         << ", \"retraction_gradient_relative_error\": "
         << static_cast<double>(report.retraction_gradient_relative_error)
-        << ",\n  \"shells\": [\n";
+        << ", \"triad_ledger_objective_residual\": "
+        << static_cast<double>(report.triad_ledger_objective_residual)
+        << ",\n  \"triad_gap_ledger\": [\n";
+    for (std::size_t gap_index = 0;
+         gap_index < report.triad_ledger.gaps.size(); ++gap_index) {
+        const TriadGapLedgerRow& gap =
+            report.triad_ledger.gaps[gap_index];
+        out << "    {\"dyadic_gap\": " << gap.dyadic_gap
+            << ", \"partition\": \""
+            << (gap.dyadic_gap == 0 ? "local" : "nonlocal")
+            << "\", \"interactions\": " << gap.interactions
+            << ", \"signed_stretching\": "
+            << static_cast<double>(gap.signed_stretching)
+            << ", \"absolute_pair_stretching\": "
+            << static_cast<double>(gap.absolute_pair_stretching)
+            << ", \"cancellation_ratio\": "
+            << static_cast<double>(
+                   std::abs(gap.signed_stretching) /
+                   std::max(1e-30L, gap.absolute_pair_stretching))
+            << ", \"low_roles\": {";
+        for (std::size_t role_index = 0; role_index < 4; ++role_index) {
+            const auto role = static_cast<TriadLowRole>(role_index);
+            out << '\"' << TriadLedger::low_role_name(role) << "\": {"
+                << "\"interactions\": "
+                << gap.interactions_by_low_role[role_index]
+                << ", \"signed_stretching\": "
+                << static_cast<double>(
+                       gap.signed_stretching_by_low_role[role_index])
+                << ", \"absolute_pair_stretching\": "
+                << static_cast<double>(
+                       gap.absolute_stretching_by_low_role[role_index])
+                << '}' << (role_index == 3 ? "" : ", ");
+        }
+        out << "}}" <<
+            (gap_index + 1 == report.triad_ledger.gaps.size()
+                 ? "\n"
+                 : ",\n");
+    }
+    out << "  ],\n  \"shells\": [\n";
     for (std::size_t index = 0; index < report.shells.size(); ++index) {
         const StateShellAnalysis& shell = report.shells[index];
         out << "    {\"shell\": " << shell.shell

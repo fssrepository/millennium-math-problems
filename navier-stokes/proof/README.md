@@ -39,3 +39,7 @@ that maximize the exact local and nonlocal L4-A pieces separately. It includes
 the replayable `K=3` shell analyses and an initial-`H4` cap sweep. The data
 invalidate the branch-specific assumption that the nonlocal term is always
 negligible; they do not prove either partitioned lemma.
+
+`l4/analysis/far-nonlocal-h4-cap100/` refines the nonlocal class into the first
+transition band and the truly scale-separated tail. It contains the first
+fine-time-step, projection-controlled `K=3,...,6` far-tail adversary.

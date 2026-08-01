@@ -1,0 +1,18 @@
+{
+  "schema": "navier-stokes-state-analysis-v1",
+  "state": "proof/l4/states/far-nonlocal-integral-h4-cap100-K6-project-K3-dt0005/dynamic/K3.tsv",
+  "cutoff": 3, "modes": 342, "active_modes": 342, "highest_active_shell": 3,
+  "E": 1, "Z": 1.15150143155712059, "P": 1.80513327178099803, "Q": 6.79147793563992988e-09,
+  "divergence_residual": 1.30367092992078064e-16, "reality_residual": 0, "homogeneous_H3_squared": 7.93430316575704175, "homogeneous_H4_squared": 93.3554394875925908, "projected_q_gradient_norm": 1.76511408999801871e-06, "retraction_directional_derivative": 1.76511409705596881e-06, "retraction_gradient_relative_error": 3.99858007891934933e-09, "triad_ledger_objective_residual": 3.16790322273108327e-19,
+  "triad_gap_ledger": [
+    {"dyadic_gap": 0, "partition": "local", "interactions": 32334, "signed_stretching": 0.00367074289998756565, "absolute_pair_stretching": 0.381734724667925074, "cancellation_ratio": 0.0096159522903785672, "low_roles": {"advecting": {"interactions": 9168, "signed_stretching": 0.000785405955158705255, "absolute_pair_stretching": 0.0200150393291987812}, "advected": {"interactions": 9168, "signed_stretching": -0.0375541191439388786, "absolute_pair_stretching": 0.041553158019938162}, "target": {"interactions": 9168, "signed_stretching": 0.0154449729439427724, "absolute_pair_stretching": 0.0169617427068353872}, "tied": {"interactions": 4830, "signed_stretching": 0.0249944831448249694, "absolute_pair_stretching": 0.303204784611952716}}},
+    {"dyadic_gap": 1, "partition": "nonlocal", "interactions": 15708, "signed_stretching": -0.00787245602112655353, "absolute_pair_stretching": 0.0817863983292656249, "cancellation_ratio": 0.0962562991150761188, "low_roles": {"advecting": {"interactions": 5236, "signed_stretching": -0.00469892797560325474, "absolute_pair_stretching": 0.0638444839136915743}, "advected": {"interactions": 5236, "signed_stretching": -0.0040238157218566899, "absolute_pair_stretching": 0.0151286421504744084}, "target": {"interactions": 5236, "signed_stretching": 0.000850287676333391228, "absolute_pair_stretching": 0.00281327226509964223}, "tied": {"interactions": 0, "signed_stretching": 0, "absolute_pair_stretching": 0}}},
+    {"dyadic_gap": 2, "partition": "nonlocal", "interactions": 1584, "signed_stretching": -0.0109689745713893241, "absolute_pair_stretching": 0.0402584495388346522, "cancellation_ratio": 0.272463909987598563, "low_roles": {"advecting": {"interactions": 528, "signed_stretching": -0.00460461544814380879, "absolute_pair_stretching": 0.0329309568966587099}, "advected": {"interactions": 528, "signed_stretching": -0.00678304666807978858, "absolute_pair_stretching": 0.00690247971617927863}, "target": {"interactions": 528, "signed_stretching": 0.000418687544834273507, "absolute_pair_stretching": 0.000425012925996660917}, "tied": {"interactions": 0, "signed_stretching": 0, "absolute_pair_stretching": 0}}}
+  ],
+  "shells": [
+    {"shell": 0, "modes": 0, "active_modes": 0, "energy": 0, "enstrophy": 0, "palinstrophy": 0, "q_gradient_norm": 0},
+    {"shell": 1, "modes": 26, "active_modes": 26, "energy": 0.994315824291760242, "enstrophy": 1.10884240383055577, "palinstrophy": 1.35086045030377355, "q_gradient_norm": 8.33241074576433919e-07},
+    {"shell": 2, "modes": 98, "active_modes": 98, "energy": 0.00462536243303705418, "enstrophy": 0.0261001346276946503, "palinstrophy": 0.189720992021043394, "q_gradient_norm": 1.18879766710216177e-06},
+    {"shell": 3, "modes": 218, "active_modes": 218, "energy": 0.00105881327520268988, "enstrophy": 0.0165588930988699867, "palinstrophy": 0.264551829456180998, "q_gradient_norm": 1.00413229493473716e-06}
+  ]
+}

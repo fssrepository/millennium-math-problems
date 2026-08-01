@@ -81,6 +81,12 @@ Real dynamic_objective_value(const EvolutionResult& evolution,
     if (objective == "critical-nonlocal-integral") {
         return evolution.integral_nonlocal_critical;
     }
+    if (objective == "critical-near-nonlocal-integral") {
+        return evolution.integral_near_nonlocal_critical;
+    }
+    if (objective == "critical-far-nonlocal-integral") {
+        return evolution.integral_far_nonlocal_critical;
+    }
     if (objective == "max-q") {
         return evolution.maximum_energy_level_quantity;
     }
@@ -117,7 +123,9 @@ DynamicAdversaryResult optimize_dynamic(
     const InitialSobolevConstraint sobolev(sobolev_order, sobolev_cap);
     const bool collect_search_partition =
         objective == "critical-local-integral" ||
-        objective == "critical-nonlocal-integral";
+        objective == "critical-nonlocal-integral" ||
+        objective == "critical-near-nonlocal-integral" ||
+        objective == "critical-far-nonlocal-integral";
     result.state = primary_start;
     result.initial_objective = active_trajectory_analyzer.evaluate_static(result.state);
     result.evolution = active_trajectory_analyzer.evolve(
@@ -777,9 +785,18 @@ bool self_test(std::ostream& out) {
         parallel_partition_advection, serial_partition_advection);
     const Real partition_parallel_vjp_error = increment_relative_error(
         parallel_partition_vjp, serial_partition_vjp);
+    const TriadLedgerReport partition_ledger =
+        TriadLedger::analyze(partition_state);
+    const Real partition_ledger_error = std::abs(
+        partition_ledger.signed_local -
+        active_objective
+            .evaluate(partition_state, TriadPartition::local)
+            .signed_vortex_stretching) /
+        std::max(1e-30L, std::abs(partition_ledger.signed_local));
     const bool partition_parallel_ok =
         partition_parallel_forward_error < 1e-14L &&
-        partition_parallel_vjp_error < 1e-14L;
+        partition_parallel_vjp_error < 1e-14L &&
+        partition_ledger_error < 1e-14L;
     const SpectralState partition_plus_state =
         active_dynamics.add_increment(
             partition_state, partition_tangent,
@@ -826,6 +843,43 @@ bool self_test(std::ostream& out) {
         partition_integral_gradient_error(TriadPartition::local);
     const Real nonlocal_integral_gradient_error =
         partition_integral_gradient_error(TriadPartition::nonlocal);
+    const Real near_nonlocal_integral_gradient_error =
+        partition_integral_gradient_error(TriadPartition::near_nonlocal);
+    const Real far_nonlocal_integral_gradient_error =
+        partition_integral_gradient_error(TriadPartition::far_nonlocal);
+    SpectralState far_partition_state =
+        SpectralStateFactory::random(3, adjoint_generator);
+    SpectralState far_partition_tangent_state =
+        SpectralStateFactory::random(3, adjoint_generator);
+    SpectralStateOps::normalize_energy(far_partition_state);
+    SpectralStateOps::normalize_energy(far_partition_tangent_state);
+    const SpectralIncrement far_partition_gradient =
+        active_objective.critical_integrand_gradient(
+            far_partition_state, TriadPartition::far_nonlocal);
+    const Real far_partition_directional_gradient = increment_inner_product(
+        far_partition_gradient, far_partition_tangent_state.velocity);
+    const SpectralState far_partition_plus = active_dynamics.add_increment(
+        far_partition_state, far_partition_tangent_state.velocity,
+        finite_difference_step);
+    const SpectralState far_partition_minus = active_dynamics.add_increment(
+        far_partition_state, far_partition_tangent_state.velocity,
+        -finite_difference_step);
+    const Real far_partition_directional_finite_difference =
+        (active_objective
+             .evaluate(far_partition_plus, TriadPartition::far_nonlocal)
+             .critical_integrand -
+         active_objective
+             .evaluate(far_partition_minus, TriadPartition::far_nonlocal)
+             .critical_integrand) /
+        (2.0L * finite_difference_step);
+    const Real far_partition_static_gradient_error = std::abs(
+        far_partition_directional_gradient -
+        far_partition_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(std::abs(far_partition_directional_gradient),
+                     std::abs(
+                         far_partition_directional_finite_difference)));
     const bool triad_partition_ok =
         TriadPartitioner::is_local(
             WaveVector{1, 0, 0}, WaveVector{0, 1, 0},
@@ -833,13 +887,25 @@ bool self_test(std::ostream& out) {
         !TriadPartitioner::is_local(
             WaveVector{1, 0, 0}, WaveVector{2, 0, 0},
             WaveVector{3, 0, 0}) &&
+        TriadPartitioner::dyadic_gap(
+            WaveVector{1, 0, 0}, WaveVector{2, 0, 0},
+            WaveVector{3, 0, 0}) == 1 &&
+        TriadPartitioner::dyadic_gap(
+            WaveVector{1, 0, 0}, WaveVector{7, 0, 0},
+            WaveVector{8, 0, 0}) == 2 &&
+        TriadPartitioner::includes(
+            WaveVector{1, 0, 0}, WaveVector{7, 0, 0},
+            WaveVector{8, 0, 0}, TriadPartition::far_nonlocal) &&
         TriadPartitioner::includes(
             WaveVector{1, 0, 0}, WaveVector{2, 0, 0},
             WaveVector{3, 0, 0}, TriadPartition::nonlocal);
     const bool partition_integral_gradients_ok =
         triad_partition_ok && partition_parallel_ok &&
         local_integral_gradient_error < 1e-9L &&
-        nonlocal_integral_gradient_error < 1e-9L;
+        nonlocal_integral_gradient_error < 1e-9L &&
+        near_nonlocal_integral_gradient_error < 1e-9L &&
+        far_nonlocal_integral_gradient_error < 1e-9L &&
+        far_partition_static_gradient_error < 1e-9L;
     GradientSearchOptions gradient_options;
     gradient_options.iterations = 3;
     gradient_options.line_search_steps = 8;
@@ -951,9 +1017,17 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(partition_parallel_forward_error)
         << ", parallel_vjp="
         << static_cast<double>(partition_parallel_vjp_error)
+        << ", ledger=" << static_cast<double>(partition_ledger_error)
         << ", local=" << static_cast<double>(local_integral_gradient_error)
         << ", nonlocal="
-        << static_cast<double>(nonlocal_integral_gradient_error) << ")\n"
+        << static_cast<double>(nonlocal_integral_gradient_error)
+        << ", near="
+        << static_cast<double>(near_nonlocal_integral_gradient_error)
+        << ", far="
+        << static_cast<double>(far_nonlocal_integral_gradient_error)
+        << ", far_static="
+        << static_cast<double>(far_partition_static_gradient_error)
+        << ")\n"
         << "projected gradient adversary test: "
         << (gradient_search_ok ? "PASS" : "FAIL")
         << " (Q " << static_cast<double>(gradient_search.initial_objective)
@@ -1144,6 +1218,10 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
         row.dynamic_coarse_integral = dynamic.evolution.integral_critical;
         row.dynamic_local_integral = evolution.integral_local_critical;
         row.dynamic_nonlocal_integral = evolution.integral_nonlocal_critical;
+        row.dynamic_near_nonlocal_integral =
+            evolution.integral_near_nonlocal_critical;
+        row.dynamic_far_nonlocal_integral =
+            evolution.integral_far_nonlocal_critical;
         row.dynamic_dt_relative_error = dynamic.time_step_relative_error;
         row.dynamic_search_initial_objective =
             dynamic.search_initial_objective;
@@ -1162,6 +1240,10 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
             evolution.maximum_local_energy_level_quantity;
         row.dynamic_maximum_nonlocal_q =
             evolution.maximum_nonlocal_energy_level_quantity;
+        row.dynamic_maximum_near_nonlocal_q =
+            evolution.maximum_near_nonlocal_energy_level_quantity;
+        row.dynamic_maximum_far_nonlocal_q =
+            evolution.maximum_far_nonlocal_energy_level_quantity;
         row.dynamic_q_log_growth_ratio =
             evolution.maximum_positive_q_log_growth_ratio;
         row.dynamic_q_derivative_error =

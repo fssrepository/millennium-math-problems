@@ -247,3 +247,37 @@ independent multistarts and continuation in `T` and `nu` for the separately
 optimized partition. Analytically, the next step is a dyadic paraproduct ledger
 that isolates the low-high-high term and states exactly which summable
 frequency envelope would close its time integral.
+
+The dyadic ledger sharpens that analytical split. It defines gap zero by
+`high/low <= 2`, gap one by `2 < high/low <= 4`, and the far tail by
+`high/low > 4`. On the converged full-nonlocal K5 branch, signed gap-one
+stretching is `-0.371413`, while the entire far tail is `-8.92578e-5`. Thus the
+old nonlocal class was dominated by its first transition band, not by strongly
+separated scales. The ledger further records whether the low mode is the
+advecting, advected, or target factor; the first two roles dominate and the
+target role partially cancels them on this branch.
+
+The engine now exposes exact `critical-near-nonlocal-integral` and
+`critical-far-nonlocal-integral` objectives. The nonzero far-tail gradient
+agrees with central differences to `4.84e-13`. A far-tail adversary validated
+with `dt=0.0005` and `dt/2` gives
+
+```text
+K:          3             4             5             6
+J_far: 2.11194e-11   3.20285e-11   3.21555e-11   3.21556e-11
+top E:  1.05881e-3    2.68442e-5    6.81316e-8    1.37352e-10
+```
+
+These are separate projections of the same K6 winner, so the saturation is not
+an optimizer-progress artifact. The revised analytical ledger is therefore:
+
+```text
+L4.1a  control the geometric far tail, dyadic gap >= 2;
+L4.1b  merge gap 1 into a quasilocal transition estimate;
+L4.2   control the combined local/transition block.
+```
+
+All three statements remain open. The far-tail numerics identify L4.1a as the
+first proof target because it has genuine scale separation and a rapidly
+decaying optimized frequency envelope. The code evidence is not substituted
+for the required cutoff-independent paraproduct estimate.

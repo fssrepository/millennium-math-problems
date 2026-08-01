@@ -36,6 +36,7 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
         << ", H" << report.sobolev_order << "_cap="
         << static_cast<double>(report.sobolev_cap) << ")\n"
         << "cutoff,steps,int_D4Z2_refined,int_local_D4Z2,int_nonlocal_D4Z2,"
+           "int_near_nonlocal_D4Z2,int_far_nonlocal_D4Z2,"
            "dt_relative_error,search_obj_initial,search_obj_final,"
            "initial_D4Z,final_D4Z,log_Q_gain,max_D4Z,max_local_D4Z,max_nonlocal_D4Z,"
            "max_positive_dlogQ_over_k0Z,q_derivative_error,strong_L4_envelope,"
@@ -47,6 +48,8 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
             << static_cast<double>(row.dynamic_integral) << ','
             << static_cast<double>(row.dynamic_local_integral) << ','
             << static_cast<double>(row.dynamic_nonlocal_integral) << ','
+            << static_cast<double>(row.dynamic_near_nonlocal_integral) << ','
+            << static_cast<double>(row.dynamic_far_nonlocal_integral) << ','
             << static_cast<double>(row.dynamic_dt_relative_error) << ','
             << static_cast<double>(row.dynamic_search_initial_objective) << ','
             << static_cast<double>(row.dynamic_search_final_objective) << ','
@@ -146,6 +149,10 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
             << static_cast<double>(row.dynamic_maximum_local_q)
             << ", \"dynamic_max_nonlocal_D4Z\": "
             << static_cast<double>(row.dynamic_maximum_nonlocal_q)
+            << ", \"dynamic_max_near_nonlocal_D4Z\": "
+            << static_cast<double>(row.dynamic_maximum_near_nonlocal_q)
+            << ", \"dynamic_max_far_nonlocal_D4Z\": "
+            << static_cast<double>(row.dynamic_maximum_far_nonlocal_q)
             << ", \"dynamic_max_positive_dlogQ_over_k0Z\": "
             << static_cast<double>(row.dynamic_q_log_growth_ratio)
             << ", \"dynamic_q_derivative_refinement_error\": "
@@ -169,6 +176,10 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
             << static_cast<double>(row.dynamic_local_integral)
             << ", \"dynamic_integral_nonlocal_D4Z2\": "
             << static_cast<double>(row.dynamic_nonlocal_integral)
+            << ", \"dynamic_integral_near_nonlocal_D4Z2\": "
+            << static_cast<double>(row.dynamic_near_nonlocal_integral)
+            << ", \"dynamic_integral_far_nonlocal_D4Z2\": "
+            << static_cast<double>(row.dynamic_far_nonlocal_integral)
             << ", \"dynamic_max_V_partition_residual\": "
             << static_cast<double>(row.dynamic_partition_residual)
             << ", \"dynamic_final_E\": "
