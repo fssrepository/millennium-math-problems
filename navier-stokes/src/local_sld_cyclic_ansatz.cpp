@@ -4,6 +4,7 @@
 #include "state_analysis.hpp"
 
 #include <cmath>
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
@@ -109,6 +110,32 @@ void write_certificate(const LocalSldCyclicAnsatzReport& report,
         << static_cast<double>(report.response_energy_fraction) << ",\n"
         << "  \"basis_inner_product\": "
         << static_cast<double>(report.basis_inner_product) << ",\n"
+        << "  \"pure_axis_energy\": "
+        << static_cast<double>(report.pure_axis_value.energy) << ",\n"
+        << "  \"pure_axis_enstrophy\": "
+        << static_cast<double>(report.pure_axis_value.enstrophy) << ",\n"
+        << "  \"pure_axis_palinstrophy\": "
+        << static_cast<double>(report.pure_axis_value.palinstrophy) << ",\n"
+        << "  \"pure_axis_stretching\": "
+        << static_cast<double>(report.pure_axis_value.signed_stretching)
+        << ",\n"
+        << "  \"pure_axis_two_entry_bracket\": "
+        << static_cast<double>(
+               report.pure_axis_value.signed_two_entry_bracket)
+        << ",\n"
+        << "  \"pure_axis_signed_constant_ratio\": "
+        << static_cast<double>(
+               report.pure_axis_value.signed_constant_ratio)
+        << ",\n"
+        << "  \"pure_axis_absolute_constant_ratio\": "
+        << static_cast<double>(report.pure_axis_value.constant_ratio)
+        << ",\n"
+        << "  \"pure_axis_identity_error\": "
+        << static_cast<double>(report.pure_axis_identity_error) << ",\n"
+        << "  \"pure_response_signed_constant_ratio\": "
+        << static_cast<double>(
+               report.pure_response_value.signed_constant_ratio)
+        << ",\n"
         << "  \"signed_local_sld_ratio\": "
         << static_cast<double>(value.signed_local_sld_ratio) << ",\n"
         << "  \"closure_constant_ratio\": "
@@ -205,6 +232,17 @@ LocalSldCyclicAnsatzReport LocalSldCyclicAnsatz::optimize(
         std::sin(report.angle) * std::sin(report.angle);
     report.basis_inner_product = pairing(
         axis.velocity, response.velocity);
+    report.pure_axis_value = objective.evaluate(axis);
+    report.pure_response_value = objective.evaluate(response);
+    report.pure_axis_identity_error = std::max({
+        std::abs(report.pure_axis_value.energy - 1.0L),
+        std::abs(report.pure_axis_value.enstrophy - 1.0L),
+        std::abs(report.pure_axis_value.palinstrophy - 1.0L),
+        std::abs(report.pure_axis_value.signed_stretching),
+        std::abs(
+            report.pure_axis_value.signed_two_entry_bracket + 1.0L / 3.0L),
+        std::abs(
+            report.pure_axis_value.signed_constant_ratio + 1.0L / 3.0L)});
     report.state = mix(axis, response, report.angle);
     report.value = objective.evaluate(report.state);
     report.projected_gradient_norm = tangent_gradient_norm(
@@ -272,6 +310,11 @@ int LocalSldCyclicAnsatzCli::run(
         << static_cast<double>(report.response_energy_fraction)
         << " direct_SLD_ratio="
         << static_cast<double>(report.value.signed_local_sld_ratio)
+        << " pure_axis_c="
+        << static_cast<double>(
+               report.pure_axis_value.signed_constant_ratio)
+        << " pure_axis_error="
+        << static_cast<double>(report.pure_axis_identity_error)
         << " full_gradient_norm="
         << static_cast<double>(report.projected_gradient_norm) << '\n'
         << "Certificate written to " << options.certificate_path << '\n';

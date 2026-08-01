@@ -153,6 +153,15 @@ source file:
   Fourier states without placing artifacts at an analysis/adversary root;
 - `LocalSldCyclicAnsatz` tests the symmetry-reduced cyclic-shear plus
   quadratic-response family suggested by the optimized direct quotient;
+- `LocalSldSignatureBlock` splits `K+G` exactly into a selected squared-length
+  signature family, its local complement, and their independently evaluated
+  mixed terms;
+- `LocalSldBlockObjective` gives those three terms exact gradients under the
+  common full-SLD normalization, so their real contributions can be searched
+  without replacing the full stretching by a block stretching;
+- `LocalSldTrajectoryAdjoint` freezes `k0,B0` from the initial datum, evolves
+  the Galerkin state, and reverse-differentiates the terminal local quotient
+  through RK4 and through both frozen parameters;
 - `LocalSignatureGradientAdversary` runs 12-worker targeted counterexample
   searches, while `LocalSignatureTrajectoryAnalyzer` verifies the exact
   dynamic signature factorization across Galerkin cutoffs;
@@ -209,11 +218,54 @@ The current direct local-lemma search is reproducible with:
   --samples 8192 --refinements 112 \
   --certificate proof/l4/analysis/shifted-local-density/cyclic-two-basis-ansatz.json \
   --state proof/l4/states/local-sld-ratio/cyclic-ansatz/K2.tsv
+
+./build/navier_stokes_lab local-sld-block \
+  --state proof/l4/states/local-sld-ratio/K8/K8.tsv \
+  --doubling-family --threads 12 \
+  --certificate proof/l4/analysis/shifted-local-density/direct-local-sld-K8-doubling-family.json
+
+./build/navier_stokes_lab local-closure-adversary \
+  --objective block-ratio --selection doubling-family \
+  --min-cutoff 1 --max-cutoff 6 --restarts 12 --workers 12 \
+  --iterations 30 --method lbfgs \
+  --certificate proof/l4/adversary/shifted-local-density/common-sld-doubling-block-K1-K6.json \
+  --state-dir proof/l4/states/local-sld-block/doubling-family-K1-K6
+
+./build/navier_stokes_lab local-closure-adversary \
+  --objective terminal-sld-ratio --selection local \
+  --min-cutoff 1 --max-cutoff 3 --restarts 12 --workers 12 \
+  --iterations 20 --trajectory-steps 10 --nu 0.1 --dt 0.001 \
+  --certificate proof/l4/adversary/shifted-local-density/frozen-terminal-sld-T001-K1-K3.json \
+  --state-dir proof/l4/states/local-sld-trajectory/frozen-T001-K1-K3
+
+./build/navier_stokes_lab local-closure-adversary \
+  --objective maximum-sld-ratio --selection local \
+  --min-cutoff 3 --max-cutoff 3 --restarts 12 --workers 12 \
+  --iterations 4 --trajectory-steps 500 --nu 0.1 --dt 0.001 \
+  --warm-state proof/l4/states/local-sld-trajectory/frozen-T020-K3/K3.tsv \
+  --certificate proof/l4/adversary/shifted-local-density/frozen-maximum-sld-T050-K3.json \
+  --state-dir proof/l4/states/local-sld-trajectory/maximum-T050-K3
 ```
 
 The first command maximizes the signed polynomial quotient itself. The
 `closure-ratio` objective remains available as a stronger sufficient screen,
 but it is not used as a substitute for the direct target.
+The common-normalization scans stabilize near `7.72930e-4` for the doubling
+family, `2.20683e-4` for its complement, and `1.34936e-4` for the mixed term.
+A separate signed-bracket search rejects the shortcut `K+G<=0` with the
+positive value `0.0740187069851`; that counterexample has nearly zero
+stretching, which is why the code keeps the full joint SLD factor.
+The canonical cyclic axis shear exactly attains the static absolute value
+`|c|=1/3`, and padded 12-start searches find no larger value through K8.
+This is a sharp conjecture, not a proof. With `k0,B0` frozen, K3 terminal
+optimization increases from `7.98918e-4` at `T=0.01` to `8.46863e-4` at
+`T=0.20`; this is now the active trajectory-level target.
+The maximum-on-trajectory version removes endpoint bias and currently finds
+the refined lower bound `8.48675785e-4` at `t=0.2175` inside `[0,0.5]`.
+At that checkpoint, the frozen-normalization block split is
+`8.18560410e-4 + 1.52599847e-5 + 1.48553902e-5`, with `9.98e-19`
+reconstruction error. The doubling family still supplies `96.45%` of the
+absolute three-block sum.
 
 The helical local target has its own replayable optimizer and same-state
 cutoff scan:

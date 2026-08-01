@@ -2,6 +2,7 @@
 
 #include "gradient_adversary.hpp"
 #include "local_quartic_closure_objective.hpp"
+#include "local_sld_block_objective.hpp"
 
 #include <cstdint>
 #include <string>
@@ -17,12 +18,16 @@ struct LocalQuarticClosureAdversaryOptions {
     int iterations = 8;
     int line_search_steps = 14;
     int lbfgs_history = 8;
+    int trajectory_steps = 8;
     SpectralReal initial_step = 0.1L;
+    SpectralReal viscosity = 0.1L;
+    SpectralReal time_step = 0.002L;
     int sobolev_order = 0;
     SpectralReal sobolev_cap = 0.0L;
     std::uint64_t seed = 20260801;
     std::string method = "lbfgs";
     std::string objective = "sld-ratio";
+    std::string selection = "local";
     std::string certificate_path;
     std::string state_directory;
     std::string warm_state_path;
@@ -31,6 +36,14 @@ struct LocalQuarticClosureAdversaryOptions {
 struct LocalQuarticClosureRestartResult {
     SpectralState state;
     LocalQuarticClosureObjectiveValue value;
+    LocalSldBlockObjectiveValue common_block_value;
+    bool common_block_objective = false;
+    SpectralReal refined_objective = 0.0L;
+    SpectralReal time_step_relative_error = 0.0L;
+    SpectralReal frozen_initial_frequency = 0.0L;
+    SpectralReal frozen_initial_ep_shift = 0.0L;
+    int objective_step = 0;
+    int refined_objective_step = 0;
     SpectralReal initial_objective = 0.0L;
     SpectralReal objective = 0.0L;
     SpectralReal initial_constant_ratio = 0.0L;
@@ -60,7 +73,10 @@ struct LocalQuarticClosureAdversaryReport {
     int workers = 0;
     int restarts = 0;
     int iterations = 0;
+    int trajectory_steps = 0;
     std::string objective;
+    SpectralReal viscosity = 0.0L;
+    SpectralReal time_step = 0.0L;
     int sobolev_order = 0;
     SpectralReal sobolev_cap = 0.0L;
     SpectralReal fitted_cutoff_slope = 0.0L;

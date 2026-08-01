@@ -17,6 +17,28 @@ std::string state_filename(const std::string& directory, int cutoff) {
             ("K" + std::to_string(cutoff) + ".tsv")).string();
 }
 
+std::string objective_formula(const std::string& objective) {
+    if (objective == "closure-ratio") {
+        return "maximize |K+G| E^(1/4) / (Z^(7/4) P)";
+    }
+    if (objective == "signed-closure-ratio") {
+        return "maximize (K+G) E^(1/4) / (Z^(7/4) P)";
+    }
+    if (objective == "block-ratio") {
+        return "maximize selected closed bracket times the full local SLD shape factor";
+    }
+    if (objective == "mixed-ratio") {
+        return "maximize mixed bracket times the full local SLD shape factor";
+    }
+    if (objective == "terminal-sld-ratio") {
+        return "maximize the terminal local SLD ratio with k0 and B0 frozen from the initial state";
+    }
+    if (objective == "maximum-sld-ratio") {
+        return "maximize the largest local SLD ratio on the trajectory with k0 and B0 frozen from the initial state";
+    }
+    return "maximize 4 S^3 Z P (K+G) / (k0 (S^4 Z^2 P + B0 Z^3 P^4))";
+}
+
 void write_json(const LocalQuarticClosureAdversaryReport& report,
                 const LocalQuarticClosureAdversaryOptions& options) {
     const std::filesystem::path path(options.certificate_path);
@@ -32,6 +54,9 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
         << "{\n"
         << "  \"schema\": \"navier-stokes-local-quartic-closure-adversary-v1\",\n"
         << "  \"search_objective\": \"" << options.objective << "\",\n"
+        << "  \"triad_selection\": \"" << options.selection << "\",\n"
+        << "  \"optimized_formula\": \""
+        << objective_formula(options.objective) << "\",\n"
         << "  \"closure_objective\": \"maximize |K+G| / (k0 B0^(1/4) Z^(5/4) P^(3/4))\",\n"
         << "  \"direct_sld_objective\": \"maximize 4 S^3 Z P (K+G) / (k0 (S^4 Z^2 P + B0 Z^3 P^4))\",\n"
         << "  \"implemented_static_scale\": \"Z^(7/4) P / E^(1/4)\",\n"
@@ -42,6 +67,11 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
         << "  \"workers\": " << report.workers << ",\n"
         << "  \"restarts_per_cutoff\": " << report.restarts << ",\n"
         << "  \"iterations_per_restart\": " << report.iterations << ",\n"
+        << "  \"trajectory_steps\": " << report.trajectory_steps << ",\n"
+        << "  \"viscosity\": "
+        << static_cast<double>(report.viscosity) << ",\n"
+        << "  \"time_step\": "
+        << static_cast<double>(report.time_step) << ",\n"
         << "  \"sobolev_order\": " << report.sobolev_order << ",\n"
         << "  \"sobolev_cap\": "
         << static_cast<double>(report.sobolev_cap) << ",\n"
@@ -80,6 +110,31 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
             << static_cast<double>(value.factorized_local_sld_ratio)
             << ", \"factorization_relative_error\": "
             << static_cast<double>(value.factorization_relative_error)
+            << ", \"common_block_objective\": "
+            << (winner.common_block_objective ? "true" : "false")
+            << ", \"common_block_constant_ratio\": "
+            << static_cast<double>(
+                   winner.common_block_value.block_constant_ratio)
+            << ", \"common_block_shape_factor\": "
+            << static_cast<double>(
+                   winner.common_block_value.common_shape_factor)
+            << ", \"common_block_sld_ratio\": "
+            << static_cast<double>(
+                   winner.common_block_value.block_sld_ratio)
+            << ", \"common_block_reconstruction_error\": "
+            << static_cast<double>(
+                   winner.common_block_value.ratio_reconstruction_error)
+            << ", \"refined_objective\": "
+            << static_cast<double>(winner.refined_objective)
+            << ", \"time_step_relative_error\": "
+            << static_cast<double>(winner.time_step_relative_error)
+            << ", \"frozen_initial_frequency\": "
+            << static_cast<double>(winner.frozen_initial_frequency)
+            << ", \"frozen_initial_ep_shift\": "
+            << static_cast<double>(winner.frozen_initial_ep_shift)
+            << ", \"objective_step\": " << winner.objective_step
+            << ", \"refined_objective_step\": "
+            << winner.refined_objective_step
             << ", \"improvement_factor\": "
             << static_cast<double>(row.improvement_factor)
             << ", \"signed_two_entry_bracket\": "
@@ -157,6 +212,7 @@ void LocalQuarticClosureReporter::write_artifacts(
         metadata << "exact-gradient local quartic closure adversary; "
                  << "cutoff=" << row.cutoff
                  << "; objective=" << options.objective
+                 << "; selection=" << options.selection
                  << "; objective_value="
                  << static_cast<double>(row.winner.objective)
                  << "; constant_ratio="
@@ -179,7 +235,7 @@ void LocalQuarticClosureReporter::print_summary(
         << " iterations=" << report.iterations << '\n'
         << "cutoff,initial_objective,optimized_objective,gain,"
            "closure_C,signed_S,warm_lift_objective,projection_residual,"
-           "gradient_norm,accepted,evaluations,seed\n";
+           "gradient_norm,time_refinement_error,accepted,evaluations,seed\n";
     for (const auto& row : report.rows) {
         out << row.cutoff << ','
             << static_cast<double>(row.winner.initial_objective) << ','
@@ -191,6 +247,8 @@ void LocalQuarticClosureReporter::print_summary(
             << static_cast<double>(row.projection_residual) << ','
             << static_cast<double>(
                    row.winner.final_projected_gradient_norm) << ','
+            << static_cast<double>(
+                   row.winner.time_step_relative_error) << ','
             << row.winner.accepted_steps << ','
             << row.winner.evaluations << ','
             << row.winner.seed << '\n';

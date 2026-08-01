@@ -34,6 +34,12 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
             options.line_search_steps = std::stoi(next(index, name));
         } else if (name == "--lbfgs-history") {
             options.lbfgs_history = std::stoi(next(index, name));
+        } else if (name == "--trajectory-steps") {
+            options.trajectory_steps = std::stoi(next(index, name));
+        } else if (name == "--nu") {
+            options.viscosity = std::stold(next(index, name));
+        } else if (name == "--dt") {
+            options.time_step = std::stold(next(index, name));
         } else if (name == "--step") {
             options.initial_step = std::stold(next(index, name));
         } else if (name == "--sobolev-order") {
@@ -46,6 +52,8 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
             options.method = next(index, name);
         } else if (name == "--objective") {
             options.objective = next(index, name);
+        } else if (name == "--selection") {
+            options.selection = next(index, name);
         } else if (name == "--certificate") {
             options.certificate_path = next(index, name);
         } else if (name == "--state-dir") {
@@ -66,7 +74,22 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
         !(options.initial_step > 0.0L) ||
         !std::isfinite(options.initial_step) ||
         (options.objective != "sld-ratio" &&
-         options.objective != "closure-ratio") ||
+         options.objective != "closure-ratio" &&
+         options.objective != "signed-closure-ratio" &&
+         options.objective != "block-ratio" &&
+         options.objective != "mixed-ratio" &&
+         options.objective != "terminal-sld-ratio" &&
+         options.objective != "maximum-sld-ratio") ||
+        (options.selection != "local" &&
+         options.selection != "doubling-family" &&
+         options.selection != "doubling-remainder") ||
+        ((options.objective == "block-ratio" ||
+          options.objective == "mixed-ratio") &&
+         options.selection == "local") ||
+        ((options.objective == "terminal-sld-ratio" ||
+          options.objective == "maximum-sld-ratio") &&
+         (options.trajectory_steps < 1 || !(options.viscosity > 0.0L) ||
+          !(options.time_step > 0.0L))) ||
         ((options.sobolev_order == 0) !=
          (options.sobolev_cap == 0.0L)) ||
         options.certificate_path.empty() ||
@@ -86,15 +109,19 @@ void LocalQuarticClosureCli::print_help(std::ostream& out) {
         << "  --iterations N       exact-gradient iterations per start\n"
         << "  --line-search N      backtracking trials per iteration\n"
         << "  --lbfgs-history N    limited-memory curvature pairs\n"
+        << "  --trajectory-steps N RK4 steps for frozen-data trajectory objectives\n"
+        << "  --nu X               viscosity for trajectory objectives\n"
+        << "  --dt X               RK4 step for trajectory objectives\n"
         << "  --step X             initial Riemannian step\n"
         << "  --method NAME        lbfgs or steepest\n"
-        << "  --objective NAME     sld-ratio (direct target) or closure-ratio\n"
+        << "  --objective NAME     sld-ratio, terminal-sld-ratio, maximum-sld-ratio, closure-ratio, signed-closure-ratio, block-ratio, or mixed-ratio\n"
+        << "  --selection NAME     local, doubling-family, or doubling-remainder\n"
         << "  --sobolev-order M    optional homogeneous Sobolev cap\n"
         << "  --sobolev-cap X      cutoff-independent squared cap\n"
         << "  --seed N             deterministic master seed\n"
         << "  --certificate PATH   write English JSON certificate\n"
         << "  --state-dir PATH     write winning K*.tsv states\n"
-        << "  --warm-state PATH    continue from the saved K-1 winner\n";
+        << "  --warm-state PATH    continue from a saved K or K-1 winner\n";
 }
 
 int LocalQuarticClosureCli::run(

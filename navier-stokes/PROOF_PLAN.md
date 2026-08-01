@@ -67,11 +67,22 @@ force the best absorbable estimate to leave at least a `Z³` term. This does not
 exclude finite-time growth of enstrophy. See
 `proof/l2/l2-certificate.json`.
 
-The current restart point is **L3 → L4**: use the encoded local/nonlocal flux
-partition to formulate a depletion quantity that controls vortex stretching,
-then reject it unless its bound is cutoff-independent and closes L5.
+The current restart point is the **frozen-data local L4 trajectory lemma**.
+For one initial datum set `k0=sqrt(Z(0)/E(0))`, `B0=E(0)P(0)`, and prove a
+cutoff- and time-uniform upper bound for
 
-The first explicit L4 candidate is now
+```text
+R_local(t)=4S(t)^3 Z(t)P(t)(K(t)+G(t))
+ / [k0(S(t)^4 Z(t)^2P(t)+B0 Z(t)^3P(t)^4)].
+```
+
+The exact maximum-on-trajectory adjoint is implemented and validated. Its
+current K3 lower bound on `[0,0.5]` is `8.48675785e-4` at `t=0.2175`; this is
+a pattern and falsification result, not the required analytic bound. Resume
+from the `(m,m,2m)`/remainder/mixed decomposition in
+`proof/l4/lemmas/shifted-local-density/SIGNATURE_BLOCK.md`.
+
+The first explicit L4 candidate in the reduction was
 
 ```text
 D_N(t) = |V_N(t)| / (Z_N(t)^(3/4) P_N(t)^(3/4)),
@@ -789,3 +800,65 @@ dominant block plus a cutoff-uniform estimate of the orthogonal shell
 remainder. The present direct quotient uses the evaluated state as the datum,
 so a trajectory proof must additionally freeze `k0,B0` at time zero. These
 finite optimizations do not complete L4 or the Clay problem.
+
+The dominant block is now an exact operator decomposition rather than a table
+classification. `L_d` selects every local squared-frequency signature
+`(m,m,2m)` and `L_r=L_local-L_d`. Independent evaluation of all mixed
+bilinear terms certifies
+
+```text
+K+G = F_d + F_r + F_cross
+```
+
+to `2.20e-18` relatively on the K8 winner. Their direct SLD contributions are
+`7.70182e-4`, `1.21606e-5`, and `1.30224e-5`. The next proof attempt must
+derive a scale-uniform signed estimate for `F_d` and a summable joint estimate
+for `F_r+F_cross`; separate triangle inequalities are not accepted because
+they restore the known frequency loss.
+
+The tempting global sign shortcut has now been eliminated. Exact-gradient
+search gives a positive normalized bracket `c=0.0740187069851` for the full
+local operator, and positive examples also exist for both sides of the
+doubling-family split. Those states have nearly zero stretching, so the
+correct restart point is the joint factorization `R_j=c_j phi(x)`, not the
+sign of `c_j` alone. The common-normalization block gradients pass central
+differences at `1.29e-11` or better. Separate cutoff scans stabilize near
+`7.72930e-4` (doubling family, K6), `2.20683e-4` (remainder, K6), and
+`1.34936e-4` (mixed, K6). The remainder and mixed blocks therefore need a
+real joint estimate even though they are small on the original K8 branch.
+
+The static absolute search has also isolated a sharp candidate rather than
+only a decimal plateau. The normalized six-mode cyclic axis shear satisfies
+`E=Z=P=1`, `S=0`, and `K+G=-1/3` with `1.08e-19` identity error. Its padded
+branch stays at `|c|=1/3` from K1 through K8 under 12-start searches. The
+candidate inequality
+
+```text
+|K+G| E^(1/4) <= (1/3) Z^(7/4)P
+```
+
+is therefore sharp if true, but remains unproved.
+
+More importantly, the engine now removes the `t=0` shortcut. A separate
+trajectory adjoint freezes `k0=sqrt(Z(0)/E(0))` and `B0=E(0)P(0)`, evolves
+with RK4, and includes the direct initial-data derivatives of both constants
+in the reverse pass. Its gradient error is `5.62e-12`, and the zero-step
+limit matches the static gradient to `1.52e-19`. At K3 and `nu=0.1`, optimized
+terminal ratios rise from `7.98918e-4` at `T=0.01` to `8.46863e-4` at
+`T=0.20`, with dt-halving errors below `4.3e-16`. Thus the current restart
+point is a uniform-in-time bound for the frozen-data joint quotient, not the
+static `1/3` conjecture alone.
+
+The maximum-on-trajectory adjoint removes endpoint bias. On the current K3
+search over `0<=t<=0.5`, it selects `t=0.2175` and returns the refined lower
+bound `8.48675785e-4`; coarse/refined checkpoint maxima differ by `3.10e-6`
+relatively. The optimized initial state remains low-shell: `99.9723%` of its
+energy lies in the first hard shell and the `(1,1,2)` signature supplies
+`99.42%` of the coherent signed transfer. The nonzero projected gradient
+`3.55e-4` prevents treating this number as a converged maximum.
+Evolving that initial state to the refined peak and retaining its initial
+`k0,B0` splits the quotient into `8.18560410e-4` (doubling family),
+`1.52599847e-5` (closed remainder), and `1.48553902e-5` (mixed), with
+`9.98e-19` reconstruction error. The family therefore remains the primary
+trajectory lemma, while the latter two terms require one joint summable
+estimate.

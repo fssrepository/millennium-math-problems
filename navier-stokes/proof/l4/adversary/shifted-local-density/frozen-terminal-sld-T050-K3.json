@@ -1,0 +1,29 @@
+{
+  "schema": "navier-stokes-local-quartic-closure-adversary-v1",
+  "search_objective": "terminal-sld-ratio",
+  "triad_selection": "local",
+  "optimized_formula": "maximize the terminal local SLD ratio with k0 and B0 frozen from the initial state",
+  "closure_objective": "maximize |K+G| / (k0 B0^(1/4) Z^(5/4) P^(3/4))",
+  "direct_sld_objective": "maximize 4 S^3 Z P (K+G) / (k0 (S^4 Z^2 P + B0 Z^3 P^4))",
+  "implemented_static_scale": "Z^(7/4) P / E^(1/4)",
+  "optimizer": "lbfgs",
+  "warm_state_path": "proof/l4/states/local-sld-trajectory/frozen-T020-K3/K3.tsv",
+  "gradient": "exact discrete reverse mode through local Galerkin triads",
+  "workers": 12,
+  "restarts_per_cutoff": 12,
+  "iterations_per_restart": 6,
+  "trajectory_steps": 500,
+  "viscosity": 0.100000000000000006,
+  "time_step": 0.00100000000000000002,
+  "sobolev_order": 0,
+  "sobolev_cap": 0,
+  "fitted_cutoff_slope": 0,
+  "maximum_constant_ratio": 0.326296709950435193,
+  "maximum_objective": 0.000815979887111786362,
+  "candidate_lemma_proved": false,
+  "finite_search_is_not_a_proof": true,
+  "remaining_requirement": "derive a cutoff-independent analytic bound for the two-entry bracket",
+  "rows": [
+    {"cutoff": 3, "initial_objective": 0.000294836561019045003, "optimized_objective": 0.000815979887111786362, "objective_gain": 0.000521143326092741413, "initial_constant_ratio": 0.256621055389349817, "optimized_constant_ratio": 0.326296709950435193, "signed_constant_ratio": -0.326296709950435193, "normalized_stretching_ratio": 0.00547499767476217723, "signed_shape_factor": 6.56465350505013082e-07, "factorized_local_sld_ratio": -2.14202484066245027e-07, "factorization_relative_error": 1.20677378019051531e-19, "common_block_objective": false, "common_block_constant_ratio": 0, "common_block_shape_factor": 0, "common_block_sld_ratio": 0, "common_block_reconstruction_error": 0, "refined_objective": 0.000815979887111784085, "time_step_relative_error": 2.84109482806188442e-15, "frozen_initial_frequency": 1.00098842911337771, "frozen_initial_ep_shift": 1.01566881302563905, "improvement_factor": 1.27151183855655292, "signed_two_entry_bracket": -0.332557320766841025, "candidate_scale": 1.01918686467098252, "signed_stretching": 0.00556353193146591051, "local_polynomial_numerator": -2.33124807646455445e-07, "local_polynomial_denominator": 1.08833848805580824, "signed_local_sld_ratio": -2.14202484066245027e-07, "energy": 1, "enstrophy": 1.00197783521886752, "palinstrophy": 1.01566881302563905, "warm_lift_constant_ratio": 0.256621055389349817, "warm_lift_objective": 0.000294836561019045003, "projection_residual": 0.147320562168171493, "projected_gradient_norm": 0.00264567143108211016, "sobolev_value": 0, "winning_restart": 0, "winning_seed": "8830210009950054544", "warm_continuation_won": true, "accepted_steps": 6, "evaluations": 13, "state_path": "proof/l4/states/local-sld-trajectory/frozen-T050-K3/K3.tsv", "restart_constant_ratios": [0.326296709950435193, 0.00373692541243140965, 0.00296027655105310936, 0.0132993250466575137, 0.00352013273010203529, 0.00368472449231403796, 0.159489705622006511, 0.00412938276286798234, 0.00271969975328291294, 0.0121795547689237844, 0.00123667222120874215, 0.00299102507012942486], "restart_objectives": [0.000815979887111786362, 3.04402383744904876e-08, 8.60346553359768643e-09, 2.7826972082934212e-06, 1.42899102290562993e-08, 2.26070483484975057e-08, 0.000171424931692380354, 3.1564761236092777e-08, 9.31983852056248899e-09, 2.04650100479723424e-06, 1.48613252908931325e-09, 1.19850160968026488e-08]}
+  ]
+}

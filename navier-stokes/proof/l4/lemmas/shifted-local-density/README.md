@@ -363,6 +363,33 @@ where `S^3` vanishes. Its K1--K8 continuation converges from
 The K8 state is dominated by the local `(1,1,2)` signature. An explicit cyclic
 axis-shear plus quadratic-response ansatz recovers `97.44%` of that value.
 These results sharpen the next signed block estimate but do not prove it.
+The operator-level version is in
+[SIGNATURE_BLOCK.md](SIGNATURE_BLOCK.md): it evaluates the dominant closed
+block, the closed complement, and every mixed bilinear term independently.
+Their K8 reconstruction error is `2.20e-18`.
+The corresponding common-normalization gradients pass central differences at
+`1.29e-11` or better. Independent scans reach `7.72930e-4`, `2.20683e-4`,
+and `1.34936e-4` for the family, remainder, and mixed terms respectively.
+The bracket alone is not sign-definite: a replayable search gives positive
+normalized `K+G` equal to `0.0740187069851`, while its nearly zero stretching
+suppresses the actual SLD contribution. The active lemma must therefore keep
+the joint block factorization.
+
+The pure cyclic axis state gives the exact sharp static candidate `|c|=1/3`
+with `1.08e-19` identity error, unchanged under padded K1--K8 searches. The
+trajectory engine now freezes `k0,B0` at time zero and differentiates through
+RK4 plus both parameter dependencies. Its gradient error is `5.62e-12`.
+Optimized K3 terminal ratios increase from `7.98918e-4` at `T=0.01` to
+`8.46863e-4` at `T=0.20`, so the unresolved lemma is explicitly the uniform
+frozen-data trajectory bound rather than the static conjecture alone.
+Maximizing over all stored times in `[0,0.5]` selects `t=0.2175` and gives
+the refined lower bound `8.48675785e-4`. The initial state still has
+`99.9723%` of its energy in the first hard shell; the search is not yet
+stationary, so this remains a pattern and falsification artifact.
+At the refined peak, frozen-data block analysis gives `8.18560410e-4` from
+the doubling family and about `1.5e-5` from each correction, reconstructing
+the full quotient to `9.98e-19`. Dominance of the same family therefore
+survives the evolution rather than being only a `t=0` artifact.
 
 ## Reduced proof obligation
 

@@ -17,11 +17,14 @@ struct LocalSldCyclicAnsatzOptions {
 struct LocalSldCyclicAnsatzReport {
     SpectralState state;
     LocalQuarticClosureObjectiveValue value;
+    LocalQuarticClosureObjectiveValue pure_axis_value;
+    LocalQuarticClosureObjectiveValue pure_response_value;
     SpectralReal angle = 0.0L;
     SpectralReal axis_energy_fraction = 0.0L;
     SpectralReal response_energy_fraction = 0.0L;
     SpectralReal basis_inner_product = 0.0L;
     SpectralReal projected_gradient_norm = 0.0L;
+    SpectralReal pure_axis_identity_error = 0.0L;
     int coarse_samples = 0;
     int refinement_iterations = 0;
     bool finite_search_is_not_a_proof = true;

@@ -106,6 +106,48 @@ ratio converge to exactly `1/3`, but that state has
 `S=-1.23e-11`; consequently its real polynomial numerator is negligible. It
 is a legitimate sharp test of LQC-3, not the worst case for SLD-1P-L.
 
+The saturating state is not opaque. For the normalized cyclic axis shear
+
+```text
+u_hat(e1)=e3/sqrt(3),
+u_hat(e2)=e1/sqrt(3),
+u_hat(e3)=e2/sqrt(3),
+u_hat(-k)=conj(u_hat(k)),
+```
+
+the engine certifies
+
+```text
+E=Z=P=1,  S=0,  K+G=-1/3,  c=-1/3
+```
+
+with maximum identity error `1.08e-19`. Padding this same state and running
+12 independent starts finds `|c|=1/3` unchanged from K1 through K8, with no
+larger finite-dimensional example. This motivates the sharp static candidate
+
+```text
+|K+G| E^(1/4) <= (1/3) Z^(7/4) P.                   (LQC-7)
+```
+
+LQC-7 is not proved. Even if proved, it would use the current state's
+normalization; LQC-3 along a trajectory uses `k0,B0` frozen at time zero.
+That distinction prevents the sharp static conjecture from being presented
+as the completed local trajectory lemma.
+
+The signed variant does not have a universal favorable sign either. Exact
+reverse mode for
+
+```text
+c=(K+G)E^(1/4)/(Z^(7/4)P)
+```
+
+agrees with central differences to `1.57e-11`. A 12-start search finds the
+positive value `c=0.0740187069851`, stable from K2 through K4. The corresponding
+stretching is nearly zero, so this rejects the shortcut `K+G<=0` without
+creating a large direct SLD source. The same test also finds positive brackets
+inside the doubling family and its complement. This failed route is recorded
+as F012; subsequent estimates must preserve the joint factorization LQC-6.
+
 Twelve-start projected L-BFGS optimization of LQC-5 gives
 
 ```text
@@ -147,13 +189,54 @@ This captures `97.44%` of the full K8 adversarial value. The nonzero full
 projected gradient (`0.00280`) measures the missing higher-response
 correction, rather than hiding it.
 
-LQC-5 as implemented here is an instantaneous `t=0` oracle: the evaluated
-state supplies `k0` and `B0`. The proof still needs a bound at later times
-with those two quantities frozen at their actual initial values. The next
-analytic task is to prove the signed `(1,1,2)` block estimate and bound its
-orthogonal shell remainder with a cutoff-independent summation, then extend
-the estimate along a Galerkin trajectory. No finite table establishes those
-steps.
+The instantaneous LQC-5 oracle uses the evaluated state as its datum. A
+separate `LocalSldTrajectoryAdjoint` now evaluates the terminal state with
+`k0=sqrt(Z(0)/E(0))` and `B0=E(0)P(0)` frozen from the actual initial state.
+Its reverse pass includes both the RK4 VJP and the direct dependence of the
+two frozen parameters on the optimized initial datum. Central differences
+give `5.62e-12`; at zero steps it reconstructs the instantaneous gradient to
+`1.52e-19`.
+
+At `nu=0.1`, 12-start K3 horizon continuation gives
+
+```text
+T          terminal frozen R_local       dt-halving error
+0.01       7.98918e-4                    3.64e-18
+0.05       8.12240e-4                    1.39e-17
+0.10       8.26646e-4                    9.14e-17
+0.20       8.46863e-4                    4.21e-16
+```
+
+The observed increase proves that the static extremizer cannot replace a
+frozen-data trajectory estimate.
+The nonsmooth maximum-on-trajectory objective over `0<=t<=0.5` selects
+`t=0.2175` after time-step refinement and gives the current lower bound
+`8.48675785e-4`. The coarse and refined grids select steps 217 and 435;
+their values differ by `3.10e-6` relatively. The projected initial gradient
+is still `3.55e-4`, so this is not claimed as a converged global maximum.
+At the refined peak, the frozen-normalization exact block decomposition is
+`8.18560410e-4` from the doubling family, `1.52599847e-5` from the closed
+remainder, and `1.48553902e-5` from the mixed term. They reconstruct the full
+`8.48675785e-4` to `9.98e-19`; the family retains `96.45%` of the absolute
+three-block sum after evolution.
+The next analytic task is to bound this evolving joint quotient uniformly,
+using the exact block split below. No finite horizon scan establishes that
+bound.
+
+[SIGNATURE_BLOCK.md](SIGNATURE_BLOCK.md) now makes this routing exact. It
+splits the local operator into the `(m,m,2m)` family and its complement and
+independently reconstructs the closed-family, closed-remainder, and mixed
+brackets. On the K8 winner the family contributes `7.70182e-4` of the full
+`7.95365e-4` quotient; remainder and mixed contributions are both about
+`1.3e-5`.
+
+Exact gradients with the common full stretching factor now maximize the three
+contributions independently. The observed maxima are `7.72930e-4` for the
+doubling family through K6, `2.20683e-4` for the remainder through K6, and
+`1.34936e-4` for the mixed block through K6. Because these winners differ,
+the values are not an additive full-state bound. They prove that a successful
+argument cannot discard the latter two blocks solely from their small size on
+the original K8 winner.
 
 Cutoff stability of `C_state` is a falsification check only. The proof task is
 to derive LQC-3, or a weaker signed version sufficient for LQC-4, uniformly

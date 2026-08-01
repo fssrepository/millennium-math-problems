@@ -2,6 +2,7 @@
 
 #include "spectral_state.hpp"
 
+#include <array>
 #include <limits>
 
 namespace lemma {
@@ -16,6 +17,14 @@ enum class TriadPartition {
 
 class TriadSelection {
 public:
+    enum class SignatureMode {
+        none,
+        include,
+        exclude,
+        include_equal_low_doubling,
+        exclude_equal_low_doubling
+    };
+
     constexpr TriadSelection() = default;
     constexpr TriadSelection(TriadPartition partition) {
         switch (partition) {
@@ -42,6 +51,32 @@ public:
         return TriadSelection(minimum_gap, maximum_gap_value);
     }
 
+    [[nodiscard]] static constexpr TriadSelection local_signature(
+        SpectralInteger first, SpectralInteger second,
+        SpectralInteger third) {
+        return TriadSelection(
+            0, 0, SignatureMode::include, {first, second, third});
+    }
+
+    [[nodiscard]] static constexpr TriadSelection local_without_signature(
+        SpectralInteger first, SpectralInteger second,
+        SpectralInteger third) {
+        return TriadSelection(
+            0, 0, SignatureMode::exclude, {first, second, third});
+    }
+
+    [[nodiscard]] static constexpr TriadSelection
+    local_equal_low_doubling() {
+        return TriadSelection(
+            0, 0, SignatureMode::include_equal_low_doubling, {});
+    }
+
+    [[nodiscard]] static constexpr TriadSelection
+    local_without_equal_low_doubling() {
+        return TriadSelection(
+            0, 0, SignatureMode::exclude_equal_low_doubling, {});
+    }
+
     [[nodiscard]] constexpr int minimum_gap() const {
         return minimum_gap_;
     }
@@ -49,7 +84,15 @@ public:
         return maximum_gap_;
     }
     [[nodiscard]] constexpr bool is_all() const {
-        return minimum_gap_ == 0 && maximum_gap_ == maximum_gap_value;
+        return minimum_gap_ == 0 && maximum_gap_ == maximum_gap_value &&
+            signature_mode_ == SignatureMode::none;
+    }
+    [[nodiscard]] constexpr SignatureMode signature_mode() const {
+        return signature_mode_;
+    }
+    [[nodiscard]] constexpr std::array<SpectralInteger, 3>
+    squared_length_signature() const {
+        return squared_length_signature_;
     }
     [[nodiscard]] constexpr bool includes_gap(int gap) const {
         return gap >= minimum_gap_ && gap <= maximum_gap_;
@@ -62,8 +105,17 @@ private:
     constexpr TriadSelection(int minimum_gap, int maximum_gap)
         : minimum_gap_(minimum_gap), maximum_gap_(maximum_gap) {}
 
+    constexpr TriadSelection(
+        int minimum_gap, int maximum_gap, SignatureMode signature_mode,
+        std::array<SpectralInteger, 3> squared_length_signature)
+        : minimum_gap_(minimum_gap), maximum_gap_(maximum_gap),
+          signature_mode_(signature_mode),
+          squared_length_signature_(squared_length_signature) {}
+
     int minimum_gap_ = 0;
     int maximum_gap_ = maximum_gap_value;
+    SignatureMode signature_mode_ = SignatureMode::none;
+    std::array<SpectralInteger, 3> squared_length_signature_{};
 };
 
 class TriadPartitioner {

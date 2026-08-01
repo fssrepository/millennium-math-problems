@@ -72,20 +72,21 @@ struct ClosureGraph {
 };
 
 ClosureGraph build_graph(const SpectralDynamics& dynamics,
-                         const SpectralState& state) {
+                         const SpectralState& state,
+                         TriadSelection selection) {
     ClosureGraph graph;
     graph.au = laplacian_weight(state, state.velocity);
     graph.b = dynamics.advection_direct_partition(
-        state, TriadPartition::local);
+        state, selection);
     graph.ab = laplacian_weight(state, graph.b);
     graph.transported_au =
         dynamics.advection_bilinear_direct_partition(
             state, state.velocity, graph.au,
-            TriadPartition::local);
+            selection);
     graph.b_advects_u =
         dynamics.advection_bilinear_direct_partition(
             state, graph.b, state.velocity,
-            TriadPartition::local);
+            selection);
     graph.energy = pairing(state.velocity, state.velocity);
     graph.enstrophy = pairing(state.velocity, graph.au);
     graph.palinstrophy = pairing(graph.au, graph.au);
@@ -115,7 +116,8 @@ SpectralReal bracket_value(const ClosureGraph& graph) {
 SpectralIncrement bracket_gradient(
     const SpectralDynamics& dynamics,
     const SpectralState& state,
-    const ClosureGraph& graph) {
+    const ClosureGraph& graph,
+    TriadSelection selection) {
     const std::size_t modes = state.waves.size();
     SpectralIncrement bar_u(modes);
     SpectralIncrement bar_au(modes);
@@ -156,14 +158,14 @@ SpectralIncrement bracket_gradient(
     const BilinearAdvectionCotangents b_advects_u_cotangents =
         dynamics.advection_bilinear_vjp_direct_partition(
             state, graph.b, state.velocity,
-            bar_b_advects_u, TriadPartition::local);
+            bar_b_advects_u, selection);
     add_scaled(bar_b, b_advects_u_cotangents.advecting, 1.0L);
     add_scaled(bar_u, b_advects_u_cotangents.advected, 1.0L);
 
     const BilinearAdvectionCotangents transported_au_cotangents =
         dynamics.advection_bilinear_vjp_direct_partition(
             state, state.velocity, graph.au,
-            bar_transported_au, TriadPartition::local);
+            bar_transported_au, selection);
     add_scaled(bar_u, transported_au_cotangents.advecting, 1.0L);
     add_scaled(bar_au, transported_au_cotangents.advected, 1.0L);
 
@@ -171,7 +173,7 @@ SpectralIncrement bracket_gradient(
     add_scaled(
         bar_u,
         dynamics.advection_vjp_direct_partition(
-            state, bar_b, TriadPartition::local),
+            state, bar_b, selection),
         1.0L);
     add_scaled(bar_u, laplacian_weight(state, bar_au), 1.0L);
     return bar_u;
@@ -180,12 +182,13 @@ SpectralIncrement bracket_gradient(
 SpectralIncrement stretching_gradient(
     const SpectralDynamics& dynamics,
     const SpectralState& state,
-    const ClosureGraph& graph) {
+    const ClosureGraph& graph,
+    TriadSelection selection) {
     SpectralIncrement result = graph.ab;
     add_scaled(
         result,
         dynamics.advection_vjp_direct_partition(
-            state, graph.au, TriadPartition::local),
+            state, graph.au, selection),
         1.0L);
     return result;
 }
@@ -193,12 +196,12 @@ SpectralIncrement stretching_gradient(
 }  // namespace
 
 LocalQuarticClosureObjective::LocalQuarticClosureObjective(
-    const SpectralDynamics& dynamics)
-    : dynamics_(dynamics) {}
+    const SpectralDynamics& dynamics, TriadSelection selection)
+    : dynamics_(dynamics), selection_(selection) {}
 
 LocalQuarticClosureObjectiveValue LocalQuarticClosureObjective::evaluate(
     const SpectralState& state) const {
-    const ClosureGraph graph = build_graph(dynamics_, state);
+    const ClosureGraph graph = build_graph(dynamics_, state, selection_);
     LocalQuarticClosureObjectiveValue result;
     result.energy = graph.energy;
     result.enstrophy = graph.enstrophy;
@@ -282,7 +285,7 @@ LocalQuarticClosureObjectiveValue LocalQuarticClosureObjective::evaluate(
 SpectralIncrement
 LocalQuarticClosureObjective::signed_local_sld_ratio_gradient(
     const SpectralState& state) const {
-    const ClosureGraph graph = build_graph(dynamics_, state);
+    const ClosureGraph graph = build_graph(dynamics_, state, selection_);
     SpectralIncrement result(state.waves.size());
     const SpectralReal e = graph.energy;
     const SpectralReal z = graph.enstrophy;
@@ -334,15 +337,109 @@ LocalQuarticClosureObjective::signed_local_sld_ratio_gradient(
         numerator_z, denominator_z);
     const SpectralReal weight_p = quotient_partial(
         numerator_p, denominator_p);
-    result = bracket_gradient(dynamics_, state, graph);
+    result = bracket_gradient(dynamics_, state, graph, selection_);
     for (ComplexVector& mode : result) {
         for (SpectralComplex& component : mode) {
             component *= weight_f;
         }
     }
     add_scaled(
-        result, stretching_gradient(dynamics_, state, graph), weight_s);
+        result, stretching_gradient(
+            dynamics_, state, graph, selection_), weight_s);
     add_scaled(result, state.velocity, 2.0L * weight_e);
+    add_scaled(result, graph.au, 2.0L * weight_z);
+    add_scaled(
+        result, laplacian_weight(state, graph.au), 2.0L * weight_p);
+    return result;
+}
+
+SpectralReal LocalQuarticClosureObjective::frozen_signed_local_sld_ratio(
+    const SpectralState& state,
+    SpectralReal initial_frequency,
+    SpectralReal initial_ep_shift) const {
+    const ClosureGraph graph = build_graph(dynamics_, state, selection_);
+    const SpectralReal z = graph.enstrophy;
+    const SpectralReal p = graph.palinstrophy;
+    const SpectralReal s = graph.stretching;
+    if (!(initial_frequency > 0.0L) ||
+        !(initial_ep_shift > 0.0L) || !(z > 0.0L) || !(p > 0.0L)) {
+        return 0.0L;
+    }
+    const SpectralReal s2 = s * s;
+    const SpectralReal s3 = s2 * s;
+    const SpectralReal s4 = s2 * s2;
+    const SpectralReal p2 = p * p;
+    const SpectralReal p4 = p2 * p2;
+    const SpectralReal denominator = initial_frequency *
+        (s4 * z * z * p +
+         initial_ep_shift * z * z * z * p4);
+    return denominator > 0.0L
+        ? 4.0L * s3 * z * p * bracket_value(graph) / denominator
+        : 0.0L;
+}
+
+SpectralIncrement
+LocalQuarticClosureObjective::frozen_signed_local_sld_ratio_gradient(
+    const SpectralState& state,
+    SpectralReal initial_frequency,
+    SpectralReal initial_ep_shift) const {
+    const ClosureGraph graph = build_graph(dynamics_, state, selection_);
+    SpectralIncrement result(state.waves.size());
+    const SpectralReal z = graph.enstrophy;
+    const SpectralReal p = graph.palinstrophy;
+    const SpectralReal s = graph.stretching;
+    const SpectralReal f = bracket_value(graph);
+    if (!(initial_frequency > 0.0L) ||
+        !(initial_ep_shift > 0.0L) || !(z > 0.0L) || !(p > 0.0L)) {
+        return result;
+    }
+    const SpectralReal s2 = s * s;
+    const SpectralReal s3 = s2 * s;
+    const SpectralReal s4 = s2 * s2;
+    const SpectralReal p2 = p * p;
+    const SpectralReal p3 = p2 * p;
+    const SpectralReal p4 = p2 * p2;
+    const SpectralReal inner = s4 * z * z * p +
+        initial_ep_shift * z * z * z * p4;
+    const SpectralReal denominator = initial_frequency * inner;
+    if (!(denominator > 0.0L) || !std::isfinite(denominator)) {
+        return result;
+    }
+    const SpectralReal numerator = 4.0L * s3 * z * p * f;
+    const SpectralReal denominator2 = denominator * denominator;
+    const SpectralReal numerator_f = 4.0L * s3 * z * p;
+    const SpectralReal numerator_s = 12.0L * s2 * z * p * f;
+    const SpectralReal numerator_z = 4.0L * s3 * p * f;
+    const SpectralReal numerator_p = 4.0L * s3 * z * f;
+    const SpectralReal denominator_s = initial_frequency *
+        (4.0L * s3 * z * z * p);
+    const SpectralReal denominator_z = initial_frequency *
+        (2.0L * s4 * z * p +
+         3.0L * initial_ep_shift * z * z * p4);
+    const SpectralReal denominator_p = initial_frequency *
+        (s4 * z * z +
+         4.0L * initial_ep_shift * z * z * z * p3);
+    auto quotient_partial = [&](SpectralReal numerator_partial,
+                                SpectralReal denominator_partial) {
+        return (numerator_partial * denominator -
+                numerator * denominator_partial) / denominator2;
+    };
+    const SpectralReal weight_f = numerator_f / denominator;
+    const SpectralReal weight_s = quotient_partial(
+        numerator_s, denominator_s);
+    const SpectralReal weight_z = quotient_partial(
+        numerator_z, denominator_z);
+    const SpectralReal weight_p = quotient_partial(
+        numerator_p, denominator_p);
+    result = bracket_gradient(dynamics_, state, graph, selection_);
+    for (ComplexVector& mode : result) {
+        for (SpectralComplex& component : mode) {
+            component *= weight_f;
+        }
+    }
+    add_scaled(
+        result, stretching_gradient(
+            dynamics_, state, graph, selection_), weight_s);
     add_scaled(result, graph.au, 2.0L * weight_z);
     add_scaled(
         result, laplacian_weight(state, graph.au), 2.0L * weight_p);
@@ -352,18 +449,30 @@ LocalQuarticClosureObjective::signed_local_sld_ratio_gradient(
 SpectralIncrement
 LocalQuarticClosureObjective::two_entry_bracket_gradient(
     const SpectralState& state) const {
-    const ClosureGraph graph = build_graph(dynamics_, state);
+    const ClosureGraph graph = build_graph(dynamics_, state, selection_);
     if (!(graph.enstrophy > 0.0L) ||
         !(graph.palinstrophy > 0.0L)) {
         return SpectralIncrement(state.waves.size());
     }
-    return bracket_gradient(dynamics_, state, graph);
+    return bracket_gradient(dynamics_, state, graph, selection_);
+}
+
+SpectralIncrement
+LocalQuarticClosureObjective::signed_stretching_gradient(
+    const SpectralState& state) const {
+    const ClosureGraph graph = build_graph(dynamics_, state, selection_);
+    if (!(graph.enstrophy > 0.0L) ||
+        !(graph.palinstrophy > 0.0L)) {
+        return SpectralIncrement(state.waves.size());
+    }
+    return stretching_gradient(
+        dynamics_, state, graph, selection_);
 }
 
 SpectralIncrement
 LocalQuarticClosureObjective::squared_constant_ratio_gradient(
     const SpectralState& state) const {
-    const ClosureGraph graph = build_graph(dynamics_, state);
+    const ClosureGraph graph = build_graph(dynamics_, state, selection_);
     SpectralIncrement result(state.waves.size());
     if (!(graph.energy > 0.0L) || !(graph.enstrophy > 0.0L) ||
         !(graph.palinstrophy > 0.0L)) {
@@ -374,7 +483,7 @@ LocalQuarticClosureObjective::squared_constant_ratio_gradient(
         (std::pow(graph.enstrophy, 3.5L) *
          graph.palinstrophy * graph.palinstrophy);
     const SpectralReal objective = bracket * bracket * factor;
-    result = bracket_gradient(dynamics_, state, graph);
+    result = bracket_gradient(dynamics_, state, graph, selection_);
     for (ComplexVector& mode : result) {
         for (SpectralComplex& component : mode) {
             component *= 2.0L * bracket * factor;
@@ -385,6 +494,36 @@ LocalQuarticClosureObjective::squared_constant_ratio_gradient(
     add_scaled(
         result, laplacian_weight(state, graph.au),
         -4.0L * objective / graph.palinstrophy);
+    return result;
+}
+
+SpectralIncrement
+LocalQuarticClosureObjective::signed_constant_ratio_gradient(
+    const SpectralState& state) const {
+    const ClosureGraph graph = build_graph(dynamics_, state, selection_);
+    SpectralIncrement result(state.waves.size());
+    if (!(graph.energy > 0.0L) || !(graph.enstrophy > 0.0L) ||
+        !(graph.palinstrophy > 0.0L)) {
+        return result;
+    }
+    const SpectralReal bracket = bracket_value(graph);
+    const SpectralReal factor = std::pow(graph.energy, 0.25L) /
+        (std::pow(graph.enstrophy, 1.75L) * graph.palinstrophy);
+    const SpectralReal objective = bracket * factor;
+    result = bracket_gradient(
+        dynamics_, state, graph, selection_);
+    for (ComplexVector& mode : result) {
+        for (SpectralComplex& component : mode) {
+            component *= factor;
+        }
+    }
+    add_scaled(
+        result, state.velocity, 0.5L * objective / graph.energy);
+    add_scaled(
+        result, graph.au, -3.5L * objective / graph.enstrophy);
+    add_scaled(
+        result, laplacian_weight(state, graph.au),
+        -2.0L * objective / graph.palinstrophy);
     return result;
 }
 
