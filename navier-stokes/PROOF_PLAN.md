@@ -171,3 +171,10 @@ immediate computational checks are continuation in `T`, decreasing viscosity,
 and independent multistarts of the exact L4-A objective. Any growth branch must
 then be classified into the existing local/nonlocal L4.1/L4.2 ledger before it
 can affect the proof status.
+
+Two warm continuations did not change that short-time picture. At `K=8`,
+doubling the horizon to `T=0.02` produced `J_8=1.20543e-5`, approximately twice
+the `T=0.01` value, while `Q(T)/Q(0)=0.9852`. Reducing viscosity from `0.1` to
+`0.02` at the same horizon produced `J_8=1.21020e-5` and
+`Q(T)/Q(0)=0.9879`. Thus neither check exposed accelerating `Q` growth; longer
+horizons and independent branches remain necessary.

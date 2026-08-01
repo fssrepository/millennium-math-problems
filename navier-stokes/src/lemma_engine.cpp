@@ -13,508 +13,39 @@
 #include "spectral_objective.hpp"
 #include "spectral_state.hpp"
 #include "state_analysis.hpp"
+#include "trajectory_analyzer.hpp"
+#include "triad_verifier.hpp"
 
 #include <algorithm>
-#include <array>
 #include <cmath>
 #include <complex>
 #include <cstddef>
 #include <cstdint>
-#include <cstdlib>
 #include <fstream>
 #include <filesystem>
 #include <iomanip>
 #include <iostream>
 #include <limits>
-#include <map>
-#include <numeric>
 #include <random>
 #include <sstream>
 #include <stdexcept>
 #include <string>
-#include <string_view>
-#include <tuple>
 #include <utility>
 #include <vector>
 
 namespace lemma {
 namespace {
 
-using Integer = SpectralInteger;
 using Real = SpectralReal;
 using Complex = SpectralComplex;
 SpectralGalerkin active_galerkin;
 SpectralDynamics active_dynamics(active_galerkin);
 SpectralObjective active_objective(active_dynamics);
+TrajectoryAnalyzer active_trajectory_analyzer(
+    active_galerkin, active_dynamics, active_objective);
 SpectralAdjoint active_adjoint(active_dynamics, active_objective);
 GradientAdversary active_gradient_adversary(
     active_dynamics, active_objective, active_adjoint);
-
-struct VortexPartition {
-    Real local = 0.0L;
-    Real nonlocal = 0.0L;
-    Real absolute_local_pairs = 0.0L;
-    Real absolute_nonlocal_pairs = 0.0L;
-};
-
-Real critical_integrand_from_stretching(Real stretching, Real enstrophy,
-                                        Real palinstrophy) {
-    const Real denominator = enstrophy * std::pow(palinstrophy, 3.0L);
-    if (!(denominator > 0.0L)) {
-        return 0.0L;
-    }
-    return std::pow(std::abs(stretching), 4.0L) / denominator;
-}
-
-Real energy_level_quantity_from_stretching(Real stretching, Real enstrophy,
-                                            Real palinstrophy) {
-    const Real denominator = std::pow(enstrophy, 2.0L) *
-                             std::pow(palinstrophy, 3.0L);
-    if (!(denominator > 0.0L)) {
-        return 0.0L;
-    }
-    return std::pow(std::abs(stretching), 4.0L) / denominator;
-}
-
-VortexPartition evaluate_vortex_partition(const SpectralState& state) {
-    VortexPartition result;
-    const Complex imaginary_unit{0.0L, 1.0L};
-    for (const InteractionIndex interaction : SpectralStateOps::interactions(state)) {
-        const auto [p_index, q_index, target_index] = interaction;
-        const WaveVector p = state.waves[p_index];
-        const WaveVector q = state.waves[q_index];
-        const WaveVector k = state.waves[target_index];
-        const Complex coefficient =
-            imaginary_unit * wave_dot(q, state.velocity[p_index]);
-        ComplexVector pair{};
-        for (std::size_t direction = 0; direction < 3; ++direction) {
-            pair[direction] = coefficient * state.velocity[q_index][direction];
-        }
-        const Real enstrophy_transfer =
-            static_cast<Real>(norm_squared(k)) *
-            std::real(dot_hermitian(state.velocity[target_index], pair));
-        const Integer smallest = std::min(
-            {norm_squared(k), norm_squared(p), norm_squared(q)});
-        const Integer largest = std::max(
-            {norm_squared(k), norm_squared(p), norm_squared(q)});
-        if (largest <= 4 * smallest) {
-            result.local += enstrophy_transfer;
-            result.absolute_local_pairs += std::abs(enstrophy_transfer);
-        } else {
-            result.nonlocal += enstrophy_transfer;
-            result.absolute_nonlocal_pairs += std::abs(enstrophy_transfer);
-        }
-    }
-    return result;
-}
-
-using RealVector = std::array<Real, 3>;
-
-struct GeometryDiagnostic {
-    Real maximum_vorticity = 0.0L;
-    Real rms_vorticity = 0.0L;
-    Real maximum_holder_half_coherence = 0.0L;
-    Real mean_holder_half_coherence = 0.0L;
-    Real positive_stretching_fraction = 0.0L;
-    Real maximum_stretch_alignment = 0.0L;
-    int high_vorticity_points = 0;
-    int coherence_pairs = 0;
-};
-
-Real real_vector_norm(const RealVector& vector) {
-    return std::sqrt(vector[0] * vector[0] + vector[1] * vector[1] +
-                     vector[2] * vector[2]);
-}
-
-GeometryDiagnostic evaluate_geometry(const SpectralState& state,
-                                     Real high_vorticity_fraction = 0.5L) {
-    const int cutoff = SpectralStateOps::cutoff(state);
-    const int grid_n = 2 * cutoff + 3;
-    const Real spacing = 2.0L * std::acos(-1.0L) / static_cast<Real>(grid_n);
-    const std::size_t cells = static_cast<std::size_t>(grid_n) *
-                              static_cast<std::size_t>(grid_n) *
-                              static_cast<std::size_t>(grid_n);
-    std::vector<RealVector> vorticity(cells);
-    std::vector<Real> magnitude(cells, 0.0L);
-    GeometryDiagnostic result;
-
-    auto cell_index = [grid_n](int x, int y, int z) {
-        const auto wrap = [grid_n](int value) {
-            value %= grid_n;
-            return value < 0 ? value + grid_n : value;
-        };
-        const auto xx = static_cast<std::size_t>(wrap(x));
-        const auto yy = static_cast<std::size_t>(wrap(y));
-        const auto zz = static_cast<std::size_t>(wrap(z));
-        const auto nn = static_cast<std::size_t>(grid_n);
-        return (zz * nn + yy) * nn + xx;
-    };
-
-    Real vorticity2_sum = 0.0L;
-    Real positive_stretching = 0.0L;
-    Real absolute_stretching = 0.0L;
-    Real maximum_vorticity = 0.0L;
-    Real maximum_stretch_alignment = 0.0L;
-    const Complex imaginary_unit{0.0L, 1.0L};
-#ifdef NS_HAVE_OPENMP
-#pragma omp parallel for collapse(3) num_threads(active_galerkin.compute_threads()) schedule(static) \
-    reduction(+ : vorticity2_sum, positive_stretching, absolute_stretching) \
-    reduction(max : maximum_vorticity, maximum_stretch_alignment)
-#endif
-    for (int z_index = 0; z_index < grid_n; ++z_index) {
-        for (int y_index = 0; y_index < grid_n; ++y_index) {
-            for (int x_index = 0; x_index < grid_n; ++x_index) {
-                std::array<std::array<Real, 3>, 3> gradient{};
-                const Real x = spacing * static_cast<Real>(x_index);
-                const Real y = spacing * static_cast<Real>(y_index);
-                const Real z = spacing * static_cast<Real>(z_index);
-                for (std::size_t mode = 0; mode < state.waves.size(); ++mode) {
-                    const WaveVector wave = state.waves[mode];
-                    const Real angle = static_cast<Real>(wave.x) * x +
-                                       static_cast<Real>(wave.y) * y +
-                                       static_cast<Real>(wave.z) * z;
-                    const Complex phase{std::cos(angle), std::sin(angle)};
-                    const std::array<int, 3> wave_component{wave.x, wave.y, wave.z};
-                    for (std::size_t velocity_component = 0;
-                         velocity_component < 3; ++velocity_component) {
-                        for (std::size_t derivative = 0; derivative < 3; ++derivative) {
-                            gradient[velocity_component][derivative] += std::real(
-                                imaginary_unit *
-                                static_cast<Real>(wave_component[derivative]) *
-                                state.velocity[mode][velocity_component] * phase);
-                        }
-                    }
-                }
-                const RealVector omega{
-                    gradient[2][1] - gradient[1][2],
-                    gradient[0][2] - gradient[2][0],
-                    gradient[1][0] - gradient[0][1]};
-                std::array<std::array<Real, 3>, 3> strain{};
-                Real strain2 = 0.0L;
-                for (std::size_t row = 0; row < 3; ++row) {
-                    for (std::size_t column = 0; column < 3; ++column) {
-                        strain[row][column] =
-                            0.5L * (gradient[row][column] + gradient[column][row]);
-                        strain2 += strain[row][column] * strain[row][column];
-                    }
-                }
-                Real stretch = 0.0L;
-                for (std::size_t row = 0; row < 3; ++row) {
-                    for (std::size_t column = 0; column < 3; ++column) {
-                        stretch += omega[row] * strain[row][column] * omega[column];
-                    }
-                }
-                const auto cell = cell_index(x_index, y_index, z_index);
-                vorticity[cell] = omega;
-                magnitude[cell] = real_vector_norm(omega);
-                maximum_vorticity = std::max(maximum_vorticity, magnitude[cell]);
-                vorticity2_sum += magnitude[cell] * magnitude[cell];
-                positive_stretching += std::max(0.0L, stretch);
-                absolute_stretching += std::abs(stretch);
-                if (magnitude[cell] > 0.0L && strain2 > 0.0L) {
-                    maximum_stretch_alignment = std::max(
-                        maximum_stretch_alignment,
-                        std::abs(stretch) /
-                            (magnitude[cell] * magnitude[cell] * std::sqrt(strain2)));
-                }
-            }
-        }
-    }
-    result.maximum_vorticity = maximum_vorticity;
-    result.maximum_stretch_alignment = maximum_stretch_alignment;
-    result.rms_vorticity = std::sqrt(vorticity2_sum / static_cast<Real>(cells));
-    if (absolute_stretching > 0.0L) {
-        result.positive_stretching_fraction =
-            positive_stretching / absolute_stretching;
-    }
-
-    const Real threshold = high_vorticity_fraction * result.maximum_vorticity;
-    Real coherence_sum = 0.0L;
-    Real maximum_holder_half = 0.0L;
-    int high_vorticity_points = 0;
-    int coherence_pairs = 0;
-#ifdef NS_HAVE_OPENMP
-#pragma omp parallel for collapse(3) num_threads(active_galerkin.compute_threads()) schedule(static) \
-    reduction(+ : coherence_sum, high_vorticity_points, coherence_pairs) \
-    reduction(max : maximum_holder_half)
-#endif
-    for (int z = 0; z < grid_n; ++z) {
-        for (int y = 0; y < grid_n; ++y) {
-            for (int x = 0; x < grid_n; ++x) {
-                const auto cell = cell_index(x, y, z);
-                if (magnitude[cell] < threshold || magnitude[cell] <= 0.0L) {
-                    continue;
-                }
-                ++high_vorticity_points;
-                const std::array<std::array<int, 3>, 3> neighbors{{
-                    {x + 1, y, z}, {x, y + 1, z}, {x, y, z + 1}}};
-                for (const auto neighbor_coordinates : neighbors) {
-                    const auto neighbor = cell_index(neighbor_coordinates[0],
-                                                     neighbor_coordinates[1],
-                                                     neighbor_coordinates[2]);
-                    if (magnitude[neighbor] < threshold || magnitude[neighbor] <= 0.0L) {
-                        continue;
-                    }
-                    const RealVector& a = vorticity[cell];
-                    const RealVector& b = vorticity[neighbor];
-                    const RealVector cross{
-                        a[1] * b[2] - a[2] * b[1],
-                        a[2] * b[0] - a[0] * b[2],
-                        a[0] * b[1] - a[1] * b[0]};
-                    const Real sine = std::min(
-                        1.0L, real_vector_norm(cross) /
-                                  (magnitude[cell] * magnitude[neighbor]));
-                    const Real holder = sine / std::sqrt(spacing);
-                    maximum_holder_half = std::max(maximum_holder_half, holder);
-                    coherence_sum += holder;
-                    ++coherence_pairs;
-                }
-            }
-        }
-    }
-    result.maximum_holder_half_coherence = maximum_holder_half;
-    result.high_vorticity_points = high_vorticity_points;
-    result.coherence_pairs = coherence_pairs;
-    if (result.coherence_pairs > 0) {
-        result.mean_holder_half_coherence =
-            coherence_sum / static_cast<Real>(result.coherence_pairs);
-    }
-    return result;
-}
-
-StaticObjective evaluate_static_objective(const SpectralState& state) {
-    return active_objective.evaluate(state);
-}
-
-struct QDerivativeDiagnostic {
-    Real derivative = 0.0L;
-    Real log_derivative = 0.0L;
-    Real relative_refinement_error = 0.0L;
-    bool valid = false;
-};
-
-QDerivativeDiagnostic evaluate_q_derivative(const SpectralState& state,
-                                            Real viscosity) {
-    const StaticObjective center = evaluate_static_objective(state);
-    const SpectralIncrement rhs = active_dynamics.rhs(state, viscosity);
-    Real rhs_norm2 = 0.0L;
-    for (const ComplexVector& value : rhs) {
-        rhs_norm2 += std::real(dot_hermitian(value, value));
-    }
-    QDerivativeDiagnostic result;
-    if (!(center.energy > 0.0L) || !(rhs_norm2 > 0.0L) ||
-        !(center.energy_level_quantity > 1e-30L)) {
-        return result;
-    }
-    const Real base_step =
-        1e-4L * std::sqrt(center.energy / rhs_norm2);
-    auto q_at_offset = [&](Real offset) {
-        SpectralState shifted = state;
-        for (std::size_t mode = 0; mode < shifted.velocity.size(); ++mode) {
-            for (std::size_t component = 0; component < 3; ++component) {
-                shifted.velocity[mode][component] += offset * rhs[mode][component];
-            }
-        }
-        return evaluate_static_objective(shifted).energy_level_quantity;
-    };
-    auto central_derivative = [&](Real step) {
-        return (q_at_offset(step) - q_at_offset(-step)) / (2.0L * step);
-    };
-    const Real coarse = central_derivative(base_step);
-    const Real refined = central_derivative(0.5L * base_step);
-    result.derivative = refined;
-    result.log_derivative = refined / center.energy_level_quantity;
-    result.relative_refinement_error =
-        std::abs(refined - coarse) /
-        std::max(1e-30L, std::max(std::abs(refined),
-                                 center.energy_level_quantity));
-    result.valid = std::isfinite(result.derivative) &&
-                   std::isfinite(result.log_derivative) &&
-                   std::isfinite(result.relative_refinement_error);
-    return result;
-}
-
-struct EvolutionResult {
-    int steps = 0;
-    Real time = 0.0L;
-    Real initial_energy = 0.0L;
-    Real final_energy = 0.0L;
-    Real initial_enstrophy = 0.0L;
-    Real final_enstrophy = 0.0L;
-    Real initial_energy_level_quantity = 0.0L;
-    Real final_energy_level_quantity = 0.0L;
-    Real integral_critical = 0.0L;
-    Real integral_enstrophy = 0.0L;
-    Real maximum_energy_level_quantity = 0.0L;
-    Real maximum_critical_integrand = 0.0L;
-    Real maximum_enstrophy = 0.0L;
-    Real energy_balance_residual = 0.0L;
-    Real integral_absolute_local_vortex = 0.0L;
-    Real integral_absolute_nonlocal_vortex = 0.0L;
-    Real integral_absolute_total_vortex = 0.0L;
-    Real integral_local_critical = 0.0L;
-    Real integral_nonlocal_critical = 0.0L;
-    Real maximum_local_energy_level_quantity = 0.0L;
-    Real maximum_nonlocal_energy_level_quantity = 0.0L;
-    Real maximum_vortex_partition_residual = 0.0L;
-    Real maximum_vorticity_linf = 0.0L;
-    Real maximum_holder_half_coherence = 0.0L;
-    Real maximum_stretch_alignment = 0.0L;
-    Real maximum_positive_q_log_growth_ratio = 0.0L;
-    Real maximum_q_derivative_refinement_error = 0.0L;
-    int geometry_samples = 0;
-    int q_derivative_samples = 0;
-    bool finite = true;
-};
-
-EvolutionResult evolve_galerkin(SpectralState state, Real viscosity,
-                                Real final_time, Real requested_dt,
-                                bool collect_vortex_partition = false) {
-    if (!(viscosity > 0.0L) || !(final_time > 0.0L) || !(requested_dt > 0.0L)) {
-        throw std::invalid_argument("evolution viscosity, time, and dt must be positive");
-    }
-    EvolutionResult result;
-    StaticObjective before = evaluate_static_objective(state);
-    result.initial_energy = before.energy;
-    result.initial_enstrophy = before.enstrophy;
-    result.initial_energy_level_quantity = before.energy_level_quantity;
-    result.maximum_energy_level_quantity = before.energy_level_quantity;
-    result.maximum_critical_integrand = before.critical_integrand;
-    result.maximum_enstrophy = before.enstrophy;
-    const Real initial_frequency =
-        std::sqrt(before.enstrophy / std::max(1e-30L, before.energy));
-    auto sample_q_derivative = [&](const SpectralState& sample_state,
-                                   const StaticObjective& sample_objective) {
-        const QDerivativeDiagnostic derivative =
-            evaluate_q_derivative(sample_state, viscosity);
-        if (!derivative.valid) {
-            return;
-        }
-        const Real denominator =
-            initial_frequency * sample_objective.enstrophy;
-        if (denominator > 0.0L) {
-            result.maximum_positive_q_log_growth_ratio = std::max(
-                result.maximum_positive_q_log_growth_ratio,
-                std::max(0.0L, derivative.log_derivative) / denominator);
-        }
-        result.maximum_q_derivative_refinement_error = std::max(
-            result.maximum_q_derivative_refinement_error,
-            derivative.relative_refinement_error);
-        ++result.q_derivative_samples;
-    };
-    VortexPartition partition_before;
-    if (collect_vortex_partition) {
-        partition_before = evaluate_vortex_partition(state);
-        result.maximum_local_energy_level_quantity =
-            energy_level_quantity_from_stretching(
-                partition_before.local, before.enstrophy, before.palinstrophy);
-        result.maximum_nonlocal_energy_level_quantity =
-            energy_level_quantity_from_stretching(
-                partition_before.nonlocal, before.enstrophy, before.palinstrophy);
-        result.maximum_vortex_partition_residual =
-            std::abs(before.vortex_stretching -
-                     std::abs(partition_before.local + partition_before.nonlocal));
-        const GeometryDiagnostic geometry = evaluate_geometry(state);
-        result.maximum_vorticity_linf = geometry.maximum_vorticity;
-        result.maximum_holder_half_coherence =
-            geometry.maximum_holder_half_coherence;
-        result.maximum_stretch_alignment = geometry.maximum_stretch_alignment;
-        ++result.geometry_samples;
-        sample_q_derivative(state, before);
-    }
-
-    const int cutoff = SpectralStateOps::cutoff(state);
-    const Real maximum_wave2 = 3.0L * static_cast<Real>(cutoff * cutoff);
-    const Real diffusion_dt = 0.5L / (viscosity * maximum_wave2);
-    Real time = 0.0L;
-    while (time < final_time) {
-        const Real dt = std::min({requested_dt, diffusion_dt, final_time - time});
-        active_dynamics.rk4_step(state, viscosity, dt);
-        const StaticObjective after = evaluate_static_objective(state);
-        if (collect_vortex_partition) {
-            const VortexPartition partition_after = evaluate_vortex_partition(state);
-            const Real local_critical_before = critical_integrand_from_stretching(
-                partition_before.local, before.enstrophy, before.palinstrophy);
-            const Real local_critical_after = critical_integrand_from_stretching(
-                partition_after.local, after.enstrophy, after.palinstrophy);
-            const Real nonlocal_critical_before = critical_integrand_from_stretching(
-                partition_before.nonlocal, before.enstrophy, before.palinstrophy);
-            const Real nonlocal_critical_after = critical_integrand_from_stretching(
-                partition_after.nonlocal, after.enstrophy, after.palinstrophy);
-            const Real local_q_after = energy_level_quantity_from_stretching(
-                partition_after.local, after.enstrophy, after.palinstrophy);
-            const Real nonlocal_q_after = energy_level_quantity_from_stretching(
-                partition_after.nonlocal, after.enstrophy, after.palinstrophy);
-            result.integral_local_critical +=
-                0.5L * dt * (local_critical_before + local_critical_after);
-            result.integral_nonlocal_critical +=
-                0.5L * dt * (nonlocal_critical_before + nonlocal_critical_after);
-            result.maximum_local_energy_level_quantity =
-                std::max(result.maximum_local_energy_level_quantity, local_q_after);
-            result.maximum_nonlocal_energy_level_quantity =
-                std::max(result.maximum_nonlocal_energy_level_quantity,
-                         nonlocal_q_after);
-            result.integral_absolute_local_vortex +=
-                0.5L * dt * (std::abs(partition_before.local) +
-                             std::abs(partition_after.local));
-            result.integral_absolute_nonlocal_vortex +=
-                0.5L * dt * (std::abs(partition_before.nonlocal) +
-                             std::abs(partition_after.nonlocal));
-            result.integral_absolute_total_vortex +=
-                0.5L * dt *
-                (std::abs(partition_before.local + partition_before.nonlocal) +
-                 std::abs(partition_after.local + partition_after.nonlocal));
-            result.maximum_vortex_partition_residual =
-                std::max(result.maximum_vortex_partition_residual,
-                         std::abs(after.vortex_stretching -
-                                  std::abs(partition_after.local +
-                                           partition_after.nonlocal)));
-            partition_before = partition_after;
-            if (result.steps % 10 == 0 || time + dt >= final_time) {
-                const GeometryDiagnostic geometry = evaluate_geometry(state);
-                result.maximum_vorticity_linf =
-                    std::max(result.maximum_vorticity_linf,
-                             geometry.maximum_vorticity);
-                result.maximum_holder_half_coherence =
-                    std::max(result.maximum_holder_half_coherence,
-                             geometry.maximum_holder_half_coherence);
-                result.maximum_stretch_alignment =
-                    std::max(result.maximum_stretch_alignment,
-                             geometry.maximum_stretch_alignment);
-                ++result.geometry_samples;
-                sample_q_derivative(state, after);
-            }
-        }
-        result.integral_critical +=
-            0.5L * dt * (before.critical_integrand + after.critical_integrand);
-        result.integral_enstrophy +=
-            0.5L * dt * (before.enstrophy + after.enstrophy);
-        result.maximum_energy_level_quantity =
-            std::max(result.maximum_energy_level_quantity,
-                     after.energy_level_quantity);
-        result.maximum_critical_integrand =
-            std::max(result.maximum_critical_integrand,
-                     after.critical_integrand);
-        result.maximum_enstrophy =
-            std::max(result.maximum_enstrophy, after.enstrophy);
-        result.finite = result.finite && std::isfinite(after.energy) &&
-                        std::isfinite(after.enstrophy) &&
-                        std::isfinite(after.critical_integrand);
-        ++result.steps;
-        time += dt;
-        before = after;
-        if (!result.finite) {
-            break;
-        }
-    }
-    result.time = time;
-    result.final_energy = before.energy;
-    result.final_enstrophy = before.enstrophy;
-    result.final_energy_level_quantity = before.energy_level_quantity;
-    result.energy_balance_residual = result.final_energy - result.initial_energy +
-                                     2.0L * viscosity * result.integral_enstrophy;
-    return result;
-}
 
 struct AdversaryResult {
     int cutoff = 0;
@@ -577,8 +108,8 @@ DynamicAdversaryResult optimize_dynamic(
     DynamicAdversaryResult result;
     const InitialSobolevConstraint sobolev(sobolev_order, sobolev_cap);
     result.state = primary_start;
-    result.initial_objective = evaluate_static_objective(result.state);
-    result.evolution = evolve_galerkin(result.state, viscosity, final_time, dt);
+    result.initial_objective = active_trajectory_analyzer.evaluate_static(result.state);
+    result.evolution = active_trajectory_analyzer.evolve(result.state, viscosity, final_time, dt);
     ++result.evaluations;
     bool result_admissible = sobolev.admissible(result.state);
 
@@ -587,7 +118,7 @@ DynamicAdversaryResult optimize_dynamic(
             SpectralStateFactory::lift(
                 *secondary_start, SpectralStateOps::cutoff(primary_start), generator);
         const EvolutionResult secondary_evolution =
-            evolve_galerkin(secondary, viscosity, final_time, dt);
+            active_trajectory_analyzer.evolve(secondary, viscosity, final_time, dt);
         ++result.evaluations;
         const bool secondary_admissible = sobolev.admissible(secondary);
         if (secondary_admissible &&
@@ -595,7 +126,7 @@ DynamicAdversaryResult optimize_dynamic(
              dynamic_objective_value(secondary_evolution, objective) >
                  dynamic_objective_value(result.evolution, objective))) {
             result.state = std::move(secondary);
-            result.initial_objective = evaluate_static_objective(result.state);
+            result.initial_objective = active_trajectory_analyzer.evaluate_static(result.state);
             result.evolution = secondary_evolution;
             result_admissible = true;
         }
@@ -623,13 +154,13 @@ DynamicAdversaryResult optimize_dynamic(
             continue;
         }
         const EvolutionResult evolution =
-            evolve_galerkin(candidate, viscosity, final_time, dt);
+            active_trajectory_analyzer.evolve(candidate, viscosity, final_time, dt);
         ++result.evaluations;
         if (evolution.finite &&
             dynamic_objective_value(evolution, objective) >
                 dynamic_objective_value(result.evolution, objective)) {
             result.state = std::move(candidate);
-            result.initial_objective = evaluate_static_objective(result.state);
+            result.initial_objective = active_trajectory_analyzer.evaluate_static(result.state);
             result.evolution = evolution;
             ++result.accepted_mutations;
         }
@@ -652,16 +183,16 @@ DynamicAdversaryResult optimize_dynamic(
             active_gradient_adversary.maximize_q(
                 result.state, gradient_options);
         result.state = gradient.state;
-        result.initial_objective = evaluate_static_objective(result.state);
+        result.initial_objective = active_trajectory_analyzer.evaluate_static(result.state);
         result.evolution =
-            evolve_galerkin(result.state, viscosity, final_time, dt);
+            active_trajectory_analyzer.evolve(result.state, viscosity, final_time, dt);
         result.evaluations += gradient.trajectory_evaluations + 1;
         result.accepted_gradient_steps = gradient.accepted_steps;
     }
     result.search_final_objective =
         dynamic_objective_value(result.evolution, objective);
     result.refined_evolution =
-        evolve_galerkin(result.state, viscosity, final_time, 0.5L * dt, true);
+        active_trajectory_analyzer.evolve(result.state, viscosity, final_time, 0.5L * dt, true);
     result.time_step_relative_error =
         std::abs(result.refined_evolution.integral_critical -
                  result.evolution.integral_critical) /
@@ -688,7 +219,7 @@ AdversaryResult optimize_static_depletion(int cutoff, int restarts, int generati
                                           *warm_start, cutoff, generator)
                                     : SpectralStateFactory::random(cutoff, generator);
         SpectralStateOps::normalize_energy(current);
-        StaticObjective current_objective = evaluate_static_objective(current);
+        StaticObjective current_objective = active_trajectory_analyzer.evaluate_static(current);
         ++global.evaluations;
         if (global.state.waves.empty() ||
             current_objective.energy_level_quantity >
@@ -706,7 +237,7 @@ AdversaryResult optimize_static_depletion(int cutoff, int restarts, int generati
                     current, scheduled_mutation, generator,
                     generation % 3 != 0);
             const StaticObjective candidate_objective =
-                evaluate_static_objective(candidate);
+                active_trajectory_analyzer.evaluate_static(candidate);
             ++global.evaluations;
             if (candidate_objective.energy_level_quantity >
                 current_objective.energy_level_quantity) {
@@ -779,256 +310,6 @@ void write_spectral_state(const std::string& path, const AdversaryResult& result
     }
 }
 
-using TriadKey = std::array<WaveVector, 3>;
-
-struct InteractionAnalysis {
-    std::vector<ComplexVector> advection;
-    std::vector<Real> local_energy_transfer;
-    std::vector<Real> nonlocal_energy_transfer;
-    Real local_absolute_transfer = 0.0L;
-    Real nonlocal_absolute_transfer = 0.0L;
-    Real maximum_detailed_triad_residual = 0.0L;
-    Real maximum_relative_detailed_triad_residual = 0.0L;
-};
-
-InteractionAnalysis analyze_interactions(const SpectralState& state) {
-    InteractionAnalysis result;
-    result.advection.resize(state.waves.size());
-    result.local_energy_transfer.assign(state.waves.size(), 0.0L);
-    result.nonlocal_energy_transfer.assign(state.waves.size(), 0.0L);
-    std::map<TriadKey, std::pair<Real, Real>> detailed_triads;
-    const Complex imaginary_unit{0.0L, 1.0L};
-    for (const InteractionIndex interaction : SpectralStateOps::interactions(state)) {
-        const auto [p_index, q_index, target_index] = interaction;
-        const WaveVector p = state.waves[p_index];
-        const ComplexVector& up = state.velocity[p_index];
-        const WaveVector q = state.waves[q_index];
-        const WaveVector k = state.waves[target_index];
-        const Complex coefficient = imaginary_unit * wave_dot(q, up);
-        const ComplexVector& uq = state.velocity[q_index];
-        ComplexVector& value = result.advection[target_index];
-        ComplexVector pair_contribution{};
-        for (std::size_t direction = 0; direction < 3; ++direction) {
-            pair_contribution[direction] = coefficient * uq[direction];
-            value[direction] += pair_contribution[direction];
-        }
-
-        // Since u_k is perpendicular to k, pressure projection does not
-        // change its energy pairing with this interaction.
-        const Real transfer = std::real(dot_hermitian(
-            state.velocity[target_index], pair_contribution));
-        const Integer k2 = norm_squared(k);
-        const Integer p2 = norm_squared(p);
-        const Integer q2 = norm_squared(q);
-        const Integer smallest = std::min({k2, p2, q2});
-        const Integer largest = std::max({k2, p2, q2});
-        const bool local = largest <= 4 * smallest;  // max |k| / min |k| <= 2
-        if (local) {
-            result.local_energy_transfer[target_index] += transfer;
-            result.local_absolute_transfer += std::abs(transfer);
-        } else {
-            result.nonlocal_energy_transfer[target_index] += transfer;
-            result.nonlocal_absolute_transfer += std::abs(transfer);
-        }
-
-        TriadKey key{-k, p, q};
-        std::sort(key.begin(), key.end());
-        auto& [sum, absolute_sum] = detailed_triads[key];
-        sum += transfer;
-        absolute_sum += std::abs(transfer);
-    }
-    for (std::size_t index = 0; index < state.waves.size(); ++index) {
-        result.advection[index] =
-            project_divergence_free(state.waves[index], result.advection[index]);
-    }
-
-    const Real total_absolute_transfer =
-        result.local_absolute_transfer + result.nonlocal_absolute_transfer;
-    for (const auto& [key, cancellation] : detailed_triads) {
-        static_cast<void>(key);
-        const auto [sum, absolute_sum] = cancellation;
-        result.maximum_detailed_triad_residual =
-            std::max(result.maximum_detailed_triad_residual, std::abs(sum));
-        if (absolute_sum > 1e-14L * total_absolute_transfer) {
-            result.maximum_relative_detailed_triad_residual =
-                std::max(result.maximum_relative_detailed_triad_residual,
-                         std::abs(sum) / absolute_sum);
-        }
-    }
-    if (total_absolute_transfer > 0.0L) {
-        result.maximum_detailed_triad_residual /= total_absolute_transfer;
-    }
-    return result;
-}
-
-struct TriadMeasurement {
-    Real energy = 0.0L;
-    Real enstrophy = 0.0L;
-    Real palinstrophy = 0.0L;
-    Real advection_norm = 0.0L;
-    Real energy_pairing = 0.0L;
-    Real vortex_stretching = 0.0L;
-    Real divergence_residual = 0.0L;
-    Real reality_residual = 0.0L;
-    Real classical_ratio = 0.0L;
-    Real detailed_triad_residual = 0.0L;
-    Real relative_detailed_triad_residual = 0.0L;
-    Real local_absolute_transfer = 0.0L;
-    Real nonlocal_absolute_transfer = 0.0L;
-    Real maximum_cumulative_flux = 0.0L;
-    Real maximum_local_cumulative_flux = 0.0L;
-    Real maximum_nonlocal_cumulative_flux = 0.0L;
-    Real flux_partition_residual = 0.0L;
-};
-
-TriadMeasurement measure(const SpectralState& state) {
-    const InteractionAnalysis interactions = analyze_interactions(state);
-    TriadMeasurement result;
-    result.detailed_triad_residual = interactions.maximum_detailed_triad_residual;
-    result.relative_detailed_triad_residual =
-        interactions.maximum_relative_detailed_triad_residual;
-    result.local_absolute_transfer = interactions.local_absolute_transfer;
-    result.nonlocal_absolute_transfer = interactions.nonlocal_absolute_transfer;
-    int maximum_radius = 0;
-    for (std::size_t index = 0; index < state.waves.size(); ++index) {
-        const WaveVector wave = state.waves[index];
-        const Real wave2 = static_cast<Real>(norm_squared(wave));
-        maximum_radius = std::max(maximum_radius,
-                                  static_cast<int>(std::ceil(std::sqrt(wave2))));
-        const Real velocity2 = std::real(dot_hermitian(state.velocity[index],
-                                                       state.velocity[index]));
-        const Real nonlinear2 = std::real(dot_hermitian(
-            interactions.advection[index], interactions.advection[index]));
-        const Real pairing = std::real(dot_hermitian(
-            state.velocity[index], interactions.advection[index]));
-        result.energy += velocity2;
-        result.enstrophy += wave2 * velocity2;
-        result.palinstrophy += wave2 * wave2 * velocity2;
-        result.advection_norm += nonlinear2;
-        result.energy_pairing += pairing;
-        result.vortex_stretching += wave2 * pairing;
-        result.divergence_residual =
-            std::max(result.divergence_residual, std::abs(wave_dot(wave, state.velocity[index])));
-        const auto opposite = state.index.find(-wave);
-        if (opposite != state.index.end()) {
-            for (std::size_t direction = 0; direction < 3; ++direction) {
-                result.reality_residual = std::max(
-                    result.reality_residual,
-                    std::abs(state.velocity[opposite->second][direction] -
-                             std::conj(state.velocity[index][direction])));
-            }
-        }
-    }
-    const Real denominator = std::pow(result.enstrophy, 0.75L) *
-                             std::pow(result.palinstrophy, 0.75L);
-    if (denominator > 0.0L) {
-        result.classical_ratio = std::abs(result.vortex_stretching) / denominator;
-    }
-
-    // Pi(K) is the nonlinear energy entering modes |k| > K. Splitting every
-    // ordered triad by scale ratio gives an exact local/nonlocal partition.
-    for (int cutoff = 1; cutoff < maximum_radius; ++cutoff) {
-        Real local_flux = 0.0L;
-        Real nonlocal_flux = 0.0L;
-        const Integer cutoff2 = static_cast<Integer>(cutoff) * cutoff;
-        for (std::size_t index = 0; index < state.waves.size(); ++index) {
-            if (norm_squared(state.waves[index]) > cutoff2) {
-                local_flux -= interactions.local_energy_transfer[index];
-                nonlocal_flux -= interactions.nonlocal_energy_transfer[index];
-            }
-        }
-        const Real total_flux = local_flux + nonlocal_flux;
-        result.maximum_cumulative_flux =
-            std::max(result.maximum_cumulative_flux, std::abs(total_flux));
-        result.maximum_local_cumulative_flux =
-            std::max(result.maximum_local_cumulative_flux, std::abs(local_flux));
-        result.maximum_nonlocal_cumulative_flux =
-            std::max(result.maximum_nonlocal_cumulative_flux, std::abs(nonlocal_flux));
-        result.flux_partition_residual =
-            std::max(result.flux_partition_residual,
-                     std::abs(total_flux - local_flux - nonlocal_flux));
-    }
-    return result;
-}
-
-struct TriadCertificate {
-    int modes = 0;
-    int samples = 0;
-    Real maximum_normalized_energy_residual = 0.0L;
-    Real maximum_divergence_residual = 0.0L;
-    Real maximum_reality_residual = 0.0L;
-    Real maximum_classical_ratio = 0.0L;
-    Real maximum_vortex_stretching = 0.0L;
-    Real maximum_detailed_triad_residual = 0.0L;
-    Real maximum_relative_detailed_triad_residual = 0.0L;
-    Real maximum_nonlocal_absolute_fraction = 0.0L;
-    Real maximum_flux_efficiency = 0.0L;
-    Real maximum_local_cumulative_flux = 0.0L;
-    Real maximum_nonlocal_cumulative_flux = 0.0L;
-    Real maximum_flux_partition_residual = 0.0L;
-    bool nonzero_vortex_stretching_seen = false;
-};
-
-TriadCertificate analyze_triads(int cutoff, int samples, std::uint64_t seed) {
-    if (samples < 1 || samples > 100000) {
-        throw std::invalid_argument("--triad-samples must be between 1 and 100000");
-    }
-    std::mt19937_64 generator(seed);
-    TriadCertificate certificate;
-    certificate.samples = samples;
-    for (int sample = 0; sample < samples; ++sample) {
-        const SpectralState state = SpectralStateFactory::random(cutoff, generator);
-        certificate.modes = static_cast<int>(state.waves.size());
-        const TriadMeasurement measurement = measure(state);
-        const Real scale = std::sqrt(std::max(0.0L, measurement.energy *
-                                                     measurement.advection_norm));
-        const Real normalized_energy_residual =
-            scale > 0.0L ? std::abs(measurement.energy_pairing) / scale : 0.0L;
-        certificate.maximum_normalized_energy_residual =
-            std::max(certificate.maximum_normalized_energy_residual,
-                     normalized_energy_residual);
-        certificate.maximum_divergence_residual =
-            std::max(certificate.maximum_divergence_residual,
-                     measurement.divergence_residual);
-        certificate.maximum_reality_residual =
-            std::max(certificate.maximum_reality_residual, measurement.reality_residual);
-        certificate.maximum_classical_ratio =
-            std::max(certificate.maximum_classical_ratio, measurement.classical_ratio);
-        certificate.maximum_vortex_stretching =
-            std::max(certificate.maximum_vortex_stretching,
-                     std::abs(measurement.vortex_stretching));
-        certificate.maximum_detailed_triad_residual =
-            std::max(certificate.maximum_detailed_triad_residual,
-                     measurement.detailed_triad_residual);
-        certificate.maximum_relative_detailed_triad_residual =
-            std::max(certificate.maximum_relative_detailed_triad_residual,
-                     measurement.relative_detailed_triad_residual);
-        const Real absolute_transfer = measurement.local_absolute_transfer +
-                                       measurement.nonlocal_absolute_transfer;
-        if (absolute_transfer > 0.0L) {
-            certificate.maximum_nonlocal_absolute_fraction =
-                std::max(certificate.maximum_nonlocal_absolute_fraction,
-                         measurement.nonlocal_absolute_transfer / absolute_transfer);
-            certificate.maximum_flux_efficiency =
-                std::max(certificate.maximum_flux_efficiency,
-                         measurement.maximum_cumulative_flux / absolute_transfer);
-        }
-        certificate.maximum_local_cumulative_flux =
-            std::max(certificate.maximum_local_cumulative_flux,
-                     measurement.maximum_local_cumulative_flux);
-        certificate.maximum_nonlocal_cumulative_flux =
-            std::max(certificate.maximum_nonlocal_cumulative_flux,
-                     measurement.maximum_nonlocal_cumulative_flux);
-        certificate.maximum_flux_partition_residual =
-            std::max(certificate.maximum_flux_partition_residual,
-                     measurement.flux_partition_residual);
-        certificate.nonzero_vortex_stretching_seen =
-            certificate.nonzero_vortex_stretching_seen ||
-            std::abs(measurement.vortex_stretching) > 1e-16L;
-    }
-    return certificate;
-}
-
 }  // namespace
 
 int run(const Options& options, std::ostream& out) {
@@ -1039,7 +320,8 @@ int run(const Options& options, std::ostream& out) {
     const StrongL4Reduction strong_l4 =
         ScalingAnalyzer::analyze_strong_l4_reduction();
     const TriadCertificate triads =
-        analyze_triads(options.triad_cutoff, options.triad_samples, options.seed);
+        TriadVerifier::analyze(
+            options.triad_cutoff, options.triad_samples, options.seed);
     LemmaReport report;
     report.candidate_count = scaling.candidates.size();
     report.minimum_young_power = scaling.minimum_young_power.str();
@@ -1133,7 +415,7 @@ bool self_test(std::ostream& out) {
         concentration.integrated_candidate_scale_critical;
     const bool strong_l4_ok = strong_l4.exact_density_factorization &&
                               strong_l4.closes_integrated_l4_from_uniform_q;
-    const TriadCertificate triads = analyze_triads(2, 2, 7);
+    const TriadCertificate triads = TriadVerifier::analyze(2, 2, 7);
     const bool triad_ok = triads.maximum_normalized_energy_residual < 1e-15L &&
                           triads.maximum_divergence_residual < 1e-15L &&
                           triads.maximum_detailed_triad_residual < 1e-15L &&
@@ -1485,9 +767,9 @@ bool self_test(std::ostream& out) {
                               std::isfinite(adversary.objective.energy_level_quantity) &&
                               adversary.objective.energy_level_quantity >= 0.0L;
     const EvolutionResult evolution =
-        evolve_galerkin(adversary.state, 0.1L, 0.002L, 0.001L);
+        active_trajectory_analyzer.evolve(adversary.state, 0.1L, 0.002L, 0.001L);
     const QDerivativeDiagnostic q_derivative =
-        evaluate_q_derivative(adversary.state, 0.1L);
+        active_trajectory_analyzer.evaluate_q_derivative(adversary.state, 0.1L);
     const bool q_derivative_ok = q_derivative.valid &&
         q_derivative.relative_refinement_error < 1e-6L;
     const bool evolution_ok = evolution.finite && evolution.steps == 2 &&
@@ -1883,12 +1165,12 @@ int run_family(const FamilyOptions& options, std::ostream& out) {
     active_galerkin.set_compute_threads(internal_parallelism ? family.threads() : 1);
     auto process_run = [&](std::size_t index) {
         auto& run = runs[index];
-        run.objective = evaluate_static_objective(run.initial);
-        run.coarse = evolve_galerkin(
+        run.objective = active_trajectory_analyzer.evaluate_static(run.initial);
+        run.coarse = active_trajectory_analyzer.evolve(
             run.initial, static_cast<Real>(options.viscosity),
             static_cast<Real>(options.evolution_time),
             static_cast<Real>(options.time_step));
-        run.refined = evolve_galerkin(
+        run.refined = active_trajectory_analyzer.evolve(
             run.initial, static_cast<Real>(options.viscosity),
             static_cast<Real>(options.evolution_time),
             0.5L * static_cast<Real>(options.time_step), true);

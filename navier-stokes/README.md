@@ -82,6 +82,11 @@ source file:
   RK4 passes, and fixed-energy Riemannian gradient search;
 - `InitialSobolevConstraint` projects search directions and retracts trials
   onto a cutoff-independent initial homogeneous Sobolev cap;
+- `TrajectoryAnalyzer` evolves and samples trajectories, including the
+  critical integral, energy balance, local/nonlocal stretching, geometry, and
+  time-step refinement diagnostics;
+- `TriadVerifier` owns direct interaction analysis, detailed triad
+  cancellation, local/nonlocal flux partitioning, and certificate aggregation;
 - `StateAnalyzer` and `StateFamilyAnalyzer` measure shell decay, active modes,
   Sobolev norms, and projectivity of replayable cutoff families;
 - `LemmaAdversary` schedules independent optimizer restarts;
@@ -93,13 +98,13 @@ source file:
   and JSON certificate formatting through typed report objects;
 - `LemmaCli` owns proof-runner argument parsing and help text.
 
-The remaining objective and geometric diagnostic kernels still live in
-`lemma_engine.cpp`. State construction, forward dynamics, the discrete adjoint,
-and constrained optimization are isolated from CLI and report generation. The
-next architectural split will move trajectory diagnostics out of the engine;
-the next mathematical task is cutoff/time/viscosity continuation of the
-adjoint-generated extremizers. This keeps rebuilds dependency-free and makes
-each layer independently replaceable.
+`lemma_engine.cpp` now coordinates proof runs and keeps the integrated
+self-test; state construction, trajectory diagnostics, triad verification,
+forward dynamics, the discrete adjoint, constrained optimization, CLI, and
+report generation are separate compilation units. The next mathematical task
+is cutoff/time/viscosity continuation of the adjoint-generated extremizers.
+This keeps rebuilds dependency-free and makes each layer independently
+replaceable.
 
 These are ordinary non-virtual C++ classes. The numerical kernels do not use
 RTTI, `std::function`, `shared_ptr`, or exceptions for control flow. Class

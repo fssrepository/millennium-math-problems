@@ -41,3 +41,8 @@ singularity. The remaining test parameters are longer time, lower viscosity,
 and independent multistarts. A proof still needs an analytical frequency
 envelope controlled from the fixed smooth initial datum without assuming the
 high-norm bound that L4 is intended to establish.
+
+Warm continuation to `T=0.02` gives `J_8=1.20543e-5` at viscosity `0.1`.
+Repeating at viscosity `0.02` gives `J_8=1.21020e-5`. In both cases `Q`
+decreases over the trajectory, so these checks do not reveal a growing
+short-time concentration branch.
