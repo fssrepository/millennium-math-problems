@@ -18,6 +18,7 @@ bool collects_partition(const std::string& objective) {
     return objective == "critical-local-integral" ||
            objective == "critical-local-increase" ||
            objective == "critical-local-log-gain" ||
+           objective == "critical-local-ep-log-gain" ||
            objective == "critical-nonlocal-integral" ||
            objective == "critical-near-nonlocal-integral" ||
            objective == "critical-far-nonlocal-integral" ||
@@ -67,7 +68,26 @@ SpectralReal DynamicAdversary::objective_value(
             !(shifted_terminal > 1e-30L)) {
             return -std::numeric_limits<SpectralReal>::infinity();
         }
-        return std::log(shifted_terminal / shifted_initial);
+        return std::log1p(
+            (evolution.final_local_critical_integrand -
+             evolution.initial_local_critical_integrand) /
+            shifted_initial);
+    }
+    if (objective == "critical-local-ep-log-gain") {
+        const SpectralReal shift =
+            evolution.initial_energy * evolution.initial_palinstrophy;
+        const SpectralReal shifted_initial =
+            evolution.initial_local_critical_integrand + shift;
+        const SpectralReal shifted_terminal =
+            evolution.final_local_critical_integrand + shift;
+        if (!(shifted_initial > 1e-30L) ||
+            !(shifted_terminal > 1e-30L)) {
+            return -std::numeric_limits<SpectralReal>::infinity();
+        }
+        return std::log1p(
+            (evolution.final_local_critical_integrand -
+             evolution.initial_local_critical_integrand) /
+            shifted_initial);
     }
     if (objective == "critical-nonlocal-integral") {
         return evolution.integral_nonlocal_critical;
@@ -136,6 +156,8 @@ DynamicAdversaryResult DynamicAdversary::optimize(
         SpectralState secondary = move_to_cutoff(
             *secondary_start, SpectralStateOps::cutoff(primary_start),
             generator);
+        sobolev.retract(
+            secondary, SpectralStateOps::energy(primary_start));
         const EvolutionResult secondary_evolution = trajectory_.evolve(
             secondary, options.viscosity, options.final_time,
             options.time_step, collect_search_partition,

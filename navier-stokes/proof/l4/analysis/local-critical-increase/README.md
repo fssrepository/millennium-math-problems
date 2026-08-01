@@ -126,6 +126,29 @@ The shifted discrete gradient passes centered differences at `2.79e-10` for
 `B=1e-6`. A shift sweep can now test additive source terms without rewarding
 numerically vanishing initial transfer.
 
+For `B=1e-4`, the twelve-start K3--K6 continuation gives
+
+```text
+K                              3         4         5         6
+shifted log gain          0.004269  0.004445  0.004495  0.004508
+gain/(T k0 Z(0))              3.889     4.068     4.119     4.135
+C_local(0)                 9.06e-5   9.73e-5   9.80e-5   9.74e-5
+Delta C_local              8.15e-7   8.79e-7   8.92e-7   8.92e-7
+```
+
+Restart zero wins at every cutoff. Top-shell energy decays with fitted
+exponent `-7.48`, and the K5-to-K6 projection residual is `4.14e-3`. This
+shifted branch is again smooth and cutoff-stabilizing; it supplies a finite
+candidate constant near `4.14`, not a proof that such a constant is universal.
+
+The scale-compatible state-dependent choice `B_0=E(0)P(0)` is implemented by
+a separate exact adjoint. Its normalized K3--K6 values are
+`7.240e-4, 7.533e-4, 7.751e-4, 7.810e-4`. Replaying the K6 winner at K7 and K8
+changes its objective by `-7.43e-6` and then `-2.14e-9` relatively. This branch
+therefore survives the finite screen without cutoff growth. The mathematical
+candidate and conditional closure are stated in
+[`../../lemmas/shifted-local-density/README.md`](../../lemmas/shifted-local-density/README.md).
+
 Artifacts:
 
 - [`../../adversary/local-critical-increase-h4-cap100-K3-K6-multistart12-lbfgs8.json`](../../adversary/local-critical-increase-h4-cap100-K3-K6-multistart12-lbfgs8.json)
@@ -133,8 +156,10 @@ Artifacts:
 - [`../../adversary/local-critical-increase-h4-cap100-K6-T002-multistart12-lbfgs8.json`](../../adversary/local-critical-increase-h4-cap100-K6-T002-multistart12-lbfgs8.json)
 - [`../../adversary/local-critical-increase-h4-cap100-K6-T002-nu002-multistart12-lbfgs8.json`](../../adversary/local-critical-increase-h4-cap100-K6-T002-nu002-multistart12-lbfgs8.json)
 - [`../../adversary/local-critical-log-gain-h4-cap100-K3-K6-multistart12-lbfgs8.json`](../../adversary/local-critical-log-gain-h4-cap100-K3-K6-multistart12-lbfgs8.json)
+- [`../../adversary/local-critical-shifted-log-gain1e-4-h4-cap100-K3-K6-multistart12-lbfgs8.json`](../../adversary/local-critical-shifted-log-gain1e-4-h4-cap100-K3-K6-multistart12-lbfgs8.json)
 - [`../local-signature-coupled-integral/critical-increase-family.json`](../local-signature-coupled-integral/critical-increase-family.json)
 - [`log-gain-family.json`](log-gain-family.json)
+- [`shifted-log-gain1e-4-family.json`](shifted-log-gain1e-4-family.json)
 - [`K6-T002-factor-trajectory.json`](K6-T002-factor-trajectory.json)
 
 Reproduce with

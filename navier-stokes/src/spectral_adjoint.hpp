@@ -45,6 +45,10 @@ public:
         SpectralReal time_step, int steps,
         TriadSelection selection = {},
         SpectralReal critical_density_shift = 0.0L) const;
+    [[nodiscard]] QTrajectoryGradient critical_ep_log_gain_gradient(
+        const SpectralState& initial, SpectralReal viscosity,
+        SpectralReal time_step, int steps,
+        TriadSelection selection = {}) const;
 
 private:
     [[nodiscard]] QTrajectoryGradient reverse_from_step(

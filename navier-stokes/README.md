@@ -119,6 +119,10 @@ source file:
 - `LocalSignatureDensity` owns the exact coupled critical factorization, while
   `LocalSignatureFactorAdversary` falsifies pointwise factor-correlation
   mechanisms with parallel one-step RK4 probes;
+- `ShiftedCriticalDensityLemma` certifies the exact homogeneity and
+  conditional Gronwall closure of the scale-compatible `E(0)P(0)` shift;
+  `ShiftedCriticalDensityAnalyzer` evaluates its exact instantaneous
+  Navier--Stokes derivative without an RK4 horizon;
 - `LocalSignatureGradientAdversary` runs 12-worker targeted counterexample
   searches, while `LocalSignatureTrajectoryAnalyzer` verifies the exact
   dynamic signature factorization across Galerkin cutoffs;

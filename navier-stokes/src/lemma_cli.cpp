@@ -110,6 +110,8 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
             options.state_directory = next_value(argc, argv, index, name);
         } else if (name == "--dynamic-warm-state") {
             options.dynamic_warm_state = next_value(argc, argv, index, name);
+        } else if (name == "--dynamic-replay-each-cutoff") {
+            options.dynamic_replay_each_cutoff = true;
         } else if (name == "--sobolev-order") {
             options.sobolev_order =
                 std::stoi(next_value(argc, argv, index, name));
@@ -157,10 +159,16 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
             "adversary numeric parameters are outside their range");
     }
     validate_threads(options.threads);
+    if (options.dynamic_replay_each_cutoff &&
+        options.dynamic_warm_state.empty()) {
+        throw std::invalid_argument(
+            "--dynamic-replay-each-cutoff requires --dynamic-warm-state");
+    }
     if (options.dynamic_objective != "critical-integral" &&
         options.dynamic_objective != "critical-local-integral" &&
         options.dynamic_objective != "critical-local-increase" &&
         options.dynamic_objective != "critical-local-log-gain" &&
+        options.dynamic_objective != "critical-local-ep-log-gain" &&
         options.dynamic_objective != "critical-nonlocal-integral" &&
         options.dynamic_objective != "critical-near-nonlocal-integral" &&
         options.dynamic_objective != "critical-far-nonlocal-integral" &&
@@ -170,7 +178,7 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
         options.dynamic_objective != "q-gain" &&
         options.dynamic_objective != "q-increase") {
         throw std::invalid_argument(
-            "--dynamic-objective must be critical-integral, critical-local-integral, critical-local-increase, critical-local-log-gain, critical-nonlocal-integral, critical-near-nonlocal-integral, critical-far-nonlocal-integral, critical-gap-tail-integral, max-q, terminal-q, q-gain, or q-increase");
+            "--dynamic-objective must be critical-integral, critical-local-integral, critical-local-increase, critical-local-log-gain, critical-local-ep-log-gain, critical-nonlocal-integral, critical-near-nonlocal-integral, critical-far-nonlocal-integral, critical-gap-tail-integral, max-q, terminal-q, q-gain, or q-increase");
     }
     if (options.dynamic_optimizer != "gradient" &&
         options.dynamic_optimizer != "mutate" &&
@@ -257,10 +265,11 @@ void LemmaCli::print_adversary_help(std::ostream& out) {
         << "  --state-prefix PATH   dump each winning Fourier state as TSV\n"
         << "  --state-dir PATH      write states under PATH/{static,dynamic}\n"
         << "  --dynamic-warm-state PATH  replay a TSV as first dynamic warm start\n"
+        << "  --dynamic-replay-each-cutoff  replay that TSV independently at every cutoff\n"
         << "  --sobolev-order M     homogeneous initial H^M constraint\n"
         << "  --sobolev-cap VALUE   cutoff-independent squared H^M cap\n"
         << "  --critical-density-shift VALUE  additive shift for local log-gain\n"
-        << "  --dynamic-objective NAME  critical integral partition, local critical increase/log-gain, max-q, terminal-q, q-increase, or q-gain\n"
+        << "  --dynamic-objective NAME  critical integral partition, local increase/log-gain/E0P0-log-gain, or Q objective\n"
         << "  --minimum-dyadic-gap M  tail objective selects triads with gap >= M\n"
         << "  --dynamic-optimizer NAME  gradient, mutate, or hybrid\n"
         << "  --gradient-method NAME  steepest or projected lbfgs\n"

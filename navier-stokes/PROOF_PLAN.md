@@ -589,6 +589,44 @@ Consequently a purely multiplicative estimate is not a stable analytical
 restart point near vanishing local transfer. The exact adjoint and CLI now
 support an additive density shift `B` and optimize
 `log((C_local(T)+B)/(C_local(0)+B))`; the shifted gradient passes centered
-differences at `2.79e-10`. The next finite test uses `B=1e-4`, comparable to
-the high-density branch, before any shifted inequality is considered as a
-lemma candidate.
+differences at `2.79e-10`. With `B=1e-4`, twelve-start K3--K6 searches give
+normalized shifted gains `3.889, 4.068, 4.119, 4.135`. Top-shell energy has
+fitted exponent `-7.48`, and the K5-to-K6 projection residual is `4.14e-3`.
+This is a smooth finite candidate constant, not a uniform estimate. The active
+diagnostic is its dependence on `B`; only a shift tied to already controlled
+initial data and correct Navier--Stokes scaling could enter a proof.
+
+The first such explicit candidate is now encoded. Set
+`B0=E(0)P(0)` and `k0=sqrt(Z(0)/E(0))`. Exact rational checks show that
+`C_local` and `B0` both have amplitude degree four and Navier--Stokes scaling
+exponent two, while both sides of
+
+```text
+d/dt log(C_local+B0) <= A(u0,nu,T) k0 Z(t)                 (SLD-1)
+```
+
+have scaling exponent two. If SLD-1 holds uniformly in cutoff, the energy
+identity gives a uniform pointwise bound for `C_local`, hence its finite-time
+integral. SLD-1 is not proved; the exact scaling and conditional Gronwall
+closure only establish that it is a logically viable target. The restart
+point is now an analytic differentiation of `C_local` and a triadwise bound
+for its derivative with no future high-Sobolev input. See
+`proof/l4/lemmas/shifted-local-density/README.md`.
+
+The state-dependent `E(0)P(0)` adjoint passes centered differences at
+`2.06e-10`. Twelve-start K3--K6 searches give normalized SLD rates
+`7.240e-4, 7.533e-4, 7.751e-4, 7.810e-4`. A same-state K6--K8 zero-padding
+audit changes the objective by `-7.43e-6` and then `-2.14e-9` relatively.
+Thus the first exact finite adversary does not falsify SLD-1 and has converged
+in cutoff on its winning branch. Further lifts of this branch are no longer
+the active task; the restart point is the symbolic/local-triad expansion of
+`dC_local/dt` needed to prove or reject SLD-1 analytically.
+
+The new `shifted-density` oracle computes that instantaneous derivative as
+`<gradient C_local,RHS>` in about `0.22 s` at K6. Direct and FFT RHS backends
+agree in the serialized result. Its normalized rates on the four optimized
+K3--K6 winners are `7.2396e-4, 7.5341e-4, 7.7546e-4, 7.8151e-4`; the K6 value
+is only `6.10e-4` above the short-horizon average relatively. This removes the
+need to use RK4 for first-pass SLD falsification. The unresolved work is still
+analytical: split this exact derivative into local signature/triad terms and
+prove a cutoff-independent upper bound, or produce a scalable counterfamily.

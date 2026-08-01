@@ -132,7 +132,8 @@ TriadSelection objective_selection(
     const std::string& objective, int minimum_dyadic_gap) {
     if (objective == "critical-local-integral" ||
         objective == "critical-local-increase" ||
-        objective == "critical-local-log-gain") {
+        objective == "critical-local-log-gain" ||
+        objective == "critical-local-ep-log-gain") {
         return TriadPartition::local;
     }
     if (objective == "critical-nonlocal-integral") {
@@ -165,9 +166,12 @@ SpectralReal GradientAdversary::objective_value(
         options.objective, options.minimum_dyadic_gap);
     const SpectralReal initial_q =
         objective_.evaluate(state).energy_level_quantity;
-    SpectralReal previous_integrand =
-        objective_.evaluate(state, selection).critical_integrand;
+    const StaticObjective initial_static =
+        objective_.evaluate(state, selection);
+    SpectralReal previous_integrand = initial_static.critical_integrand;
     const SpectralReal initial_integrand = previous_integrand;
+    const SpectralReal initial_ep_shift =
+        initial_static.energy * initial_static.palinstrophy;
     SpectralReal critical_integral = 0.0L;
     SpectralReal maximum_q = initial_q;
     for (int step = 0; step < options.trajectory_steps; ++step) {
@@ -207,7 +211,20 @@ SpectralReal GradientAdversary::objective_value(
             !(shifted_terminal > 1e-30L)) {
             return -std::numeric_limits<SpectralReal>::infinity();
         }
-        return std::log(shifted_terminal / shifted_initial);
+        return std::log1p(
+            (previous_integrand - initial_integrand) / shifted_initial);
+    }
+    if (options.objective == "critical-local-ep-log-gain") {
+        const SpectralReal shifted_initial =
+            initial_integrand + initial_ep_shift;
+        const SpectralReal shifted_terminal =
+            previous_integrand + initial_ep_shift;
+        if (!(shifted_initial > 1e-30L) ||
+            !(shifted_terminal > 1e-30L)) {
+            return -std::numeric_limits<SpectralReal>::infinity();
+        }
+        return std::log1p(
+            (previous_integrand - initial_integrand) / shifted_initial);
     }
     if (options.objective == "critical-integral" ||
         options.objective == "critical-local-integral" ||
@@ -291,6 +308,10 @@ GradientSearchResult GradientAdversary::maximize_q(
                 result.state, options.viscosity, options.time_step,
                 options.trajectory_steps, TriadPartition::local,
                 options.critical_density_shift);
+        } else if (options.objective == "critical-local-ep-log-gain") {
+            trajectory = adjoint_.critical_ep_log_gain_gradient(
+                result.state, options.viscosity, options.time_step,
+                options.trajectory_steps, TriadPartition::local);
         } else if (options.objective == "critical-integral" ||
                    options.objective == "critical-local-integral" ||
                    options.objective == "critical-nonlocal-integral" ||

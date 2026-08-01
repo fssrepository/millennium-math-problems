@@ -29,6 +29,7 @@
 #include "spectral_galerkin.hpp"
 #include "spectral_objective.hpp"
 #include "spectral_state.hpp"
+#include "shifted_critical_density.hpp"
 #include "state_analysis.hpp"
 #include "trajectory_analyzer.hpp"
 #include "transition_block_scaling.hpp"
@@ -420,6 +421,8 @@ bool self_test(std::ostream& out) {
         ScalingAnalyzer::analyze_concentration();
     const StrongL4Reduction strong_l4 =
         ScalingAnalyzer::analyze_strong_l4_reduction();
+    const ShiftedCriticalDensityCertificate shifted_density =
+        ShiftedCriticalDensityLemma::analyze();
     const DyadicTailScaling dyadic_tail =
         ScalingAnalyzer::analyze_dyadic_tail();
     const DyadicShellRandomCertificate dyadic_shell_bounds =
@@ -447,6 +450,11 @@ bool self_test(std::ostream& out) {
         concentration.integrated_candidate_scale_critical;
     const bool strong_l4_ok = strong_l4.exact_density_factorization &&
                               strong_l4.closes_integrated_l4_from_uniform_q;
+    const bool shifted_density_ok = shifted_density.shift_matches_density &&
+        shifted_density.gronwall_coefficient_is_critical &&
+        shifted_density.energy_identity_closes_conditionally &&
+        shifted_density.density_amplitude_degree == Rational(4) &&
+        shifted_density.density_scaling_exponent == Rational(2);
     const bool dyadic_tail_scaling_ok =
         dyadic_tail.low_advecting_gap_decay == Rational(1, 2) &&
         dyadic_tail.low_advected_gap_decay == Rational(1, 2) &&
@@ -1343,6 +1351,38 @@ bool self_test(std::ostream& out) {
             1e-30L,
             std::max(std::abs(local_log_gain_directional),
                      std::abs(local_log_gain_finite_difference)));
+    const QTrajectoryGradient local_ep_log_gain_gradient =
+        active_adjoint.critical_ep_log_gain_gradient(
+            partition_state, adjoint_viscosity, adjoint_dt,
+            trajectory_steps, TriadPartition::local);
+    const Real local_ep_log_gain_directional = increment_inner_product(
+        local_ep_log_gain_gradient.initial_gradient, partition_tangent);
+    auto local_critical_ep_log_gain = [&](SpectralState state) {
+        const StaticObjective initial = active_objective.evaluate(
+            state, TriadPartition::local);
+        const Real shift = initial.energy * initial.palinstrophy;
+        for (int step = 0; step < trajectory_steps; ++step) {
+            active_dynamics.rk4_step(
+                state, adjoint_viscosity, adjoint_dt);
+        }
+        const Real terminal = active_objective
+            .evaluate(state, TriadPartition::local)
+            .critical_integrand;
+        return std::log1p(
+            (terminal - initial.critical_integrand) /
+            (initial.critical_integrand + shift));
+    };
+    const Real local_ep_log_gain_finite_difference =
+        (local_critical_ep_log_gain(partition_plus_state) -
+         local_critical_ep_log_gain(partition_minus_state)) /
+        (2.0L * finite_difference_step);
+    const Real local_ep_log_gain_gradient_error = std::abs(
+        local_ep_log_gain_directional -
+        local_ep_log_gain_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(std::abs(local_ep_log_gain_directional),
+                     std::abs(local_ep_log_gain_finite_difference)));
     const EvolutionResult configurable_tail_evolution =
         active_trajectory_analyzer.evolve(
             partition_state, adjoint_viscosity,
@@ -1422,6 +1462,7 @@ bool self_test(std::ostream& out) {
         configurable_tail_integral_gradient_error < 1e-9L &&
         local_increase_gradient_error < 1e-9L &&
         local_log_gain_gradient_error < 1e-9L &&
+        local_ep_log_gain_gradient_error < 1e-9L &&
         configurable_tail_trajectory_error < 1e-14L &&
         far_partition_static_gradient_error < 1e-9L;
     GradientSearchOptions gradient_options;
@@ -1504,6 +1545,12 @@ bool self_test(std::ostream& out) {
         << ")\n"
         << "strong L4 reduction test: " << (strong_l4_ok ? "PASS" : "FAIL")
         << " (integral D4Z2 <= sup(Q)*E0/(2nu))\n"
+        << "shifted local density scaling test: "
+        << (shifted_density_ok ? "PASS" : "FAIL")
+        << " (C and E0P0 amplitude="
+        << shifted_density.density_amplitude_degree.str()
+        << ", scaling=" << shifted_density.density_scaling_exponent.str()
+        << ", conditional energy closure)\n"
         << "dyadic tail scaling test: "
         << (dyadic_tail_scaling_ok ? "PASS" : "FAIL")
         << " (gap decay=" << dyadic_tail.low_advecting_gap_decay.str()
@@ -1761,6 +1808,8 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(local_increase_gradient_error)
         << ", local_log_gain="
         << static_cast<double>(local_log_gain_gradient_error)
+        << ", local_E0P0_log_gain="
+        << static_cast<double>(local_ep_log_gain_gradient_error)
         << ", tail_trajectory="
         << static_cast<double>(configurable_tail_trajectory_error)
         << ", far_static="
@@ -1790,6 +1839,7 @@ bool self_test(std::ostream& out) {
         << " (energy residual="
         << static_cast<double>(evolution.energy_balance_residual) << ")\n";
     return rational_ok && scaling_ok && concentration_ok && strong_l4_ok &&
+           shifted_density_ok &&
            dyadic_tail_scaling_ok && dyadic_shell_bounds_ok &&
            periodic_shell_geometry_ok && periodic_tail_bound_ok &&
            far_tail_closure_ok &&
@@ -1866,7 +1916,10 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
                 result);
         }
         const SpectralState* dynamic_warm_start = nullptr;
-        if (!dynamic_results.empty()) {
+        if (options.dynamic_replay_each_cutoff &&
+            !replayed_dynamic_warm_state.waves.empty()) {
+            dynamic_warm_start = &replayed_dynamic_warm_state;
+        } else if (!dynamic_results.empty()) {
             dynamic_warm_start = &dynamic_results.back().state;
         } else if (!replayed_dynamic_warm_state.waves.empty()) {
             dynamic_warm_start = &replayed_dynamic_warm_state;
@@ -1937,6 +1990,8 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
         static_cast<Real>(options.critical_density_shift);
     report.restarts = options.restarts;
     report.dynamic_restarts = options.dynamic_restarts;
+    report.dynamic_replay_each_cutoff =
+        options.dynamic_replay_each_cutoff;
     report.generations = options.generations;
     report.dynamic_generations = options.dynamic_generations;
     report.mutation = static_cast<Real>(options.mutation);
@@ -1999,19 +2054,41 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
         row.dynamic_final_local_critical_density =
             evolution.final_local_critical_integrand;
         row.dynamic_initial_enstrophy = evolution.initial_enstrophy;
+        row.dynamic_initial_palinstrophy = evolution.initial_palinstrophy;
+        row.dynamic_initial_ep_shift =
+            evolution.initial_energy * evolution.initial_palinstrophy;
+        const Real initial_frequency = std::sqrt(
+            evolution.initial_enstrophy /
+            std::max(1e-30L, evolution.initial_energy));
+        const Real local_growth_normalization = options.evolution_time *
+            initial_frequency * evolution.initial_enstrophy;
         if (evolution.initial_local_critical_integrand > 1e-30L &&
             evolution.final_local_critical_integrand > 1e-30L) {
             row.dynamic_local_critical_log_gain = std::log(
                 evolution.final_local_critical_integrand /
                 evolution.initial_local_critical_integrand);
-            const Real initial_frequency = std::sqrt(
-                evolution.initial_enstrophy /
-                std::max(1e-30L, evolution.initial_energy));
-            const Real normalization = options.evolution_time *
-                initial_frequency * evolution.initial_enstrophy;
-            if (normalization > 1e-30L) {
+            if (local_growth_normalization > 1e-30L) {
                 row.dynamic_local_log_gain_rate_ratio =
-                    row.dynamic_local_critical_log_gain / normalization;
+                    row.dynamic_local_critical_log_gain /
+                    local_growth_normalization;
+            }
+        }
+        const Real ep_shifted_initial =
+            evolution.initial_local_critical_integrand +
+            row.dynamic_initial_ep_shift;
+        const Real ep_shifted_final =
+            evolution.final_local_critical_integrand +
+            row.dynamic_initial_ep_shift;
+        if (ep_shifted_initial > 1e-30L && ep_shifted_final > 1e-30L) {
+            row.dynamic_ep_shifted_local_log_gain =
+                std::log1p(
+                    (evolution.final_local_critical_integrand -
+                     evolution.initial_local_critical_integrand) /
+                    ep_shifted_initial);
+            if (local_growth_normalization > 1e-30L) {
+                row.dynamic_ep_shifted_log_gain_rate_ratio =
+                    row.dynamic_ep_shifted_local_log_gain /
+                    local_growth_normalization;
             }
         }
         row.dynamic_maximum_q = evolution.maximum_energy_level_quantity;

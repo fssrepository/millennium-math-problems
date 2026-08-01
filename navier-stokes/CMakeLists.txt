@@ -47,6 +47,8 @@ add_executable(navier_stokes_lab
     src/spectral_galerkin.cpp
     src/spectral_objective.cpp
     src/spectral_state.cpp
+    src/shifted_critical_density.cpp
+    src/shifted_critical_density_cli.cpp
     src/state_analysis.cpp
     src/trajectory_analyzer.cpp
     src/transition_block_scaling.cpp

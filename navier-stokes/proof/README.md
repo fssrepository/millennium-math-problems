@@ -91,3 +91,9 @@ gradient to reject monotonic decay of the coupled local density (F010). Its
 positive-growth K3--K6 branch is time-step stable and spectrally convergent,
 but its increase flattens with cutoff and therefore supplies a mechanism test,
 not a blow-up certificate.
+
+`l4/lemmas/shifted-local-density/` states the next explicit analytical
+candidate. The initial shift `B0=E(0)P(0)` has exactly the same amplitude and
+Navier--Stokes scaling as the local critical density. A cutoff-uniform bound on
+`d log(C_local+B0)/dt` by `k0 Z` would close the local time integral through
+the energy identity; this differential estimate remains open.

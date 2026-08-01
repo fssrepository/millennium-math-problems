@@ -229,7 +229,10 @@ QTrajectoryGradient SpectralAdjoint::critical_log_gain_gradient(
         throw std::runtime_error(
             "critical log-gain gradient requires positive endpoint densities");
     }
-    result.objective_value = std::log(terminal_density / initial_density);
+    result.objective_value = std::log1p(
+        (terminal_objective.critical_integrand -
+         initial_objective.critical_integrand) /
+        initial_density);
     result.initial_gradient = objective_.critical_integrand_gradient(
         checkpoints.back(), selection);
     for (ComplexVector& value : result.initial_gradient) {
@@ -250,6 +253,70 @@ QTrajectoryGradient SpectralAdjoint::critical_log_gain_gradient(
         for (std::size_t component = 0; component < 3; ++component) {
             result.initial_gradient[mode][component] -=
                 initial_gradient[mode][component] / initial_density;
+        }
+    }
+    return result;
+}
+
+QTrajectoryGradient SpectralAdjoint::critical_ep_log_gain_gradient(
+    const SpectralState& initial, SpectralReal viscosity,
+    SpectralReal time_step, int steps, TriadSelection selection) const {
+    const std::vector<SpectralState> checkpoints = build_checkpoints(
+        dynamics_, initial, viscosity, time_step, steps);
+    QTrajectoryGradient result;
+    result.objective_step = steps;
+    result.total_steps = steps;
+    result.checkpoint_count = checkpoints.size();
+    const StaticObjective initial_objective =
+        objective_.evaluate(checkpoints.front(), selection);
+    const StaticObjective terminal_objective =
+        objective_.evaluate(checkpoints.back(), selection);
+    const SpectralReal shift = initial_objective.energy *
+        initial_objective.palinstrophy;
+    const SpectralReal shifted_initial =
+        initial_objective.critical_integrand + shift;
+    const SpectralReal shifted_terminal =
+        terminal_objective.critical_integrand + shift;
+    if (!(shifted_initial > 1e-30L) || !(shifted_terminal > 1e-30L)) {
+        throw std::runtime_error(
+            "E0P0 critical log-gain requires positive shifted densities");
+    }
+    result.objective_value = std::log1p(
+        (terminal_objective.critical_integrand -
+         initial_objective.critical_integrand) /
+        shifted_initial);
+    result.initial_gradient = objective_.critical_integrand_gradient(
+        checkpoints.back(), selection);
+    for (ComplexVector& value : result.initial_gradient) {
+        for (SpectralComplex& component : value) {
+            component /= shifted_terminal;
+        }
+    }
+    for (int step = steps - 1; step >= 0; --step) {
+        result.initial_gradient = dynamics_.rk4_vjp(
+            checkpoints[static_cast<std::size_t>(step)],
+            result.initial_gradient, viscosity, time_step);
+    }
+    const SpectralIncrement initial_density_gradient =
+        objective_.critical_integrand_gradient(
+            checkpoints.front(), selection);
+    const SpectralReal shift_coefficient =
+        1.0L / shifted_terminal - 1.0L / shifted_initial;
+    for (std::size_t mode = 0;
+         mode < result.initial_gradient.size(); ++mode) {
+        const SpectralReal wave2 = static_cast<SpectralReal>(
+            norm_squared(initial.waves[mode]));
+        const SpectralReal wave4 = wave2 * wave2;
+        for (std::size_t component = 0; component < 3; ++component) {
+            const SpectralComplex shift_gradient =
+                2.0L * (initial_objective.palinstrophy +
+                        initial_objective.energy * wave4) *
+                initial.velocity[mode][component];
+            result.initial_gradient[mode][component] -=
+                initial_density_gradient[mode][component] /
+                shifted_initial;
+            result.initial_gradient[mode][component] +=
+                shift_coefficient * shift_gradient;
         }
     }
     return result;

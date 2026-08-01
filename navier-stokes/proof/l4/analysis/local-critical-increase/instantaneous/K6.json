@@ -1,0 +1,18 @@
+{
+  "schema": "navier-stokes-shifted-critical-density-v1",
+  "state": "proof/l4/states/local-critical-ep-log-gain-multistart/dynamic/K6.tsv",
+  "cutoff": 6,
+  "modes": 2196,
+  "viscosity": 0.100000000000000006,
+  "energy": 1,
+  "enstrophy": 1.06897560328489805,
+  "palinstrophy": 1.24975213774681437,
+  "local_critical_density": 0.000185089166701380743,
+  "initial_E0P0_shift": 1.24975213774681415,
+  "density_derivative": 0.00107963157489812125,
+  "shifted_log_derivative": 0.000863748636052762337,
+  "initial_frequency": 1.03391276386593578,
+  "k0Z_normalization": 1.10522752049754502,
+  "normalized_shifted_log_derivative": 0.00078151205976478475,
+  "finite": true
+}
