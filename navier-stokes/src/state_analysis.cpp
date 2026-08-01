@@ -406,7 +406,9 @@ void StateAnalysisReporter::write_console(const StateAnalysisReport& report,
             << '\n';
     }
     out << "local_triad_symmetry_residuals,energy,reconstruction,"
-           "maximum_spread_bound_ratio\n"
+           "maximum_spread_bound_ratio,coherent_signatures,"
+           "effective_coherent_signatures,dominant_signature_fraction,"
+           "signed_signature_cancellation,signed_signature_amplification\n"
         << "local_triad_symmetry_residuals,"
         << static_cast<double>(report.local_triad_symmetry
                                    .maximum_energy_cancellation_residual)
@@ -414,6 +416,15 @@ void StateAnalysisReporter::write_console(const StateAnalysisReport& report,
                                           .local_reconstruction_residual)
         << ',' << static_cast<double>(report.local_triad_symmetry
                                           .maximum_frequency_spread_bound_ratio)
+        << ',' << report.local_triad_symmetry.coherent_signature_count
+        << ',' << static_cast<double>(report.local_triad_symmetry
+                                          .effective_coherent_signature_count)
+        << ',' << static_cast<double>(report.local_triad_symmetry
+                                          .dominant_coherent_signature_fraction)
+        << ',' << static_cast<double>(report.local_triad_symmetry
+                                          .signed_signature_cancellation_ratio)
+        << ',' << static_cast<double>(report.local_triad_symmetry
+                                          .signed_signature_amplification)
         << '\n';
     out << "\nlocal_triad_signature,k2_a,k2_b,k2_c,triads,"
            "signed_enstrophy_transfer,absolute_group_transfer,"
@@ -694,6 +705,26 @@ void StateAnalysisReporter::write_json(const StateAnalysisReport& report,
         << ", \"maximum_frequency_spread_bound_ratio\": "
         << static_cast<double>(report.local_triad_symmetry
                                    .maximum_frequency_spread_bound_ratio)
+        << ", \"coherent_signature_count\": "
+        << report.local_triad_symmetry.coherent_signature_count
+        << ", \"absolute_signed_signature_transfer\": "
+        << static_cast<double>(report.local_triad_symmetry
+                                   .absolute_signed_signature_transfer)
+        << ", \"squared_signed_signature_transfer\": "
+        << static_cast<double>(report.local_triad_symmetry
+                                   .squared_signed_signature_transfer)
+        << ", \"effective_coherent_signature_count\": "
+        << static_cast<double>(report.local_triad_symmetry
+                                   .effective_coherent_signature_count)
+        << ", \"dominant_coherent_signature_fraction\": "
+        << static_cast<double>(report.local_triad_symmetry
+                                   .dominant_coherent_signature_fraction)
+        << ", \"signed_signature_cancellation_ratio\": "
+        << static_cast<double>(report.local_triad_symmetry
+                                   .signed_signature_cancellation_ratio)
+        << ", \"signed_signature_amplification\": "
+        << static_cast<double>(report.local_triad_symmetry
+                                   .signed_signature_amplification)
         << ", \"spread_bins\": [";
     for (std::size_t index = 0;
          index < report.local_triad_symmetry.spread_bins.size(); ++index) {

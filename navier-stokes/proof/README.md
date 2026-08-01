@@ -71,3 +71,13 @@ depletion open.
 `(|p|^2,|q|^2,|p+q|^2)=(r,r,2r)`. Its bounded lattice degree improves the
 local transfer from critical frequency power `9/2` to `7/2`, making the family
 viscosity-absorbable at high frequency.
+
+`l4/lemmas/local-signature-families/` proves the same `O(K)` lattice-degree
+bound for every fixed squared-length signature and square-sums their
+transfers. The full broad local block closes if its effective coherent
+signature count is `O(K^mu)` for any `mu<1`; the replayed K3 broad endpoint has
+`N_eff=1.1902068038`. The unrestricted pointwise hypothesis is rejected by
+`l4/analysis/local-signature-adversary/`, whose flat-spectrum search reaches
+`N_eff=1748.62` at K6. The sign-preserving amplification `A_sig` remains only
+`2.33549` on that profile; proving growth strictly below `K^(1/2)` is the
+sharper surviving target.

@@ -25,6 +25,13 @@ struct LocalTriadSymmetryReport {
     SpectralReal maximum_energy_cancellation_residual = 0.0L;
     SpectralReal local_reconstruction_residual = 0.0L;
     SpectralReal maximum_frequency_spread_bound_ratio = 0.0L;
+    std::size_t coherent_signature_count = 0;
+    SpectralReal absolute_signed_signature_transfer = 0.0L;
+    SpectralReal squared_signed_signature_transfer = 0.0L;
+    SpectralReal effective_coherent_signature_count = 0.0L;
+    SpectralReal dominant_coherent_signature_fraction = 0.0L;
+    SpectralReal signed_signature_cancellation_ratio = 0.0L;
+    SpectralReal signed_signature_amplification = 0.0L;
     std::array<LocalTriadSpreadBin, local_spread_bin_count> spread_bins{};
     struct SignatureRow {
         std::array<SpectralInteger, 3> squared_lengths{};

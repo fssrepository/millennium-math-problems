@@ -1,0 +1,22 @@
+{
+  "schema": "navier-stokes-local-signature-v1",
+  "maximum_cutoff": 5,
+  "ordered_signature_degree_bound": "2(2K+1)",
+  "square_summed_transfer_bound": "(sum_sigma |V_sigma|^2)^(1/2) <= C K^(7/2) E_K^(3/2)",
+  "effective_signature_identity": "sum_sigma |V_sigma| = sqrt(N_eff) (sum_sigma |V_sigma|^2)^(1/2)",
+  "maximum_input_degree_ratio": 0.800000000000000044,
+  "maximum_target_degree_ratio": 0.800000000000000044,
+  "all_fixed_signature_degree_bounds_hold": true,
+  "closure": {
+    "finite": {"signature_count_power": "0", "union_degree_power": "1", "transfer_frequency_power": "7/2", "transfer_to_viscosity_frequency_power": "-1/2", "energy_level_high_frequency_absorption": true},
+    "critical": {"signature_count_power": "1", "union_degree_power": "2", "transfer_frequency_power": "4", "transfer_to_viscosity_frequency_power": "0", "energy_level_high_frequency_absorption": false},
+    "dense": {"signature_count_power": "2", "union_degree_power": "3", "transfer_frequency_power": "9/2", "transfer_to_viscosity_frequency_power": "1/2", "energy_level_high_frequency_absorption": false}
+  },
+  "rows": [
+    {"cutoff": 1, "ordered_signatures": 10, "maximum_input_degree": 4, "maximum_target_degree": 4, "ordered_signature_degree_bound": 6},
+    {"cutoff": 2, "ordered_signatures": 117, "maximum_input_degree": 8, "maximum_target_degree": 8, "ordered_signature_degree_bound": 10},
+    {"cutoff": 3, "ordered_signatures": 659, "maximum_input_degree": 8, "maximum_target_degree": 8, "ordered_signature_degree_bound": 14},
+    {"cutoff": 4, "ordered_signatures": 2633, "maximum_input_degree": 12, "maximum_target_degree": 12, "ordered_signature_degree_bound": 18},
+    {"cutoff": 5, "ordered_signatures": 7730, "maximum_input_degree": 12, "maximum_target_degree": 12, "ordered_signature_degree_bound": 22}
+  ]
+}

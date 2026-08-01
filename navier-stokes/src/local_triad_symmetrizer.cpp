@@ -174,6 +174,43 @@ LocalTriadSymmetryReport LocalTriadSymmetrizer::analyze(
                 std::abs(right.signed_enstrophy_transfer);
         });
 
+    SpectralReal dominant_signature_transfer = 0.0L;
+    for (const auto& signature : report.signatures) {
+        const SpectralReal magnitude =
+            std::abs(signature.signed_enstrophy_transfer);
+        report.absolute_signed_signature_transfer += magnitude;
+        report.squared_signed_signature_transfer += magnitude * magnitude;
+        dominant_signature_transfer = std::max(
+            dominant_signature_transfer, magnitude);
+    }
+    const SpectralReal coherent_threshold =
+        1e-14L * report.absolute_signed_signature_transfer;
+    for (const auto& signature : report.signatures) {
+        if (std::abs(signature.signed_enstrophy_transfer) >
+            coherent_threshold) {
+            ++report.coherent_signature_count;
+        }
+    }
+    if (report.squared_signed_signature_transfer > 0.0L) {
+        report.effective_coherent_signature_count =
+            report.absolute_signed_signature_transfer *
+            report.absolute_signed_signature_transfer /
+            report.squared_signed_signature_transfer;
+    }
+    if (report.absolute_signed_signature_transfer > 0.0L) {
+        report.dominant_coherent_signature_fraction =
+            dominant_signature_transfer /
+            report.absolute_signed_signature_transfer;
+        report.signed_signature_cancellation_ratio =
+            std::abs(report.signed_local_enstrophy_transfer) /
+            report.absolute_signed_signature_transfer;
+    }
+    if (report.squared_signed_signature_transfer > 0.0L) {
+        report.signed_signature_amplification =
+            std::abs(report.signed_local_enstrophy_transfer) /
+            std::sqrt(report.squared_signed_signature_transfer);
+    }
+
     const TriadLedgerReport direct = TriadLedger::analyze(state);
     report.local_reconstruction_residual = relative_residual(
         report.signed_local_enstrophy_transfer - direct.signed_local,

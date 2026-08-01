@@ -107,6 +107,9 @@ source file:
 - `OrthogonalTriadGeometry` proves and enumerates the bounded-degree lattice
   graph for equal-length orthogonal waves and certifies its subcritical
   `K^(-1/2)` transfer-to-viscosity scaling;
+- `LocalSignatureGeometry` extends the degree bound to every fixed
+  squared-length triple, square-sums the signature transfers, and certifies
+  that an effective-signature exponent below one is viscosity-subcritical;
 - `HelicalSectorObjective`, `HelicalSectorAdjoint`, and the two helical
   adversaries provide exact static and checkpointed trajectory gradients for
   sector-selective local searches;
@@ -140,9 +143,13 @@ source file:
 self-test; state construction, trajectory diagnostics, triad verification,
 forward dynamics, the discrete adjoint, constrained optimization, CLI, and
 report generation are separate compilation units. The next mathematical task
-is a cutoff-independent paraproduct estimate for the measured dyadic tail.
-This keeps rebuilds dependency-free and makes each layer independently
-replaceable.
+is a sign-preserving local-signature amplification bound
+`A_sig=O(K^alpha)` with `alpha<1/2`, or its time-integrated version. A
+pointwise sublinear raw participation bound for arbitrary fixed-energy states
+has been adversarially rejected, while the signed candidate survives through
+K6. The far dyadic tail and every fixed local signature family already have
+cutoff-independent closures. This keeps rebuilds dependency-free and makes
+each layer independently replaceable.
 
 The helical local target has its own replayable optimizer and same-state
 cutoff scan:

@@ -458,3 +458,34 @@ Unrestricted local interactions have `d=3` and power `9/2`; viscosity has
 power `4`; the critical degree is `d=2`; the controlled orthogonal family has
 `d=1` and power `7/2`. A closing extension must therefore produce effective
 degree `d<2` on the unresolved broad class.
+
+The extension to all fixed squared-length signatures is now proved. Every
+ordered `(r,s,t)` family has input and target degree at most `2(2K+1)`. More
+importantly, summing the squared per-signature estimates before Cauchy gives
+
+```text
+(sum_sigma |V_sigma|^2)^(1/2) <= C K^(7/2) E_K^(3/2).
+```
+
+With
+`N_eff=(sum_sigma |V_sigma|)^2/sum_sigma |V_sigma|^2`, the entire local block
+is bounded by `C sqrt(N_eff) K^(7/2) E_K^(3/2)`. Therefore
+`N_eff=O(K^mu)` closes exactly when `mu<1`. Replay of the broad K3 endpoint
+gives `N_eff=1.1902068038` and dominant coherent fraction `0.912689851446`,
+despite 106 signatures above the numerical threshold. This is a sharper
+restart point than raw signature counting, but the unrestricted pointwise
+claim has now been rejected. A 12-worker flat-spectrum search reaches
+`N_eff=1748.62` at K6 and has finite-range slope `4.223`; energy and
+incompressibility alone do not force sublinear participation. The viable
+target retains inter-signature signs. With
+
+```text
+A_sig=|sum V_sigma|/(sum |V_sigma|^2)^(1/2),
+```
+
+the square-summed lemma closes whenever `A_sig=O(K^alpha)`, `alpha<1/2`.
+The same K1--K6 search gives K6 maxima `2.33549` (flat) and `2.73471`
+(outer-half-flat), with fitted slopes `0.48310` and `0.25607`. This passes the
+finite screen but is not proved. The analytical restart point is LSF-4 or a
+trajectory-integrated version tied to a fixed smooth initial datum. See
+`proof/l4/lemmas/local-signature-families/README.md`.

@@ -17,6 +17,7 @@
 #include "orthogonal_triad_geometry.hpp"
 #include "lemma_adversary.hpp"
 #include "lemma_reporter.hpp"
+#include "local_signature_geometry.hpp"
 #include "local_triad_symmetrizer.hpp"
 #include "moving_gap_controller.hpp"
 #include "projective_family.hpp"
@@ -732,6 +733,10 @@ bool self_test(std::ostream& out) {
         OrthogonalTriadGeometry::certify(5);
     const OrthogonalTriadClosure orthogonal_closure =
         OrthogonalTriadGeometry::analyze_closure();
+    const LocalSignatureGeometryCertificate local_signature_geometry =
+        LocalSignatureGeometry::certify(3);
+    const SignatureFamilyClosure signature_family_closure =
+        LocalSignatureGeometry::analyze_closure();
     SpectralState positive_helical_state =
         HelicalTriadLedger::project_helicity(helical_state, 1);
     SpectralStateOps::normalize_energy(positive_helical_state);
@@ -762,6 +767,18 @@ bool self_test(std::ostream& out) {
         local_symmetry.local_reconstruction_residual < 1e-15L &&
         local_symmetry.maximum_frequency_spread_bound_ratio <=
             1.0L + 1e-15L &&
+        local_symmetry.coherent_signature_count > 0 &&
+        local_symmetry.effective_coherent_signature_count >= 1.0L &&
+        local_symmetry.effective_coherent_signature_count <=
+            static_cast<Real>(local_symmetry.signatures.size()) +
+                1e-12L &&
+        local_symmetry.dominant_coherent_signature_fraction > 0.0L &&
+        local_symmetry.dominant_coherent_signature_fraction <= 1.0L &&
+        local_symmetry.signed_signature_cancellation_ratio <=
+            1.0L + 1e-15L &&
+        local_symmetry.signed_signature_amplification <=
+            std::sqrt(local_symmetry.effective_coherent_signature_count) +
+                1e-15L &&
         local_symmetry.local_triads > 0;
     const bool orthogonal_geometry_ok =
         orthogonal_geometry.all_degree_bounds_hold &&
@@ -776,6 +793,30 @@ bool self_test(std::ostream& out) {
         orthogonal_closure.high_frequency_absorbable_from_energy &&
         orthogonal_closure.orthogonal_degree_is_subcritical &&
         orthogonal_closure.generic_local_degree_is_supercritical;
+    const bool local_signature_geometry_ok =
+        local_signature_geometry.all_fixed_signature_degree_bounds_hold &&
+        local_signature_geometry.maximum_input_degree_ratio <= 1.0L &&
+        local_signature_geometry.maximum_target_degree_ratio <= 1.0L &&
+        signature_family_closure.finite_signature_family
+                .transfer_frequency_power == Rational(7, 2) &&
+        signature_family_closure.finite_signature_family
+                .energy_level_high_frequency_absorption &&
+        signature_family_closure.critical_signature_family
+                .transfer_frequency_power == Rational(4) &&
+        !signature_family_closure.critical_signature_family
+                .energy_level_high_frequency_absorption &&
+        signature_family_closure.dense_signature_family
+                .transfer_frequency_power == Rational(9, 2) &&
+        !signature_family_closure.dense_signature_family
+                .energy_level_high_frequency_absorption &&
+        signature_family_closure.square_summed_fixed_signature_bound &&
+        signature_family_closure.effective_count_replaces_raw_count &&
+        signature_family_closure.critical_signed_amplification_power ==
+            Rational(1, 2) &&
+        signature_family_closure
+            .signed_amplification_preserves_cancellation &&
+        signature_family_closure
+                .closing_requires_sublinear_signature_count;
     const bool pure_helical_ok =
         positive_helical.negative_helical_energy < 1e-15L &&
         negative_helical.positive_helical_energy < 1e-15L &&
@@ -1621,6 +1662,12 @@ bool self_test(std::ostream& out) {
         << ", spread="
         << static_cast<double>(
                local_symmetry.maximum_frequency_spread_bound_ratio)
+        << ", effective signatures="
+        << static_cast<double>(
+               local_symmetry.effective_coherent_signature_count)
+        << ", signed amplification="
+        << static_cast<double>(
+               local_symmetry.signed_signature_amplification)
         << ")\n"
         << "orthogonal triad closure test: "
         << (orthogonal_geometry_ok ? "PASS" : "FAIL")
@@ -1632,6 +1679,24 @@ bool self_test(std::ostream& out) {
                orthogonal_geometry.maximum_target_degree_ratio)
         << ", high-frequency power="
         << orthogonal_closure.transfer_to_viscosity_frequency_power.str()
+        << ")\n"
+        << "local signature closure test: "
+        << (local_signature_geometry_ok ? "PASS" : "FAIL")
+        << " (input degree="
+        << static_cast<double>(
+               local_signature_geometry.maximum_input_degree_ratio)
+        << ", target degree="
+        << static_cast<double>(
+               local_signature_geometry.maximum_target_degree_ratio)
+        << ", finite="
+        << signature_family_closure.finite_signature_family
+               .transfer_frequency_power.str()
+        << ", critical="
+        << signature_family_closure.critical_signature_family
+               .transfer_frequency_power.str()
+        << ", dense="
+        << signature_family_closure.dense_signature_family
+               .transfer_frequency_power.str()
         << ")\n"
         << "pure helical local test: "
         << (pure_helical_ok ? "PASS" : "FAIL")
@@ -1771,7 +1836,8 @@ bool self_test(std::ostream& out) {
            transition_block_scaling_ok &&
            moving_gap_controller_ok &&
            triad_ok && helical_ok && helical_gap_ok && local_symmetry_ok &&
-           orthogonal_geometry_ok && pure_helical_ok && fft_ok &&
+           orthogonal_geometry_ok && local_signature_geometry_ok &&
+           pure_helical_ok && fft_ok &&
            helical_sector_objective_ok && helical_adversary_ok &&
            helical_trajectory_adjoint_ok &&
            helical_trajectory_adversary_ok && fft_adjoint_ok && adjoint_ok &&
