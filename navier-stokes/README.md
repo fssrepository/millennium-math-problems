@@ -151,9 +151,10 @@ strong quarter-depletion quantity `Q = D^4 Z` at fixed unit energy:
 ```
 
 Winning states are saved as Fourier coefficients, so a suspected obstruction
-can be replayed or converted into an analytical family. For `max-q`, the
-default dynamic optimizer uses the exact discrete RK4 adjoint, projects the
-gradient onto the fixed-energy sphere, and applies monotone backtracking.
+can be replayed or converted into an analytical family. The default dynamic
+objective is the L4-A integral `integral D^4 Z^2 dt`; the exact trapezoidal
+discrete adjoint projects its gradient onto the fixed-energy sphere and applies
+monotone backtracking. `max-q` remains available for the stronger L4-S route.
 `--dynamic-optimizer mutate` retains the old random search as a control, while
 `hybrid` runs both. The command then directly integrates `D^4 Z^2`. Cutoff
 growth attacks the strong pointwise lemma; growth of the dynamic integral

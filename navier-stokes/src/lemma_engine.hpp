@@ -29,7 +29,9 @@ struct AdversaryOptions {
     std::string state_prefix;
     std::string state_directory;
     std::string dynamic_warm_state;
-    std::string dynamic_objective = "max-q";
+    int sobolev_order = 0;
+    double sobolev_cap = 0.0;
+    std::string dynamic_objective = "critical-integral";
     std::string dynamic_optimizer = "gradient";
     int threads = 0;
     std::string backend = "auto";

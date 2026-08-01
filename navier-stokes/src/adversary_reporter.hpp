@@ -51,6 +51,7 @@ struct AdversaryReportRow {
     int dynamic_evaluations = 0;
     int dynamic_accepted_mutations = 0;
     int dynamic_accepted_gradient_steps = 0;
+    long double dynamic_sobolev_value = 0.0L;
 };
 
 struct AdversaryReport {
@@ -58,6 +59,8 @@ struct AdversaryReport {
     std::string backend;
     std::string dynamic_objective;
     std::string dynamic_optimizer;
+    int sobolev_order = 0;
+    long double sobolev_cap = 0.0L;
     int restarts = 0;
     int generations = 0;
     int dynamic_generations = 0;

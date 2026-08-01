@@ -31,7 +31,9 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
         << "\nDynamic Galerkin check (nu=" << static_cast<double>(report.viscosity)
         << ", T=" << static_cast<double>(report.time)
         << ", objective=" << report.dynamic_objective
-        << ", optimizer=" << report.dynamic_optimizer << ")\n"
+        << ", optimizer=" << report.dynamic_optimizer
+        << ", H" << report.sobolev_order << "_cap="
+        << static_cast<double>(report.sobolev_cap) << ")\n"
         << "cutoff,steps,int_D4Z2_refined,int_local_D4Z2,int_nonlocal_D4Z2,"
            "dt_relative_error,initial_D4Z,final_D4Z,log_Q_gain,max_D4Z,max_local_D4Z,max_nonlocal_D4Z,"
            "max_positive_dlogQ_over_k0Z,q_derivative_error,strong_L4_envelope,"
@@ -65,7 +67,9 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
             << "  # dynamic_evals=" << row.dynamic_evaluations
             << ", accepted_mutations=" << row.dynamic_accepted_mutations
             << ", accepted_gradient="
-            << row.dynamic_accepted_gradient_steps << '\n';
+            << row.dynamic_accepted_gradient_steps
+            << ", initial_sobolev="
+            << static_cast<double>(row.dynamic_sobolev_value) << '\n';
     }
 }
 
@@ -80,6 +84,9 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
         << ", \"dynamic_generations\": " << report.dynamic_generations
         << ", \"dynamic_objective\": \"" << report.dynamic_objective << "\""
         << ", \"dynamic_optimizer\": \"" << report.dynamic_optimizer << "\""
+        << ", \"sobolev_order\": " << report.sobolev_order
+        << ", \"sobolev_cap\": "
+        << static_cast<double>(report.sobolev_cap)
         << ", \"mutation\": " << static_cast<double>(report.mutation)
         << ", \"seed\": " << report.seed << "},\n"
         << "  \"threads\": " << report.workers << ",\n"
@@ -154,7 +161,9 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
             << ", \"dynamic_accepted_mutations\": "
             << row.dynamic_accepted_mutations
             << ", \"dynamic_accepted_gradient_steps\": "
-            << row.dynamic_accepted_gradient_steps << '}'
+            << row.dynamic_accepted_gradient_steps
+            << ", \"dynamic_initial_sobolev_value\": "
+            << static_cast<double>(row.dynamic_sobolev_value) << '}'
             << (index + 1 == report.rows.size() ? "\n" : ",\n");
     }
     out << "  ],\n"

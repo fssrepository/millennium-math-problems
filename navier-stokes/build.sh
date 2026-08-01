@@ -16,7 +16,8 @@ fi
 
 mkdir -p build
 "$compiler" "${flags[@]}" -Isrc \
-  src/gradient_adversary.cpp src/main.cpp src/lemma_cli.cpp \
+  src/gradient_adversary.cpp src/initial_sobolev_constraint.cpp \
+  src/main.cpp src/lemma_cli.cpp \
   src/lemma_engine.cpp src/lemma_reporter.cpp \
   src/adversary_reporter.cpp \
   src/family_reporter.cpp \

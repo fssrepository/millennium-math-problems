@@ -149,6 +149,10 @@ StateAnalysisReport SpectralStateAnalyzer::analyze(
             dot_hermitian(state.velocity[index], state.velocity[index]));
         const SpectralReal gradient_norm2 =
             std::real(dot_hermitian(gradient[index], gradient[index]));
+        report.homogeneous_h3_squared +=
+            wave2 * wave2 * wave2 * mode_energy;
+        report.homogeneous_h4_squared +=
+            wave2 * wave2 * wave2 * wave2 * mode_energy;
         ++shell_report.modes;
         shell_report.energy += mode_energy;
         shell_report.enstrophy += wave2 * mode_energy;
@@ -206,6 +210,10 @@ void StateAnalysisReporter::write_console(const StateAnalysisReport& report,
         << " divergence_residual="
         << static_cast<double>(report.divergence_residual)
         << " reality_residual=" << static_cast<double>(report.reality_residual)
+        << " H3_squared="
+        << static_cast<double>(report.homogeneous_h3_squared)
+        << " H4_squared="
+        << static_cast<double>(report.homogeneous_h4_squared)
         << " projected_q_gradient_norm="
         << static_cast<double>(report.projected_q_gradient_norm)
         << " retraction_gradient_error="
@@ -256,6 +264,10 @@ void StateAnalysisReporter::write_json(const StateAnalysisReport& report,
         << static_cast<double>(report.divergence_residual)
         << ", \"reality_residual\": "
         << static_cast<double>(report.reality_residual)
+        << ", \"homogeneous_H3_squared\": "
+        << static_cast<double>(report.homogeneous_h3_squared)
+        << ", \"homogeneous_H4_squared\": "
+        << static_cast<double>(report.homogeneous_h4_squared)
         << ", \"projected_q_gradient_norm\": "
         << static_cast<double>(report.projected_q_gradient_norm)
         << ", \"retraction_directional_derivative\": "
@@ -316,6 +328,14 @@ StateFamilyAnalysisReport StateFamilyAnalyzer::analyze(
                 row.top_shell_energy += std::real(dot_hermitian(
                     state.velocity[mode], state.velocity[mode]));
             }
+            const SpectralReal wave2 =
+                static_cast<SpectralReal>(norm_squared(wave));
+            const SpectralReal mode_energy = std::real(dot_hermitian(
+                state.velocity[mode], state.velocity[mode]));
+            row.homogeneous_h3_squared +=
+                wave2 * wave2 * wave2 * mode_energy;
+            row.homogeneous_h4_squared +=
+                wave2 * wave2 * wave2 * wave2 * mode_energy;
         }
         if (!previous.waves.empty()) {
             SpectralReal difference2 = 0.0L;
@@ -373,13 +393,15 @@ StateFamilyAnalysisReport StateFamilyAnalyzer::analyze(
 void StateFamilyAnalysisReporter::write_console(
     const StateFamilyAnalysisReport& report, std::ostream& out) {
     out << "state_directory=" << report.state_directory
-        << "\ncutoff,modes,E,Z,P,Q,top_shell_energy,projection_residual\n"
+        << "\ncutoff,modes,E,Z,P,H3_squared,H4_squared,Q,top_shell_energy,projection_residual\n"
         << std::setprecision(12);
     for (const StateFamilyAnalysisRow& row : report.rows) {
         out << row.cutoff << ',' << row.modes << ','
             << static_cast<double>(row.energy) << ','
             << static_cast<double>(row.enstrophy) << ','
             << static_cast<double>(row.palinstrophy) << ','
+            << static_cast<double>(row.homogeneous_h3_squared) << ','
+            << static_cast<double>(row.homogeneous_h4_squared) << ','
             << static_cast<double>(row.q) << ','
             << static_cast<double>(row.top_shell_energy) << ','
             << static_cast<double>(row.projection_residual) << '\n';
@@ -407,6 +429,10 @@ void StateFamilyAnalysisReporter::write_json(
             << ", \"E\": " << static_cast<double>(row.energy)
             << ", \"Z\": " << static_cast<double>(row.enstrophy)
             << ", \"P\": " << static_cast<double>(row.palinstrophy)
+            << ", \"homogeneous_H3_squared\": "
+            << static_cast<double>(row.homogeneous_h3_squared)
+            << ", \"homogeneous_H4_squared\": "
+            << static_cast<double>(row.homogeneous_h4_squared)
             << ", \"Q\": " << static_cast<double>(row.q)
             << ", \"top_shell_energy\": "
             << static_cast<double>(row.top_shell_energy)

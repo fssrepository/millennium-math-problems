@@ -49,26 +49,8 @@ SpectralIncrement SpectralObjective::energy_level_gradient(
         return result;
     }
 
-    const SpectralIncrement advection = dynamics_.advection(state);
-    SpectralIncrement weighted_velocity(state.waves.size());
-    for (std::size_t mode = 0; mode < state.waves.size(); ++mode) {
-        const SpectralReal wave2 =
-            static_cast<SpectralReal>(norm_squared(state.waves[mode]));
-        for (std::size_t component = 0; component < 3; ++component) {
-            weighted_velocity[mode][component] =
-                wave2 * state.velocity[mode][component];
-        }
-    }
-    SpectralIncrement stretching_gradient =
-        dynamics_.advection_vjp(state, weighted_velocity);
-    for (std::size_t mode = 0; mode < state.waves.size(); ++mode) {
-        const SpectralReal wave2 =
-            static_cast<SpectralReal>(norm_squared(state.waves[mode]));
-        for (std::size_t component = 0; component < 3; ++component) {
-            stretching_gradient[mode][component] +=
-                wave2 * advection[mode][component];
-        }
-    }
+    const SpectralIncrement stretching_gradient =
+        signed_stretching_gradient(state);
 
     const SpectralReal stretching = objective.signed_vortex_stretching;
     const SpectralReal stretching2 = stretching * stretching;
@@ -99,6 +81,74 @@ SpectralIncrement SpectralObjective::energy_level_gradient(
                 (2.0L * enstrophy_coefficient * wave2 +
                  2.0L * palinstrophy_coefficient * wave4) *
                     state.velocity[mode][component];
+        }
+    }
+    return result;
+}
+
+SpectralIncrement SpectralObjective::critical_integrand_gradient(
+    const SpectralState& state) const {
+    const StaticObjective objective = evaluate(state);
+    SpectralIncrement result(state.waves.size());
+    if (!(objective.enstrophy > 0.0L) ||
+        !(objective.palinstrophy > 0.0L) ||
+        objective.signed_vortex_stretching == 0.0L) {
+        return result;
+    }
+    const SpectralIncrement stretching_gradient =
+        signed_stretching_gradient(state);
+    const SpectralReal stretching = objective.signed_vortex_stretching;
+    const SpectralReal stretching2 = stretching * stretching;
+    const SpectralReal stretching4 = stretching2 * stretching2;
+    const SpectralReal palinstrophy2 =
+        objective.palinstrophy * objective.palinstrophy;
+    const SpectralReal palinstrophy3 =
+        palinstrophy2 * objective.palinstrophy;
+    const SpectralReal stretching_coefficient =
+        4.0L * stretching * stretching2 /
+        (objective.enstrophy * palinstrophy3);
+    const SpectralReal enstrophy_coefficient =
+        -stretching4 /
+        (objective.enstrophy * objective.enstrophy * palinstrophy3);
+    const SpectralReal palinstrophy_coefficient =
+        -3.0L * stretching4 /
+        (objective.enstrophy * palinstrophy3 * objective.palinstrophy);
+    for (std::size_t mode = 0; mode < state.waves.size(); ++mode) {
+        const SpectralReal wave2 =
+            static_cast<SpectralReal>(norm_squared(state.waves[mode]));
+        const SpectralReal wave4 = wave2 * wave2;
+        for (std::size_t component = 0; component < 3; ++component) {
+            result[mode][component] =
+                stretching_coefficient *
+                    stretching_gradient[mode][component] +
+                (2.0L * enstrophy_coefficient * wave2 +
+                 2.0L * palinstrophy_coefficient * wave4) *
+                    state.velocity[mode][component];
+        }
+    }
+    return result;
+}
+
+SpectralIncrement SpectralObjective::signed_stretching_gradient(
+    const SpectralState& state) const {
+    const SpectralIncrement advection = dynamics_.advection(state);
+    SpectralIncrement weighted_velocity(state.waves.size());
+    for (std::size_t mode = 0; mode < state.waves.size(); ++mode) {
+        const SpectralReal wave2 =
+            static_cast<SpectralReal>(norm_squared(state.waves[mode]));
+        for (std::size_t component = 0; component < 3; ++component) {
+            weighted_velocity[mode][component] =
+                wave2 * state.velocity[mode][component];
+        }
+    }
+    SpectralIncrement result =
+        dynamics_.advection_vjp(state, weighted_velocity);
+    for (std::size_t mode = 0; mode < state.waves.size(); ++mode) {
+        const SpectralReal wave2 =
+            static_cast<SpectralReal>(norm_squared(state.waves[mode]));
+        for (std::size_t component = 0; component < 3; ++component) {
+            result[mode][component] +=
+                wave2 * advection[mode][component];
         }
     }
     return result;

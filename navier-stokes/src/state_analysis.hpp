@@ -48,6 +48,8 @@ struct StateAnalysisReport {
     SpectralReal projected_q_gradient_norm = 0.0L;
     SpectralReal retraction_directional_derivative = 0.0L;
     SpectralReal retraction_gradient_relative_error = 0.0L;
+    SpectralReal homogeneous_h3_squared = 0.0L;
+    SpectralReal homogeneous_h4_squared = 0.0L;
     StaticObjective objective;
     std::vector<StateShellAnalysis> shells;
     std::vector<StateModeAnalysis> top_modes;
@@ -66,6 +68,8 @@ struct StateFamilyAnalysisRow {
     SpectralReal energy = 0.0L;
     SpectralReal enstrophy = 0.0L;
     SpectralReal palinstrophy = 0.0L;
+    SpectralReal homogeneous_h3_squared = 0.0L;
+    SpectralReal homogeneous_h4_squared = 0.0L;
     SpectralReal q = 0.0L;
     SpectralReal top_shell_energy = 0.0L;
     SpectralReal projection_residual = 0.0L;

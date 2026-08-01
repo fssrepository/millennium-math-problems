@@ -107,6 +107,12 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
             options.state_directory = next_value(argc, argv, index, name);
         } else if (name == "--dynamic-warm-state") {
             options.dynamic_warm_state = next_value(argc, argv, index, name);
+        } else if (name == "--sobolev-order") {
+            options.sobolev_order =
+                std::stoi(next_value(argc, argv, index, name));
+        } else if (name == "--sobolev-cap") {
+            options.sobolev_cap =
+                std::stod(next_value(argc, argv, index, name));
         } else if (name == "--dynamic-objective") {
             options.dynamic_objective = next_value(argc, argv, index, name);
         } else if (name == "--dynamic-optimizer") {
@@ -127,7 +133,10 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
         !(options.viscosity > 0.0) || !std::isfinite(options.viscosity) ||
         !(options.evolution_time > 0.0) ||
         !std::isfinite(options.evolution_time) ||
-        !(options.time_step > 0.0) || !std::isfinite(options.time_step)) {
+        !(options.time_step > 0.0) || !std::isfinite(options.time_step) ||
+        options.sobolev_order < 0 || options.sobolev_order > 8 ||
+        !(options.sobolev_cap >= 0.0) || !std::isfinite(options.sobolev_cap) ||
+        ((options.sobolev_order == 0) != (options.sobolev_cap == 0.0))) {
         throw std::invalid_argument(
             "adversary numeric parameters are outside their range");
     }
@@ -145,11 +154,6 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
         options.dynamic_optimizer != "hybrid") {
         throw std::invalid_argument(
             "--dynamic-optimizer must be gradient, mutate, or hybrid");
-    }
-    if (options.dynamic_objective == "critical-integral" &&
-        options.dynamic_optimizer != "mutate") {
-        throw std::invalid_argument(
-            "critical-integral currently requires --dynamic-optimizer mutate");
     }
     return options;
 }
@@ -224,6 +228,8 @@ void LemmaCli::print_adversary_help(std::ostream& out) {
         << "  --state-prefix PATH   dump each winning Fourier state as TSV\n"
         << "  --state-dir PATH      write states under PATH/{static,dynamic}\n"
         << "  --dynamic-warm-state PATH  replay a TSV as first dynamic warm start\n"
+        << "  --sobolev-order M     homogeneous initial H^M constraint\n"
+        << "  --sobolev-cap VALUE   cutoff-independent squared H^M cap\n"
         << "  --dynamic-objective NAME  max-q, terminal-q, q-increase, q-gain, or critical-integral\n"
         << "  --dynamic-optimizer NAME  gradient, mutate, or hybrid\n"
         << "  --threads N           worker threads; 0 uses up to 12 CPUs\n"

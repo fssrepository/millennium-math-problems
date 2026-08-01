@@ -566,17 +566,19 @@ DynamicAdversaryResult optimize_dynamic(
     const SpectralState& primary_start, const SpectralState* secondary_start,
     int generations, Real mutation, Real viscosity, Real final_time, Real dt,
     std::uint64_t seed, const std::string& objective,
-    const std::string& optimizer) {
+    const std::string& optimizer, int sobolev_order, Real sobolev_cap) {
     if (generations < 0) {
         throw std::invalid_argument("--dynamic-generations cannot be negative");
     }
     std::mt19937_64 generator(seed ^ 0xd1b54a32d192ed03ULL ^
                               static_cast<std::uint64_t>(SpectralStateOps::cutoff(primary_start)));
     DynamicAdversaryResult result;
+    const InitialSobolevConstraint sobolev(sobolev_order, sobolev_cap);
     result.state = primary_start;
     result.initial_objective = evaluate_static_objective(result.state);
     result.evolution = evolve_galerkin(result.state, viscosity, final_time, dt);
     ++result.evaluations;
+    bool result_admissible = sobolev.admissible(result.state);
 
     if (secondary_start != nullptr) {
         SpectralState secondary =
@@ -585,12 +587,20 @@ DynamicAdversaryResult optimize_dynamic(
         const EvolutionResult secondary_evolution =
             evolve_galerkin(secondary, viscosity, final_time, dt);
         ++result.evaluations;
-        if (dynamic_objective_value(secondary_evolution, objective) >
-            dynamic_objective_value(result.evolution, objective)) {
+        const bool secondary_admissible = sobolev.admissible(secondary);
+        if (secondary_admissible &&
+            (!result_admissible ||
+             dynamic_objective_value(secondary_evolution, objective) >
+                 dynamic_objective_value(result.evolution, objective))) {
             result.state = std::move(secondary);
             result.initial_objective = evaluate_static_objective(result.state);
             result.evolution = secondary_evolution;
+            result_admissible = true;
         }
+    }
+    if (!result_admissible) {
+        throw std::invalid_argument(
+            "no dynamic start satisfies the configured Sobolev cap");
     }
 
     const bool use_mutations = optimizer == "mutate" || optimizer == "hybrid";
@@ -605,6 +615,9 @@ DynamicAdversaryResult optimize_dynamic(
         SpectralState candidate =
             SpectralStateFactory::mutate(
                 result.state, radius, generator, generation % 4 != 0);
+        if (!sobolev.admissible(candidate)) {
+            continue;
+        }
         const EvolutionResult evolution =
             evolve_galerkin(candidate, viscosity, final_time, dt);
         ++result.evaluations;
@@ -629,6 +642,8 @@ DynamicAdversaryResult optimize_dynamic(
             final_time / static_cast<Real>(trajectory_steps);
         gradient_options.initial_step = mutation;
         gradient_options.objective = objective;
+        gradient_options.sobolev_order = sobolev_order;
+        gradient_options.sobolev_cap = sobolev_cap;
         const GradientSearchResult gradient =
             active_gradient_adversary.maximize_q(
                 result.state, gradient_options);
@@ -1382,6 +1397,44 @@ bool self_test(std::ostream& out) {
     const bool q_increase_constraints_ok =
         q_increase_divergence_residual < 1e-15L &&
         q_increase_reality_residual < 1e-15L;
+    const QTrajectoryGradient critical_integral_gradient =
+        active_adjoint.critical_integral_gradient(
+            adjoint_state, adjoint_viscosity, adjoint_dt,
+            trajectory_steps);
+    const Real critical_integral_directional_adjoint =
+        increment_inner_product(
+            critical_integral_gradient.initial_gradient, tangent);
+    auto discrete_critical_integral = [&](SpectralState state) {
+        StaticObjective previous = active_objective.evaluate(state);
+        Real integral = 0.0L;
+        for (int step = 0; step < trajectory_steps; ++step) {
+            active_dynamics.rk4_step(
+                state, adjoint_viscosity, adjoint_dt);
+            const StaticObjective current = active_objective.evaluate(state);
+            integral += 0.5L * adjoint_dt *
+                        (previous.critical_integrand +
+                         current.critical_integrand);
+            previous = current;
+        }
+        return integral;
+    };
+    const Real critical_integral_plus =
+        discrete_critical_integral(rhs_plus_state);
+    const Real critical_integral_minus =
+        discrete_critical_integral(rhs_minus_state);
+    const Real critical_integral_directional_finite_difference =
+        (critical_integral_plus - critical_integral_minus) /
+        (2.0L * finite_difference_step);
+    const Real critical_integral_gradient_error =
+        std::abs(critical_integral_directional_adjoint -
+                 critical_integral_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(std::abs(critical_integral_directional_adjoint),
+                     std::abs(
+                         critical_integral_directional_finite_difference)));
+    const bool critical_integral_gradient_ok =
+        critical_integral_gradient_error < 1e-9L;
     GradientSearchOptions gradient_options;
     gradient_options.iterations = 3;
     gradient_options.line_search_steps = 8;
@@ -1481,6 +1534,10 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(q_increase_divergence_residual)
         << ", reality="
         << static_cast<double>(q_increase_reality_residual) << ")\n"
+        << "critical L4 integral gradient test: "
+        << (critical_integral_gradient_ok ? "PASS" : "FAIL")
+        << " (relative error="
+        << static_cast<double>(critical_integral_gradient_error) << ")\n"
         << "projected gradient adversary test: "
         << (gradient_search_ok ? "PASS" : "FAIL")
         << " (Q " << static_cast<double>(gradient_search.initial_objective)
@@ -1504,8 +1561,8 @@ bool self_test(std::ostream& out) {
            triad_ok && fft_ok && fft_adjoint_ok && adjoint_ok && q_gradient_ok &&
            trajectory_gradient_ok && q_gain_gradient_ok &&
            q_increase_gradient_ok && q_increase_constraints_ok &&
-           gradient_search_ok && adversary_ok && q_derivative_ok &&
-           evolution_ok;
+           critical_integral_gradient_ok && gradient_search_ok &&
+           adversary_ok && q_derivative_ok && evolution_ok;
 }
 
 int run_adversary(const AdversaryOptions& options, std::ostream& out) {
@@ -1560,7 +1617,9 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
             static_cast<Real>(options.viscosity),
             static_cast<Real>(options.evolution_time),
             static_cast<Real>(options.time_step), options.seed,
-            options.dynamic_objective, options.dynamic_optimizer);
+            options.dynamic_objective, options.dynamic_optimizer,
+            options.sobolev_order,
+            static_cast<Real>(options.sobolev_cap));
         active_galerkin.set_compute_threads(1);
         if (!options.state_prefix.empty()) {
             AdversaryResult dynamic_state;
@@ -1617,6 +1676,8 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
     report.backend = options.backend;
     report.dynamic_objective = options.dynamic_objective;
     report.dynamic_optimizer = options.dynamic_optimizer;
+    report.sobolev_order = options.sobolev_order;
+    report.sobolev_cap = static_cast<Real>(options.sobolev_cap);
     report.restarts = options.restarts;
     report.generations = options.generations;
     report.dynamic_generations = options.dynamic_generations;
@@ -1706,6 +1767,10 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
         row.dynamic_accepted_mutations = dynamic.accepted_mutations;
         row.dynamic_accepted_gradient_steps =
             dynamic.accepted_gradient_steps;
+        row.dynamic_sobolev_value = InitialSobolevConstraint(
+            options.sobolev_order,
+            static_cast<Real>(options.sobolev_cap))
+                                         .value(dynamic.state);
         report.rows.push_back(row);
     }
     AdversaryReporter::write_console(report, out);

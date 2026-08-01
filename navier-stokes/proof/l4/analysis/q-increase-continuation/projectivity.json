@@ -1,0 +1,14 @@
+{
+  "schema": "navier-stokes-state-family-analysis-v1",
+  "state_directory": "proof/l4/states/q-increase-continuation/dynamic",
+  "top_shell_energy_fitted_exponent": -5.44640930195696615,
+  "maximum_projection_residual": 0.135954598056863024,
+  "rows": [
+    {"cutoff": 1, "modes": 26, "E": 1, "Z": 1.1706856358190143, "P": 1.53987037926893033, "Q": 6.56197182650680515e-05, "top_shell_energy": 1, "projection_residual": 0},
+    {"cutoff": 2, "modes": 124, "E": 1, "Z": 1.28528605608292268, "P": 2.13674180959308613, "Q": 0.000132315491121308182, "top_shell_energy": 0.0158891605480389123, "projection_residual": 0.135954598056863024},
+    {"cutoff": 3, "modes": 342, "E": 0.999999999999999889, "Z": 1.36770495958024507, "P": 2.70959244808465316, "Q": 0.000137370753376409835, "top_shell_energy": 0.00110242004083531344, "projection_residual": 0.0727183418358803707},
+    {"cutoff": 4, "modes": 728, "E": 1, "Z": 1.39097905830824931, "P": 3.14427016780368929, "Q": 0.000132682080845996525, "top_shell_energy": 0.000280654685168246331, "projection_residual": 0.0315008468860964869},
+    {"cutoff": 5, "modes": 1330, "E": 1, "Z": 1.3922948444921377, "P": 3.33303360759797451, "Q": 0.000131566237846183321, "top_shell_energy": 0.000123919455660762571, "projection_residual": 0.0173575858782376406},
+    {"cutoff": 6, "modes": 2196, "E": 1, "Z": 1.39237396324154639, "P": 3.49769363496037489, "Q": 0.00012180928524812758, "top_shell_energy": 7.2096253357154113e-05, "projection_residual": 0.0112349190931253888}
+  ]
+}

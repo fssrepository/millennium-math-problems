@@ -23,8 +23,12 @@ public:
         const SpectralState& state) const;
     [[nodiscard]] SpectralIncrement energy_level_gradient(
         const SpectralState& state) const;
+    [[nodiscard]] SpectralIncrement critical_integrand_gradient(
+        const SpectralState& state) const;
 
 private:
+    [[nodiscard]] SpectralIncrement signed_stretching_gradient(
+        const SpectralState& state) const;
     const SpectralDynamics& dynamics_;
 };
 

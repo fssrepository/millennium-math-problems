@@ -7,6 +7,7 @@ find_package(OpenMP)
 
 add_executable(navier_stokes_lab
     src/gradient_adversary.cpp
+    src/initial_sobolev_constraint.cpp
     src/main.cpp
     src/lemma_cli.cpp
     src/lemma_engine.cpp
