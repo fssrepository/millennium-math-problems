@@ -26,6 +26,7 @@
 #include "local_signature_factor_adversary.hpp"
 #include "local_signature_gradient_adversary.hpp"
 #include "local_signature_trajectory.hpp"
+#include "local_quartic_closure_cli.hpp"
 #include "shifted_critical_density_cli.hpp"
 
 namespace ns {
@@ -881,6 +882,7 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab local-signature-factor [options]\n"
         << "  navier_stokes_lab local-signature-gradient [options]\n"
         << "  navier_stokes_lab local-signature-trajectory [options]\n"
+        << "  navier_stokes_lab local-closure-adversary [options]\n"
         << "  navier_stokes_lab shifted-density [options]\n"
         << "  navier_stokes_lab self-test\n\n"
         << "Simulation options:\n"
@@ -922,6 +924,8 @@ void print_help(std::ostream& out) {
     lemma::LocalSignatureGradientCli::print_help(out);
     out << '\n';
     lemma::LocalSignatureTrajectoryCli::print_help(out);
+    out << '\n';
+    lemma::LocalQuarticClosureCli::print_help(out);
     out << '\n';
     lemma::ShiftedCriticalDensityCli::print_help(out);
     out << '\n';
@@ -994,6 +998,11 @@ int main(int argc, char** argv) {
         if (command == "local-signature-trajectory") {
             return lemma::LocalSignatureTrajectoryCli::run(
                 lemma::LocalSignatureTrajectoryCli::parse(argc, argv, 2),
+                std::cout);
+        }
+        if (command == "local-closure-adversary") {
+            return lemma::LocalQuarticClosureCli::run(
+                lemma::LocalQuarticClosureCli::parse(argc, argv, 2),
                 std::cout);
         }
         if (command == "shifted-density") {

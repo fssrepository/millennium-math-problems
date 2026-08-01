@@ -6,6 +6,11 @@
 
 namespace lemma {
 
+struct BilinearAdvectionCotangents {
+    SpectralIncrement advecting;
+    SpectralIncrement advected;
+};
+
 class SpectralDynamics {
 public:
     explicit SpectralDynamics(const SpectralGalerkin& configuration);
@@ -18,6 +23,13 @@ public:
         const SpectralState& state,
         const SpectralIncrement& advecting,
         const SpectralIncrement& advected,
+        TriadSelection selection) const;
+    [[nodiscard]] BilinearAdvectionCotangents
+    advection_bilinear_vjp_direct_partition(
+        const SpectralState& state,
+        const SpectralIncrement& advecting,
+        const SpectralIncrement& advected,
+        const SpectralIncrement& output_cotangent,
         TriadSelection selection) const;
     [[nodiscard]] SpectralIncrement advection_fft(
         const SpectralState& state) const;

@@ -203,38 +203,95 @@ SpectralIncrement SpectralDynamics::advection_vjp_direct_partition(
     const SpectralState& state,
     const SpectralIncrement& output_cotangent,
     TriadSelection selection) const {
+    const BilinearAdvectionCotangents cotangents =
+        advection_bilinear_vjp_direct_partition(
+            state, state.velocity, state.velocity,
+            output_cotangent, selection);
+    SpectralIncrement result = cotangents.advecting;
+    add_scaled_increment(result, cotangents.advected, 1.0L);
+    project_increment(result, state);
+    return result;
+}
+
+BilinearAdvectionCotangents
+SpectralDynamics::advection_bilinear_vjp_direct_partition(
+    const SpectralState& state,
+    const SpectralIncrement& advecting,
+    const SpectralIncrement& advected,
+    const SpectralIncrement& output_cotangent,
+    TriadSelection selection) const {
+    require_matching_increment(state, advecting);
+    require_matching_increment(state, advected);
     require_matching_increment(state, output_cotangent);
     SpectralIncrement cotangent = output_cotangent;
     project_increment(cotangent, state);
     const SpectralComplex minus_imaginary_unit{0.0L, -1.0L};
-    SpectralIncrement result = reduce_interactions(
-        state, configuration_.compute_threads(),
-        [&](InteractionIndex interaction, SpectralIncrement& partial) {
+    BilinearAdvectionCotangents result{
+        SpectralIncrement(state.waves.size()),
+        SpectralIncrement(state.waves.size())};
+    const std::vector<InteractionIndex>& interactions =
+        SpectralStateOps::interactions(state);
+    const int requested_threads = configuration_.compute_threads();
+#ifdef NS_HAVE_OPENMP
+    const int worker_count = std::max(
+        1, std::min(requested_threads,
+                    static_cast<int>(interactions.size())));
+    std::vector<BilinearAdvectionCotangents> partials(
+        static_cast<std::size_t>(worker_count));
+    for (BilinearAdvectionCotangents& partial : partials) {
+        partial.advecting.resize(state.waves.size());
+        partial.advected.resize(state.waves.size());
+    }
+#pragma omp parallel num_threads(worker_count) if(worker_count > 1)
+    {
+        BilinearAdvectionCotangents& partial =
+            partials[static_cast<std::size_t>(omp_get_thread_num())];
+#pragma omp for schedule(static)
+        for (std::ptrdiff_t interaction_index = 0;
+             interaction_index <
+                 static_cast<std::ptrdiff_t>(interactions.size());
+             ++interaction_index) {
+            const InteractionIndex interaction = interactions[
+                static_cast<std::size_t>(interaction_index)];
+#else
+    BilinearAdvectionCotangents& partial = result;
+    for (const InteractionIndex interaction : interactions) {
+#endif
         if (!TriadPartitioner::includes(state, interaction, selection)) {
-            return;
+            continue;
         }
         const auto [p_index, q_index, target_index] = interaction;
         const ComplexVector& target_cotangent = cotangent[target_index];
         const SpectralComplex first_coefficient =
             minus_imaginary_unit *
-            dot_hermitian(state.velocity[q_index], target_cotangent);
+            dot_hermitian(advected[q_index], target_cotangent);
         for (std::size_t component = 0; component < 3; ++component) {
             const SpectralReal wave_component = static_cast<SpectralReal>(
                 component == 0   ? state.waves[q_index].x
                 : component == 1 ? state.waves[q_index].y
                                  : state.waves[q_index].z);
-            partial[p_index][component] +=
+            partial.advecting[p_index][component] +=
                 wave_component * first_coefficient;
         }
         const SpectralComplex second_coefficient =
             minus_imaginary_unit * std::conj(wave_dot(
-                state.waves[q_index], state.velocity[p_index]));
+                state.waves[q_index], advecting[p_index]));
         for (std::size_t component = 0; component < 3; ++component) {
-            partial[q_index][component] +=
+            partial.advected[q_index][component] +=
                 second_coefficient * target_cotangent[component];
         }
-    });
-    project_increment(result, state);
+#ifdef NS_HAVE_OPENMP
+        }
+    }
+    for (const BilinearAdvectionCotangents& worker : partials) {
+        add_scaled_increment(result.advecting, worker.advecting, 1.0L);
+        add_scaled_increment(result.advected, worker.advected, 1.0L);
+    }
+#else
+    }
+#endif
+    project_increment(result.advecting, state);
+    project_increment(result.advected, state);
     return result;
 }
 

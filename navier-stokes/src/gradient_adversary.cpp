@@ -1,5 +1,7 @@
 #include "gradient_adversary.hpp"
 
+#include "local_quartic_closure_objective.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -161,6 +163,14 @@ GradientAdversary::GradientAdversary(const SpectralDynamics& dynamics,
 SpectralReal GradientAdversary::objective_value(
     const SpectralState& initial,
     const GradientSearchOptions& options) const {
+    if (options.objective == "local-closure-ratio") {
+        return LocalQuarticClosureObjective(dynamics_)
+            .evaluate(initial).squared_constant_ratio;
+    }
+    if (options.objective == "local-sld-ratio") {
+        return LocalQuarticClosureObjective(dynamics_)
+            .evaluate(initial).signed_local_sld_ratio;
+    }
     SpectralState state = initial;
     const TriadSelection selection = objective_selection(
         options.objective, options.minimum_dyadic_gap);
@@ -283,7 +293,21 @@ GradientSearchResult GradientAdversary::maximize_q(
 
     for (int iteration = 0; iteration < options.iterations; ++iteration) {
         QTrajectoryGradient trajectory;
-        if (options.objective == "max-q") {
+        if (options.objective == "local-closure-ratio") {
+            const LocalQuarticClosureObjective closure(dynamics_);
+            trajectory.objective_value =
+                closure.evaluate(result.state).squared_constant_ratio;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient =
+                closure.squared_constant_ratio_gradient(result.state);
+        } else if (options.objective == "local-sld-ratio") {
+            const LocalQuarticClosureObjective closure(dynamics_);
+            trajectory.objective_value =
+                closure.evaluate(result.state).signed_local_sld_ratio;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient =
+                closure.signed_local_sld_ratio_gradient(result.state);
+        } else if (options.objective == "max-q") {
             trajectory = adjoint_.maximum_q_gradient(
                 result.state, options.viscosity, options.time_step,
                 options.trajectory_steps);

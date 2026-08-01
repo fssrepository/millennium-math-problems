@@ -1,0 +1,21 @@
+{
+  "schema": "navier-stokes-local-quartic-closure-adversary-v1",
+  "objective": "maximize |K+G| / (k0 B0^(1/4) Z^(5/4) P^(3/4))",
+  "implemented_static_scale": "Z^(7/4) P / E^(1/4)",
+  "optimizer": "lbfgs",
+  "warm_state_path": "",
+  "gradient": "exact discrete reverse mode through local Galerkin triads",
+  "workers": 12,
+  "restarts_per_cutoff": 12,
+  "iterations_per_restart": 80,
+  "sobolev_order": 0,
+  "sobolev_cap": 0,
+  "fitted_cutoff_slope": 0,
+  "maximum_constant_ratio": 0.333333333333333315,
+  "candidate_lemma_proved": false,
+  "finite_search_is_not_a_proof": true,
+  "remaining_requirement": "derive a cutoff-independent analytic bound for the two-entry bracket",
+  "rows": [
+    {"cutoff": 1, "initial_constant_ratio": 0.0151577193819452463, "optimized_constant_ratio": 0.333333333333333315, "improvement_factor": 21.9909951447165142, "signed_two_entry_bracket": -0.333333333333333315, "candidate_scale": 1, "energy": 1, "enstrophy": 1, "palinstrophy": 1, "warm_lift_constant_ratio": 0, "projection_residual": 0, "projected_gradient_norm": 1.04519337088417491e-09, "sobolev_value": 0, "winning_restart": 7, "winning_seed": "16360331986370333696", "warm_continuation_won": false, "accepted_steps": 79, "evaluations": 254, "state_path": "proof/l4/states/local-closure-ratio/unconstrained-K1-deep/K1.tsv", "restart_constant_ratios": [0.066474148146387968, 0.333333333333333315, 0.072993680749524753, 0.333333333333333259, 0.333332043550874202, 0.333333333333281079, 0.0729936806907495461, 0.333333333333333315, 0.333333333333333315, 0.333333333333333315, 0.333333333333333315, 0.333333333055144843]}
+  ]
+}

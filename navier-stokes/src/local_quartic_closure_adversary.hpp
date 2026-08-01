@@ -1,0 +1,88 @@
+#pragma once
+
+#include "gradient_adversary.hpp"
+#include "local_quartic_closure_objective.hpp"
+
+#include <cstdint>
+#include <string>
+#include <vector>
+
+namespace lemma {
+
+struct LocalQuarticClosureAdversaryOptions {
+    int minimum_cutoff = 2;
+    int maximum_cutoff = 6;
+    int restarts = 12;
+    int workers = 12;
+    int iterations = 8;
+    int line_search_steps = 14;
+    int lbfgs_history = 8;
+    SpectralReal initial_step = 0.1L;
+    int sobolev_order = 0;
+    SpectralReal sobolev_cap = 0.0L;
+    std::uint64_t seed = 20260801;
+    std::string method = "lbfgs";
+    std::string objective = "sld-ratio";
+    std::string certificate_path;
+    std::string state_directory;
+    std::string warm_state_path;
+};
+
+struct LocalQuarticClosureRestartResult {
+    SpectralState state;
+    LocalQuarticClosureObjectiveValue value;
+    SpectralReal initial_objective = 0.0L;
+    SpectralReal objective = 0.0L;
+    SpectralReal initial_constant_ratio = 0.0L;
+    SpectralReal final_projected_gradient_norm = 0.0L;
+    SpectralReal sobolev_value = 0.0L;
+    std::uint64_t seed = 0;
+    int restart = 0;
+    int accepted_steps = 0;
+    int evaluations = 0;
+    bool warm_continuation = false;
+};
+
+struct LocalQuarticClosureCutoffResult {
+    int cutoff = 0;
+    LocalQuarticClosureRestartResult winner;
+    SpectralReal warm_lift_constant_ratio = 0.0L;
+    SpectralReal warm_lift_objective = 0.0L;
+    SpectralReal improvement_factor = 0.0L;
+    SpectralReal objective_gain = 0.0L;
+    SpectralReal projection_residual = 0.0L;
+    std::string state_path;
+    std::vector<SpectralReal> restart_constant_ratios;
+    std::vector<SpectralReal> restart_objectives;
+};
+
+struct LocalQuarticClosureAdversaryReport {
+    int workers = 0;
+    int restarts = 0;
+    int iterations = 0;
+    std::string objective;
+    int sobolev_order = 0;
+    SpectralReal sobolev_cap = 0.0L;
+    SpectralReal fitted_cutoff_slope = 0.0L;
+    SpectralReal maximum_constant_ratio = 0.0L;
+    SpectralReal maximum_objective = 0.0L;
+    bool finite_search_is_not_a_proof = true;
+    bool candidate_lemma_proved = false;
+    std::vector<LocalQuarticClosureCutoffResult> rows;
+};
+
+class LocalQuarticClosureAdversary {
+public:
+    [[nodiscard]] static LocalQuarticClosureRestartResult maximize(
+        const SpectralState& initial,
+        const LocalQuarticClosureAdversaryOptions& options,
+        int restart, std::uint64_t seed, bool warm_continuation);
+};
+
+class LocalQuarticClosureEnsemble {
+public:
+    [[nodiscard]] static LocalQuarticClosureAdversaryReport scan(
+        const LocalQuarticClosureAdversaryOptions& options);
+};
+
+}  // namespace lemma

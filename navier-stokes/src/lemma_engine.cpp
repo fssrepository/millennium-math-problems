@@ -25,6 +25,7 @@
 #include "local_quartic_identity_ledger.hpp"
 #include "local_quartic_commutator.hpp"
 #include "local_quartic_closure_target.hpp"
+#include "local_quartic_closure_objective.hpp"
 #include "local_quartic_projected_residual.hpp"
 #include "local_quartic_reduced_ledger.hpp"
 #include "local_quartic_shell_ledger.hpp"
@@ -1208,6 +1209,19 @@ bool self_test(std::ostream& out) {
         LocalQuarticClosureTarget::evaluate(
             shifted_density_diagnostic, critical_derivative_ledger,
             local_quartic_reduced);
+    const LocalQuarticClosureObjective local_closure_objective(
+        active_dynamics);
+    const LocalQuarticClosureObjectiveValue local_closure_value =
+        local_closure_objective.evaluate(partition_state);
+    const Real local_closure_value_error = std::abs(
+        local_closure_value.constant_ratio -
+        local_quartic_closure.required_constant_ratio) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(local_closure_value.constant_ratio),
+                std::abs(local_quartic_closure
+                             .required_constant_ratio)));
     const LocalQuarticShellReport local_quartic_shells =
         LocalQuarticShellLedger::evaluate(
             active_dynamics, partition_state,
@@ -1289,6 +1303,27 @@ bool self_test(std::ostream& out) {
         active_dynamics.add_increment(
             partition_state, partition_tangent,
             -finite_difference_step);
+    const SpectralIncrement local_closure_gradient =
+        local_closure_objective.squared_constant_ratio_gradient(
+            partition_state);
+    const Real local_closure_directional_adjoint =
+        increment_inner_product(
+            local_closure_gradient, partition_tangent);
+    const Real local_closure_directional_finite_difference =
+        (local_closure_objective.evaluate(partition_plus_state)
+             .squared_constant_ratio -
+         local_closure_objective.evaluate(partition_minus_state)
+             .squared_constant_ratio) /
+        (2.0L * finite_difference_step);
+    const Real local_closure_gradient_error = std::abs(
+        local_closure_directional_adjoint -
+        local_closure_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(local_closure_directional_adjoint),
+                std::abs(
+                    local_closure_directional_finite_difference)));
     auto partition_integral_gradient_error = [&](TriadSelection selection) {
         const QTrajectoryGradient partition_gradient =
             active_adjoint.critical_integral_gradient(
@@ -1508,6 +1543,9 @@ bool self_test(std::ostream& out) {
         local_quartic_projected.finite &&
         local_quartic_reduced.finite &&
         local_quartic_closure.finite &&
+        local_closure_value.finite &&
+        local_closure_value_error < 1e-12L &&
+        local_closure_gradient_error < 1e-9L &&
         local_quartic_envelope.all_bounds_hold &&
         shifted_density_budget.finite &&
         local_integral_gradient_error < 1e-9L &&
@@ -1558,6 +1596,21 @@ bool self_test(std::ostream& out) {
         gradient_search.accepted_steps > 0 &&
         gradient_energy_error < 1e-14L &&
         gradient_constraint_error < 1e-15L;
+    GradientSearchOptions closure_gradient_options;
+    closure_gradient_options.iterations = 3;
+    closure_gradient_options.line_search_steps = 12;
+    closure_gradient_options.trajectory_steps = 0;
+    closure_gradient_options.initial_step = 0.05L;
+    closure_gradient_options.objective = "local-closure-ratio";
+    closure_gradient_options.method = "lbfgs";
+    const GradientSearchResult closure_gradient_search =
+        active_gradient_adversary.maximize_q(
+            partition_state, closure_gradient_options);
+    const bool closure_gradient_search_ok =
+        closure_gradient_search.objective >=
+            closure_gradient_search.initial_objective &&
+        closure_gradient_search.accepted_steps > 0 &&
+        std::isfinite(closure_gradient_search.objective);
     const AdversaryResult adversary =
         optimize_static_depletion(1, 1, 2, 0.1L, 11);
     const bool adversary_ok = adversary.modes == 26 &&
@@ -1910,6 +1963,10 @@ bool self_test(std::ostream& out) {
         << ", closure C="
         << static_cast<double>(local_quartic_closure
                                    .required_constant_ratio)
+        << ", closure value error="
+        << static_cast<double>(local_closure_value_error)
+        << ", closure gradient error="
+        << static_cast<double>(local_closure_gradient_error)
         << ")\n"
         << "projected gradient adversary test: "
         << (gradient_search_ok ? "PASS" : "FAIL")
@@ -1919,6 +1976,15 @@ bool self_test(std::ostream& out) {
         << ", energy error=" << static_cast<double>(gradient_energy_error)
         << ", constraint error="
         << static_cast<double>(gradient_constraint_error)
+        << ")\n"
+        << "local closure gradient adversary test: "
+        << (closure_gradient_search_ok ? "PASS" : "FAIL")
+        << " (C "
+        << std::sqrt(static_cast<double>(
+               closure_gradient_search.initial_objective))
+        << " -> "
+        << std::sqrt(static_cast<double>(closure_gradient_search.objective))
+        << ", accepted=" << closure_gradient_search.accepted_steps
         << ")\n"
         << "static adversary test: " << (adversary_ok ? "PASS" : "FAIL")
         << " (Q=" << static_cast<double>(adversary.objective.energy_level_quantity)
@@ -1952,6 +2018,7 @@ bool self_test(std::ostream& out) {
            q_increase_gradient_ok && q_increase_constraints_ok &&
            critical_integral_gradient_ok &&
            partition_integral_gradients_ok && gradient_search_ok &&
+           closure_gradient_search_ok &&
            adversary_ok && dynamic_class_ok && q_derivative_ok && evolution_ok;
 }
 
