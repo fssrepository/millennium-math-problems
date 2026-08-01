@@ -6,7 +6,9 @@ stage:
 - `l2/`: exact scaling and Fourier-triad obstruction certificates;
 - `l4/adversary/`: static and trajectory adversary certificates;
 - `l4/family/`: fixed smooth projective-family certificates;
-- `l4/states/`: replayable Fourier coefficients produced by adversaries;
+- `l4/states/<experiment>/static/`: replayable static-search winners;
+- `l4/states/<experiment>/dynamic/`: replayable trajectory-search winners;
+- `l4/analysis/`: shell, Sobolev, active-mode, and projectivity certificates;
 - `failed_lemmas.tsv`: the global rejection ledger.
 
 JSON and TSV files are computational evidence or exact finite algebra checks.
@@ -17,3 +19,11 @@ Their presence does not replace the infinite-dimensional estimates required by
 through the complete FFT forward/adjoint path. It records a fixed-energy
 `max-q` search at cutoff `K=5` with 1,330 Fourier modes and is intended as a
 fast regression artifact, not as evidence of asymptotic cutoff behavior.
+
+`l4/adversary/l4-critical-integral-h4-cap100-K1-K8.json` is the first cutoff
+continuation that directly maximizes the L4-A time integral with the exact
+discrete adjoint. Its states are under
+`l4/states/critical-integral-h4-cap100/`; the warm-start refinement is under
+`l4/states/critical-integral-h4-cap100-refined/`. The numerical interpretation
+and state-family certificate are in
+`l4/analysis/critical-integral-h4-cap100/README.md`.

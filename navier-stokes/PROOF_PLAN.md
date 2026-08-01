@@ -135,8 +135,39 @@ The scalar inequality `|a+b|^4 <= 8(|a|^4+|b|^4)` then recovers L4-A. Current
 adversarial paths indicate that L4.2 is the dominant term; this observation is
 only routing information, not a proof.
 
-The immediate computational action is continuation of adjoint extremizers in
-`K`, time horizon, and viscosity with deterministic multistart. The immediate
-analytical action is to extract a reproducible Fourier concentration pattern
-from those branches and test whether it yields either a genuine projective
-counterfamily to L4-S or a cutoff-uniform structural bound for L4.1/L4.2.
+The exact discrete adjoint now differentiates the actual L4-A objective,
+
+```text
+J_N(u_0) = integral_0^T |V_N|^4 / (Z_N P_N^3) dt
+         = integral_0^T D_N^4 Z_N^2 dt,
+```
+
+including every RK4 stage and the trapezoidal quadrature. Its directional
+derivative agrees with central differences to `1.12e-12` on the deterministic
+self-test.
+
+The first fixed-energy, initial-`H4^2 <= 100` continuation at `nu=0.1` and
+`T=0.01` gives
+
+```text
+K:       1          2          3          4 ...      8
+J_N: 3.658e-6   5.892e-6   6.000e-6   6.006e-6   6.010e-6.
+```
+
+A further 24-step `K=8` warm continuation reaches `6.04549e-6`. The refined
+state has `H4^2=15.7589`, energy-balance residual `8.3e-12`, active modes only
+through shell three at the `1e-8` relative-energy threshold, and cutoff-shell
+energy `1.49e-11`. The finite family therefore approaches a smooth low-mode
+branch rather than displaying short-time cutoff concentration. This does not
+prove L4-A: it covers one normalization, viscosity, short horizon, and one
+optimized branch, while the desired constant may depend on the fixed smooth
+datum and finite time but must not depend on `N`.
+
+The immediate analytical task is now sharper: determine whether the observed
+low-shell branch can be bounded by a frequency-envelope estimate whose
+constant depends only on the fixed initial Sobolev norm, energy, viscosity, and
+`T`, without inserting an a priori high-Sobolev bound on the solution. The
+immediate computational checks are continuation in `T`, decreasing viscosity,
+and independent multistarts of the exact L4-A objective. Any growth branch must
+then be classified into the existing local/nonlocal L4.1/L4.2 ledger before it
+can affect the proof status.

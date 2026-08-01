@@ -78,8 +78,12 @@ source file:
 - `SpectralFftOperator` implements the dealiased forward, tangent, and adjoint
   pseudospectral kernels and is checked against direct triad summation;
 - `SpectralObjective`, `SpectralAdjoint`, and `GradientAdversary` provide the
-  exact `Q=D^4 Z` gradient, checkpointed reverse RK4 pass, and fixed-energy
-  Riemannian gradient search;
+  exact `Q=D^4 Z` and `integral D^4 Z^2 dt` gradients, checkpointed reverse
+  RK4 passes, and fixed-energy Riemannian gradient search;
+- `InitialSobolevConstraint` projects search directions and retracts trials
+  onto a cutoff-independent initial homogeneous Sobolev cap;
+- `StateAnalyzer` and `StateFamilyAnalyzer` measure shell decay, active modes,
+  Sobolev norms, and projectivity of replayable cutoff families;
 - `LemmaAdversary` schedules independent optimizer restarts;
 - `ProjectiveFamily` schedules cutoff projections and switches to internal FFT
   parallelism for a single expensive high-cutoff trajectory;
@@ -96,6 +100,12 @@ next architectural split will move trajectory diagnostics out of the engine;
 the next mathematical task is cutoff/time/viscosity continuation of the
 adjoint-generated extremizers. This keeps rebuilds dependency-free and makes
 each layer independently replaceable.
+
+These are ordinary non-virtual C++ classes. The numerical kernels do not use
+RTTI, `std::function`, `shared_ptr`, or exceptions for control flow. Class
+boundaries therefore add no intended per-mode dispatch cost; current
+performance work targets state copies, temporary FFT buffers, cache locality,
+and parallel work partitioning instead of removing the architecture.
 
 ## Proof-oriented lemma checks
 
@@ -179,9 +189,32 @@ value itself is the desired objective.
 The self-test validates each derivative layer independently. Current relative
 errors on the deterministic test state are approximately `2.6e-19` for FFT
 JVP versus direct JVP, `1.9e-19` for FFT VJP versus direct VJP, `5.6e-19` for
-RK4 adjoint duality, and `2.0e-13` for a three-step trajectory gradient versus
-central differences. A short `K=5` smoke certificate with 1,330 modes is stored
-in `proof/l4/adversary/l4s-fft-gradient-K5-smoke.json`.
+RK4 adjoint duality, `2.0e-13` for a three-step `Q` trajectory gradient, and
+`1.1e-12` for the critical trapezoidal time-integral gradient versus central
+differences. A short `K=5` smoke certificate with 1,330 modes is stored in
+`proof/l4/adversary/l4s-fft-gradient-K5-smoke.json`.
+
+The first direct L4-A adjoint continuation is replayable with:
+
+```bash
+./build/navier_stokes_lab adversary \
+  --cutoffs 1,2,3,4,5,6,7,8 \
+  --dynamic-generations 12 \
+  --dynamic-objective critical-integral \
+  --dynamic-optimizer gradient \
+  --sobolev-order 4 --sobolev-cap 100 \
+  --nu 0.1 --evolve-time 0.01 --dt 0.002 \
+  --threads 12 --backend auto \
+  --state-dir proof/l4/states/critical-integral-h4-cap100
+```
+
+For this short-time, unit-energy experiment the optimized integral approaches
+`6.01e-6` by `K=8`; a continued `K=8` run reaches `6.045e-6`. The final state
+has squared homogeneous `H4` norm `15.76`, only modes through shell three are
+active at relative energy `1e-8`, and the cutoff-shell energy is `1.49e-11`.
+This is finite evidence for a smooth cutoff limit, not a uniform-in-time bound.
+The certificate and interpretation are under
+`proof/l4/analysis/critical-integral-h4-cap100/`.
 
 ## Fixed smooth projective family
 
