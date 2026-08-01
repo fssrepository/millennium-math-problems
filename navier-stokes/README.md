@@ -46,15 +46,18 @@ dynamic flux lemma.
 
 ## Fast build
 
-No third-party C++ libraries are required. The direct build path is:
+No third-party C++ libraries are required; the build needs a C++20 compiler and
+CMake. The cached parallel build path is:
 
 ```bash
 chmod +x build.sh
 ./build.sh
 ```
 
-It uses `g++` directly and runs the self-tests after compilation. A conventional
-CMake path is also available when CMake is installed:
+It uses all processors reported by `nproc`, retains object files for fast
+incremental checks, and runs the self-tests. Override the worker count with
+`NS_BUILD_JOBS=12`; set `CMAKE=/path/to/cmake` if CMake is not on `PATH`.
+The equivalent manual commands are:
 
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
@@ -98,6 +101,8 @@ source file:
   frequency/amplitude bounds and reconstructs the separated signed ledger;
 - `MovingGapController` implements the logarithmic gap choice that turns the
   post-Young far-tail remainder from `Z^3` into a linear `Z` term;
+- `DyadicShellBounds` isolates the cutoff-independent scalar shell sums,
+  including explicit `sqrt(2)`, `sqrt(8/7)`, and Holder constants;
 - `TriadVerifier` owns direct interaction analysis, detailed triad
   cancellation, local/nonlocal flux partitioning, and certificate aggregation;
 - `StateAnalyzer` and `StateFamilyAnalyzer` measure shell decay, active modes,

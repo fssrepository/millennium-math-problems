@@ -57,6 +57,22 @@ void LemmaReporter::write_console(const LemmaReport& report, std::ostream& out) 
         << report.moving_gap_remaining_enstrophy_power
         << "\n  moving gap closes geometric far tail:    "
         << (report.moving_gap_closes_far_tail ? "verified" : "FAILED")
+        << "\n  shell-sequence samples:                  "
+        << report.dyadic_shell_bounds.samples << " x "
+        << report.dyadic_shell_bounds.shells
+        << " shells\n  max high-moment Holder ratio:           "
+        << static_cast<double>(
+               report.dyadic_shell_bounds.maximum_high_moment_ratio)
+        << "\n  max one-gain tail ratio:                 "
+        << static_cast<double>(
+               report.dyadic_shell_bounds.maximum_one_gain_tail_ratio)
+        << "\n  max three-gain tail ratio:               "
+        << static_cast<double>(
+               report.dyadic_shell_bounds.maximum_three_gain_tail_ratio)
+        << "\n  shell-sequence bounds:                   "
+        << (report.dyadic_shell_bounds.all_bounds_hold
+                ? "verified"
+                : "FAILED")
         << "\n\n"
         << "Fourier-Galerkin triad checks\n"
         << "  modes / samples:                        " << report.triad_modes
@@ -147,6 +163,33 @@ void LemmaReporter::write_json(const LemmaReport& report, std::ostream& out) {
         << report.moving_gap_remaining_enstrophy_power
         << "\",\n    \"moving_gap_closes_far_tail\": "
         << (report.moving_gap_closes_far_tail ? "true" : "false")
+        << "\n  },\n"
+        << "  \"dyadic_shell_bounds\": {\n"
+        << "    \"shells\": " << report.dyadic_shell_bounds.shells
+        << ",\n    \"minimum_gap\": "
+        << report.dyadic_shell_bounds.minimum_gap
+        << ",\n    \"samples\": " << report.dyadic_shell_bounds.samples
+        << ",\n    \"seed\": " << report.dyadic_shell_bounds.seed
+        << ",\n    \"low_one_derivative_constant\": \"sqrt(2)\",\n"
+        << "    \"low_three_derivative_constant\": \"sqrt(8/7)\",\n"
+        << "    \"high_moment_constant\": \"1\",\n"
+        << "    \"maximum_high_moment_ratio\": "
+        << static_cast<double>(
+               report.dyadic_shell_bounds.maximum_high_moment_ratio)
+        << ",\n    \"maximum_low_one_derivative_ratio\": "
+        << static_cast<double>(
+               report.dyadic_shell_bounds.maximum_low_one_derivative_ratio)
+        << ",\n    \"maximum_low_three_derivative_ratio\": "
+        << static_cast<double>(
+               report.dyadic_shell_bounds.maximum_low_three_derivative_ratio)
+        << ",\n    \"maximum_one_gain_tail_ratio\": "
+        << static_cast<double>(
+               report.dyadic_shell_bounds.maximum_one_gain_tail_ratio)
+        << ",\n    \"maximum_three_gain_tail_ratio\": "
+        << static_cast<double>(
+               report.dyadic_shell_bounds.maximum_three_gain_tail_ratio)
+        << ",\n    \"all_bounds_hold\": "
+        << (report.dyadic_shell_bounds.all_bounds_hold ? "true" : "false")
         << "\n  },\n"
         << "  \"fourier_galerkin\": {\n"
         << "    \"cutoff\": " << report.triad_cutoff << ",\n"

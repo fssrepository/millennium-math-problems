@@ -73,14 +73,15 @@ Write
 a_j = ||Delta_j u||_2.
 ```
 
-Periodic Bernstein and Cauchy-Schwarz give
+After the torus Bernstein step, Cauchy-Schwarz and the exact geometric sums
+give the cutoff-independent sequence inequalities
 
 ```text
 sum_{j<=l-m} 2^(5j/2) a_j
-    <= C 2^((l-m)/2) P^(1/2),
+    <= sqrt(2) 2^((l-m)/2) P^(1/2),
 
 sum_{j<=l-m} 2^(7j/2) a_j
-    <= C 2^(3(l-m)/2) P^(1/2).
+    <= sqrt(8/7) 2^(3(l-m)/2) P^(1/2).
 ```
 
 The common high-frequency moment satisfies
@@ -89,9 +90,17 @@ The common high-frequency moment satisfies
 sum_l 2^(5l/2) a_l^2 <= Z^(3/4) P^(1/4).
 ```
 
-The first inequality handles the low-advecting and low-advected roles; the
-second handles the low-target role. Combining them yields (FT-1), subject to
-writing out the bounded shell-overlap and torus Bernstein constants.
+The moment inequality has constant one by Holder interpolation. The first
+low-shell inequality handles the low-advecting and low-advected roles; the
+second handles the low-target role. `DyadicShellBounds` evaluates the two
+resulting finite sequence forms and verifies these cutoff-independent constants
+on deterministic random regressions. Combining them yields the scalar
+shell-summation part of (FT-1).
+
+What remains here is not a numerical sequence conjecture: the vector-valued
+periodic Littlewood-Paley decomposition, bounded shell overlap, Leray
+projection, and torus Bernstein constants must be written into a conventional
+proof before (FT-1) is established.
 
 ## Why a fixed gap is insufficient
 
@@ -139,8 +148,10 @@ desired regularity is the next lemma.
 - [x] exact low-advecting commutator identity;
 - [x] exact three-role finite Fourier reconstruction;
 - [x] termwise frequency and amplitude inequalities;
+- [x] cutoff-independent scalar shell sums with explicit constants;
 - [x] rational Young and moving-gap exponent certificate;
-- [ ] conventional Littlewood-Paley proof of (FT-1), including constants;
+- [ ] lift the scalar shell sums to a conventional vector-valued periodic
+      Littlewood-Paley proof of (FT-1), including projection constants;
 - [ ] cutoff-independent treatment of the `O(log Z)` transition/local block;
 - [ ] insertion into the full Galerkin enstrophy inequality and compactness
       argument.

@@ -1,5 +1,6 @@
 #include "lemma_engine.hpp"
 #include "adversary_reporter.hpp"
+#include "dyadic_shell_bounds.hpp"
 #include "family_reporter.hpp"
 #include "gradient_adversary.hpp"
 #include "proof_scaling.hpp"
@@ -371,6 +372,9 @@ int run(const Options& options, std::ostream& out) {
         ScalingAnalyzer::analyze_strong_l4_reduction();
     const DyadicTailScaling dyadic_tail =
         ScalingAnalyzer::analyze_dyadic_tail();
+    const DyadicShellRandomCertificate dyadic_shell_bounds =
+        DyadicShellBounds::verify_random(
+            32, 2, 512, options.seed ^ UINT64_C(0xd1a61c5e11));
     const TriadCertificate triads =
         TriadVerifier::analyze(
             options.triad_cutoff, options.triad_samples, options.seed);
@@ -424,6 +428,7 @@ int run(const Options& options, std::ostream& out) {
         dyadic_tail.moving_gap_remaining_enstrophy_power.str();
     report.moving_gap_closes_far_tail =
         dyadic_tail.moving_gap_closes_far_tail;
+    report.dyadic_shell_bounds = dyadic_shell_bounds;
     report.triad_cutoff = options.triad_cutoff;
     report.triad_modes = triads.modes;
     report.triad_samples = triads.samples;
@@ -463,6 +468,7 @@ int run(const Options& options, std::ostream& out) {
                         dyadic_tail.frequency_tail_is_summable &&
                         !dyadic_tail.energy_identity_closes_time_integral &&
                         dyadic_tail.moving_gap_closes_far_tail &&
+                        dyadic_shell_bounds.all_bounds_hold &&
                         !scaling.closing_candidate_exists &&
                         triads.maximum_normalized_energy_residual < 1e-15L &&
                         triads.maximum_divergence_residual < 1e-15L &&
@@ -481,6 +487,8 @@ bool self_test(std::ostream& out) {
         ScalingAnalyzer::analyze_strong_l4_reduction();
     const DyadicTailScaling dyadic_tail =
         ScalingAnalyzer::analyze_dyadic_tail();
+    const DyadicShellRandomCertificate dyadic_shell_bounds =
+        DyadicShellBounds::verify_random(32, 2, 512, 1701);
     const bool rational_ok = Rational(1, 2) + Rational(1, 3) == Rational(5, 6) &&
                              Rational(3, 4) * Rational(8, 9) == Rational(2, 3);
     const bool scaling_ok = scaling.has_absorbable_candidate &&
@@ -510,6 +518,13 @@ bool self_test(std::ostream& out) {
         dyadic_tail.frequency_tail_is_summable &&
         !dyadic_tail.energy_identity_closes_time_integral &&
         dyadic_tail.moving_gap_closes_far_tail;
+    const bool dyadic_shell_bounds_ok =
+        dyadic_shell_bounds.all_bounds_hold &&
+        dyadic_shell_bounds.maximum_high_moment_ratio <= 1.0L &&
+        dyadic_shell_bounds.maximum_low_one_derivative_ratio <= 1.0L &&
+        dyadic_shell_bounds.maximum_low_three_derivative_ratio <= 1.0L &&
+        dyadic_shell_bounds.maximum_one_gain_tail_ratio <= 1.0L &&
+        dyadic_shell_bounds.maximum_three_gain_tail_ratio <= 1.0L;
     const std::array<Real, 7> moving_gap_enstrophies{
         0.0L, 0.25L, 1.0L, 1.1L, 4.0L, 4.1L, 1024.0L};
     bool moving_gap_controller_ok = true;
@@ -1111,6 +1126,15 @@ bool self_test(std::ostream& out) {
         << ", moving-gap remainder Z^"
         << dyadic_tail.moving_gap_remaining_enstrophy_power.str()
         << ")\n"
+        << "dyadic shell sequence test: "
+        << (dyadic_shell_bounds_ok ? "PASS" : "FAIL")
+        << " (high="
+        << static_cast<double>(dyadic_shell_bounds.maximum_high_moment_ratio)
+        << ", one-gain="
+        << static_cast<double>(dyadic_shell_bounds.maximum_one_gain_tail_ratio)
+        << ", three-gain="
+        << static_cast<double>(dyadic_shell_bounds.maximum_three_gain_tail_ratio)
+        << ")\n"
         << "moving gap controller test: "
         << (moving_gap_controller_ok ? "PASS" : "FAIL")
         << " (m(1.1)="
@@ -1210,7 +1234,7 @@ bool self_test(std::ostream& out) {
         << " (energy residual="
         << static_cast<double>(evolution.energy_balance_residual) << ")\n";
     return rational_ok && scaling_ok && concentration_ok && strong_l4_ok &&
-           dyadic_tail_scaling_ok &&
+           dyadic_tail_scaling_ok && dyadic_shell_bounds_ok &&
            moving_gap_controller_ok &&
            triad_ok && fft_ok && fft_adjoint_ok && adjoint_ok && q_gradient_ok &&
            trajectory_gradient_ok && q_gain_gradient_ok &&

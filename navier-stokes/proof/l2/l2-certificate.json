@@ -42,6 +42,21 @@
     "moving_gap_remaining_enstrophy_power": "1",
     "moving_gap_closes_far_tail": true
   },
+  "dyadic_shell_bounds": {
+    "shells": 32,
+    "minimum_gap": 2,
+    "samples": 512,
+    "seed": 900452678096,
+    "low_one_derivative_constant": "sqrt(2)",
+    "low_three_derivative_constant": "sqrt(8/7)",
+    "high_moment_constant": "1",
+    "maximum_high_moment_ratio": 0.999909372417369213,
+    "maximum_low_one_derivative_ratio": 0.967606279700247485,
+    "maximum_low_three_derivative_ratio": 0.997486065887671525,
+    "maximum_one_gain_tail_ratio": 0.109341436493540459,
+    "maximum_three_gain_tail_ratio": 0.137493538629771456,
+    "all_bounds_hold": true
+  },
   "fourier_galerkin": {
     "cutoff": 3,
     "modes": 342,

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "dyadic_shell_bounds.hpp"
+
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
@@ -37,6 +39,7 @@ struct LemmaReport {
     std::string moving_gap_log_enstrophy_slope;
     std::string moving_gap_remaining_enstrophy_power;
     bool moving_gap_closes_far_tail = false;
+    DyadicShellRandomCertificate dyadic_shell_bounds;
     int triad_cutoff = 0;
     int triad_modes = 0;
     int triad_samples = 0;

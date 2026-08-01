@@ -354,9 +354,11 @@ m(t) = m0 + ceil(log2(max(1,Z(t))))
 
 reduces the cubic remainder to `C nu^(-3) 2^(-2m0) Z(t)` without assuming a
 future bound for `Z`. `MovingGapController` checks the integer inequality and
-the scaling certificate checks the exact Young exponents. This conditionally
-closes only the dynamically selected far tail. The active L4 task is to write
-a conventional cutoff-independent Littlewood-Paley proof of (FT-1), with all
-constants, and to control the remaining local/transition block of
-`O(log Z(t))` dyadic gaps. See
+the scaling certificate checks the exact Young exponents. `DyadicShellBounds`
+separately certifies the scalar sequence sums with constants `sqrt(2)`,
+`sqrt(8/7)`, and one for the interpolated high moment. This conditionally
+closes only the dynamically selected far tail. The active L4 task is to lift
+those scalar sums to a conventional vector-valued, periodic, cutoff-independent
+Littlewood-Paley proof of (FT-1), and to control the remaining
+local/transition block of `O(log Z(t))` dyadic gaps. See
 `proof/l4/lemmas/dynamic-far-tail/README.md`.
