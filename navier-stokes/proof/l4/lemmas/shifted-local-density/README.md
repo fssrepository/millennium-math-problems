@@ -356,6 +356,14 @@ uniform constant. The K3--K6 optimized values decrease from `0.145045` to
 `0.127982`, and the identical K6 state changes by only `5.7e-11` after lifting
 to K8. See [CLOSURE_TARGET.md](CLOSURE_TARGET.md).
 
+The search now also differentiates the actual signed local SLD-1P-L quotient,
+so the stronger absolute target cannot distract the optimizer with states
+where `S^3` vanishes. Its K1--K8 continuation converges from
+`7.60409e-4` to `7.95364960e-4`; the last continuation gain is `2.0e-12`.
+The K8 state is dominated by the local `(1,1,2)` signature. An explicit cyclic
+axis-shear plus quadratic-response ansatz recovers `97.44%` of that value.
+These results sharpen the next signed block estimate but do not prove it.
+
 ## Reduced proof obligation
 
 Multiplying SLD-1 by the positive denominator `Z^2 P^4` removes all quotient

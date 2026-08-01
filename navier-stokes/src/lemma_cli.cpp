@@ -173,14 +173,12 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
         options.dynamic_objective != "critical-near-nonlocal-integral" &&
         options.dynamic_objective != "critical-far-nonlocal-integral" &&
         options.dynamic_objective != "critical-gap-tail-integral" &&
-        options.dynamic_objective != "local-closure-ratio" &&
-        options.dynamic_objective != "local-sld-ratio" &&
         options.dynamic_objective != "max-q" &&
         options.dynamic_objective != "terminal-q" &&
         options.dynamic_objective != "q-gain" &&
         options.dynamic_objective != "q-increase") {
         throw std::invalid_argument(
-            "--dynamic-objective must be critical-integral, critical-local-integral, critical-local-increase, critical-local-log-gain, critical-local-ep-log-gain, critical-nonlocal-integral, critical-near-nonlocal-integral, critical-far-nonlocal-integral, critical-gap-tail-integral, local-closure-ratio, local-sld-ratio, max-q, terminal-q, q-gain, or q-increase");
+            "--dynamic-objective must be critical-integral, critical-local-integral, critical-local-increase, critical-local-log-gain, critical-local-ep-log-gain, critical-nonlocal-integral, critical-near-nonlocal-integral, critical-far-nonlocal-integral, critical-gap-tail-integral, max-q, terminal-q, q-gain, or q-increase");
     }
     if (options.dynamic_optimizer != "gradient" &&
         options.dynamic_optimizer != "mutate" &&

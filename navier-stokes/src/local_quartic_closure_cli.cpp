@@ -44,6 +44,8 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
             options.seed = std::stoull(next(index, name));
         } else if (name == "--method") {
             options.method = next(index, name);
+        } else if (name == "--objective") {
+            options.objective = next(index, name);
         } else if (name == "--certificate") {
             options.certificate_path = next(index, name);
         } else if (name == "--state-dir") {
@@ -63,6 +65,8 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
         options.lbfgs_history < 1 || options.lbfgs_history > 64 ||
         !(options.initial_step > 0.0L) ||
         !std::isfinite(options.initial_step) ||
+        (options.objective != "sld-ratio" &&
+         options.objective != "closure-ratio") ||
         ((options.sobolev_order == 0) !=
          (options.sobolev_cap == 0.0L)) ||
         options.certificate_path.empty() ||
@@ -84,6 +88,7 @@ void LocalQuarticClosureCli::print_help(std::ostream& out) {
         << "  --lbfgs-history N    limited-memory curvature pairs\n"
         << "  --step X             initial Riemannian step\n"
         << "  --method NAME        lbfgs or steepest\n"
+        << "  --objective NAME     sld-ratio (direct target) or closure-ratio\n"
         << "  --sobolev-order M    optional homogeneous Sobolev cap\n"
         << "  --sobolev-cap X      cutoff-independent squared cap\n"
         << "  --seed N             deterministic master seed\n"

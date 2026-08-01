@@ -1,5 +1,6 @@
 #include "local_quartic_closure_objective.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <stdexcept>
@@ -219,6 +220,9 @@ LocalQuarticClosureObjectiveValue LocalQuarticClosureObjective::evaluate(
         result.constant_ratio = std::abs(
             result.signed_two_entry_bracket) /
             result.candidate_scale;
+        result.signed_constant_ratio =
+            result.signed_two_entry_bracket /
+            result.candidate_scale;
         result.squared_constant_ratio =
             result.constant_ratio * result.constant_ratio;
         result.initial_frequency = std::sqrt(
@@ -245,8 +249,32 @@ LocalQuarticClosureObjectiveValue LocalQuarticClosureObjective::evaluate(
                 result.local_polynomial_numerator /
                 result.local_polynomial_denominator;
         }
+        result.normalized_stretching_ratio =
+            result.signed_stretching /
+            (std::pow(result.energy, 0.25L) *
+             std::pow(result.enstrophy, 0.25L) *
+             result.palinstrophy);
+        const SpectralReal normalized2 =
+            result.normalized_stretching_ratio *
+            result.normalized_stretching_ratio;
+        const SpectralReal normalized3 = normalized2 *
+            result.normalized_stretching_ratio;
+        const SpectralReal normalized4 = normalized2 * normalized2;
+        result.signed_shape_factor =
+            4.0L * normalized3 / (1.0L + normalized4);
+        result.factorized_local_sld_ratio =
+            result.signed_constant_ratio * result.signed_shape_factor;
+        const SpectralReal factorization_scale = std::max(
+            {std::abs(result.signed_local_sld_ratio),
+             std::abs(result.factorized_local_sld_ratio), 1e-30L});
+        result.factorization_relative_error = std::abs(
+            result.signed_local_sld_ratio -
+            result.factorized_local_sld_ratio) /
+            factorization_scale;
     }
     result.finite = std::isfinite(result.squared_constant_ratio) &&
+        std::isfinite(result.signed_local_sld_ratio) &&
+        std::isfinite(result.factorization_relative_error) &&
         result.candidate_scale > 0.0L;
     return result;
 }

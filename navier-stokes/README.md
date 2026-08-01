@@ -146,6 +146,13 @@ source file:
   polynomial reconstruction check;
 - `LocalQuarticClosureTarget` certifies the exact weighted-Young implication
   from the explicit `K+G` depletion target to the local SLD-1P inequality;
+- `LocalQuarticClosureObjective` reverse-differentiates both the sufficient
+  absolute closure ratio and the actual signed local SLD-1P quotient;
+- `LocalQuarticClosureAdversary`, its CLI, and its reporter run 12-worker
+  projected L-BFGS cutoff continuations and save English JSON plus replayable
+  Fourier states without placing artifacts at an analysis/adversary root;
+- `LocalSldCyclicAnsatz` tests the symmetry-reduced cyclic-shear plus
+  quadratic-response family suggested by the optimized direct quotient;
 - `LocalSignatureGradientAdversary` runs 12-worker targeted counterexample
   searches, while `LocalSignatureTrajectoryAnalyzer` verifies the exact
   dynamic signature factorization across Galerkin cutoffs;
@@ -188,6 +195,25 @@ the exact coupled density `A_sig^4 R^2/(Z P^3)` for each fixed smooth initial
 datum. The far dyadic tail and every fixed local signature family already have
 cutoff-independent closures. This keeps rebuilds dependency-free and makes
 each layer independently replaceable.
+
+The current direct local-lemma search is reproducible with:
+
+```bash
+./build/navier_stokes_lab local-closure-adversary \
+  --objective sld-ratio --min-cutoff 1 --max-cutoff 4 \
+  --restarts 12 --workers 12 --iterations 20 --method lbfgs \
+  --certificate proof/l4/adversary/shifted-local-density/direct-local-sld-ratio-K1-K4.json \
+  --state-dir proof/l4/states/local-sld-ratio/K1-K4
+
+./build/navier_stokes_lab local-sld-ansatz \
+  --samples 8192 --refinements 112 \
+  --certificate proof/l4/analysis/shifted-local-density/cyclic-two-basis-ansatz.json \
+  --state proof/l4/states/local-sld-ratio/cyclic-ansatz/K2.tsv
+```
+
+The first command maximizes the signed polynomial quotient itself. The
+`closure-ratio` objective remains available as a stronger sufficient screen,
+but it is not used as a substitute for the direct target.
 
 The helical local target has its own replayable optimizer and same-state
 cutoff scan:

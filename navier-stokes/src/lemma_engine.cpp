@@ -30,6 +30,7 @@
 #include "local_quartic_reduced_ledger.hpp"
 #include "local_quartic_shell_ledger.hpp"
 #include "local_quartic_shell_envelope.hpp"
+#include "local_sld_cyclic_ansatz.hpp"
 #include "local_triad_symmetrizer.hpp"
 #include "moving_gap_controller.hpp"
 #include "projective_family.hpp"
@@ -1324,6 +1325,25 @@ bool self_test(std::ostream& out) {
                 std::abs(local_closure_directional_adjoint),
                 std::abs(
                     local_closure_directional_finite_difference)));
+    const SpectralIncrement local_sld_gradient =
+        local_closure_objective.signed_local_sld_ratio_gradient(
+            partition_state);
+    const Real local_sld_directional_adjoint =
+        increment_inner_product(local_sld_gradient, partition_tangent);
+    const Real local_sld_directional_finite_difference =
+        (local_closure_objective.evaluate(partition_plus_state)
+             .signed_local_sld_ratio -
+         local_closure_objective.evaluate(partition_minus_state)
+             .signed_local_sld_ratio) /
+        (2.0L * finite_difference_step);
+    const Real local_sld_gradient_error = std::abs(
+        local_sld_directional_adjoint -
+        local_sld_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(local_sld_directional_adjoint),
+                std::abs(local_sld_directional_finite_difference)));
     auto partition_integral_gradient_error = [&](TriadSelection selection) {
         const QTrajectoryGradient partition_gradient =
             active_adjoint.critical_integral_gradient(
@@ -1544,8 +1564,10 @@ bool self_test(std::ostream& out) {
         local_quartic_reduced.finite &&
         local_quartic_closure.finite &&
         local_closure_value.finite &&
+        local_closure_value.factorization_relative_error < 1e-12L &&
         local_closure_value_error < 1e-12L &&
         local_closure_gradient_error < 1e-9L &&
+        local_sld_gradient_error < 1e-9L &&
         local_quartic_envelope.all_bounds_hold &&
         shifted_density_budget.finite &&
         local_integral_gradient_error < 1e-9L &&
@@ -1611,6 +1633,23 @@ bool self_test(std::ostream& out) {
             closure_gradient_search.initial_objective &&
         closure_gradient_search.accepted_steps > 0 &&
         std::isfinite(closure_gradient_search.objective);
+    closure_gradient_options.objective = "local-sld-ratio";
+    const GradientSearchResult local_sld_gradient_search =
+        active_gradient_adversary.maximize_q(
+            partition_state, closure_gradient_options);
+    const bool local_sld_gradient_search_ok =
+        local_sld_gradient_search.objective >=
+            local_sld_gradient_search.initial_objective &&
+        local_sld_gradient_search.accepted_steps > 0 &&
+        std::isfinite(local_sld_gradient_search.objective);
+    LocalSldCyclicAnsatzOptions cyclic_options;
+    cyclic_options.coarse_samples = 512;
+    cyclic_options.refinement_iterations = 48;
+    const LocalSldCyclicAnsatzReport cyclic_ansatz =
+        LocalSldCyclicAnsatz::optimize(cyclic_options);
+    const bool cyclic_ansatz_ok = cyclic_ansatz.value.finite &&
+        cyclic_ansatz.value.signed_local_sld_ratio > 7.7e-4L &&
+        std::abs(cyclic_ansatz.basis_inner_product) < 1e-14L;
     const AdversaryResult adversary =
         optimize_static_depletion(1, 1, 2, 0.1L, 11);
     const bool adversary_ok = adversary.modes == 26 &&
@@ -1967,6 +2006,11 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(local_closure_value_error)
         << ", closure gradient error="
         << static_cast<double>(local_closure_gradient_error)
+        << ", direct SLD gradient error="
+        << static_cast<double>(local_sld_gradient_error)
+        << ", SLD factorization error="
+        << static_cast<double>(
+               local_closure_value.factorization_relative_error)
         << ")\n"
         << "projected gradient adversary test: "
         << (gradient_search_ok ? "PASS" : "FAIL")
@@ -1985,6 +2029,23 @@ bool self_test(std::ostream& out) {
         << " -> "
         << std::sqrt(static_cast<double>(closure_gradient_search.objective))
         << ", accepted=" << closure_gradient_search.accepted_steps
+        << ")\n"
+        << "direct local SLD gradient adversary test: "
+        << (local_sld_gradient_search_ok ? "PASS" : "FAIL")
+        << " (ratio "
+        << static_cast<double>(
+               local_sld_gradient_search.initial_objective)
+        << " -> "
+        << static_cast<double>(local_sld_gradient_search.objective)
+        << ", accepted=" << local_sld_gradient_search.accepted_steps
+        << ")\n"
+        << "local SLD cyclic ansatz test: "
+        << (cyclic_ansatz_ok ? "PASS" : "FAIL")
+        << " (ratio="
+        << static_cast<double>(
+               cyclic_ansatz.value.signed_local_sld_ratio)
+        << ", basis inner product="
+        << static_cast<double>(cyclic_ansatz.basis_inner_product)
         << ")\n"
         << "static adversary test: " << (adversary_ok ? "PASS" : "FAIL")
         << " (Q=" << static_cast<double>(adversary.objective.energy_level_quantity)
@@ -2018,7 +2079,8 @@ bool self_test(std::ostream& out) {
            q_increase_gradient_ok && q_increase_constraints_ok &&
            critical_integral_gradient_ok &&
            partition_integral_gradients_ok && gradient_search_ok &&
-           closure_gradient_search_ok &&
+           closure_gradient_search_ok && local_sld_gradient_search_ok &&
+           cyclic_ansatz_ok &&
            adversary_ok && dynamic_class_ok && q_derivative_ok && evolution_ok;
 }
 

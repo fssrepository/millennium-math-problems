@@ -1,0 +1,24 @@
+{
+  "schema": "navier-stokes-local-quartic-closure-adversary-v1",
+  "search_objective": "closure-ratio",
+  "closure_objective": "maximize |K+G| / (k0 B0^(1/4) Z^(5/4) P^(3/4))",
+  "direct_sld_objective": "maximize 4 S^3 Z P (K+G) / (k0 (S^4 Z^2 P + B0 Z^3 P^4))",
+  "implemented_static_scale": "Z^(7/4) P / E^(1/4)",
+  "optimizer": "lbfgs",
+  "warm_state_path": "proof/l4/states/local-closure-ratio/unconstrained-K1-deep/K1.tsv",
+  "gradient": "exact discrete reverse mode through local Galerkin triads",
+  "workers": 12,
+  "restarts_per_cutoff": 12,
+  "iterations_per_restart": 50,
+  "sobolev_order": 0,
+  "sobolev_cap": 0,
+  "fitted_cutoff_slope": 0,
+  "maximum_constant_ratio": 0.333333333333333315,
+  "maximum_objective": 0.111111111111111105,
+  "candidate_lemma_proved": false,
+  "finite_search_is_not_a_proof": true,
+  "remaining_requirement": "derive a cutoff-independent analytic bound for the two-entry bracket",
+  "rows": [
+    {"cutoff": 2, "initial_objective": 0.111111111111111105, "optimized_objective": 0.111111111111111105, "objective_gain": 0, "initial_constant_ratio": 0.333333333333333315, "optimized_constant_ratio": 0.333333333333333315, "improvement_factor": 1, "signed_two_entry_bracket": -0.333333333333333315, "candidate_scale": 1, "signed_stretching": -1.23291093713499571e-11, "local_polynomial_numerator": 2.49881354994474002e-33, "local_polynomial_denominator": 1, "signed_local_sld_ratio": 2.49881354994474002e-33, "energy": 1, "enstrophy": 1, "palinstrophy": 1, "warm_lift_constant_ratio": 0.333333333333333315, "warm_lift_objective": 0.111111111111111105, "projection_residual": 5.22488683180303122e-27, "projected_gradient_norm": 1.05009051097462022e-09, "sobolev_value": 0, "winning_restart": 0, "winning_seed": "9387458823996373547", "warm_continuation_won": true, "accepted_steps": 0, "evaluations": 26, "state_path": "proof/l4/states/local-closure-ratio/one-third-K2-test/K2.tsv", "restart_constant_ratios": [0.333333333333333315, 0.32654282175872601, 0.13398486192077988, 0.333333319023524255, 0.19917633344203739, 0.280921583358580973, 0.333333333289486278, 0.152844617742162098, 0.215876589969675348, 0.333333317962805797, 0.114259433392775014, 0.333132296307349307], "restart_objectives": [0.111111111111111105, 0.106630214442151122, 0.0179519432239304486, 0.111111101571238588, 0.0396712118034136599, 0.0789169359966921669, 0.111111111081879738, 0.0233614771727476515, 0.0466027020969353376, 0.11111110086409301, 0.0130552181192379897, 0.11097712684300759]}
+  ]
+}

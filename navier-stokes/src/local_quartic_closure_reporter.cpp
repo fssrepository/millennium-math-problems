@@ -70,6 +70,16 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
             << static_cast<double>(winner.initial_constant_ratio)
             << ", \"optimized_constant_ratio\": "
             << static_cast<double>(value.constant_ratio)
+            << ", \"signed_constant_ratio\": "
+            << static_cast<double>(value.signed_constant_ratio)
+            << ", \"normalized_stretching_ratio\": "
+            << static_cast<double>(value.normalized_stretching_ratio)
+            << ", \"signed_shape_factor\": "
+            << static_cast<double>(value.signed_shape_factor)
+            << ", \"factorized_local_sld_ratio\": "
+            << static_cast<double>(value.factorized_local_sld_ratio)
+            << ", \"factorization_relative_error\": "
+            << static_cast<double>(value.factorization_relative_error)
             << ", \"improvement_factor\": "
             << static_cast<double>(row.improvement_factor)
             << ", \"signed_two_entry_bracket\": "
@@ -112,6 +122,14 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
             output << static_cast<double>(
                 row.restart_constant_ratios[restart]);
             if (restart + 1 != row.restart_constant_ratios.size()) {
+                output << ", ";
+            }
+        }
+        output << "], \"restart_objectives\": [";
+        for (std::size_t restart = 0;
+             restart < row.restart_objectives.size(); ++restart) {
+            output << static_cast<double>(row.restart_objectives[restart]);
+            if (restart + 1 != row.restart_objectives.size()) {
                 output << ", ";
             }
         }

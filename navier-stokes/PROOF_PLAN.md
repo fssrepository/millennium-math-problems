@@ -765,3 +765,27 @@ signed two-entry structure. The K6 finite-state ratio is `0.127982322632` and
 the algebraic identity error is `8.00e-20`; neither number proves uniformity.
 `proof/l4/lemmas/shifted-local-density/CLOSURE_TARGET.md` is the exact current
 restart point.
+
+The absolute closure ratio was subsequently reverse-differentiated and
+optimized directly. A K1 branch reaches `C_state=1/3`, but its stretching is
+only `1.23e-11`; the `S^3` factor makes it irrelevant to the actual local
+polynomial source. The engine therefore now optimizes the signed quotient
+
+```text
+R_local=4S^3ZP(K+G)/[k0(S^4Z^2P+B0Z^3P^4)]          (LQC-5)
+```
+
+instead of treating LQC-3 as the only search objective. Its analytic gradient
+agrees with central differences to `6.77e-12`. Twelve-start L-BFGS continuation
+gives `R_local=7.60409e-4` at K1 and `7.95364960e-4` at K8; gains after K3 are
+below `4e-10`, and the final adjacent projection residual is `1.99e-6`.
+
+The K8 extremizer is a low-shell, predominantly heterochiral state. Six axis
+modes and twelve face-diagonal modes dominate, while the `(1,1,2)` local
+signature supplies `98.8%` of its signed transfer. The explicit two-basis
+cyclic-shear/quadratic-response ansatz reaches `7.75010870e-4`, or `97.44%` of
+the full value. The active restart point is to prove a signed bound for this
+dominant block plus a cutoff-uniform estimate of the orthogonal shell
+remainder. The present direct quotient uses the evaluated state as the datum,
+so a trajectory proof must additionally freeze `k0,B0` at time zero. These
+finite optimizations do not complete L4 or the Clay problem.

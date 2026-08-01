@@ -46,6 +46,7 @@ add_executable(navier_stokes_lab
     src/local_quartic_reduced_ledger.cpp
     src/local_quartic_shell_ledger.cpp
     src/local_quartic_shell_envelope.cpp
+    src/local_sld_cyclic_ansatz.cpp
     src/moving_gap_controller.cpp
     src/orthogonal_triad_geometry.cpp
     src/periodic_shell_geometry.cpp

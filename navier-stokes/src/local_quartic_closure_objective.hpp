@@ -15,7 +15,12 @@ struct LocalQuarticClosureObjectiveValue {
     SpectralReal signed_two_entry_bracket = 0.0L;
     SpectralReal candidate_scale = 0.0L;
     SpectralReal constant_ratio = 0.0L;
+    SpectralReal signed_constant_ratio = 0.0L;
     SpectralReal squared_constant_ratio = 0.0L;
+    SpectralReal normalized_stretching_ratio = 0.0L;
+    SpectralReal signed_shape_factor = 0.0L;
+    SpectralReal factorized_local_sld_ratio = 0.0L;
+    SpectralReal factorization_relative_error = 0.0L;
     SpectralReal initial_frequency = 0.0L;
     SpectralReal initial_ep_shift = 0.0L;
     SpectralReal local_polynomial_numerator = 0.0L;
