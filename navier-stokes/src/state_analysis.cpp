@@ -6,11 +6,13 @@
 #include <cmath>
 #include <cstddef>
 #include <fstream>
+#include <filesystem>
 #include <iomanip>
 #include <limits>
 #include <ostream>
 #include <stdexcept>
 #include <string>
+#include <sstream>
 #include <utility>
 
 namespace lemma {
@@ -277,6 +279,144 @@ void StateAnalysisReporter::write_json(const StateAnalysisReport& report,
     out << "  ]\n}\n";
 }
 
+StateFamilyAnalysisReport StateFamilyAnalyzer::analyze(
+    const StateFamilyAnalysisOptions& options,
+    const SpectralObjective& objective) {
+    if (options.state_directory.empty() || options.cutoffs.empty()) {
+        throw std::invalid_argument(
+            "state-family analysis requires a directory and cutoffs");
+    }
+    StateFamilyAnalysisReport report;
+    report.state_directory = options.state_directory;
+    SpectralState previous;
+    for (const int cutoff : options.cutoffs) {
+        const std::string path =
+            (std::filesystem::path(options.state_directory) /
+             ("K" + std::to_string(cutoff) + ".tsv"))
+                .string();
+        const SpectralState state = SpectralStateReader::read_tsv(path);
+        const int actual_cutoff = SpectralStateOps::cutoff(state);
+        if (actual_cutoff != cutoff) {
+            throw std::runtime_error(
+                "state cutoff does not match filename: " + path);
+        }
+        StateFamilyAnalysisRow row;
+        row.cutoff = cutoff;
+        row.modes = static_cast<int>(state.waves.size());
+        const StaticObjective state_objective = objective.evaluate(state);
+        row.energy = state_objective.energy;
+        row.enstrophy = state_objective.enstrophy;
+        row.palinstrophy = state_objective.palinstrophy;
+        row.q = state_objective.energy_level_quantity;
+        for (std::size_t mode = 0; mode < state.waves.size(); ++mode) {
+            const WaveVector wave = state.waves[mode];
+            const int shell = std::max(
+                {std::abs(wave.x), std::abs(wave.y), std::abs(wave.z)});
+            if (shell == cutoff) {
+                row.top_shell_energy += std::real(dot_hermitian(
+                    state.velocity[mode], state.velocity[mode]));
+            }
+        }
+        if (!previous.waves.empty()) {
+            SpectralReal difference2 = 0.0L;
+            const SpectralReal previous_energy =
+                SpectralStateOps::energy(previous);
+            for (std::size_t mode = 0; mode < previous.waves.size(); ++mode) {
+                const std::size_t upper = state.index.at(previous.waves[mode]);
+                for (std::size_t component = 0; component < 3; ++component) {
+                    difference2 += std::norm(
+                        state.velocity[upper][component] -
+                        previous.velocity[mode][component]);
+                }
+            }
+            row.projection_residual = std::sqrt(
+                difference2 / std::max(1e-30L, previous_energy));
+            report.maximum_projection_residual = std::max(
+                report.maximum_projection_residual,
+                row.projection_residual);
+        }
+        report.rows.push_back(row);
+        previous = state;
+    }
+    SpectralReal mean_x = 0.0L;
+    SpectralReal mean_y = 0.0L;
+    int positive_rows = 0;
+    for (const StateFamilyAnalysisRow& row : report.rows) {
+        if (row.cutoff > 0 && row.top_shell_energy > 0.0L) {
+            mean_x += std::log(static_cast<SpectralReal>(row.cutoff));
+            mean_y += std::log(row.top_shell_energy);
+            ++positive_rows;
+        }
+    }
+    if (positive_rows >= 2) {
+        mean_x /= static_cast<SpectralReal>(positive_rows);
+        mean_y /= static_cast<SpectralReal>(positive_rows);
+        SpectralReal covariance = 0.0L;
+        SpectralReal variance = 0.0L;
+        for (const StateFamilyAnalysisRow& row : report.rows) {
+            if (row.cutoff <= 0 || !(row.top_shell_energy > 0.0L)) {
+                continue;
+            }
+            const SpectralReal x =
+                std::log(static_cast<SpectralReal>(row.cutoff));
+            const SpectralReal y = std::log(row.top_shell_energy);
+            covariance += (x - mean_x) * (y - mean_y);
+            variance += (x - mean_x) * (x - mean_x);
+        }
+        if (variance > 0.0L) {
+            report.top_shell_energy_exponent = covariance / variance;
+        }
+    }
+    return report;
+}
+
+void StateFamilyAnalysisReporter::write_console(
+    const StateFamilyAnalysisReport& report, std::ostream& out) {
+    out << "state_directory=" << report.state_directory
+        << "\ncutoff,modes,E,Z,P,Q,top_shell_energy,projection_residual\n"
+        << std::setprecision(12);
+    for (const StateFamilyAnalysisRow& row : report.rows) {
+        out << row.cutoff << ',' << row.modes << ','
+            << static_cast<double>(row.energy) << ','
+            << static_cast<double>(row.enstrophy) << ','
+            << static_cast<double>(row.palinstrophy) << ','
+            << static_cast<double>(row.q) << ','
+            << static_cast<double>(row.top_shell_energy) << ','
+            << static_cast<double>(row.projection_residual) << '\n';
+    }
+    out << "top_shell_energy_fitted_exponent="
+        << static_cast<double>(report.top_shell_energy_exponent)
+        << "\nmaximum_projection_residual="
+        << static_cast<double>(report.maximum_projection_residual) << '\n';
+}
+
+void StateFamilyAnalysisReporter::write_json(
+    const StateFamilyAnalysisReport& report, std::ostream& out) {
+    out << std::setprecision(18)
+        << "{\n  \"schema\": \"navier-stokes-state-family-analysis-v1\",\n"
+        << "  \"state_directory\": \"" << report.state_directory
+        << "\",\n  \"top_shell_energy_fitted_exponent\": "
+        << static_cast<double>(report.top_shell_energy_exponent)
+        << ",\n  \"maximum_projection_residual\": "
+        << static_cast<double>(report.maximum_projection_residual)
+        << ",\n  \"rows\": [\n";
+    for (std::size_t index = 0; index < report.rows.size(); ++index) {
+        const StateFamilyAnalysisRow& row = report.rows[index];
+        out << "    {\"cutoff\": " << row.cutoff
+            << ", \"modes\": " << row.modes
+            << ", \"E\": " << static_cast<double>(row.energy)
+            << ", \"Z\": " << static_cast<double>(row.enstrophy)
+            << ", \"P\": " << static_cast<double>(row.palinstrophy)
+            << ", \"Q\": " << static_cast<double>(row.q)
+            << ", \"top_shell_energy\": "
+            << static_cast<double>(row.top_shell_energy)
+            << ", \"projection_residual\": "
+            << static_cast<double>(row.projection_residual) << '}'
+            << (index + 1 == report.rows.size() ? "\n" : ",\n");
+    }
+    out << "  ]\n}\n";
+}
+
 int run_state_analysis(const StateAnalysisOptions& options, std::ostream& out) {
     if (options.state_path.empty()) {
         throw std::invalid_argument("--state is required");
@@ -303,6 +443,28 @@ int run_state_analysis(const StateAnalysisOptions& options, std::ostream& out) {
                    report.reality_residual < 1e-12L
                ? 0
                : 2;
+}
+
+int run_state_family_analysis(const StateFamilyAnalysisOptions& options,
+                              std::ostream& out) {
+    SpectralGalerkin configuration;
+    configuration.configure("auto", 12);
+    const SpectralDynamics dynamics(configuration);
+    const SpectralObjective objective(dynamics);
+    const StateFamilyAnalysisReport report =
+        StateFamilyAnalyzer::analyze(options, objective);
+    StateFamilyAnalysisReporter::write_console(report, out);
+    if (!options.certificate_path.empty()) {
+        std::ofstream certificate(options.certificate_path);
+        if (!certificate) {
+            throw std::runtime_error(
+                "cannot open state-family certificate: " +
+                options.certificate_path);
+        }
+        StateFamilyAnalysisReporter::write_json(report, certificate);
+        out << "Certificate written to " << options.certificate_path << '\n';
+    }
+    return 0;
 }
 
 StateAnalysisOptions StateAnalysisCli::parse(int argc, char** argv, int first) {
@@ -338,6 +500,50 @@ void StateAnalysisCli::print_help(std::ostream& out) {
         << "  --certificate PATH    write shell analysis JSON\n"
         << "  --top N               report N strongest modes (default 12)\n"
         << "  --active-relative X   relative energy activity threshold\n";
+}
+
+StateFamilyAnalysisOptions StateFamilyAnalysisCli::parse(
+    int argc, char** argv, int first) {
+    StateFamilyAnalysisOptions options;
+    auto next_value = [&](int& index, const std::string& name) {
+        if (index + 1 >= argc) {
+            throw std::invalid_argument("missing value for " + name);
+        }
+        return std::string(argv[++index]);
+    };
+    for (int index = first; index < argc; ++index) {
+        const std::string name = argv[index];
+        if (name == "--state-dir") {
+            options.state_directory = next_value(index, name);
+        } else if (name == "--certificate") {
+            options.certificate_path = next_value(index, name);
+        } else if (name == "--cutoffs") {
+            options.cutoffs.clear();
+            std::stringstream values(next_value(index, name));
+            std::string token;
+            while (std::getline(values, token, ',')) {
+                options.cutoffs.push_back(std::stoi(token));
+            }
+        } else {
+            throw std::invalid_argument(
+                "unknown state-family-analysis option: " + name);
+        }
+    }
+    if (options.cutoffs.empty() ||
+        !std::is_sorted(options.cutoffs.begin(), options.cutoffs.end()) ||
+        std::adjacent_find(options.cutoffs.begin(), options.cutoffs.end()) !=
+            options.cutoffs.end()) {
+        throw std::invalid_argument(
+            "state-family cutoffs must be nonempty, sorted, and unique");
+    }
+    return options;
+}
+
+void StateFamilyAnalysisCli::print_help(std::ostream& out) {
+    out << "State-family analysis options:\n"
+        << "  --state-dir PATH      directory containing K1.tsv, K2.tsv, ...\n"
+        << "  --cutoffs A,B,C       ordered cutoff ladder\n"
+        << "  --certificate PATH    write projectivity analysis JSON\n";
 }
 
 }  // namespace lemma

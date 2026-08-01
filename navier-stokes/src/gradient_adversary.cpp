@@ -72,6 +72,9 @@ SpectralReal GradientAdversary::objective_value(
         }
         return std::log(terminal_q / initial_q);
     }
+    if (options.objective == "q-increase") {
+        return terminal_q - initial_q;
+    }
     throw std::invalid_argument("unknown gradient objective: " +
                                 options.objective);
 }
@@ -89,6 +92,8 @@ GradientSearchResult GradientAdversary::maximize_q(
     GradientSearchResult result;
     result.state = initial;
     const SpectralReal target_energy = SpectralStateOps::energy(initial);
+    dynamics_.enforce_constraints(result.state);
+    SpectralStateOps::normalize_energy(result.state, target_energy);
     result.objective = objective_value(result.state, options);
     result.initial_objective = result.objective;
     ++result.trajectory_evaluations;
@@ -106,6 +111,10 @@ GradientSearchResult GradientAdversary::maximize_q(
                 options.trajectory_steps);
         } else if (options.objective == "q-gain") {
             trajectory = adjoint_.q_gain_gradient(
+                result.state, options.viscosity, options.time_step,
+                options.trajectory_steps);
+        } else if (options.objective == "q-increase") {
+            trajectory = adjoint_.q_increase_gradient(
                 result.state, options.viscosity, options.time_step,
                 options.trajectory_steps);
         } else {
@@ -135,6 +144,7 @@ GradientSearchResult GradientAdversary::maximize_q(
              line_step < options.line_search_steps; ++line_step) {
             SpectralState candidate = dynamics_.add_increment(
                 result.state, direction, trial_step);
+            dynamics_.enforce_constraints(candidate);
             SpectralStateOps::normalize_energy(candidate, target_energy);
             const SpectralReal candidate_objective =
                 objective_value(candidate, options);

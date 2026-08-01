@@ -29,6 +29,9 @@ public:
     [[nodiscard]] QTrajectoryGradient q_gain_gradient(
         const SpectralState& initial, SpectralReal viscosity,
         SpectralReal time_step, int steps) const;
+    [[nodiscard]] QTrajectoryGradient q_increase_gradient(
+        const SpectralState& initial, SpectralReal viscosity,
+        SpectralReal time_step, int steps) const;
 
 private:
     [[nodiscard]] QTrajectoryGradient reverse_from_step(

@@ -27,6 +27,9 @@ struct AdversaryReportRow {
     long double dynamic_nonlocal_integral = 0.0L;
     long double dynamic_dt_relative_error = 0.0L;
     long double dynamic_maximum_q = 0.0L;
+    long double dynamic_initial_q = 0.0L;
+    long double dynamic_final_q = 0.0L;
+    long double dynamic_log_q_gain = 0.0L;
     long double dynamic_maximum_local_q = 0.0L;
     long double dynamic_maximum_nonlocal_q = 0.0L;
     long double dynamic_q_log_growth_ratio = 0.0L;

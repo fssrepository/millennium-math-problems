@@ -890,6 +890,8 @@ void print_help(std::ostream& out) {
     lemma::LemmaCli::print_family_help(out);
     out << '\n';
     lemma::StateAnalysisCli::print_help(out);
+    out << '\n';
+    lemma::StateFamilyAnalysisCli::print_help(out);
 }
 
 }  // namespace ns
@@ -920,6 +922,11 @@ int main(int argc, char** argv) {
         if (command == "state-analysis") {
             return lemma::run_state_analysis(
                 lemma::StateAnalysisCli::parse(argc, argv, 2), std::cout);
+        }
+        if (command == "state-family-analysis") {
+            return lemma::run_state_family_analysis(
+                lemma::StateFamilyAnalysisCli::parse(argc, argv, 2),
+                std::cout);
         }
         const ns::ParsedOptions options = ns::parse_options(argc, argv, 2);
         if (command == "simulate") {

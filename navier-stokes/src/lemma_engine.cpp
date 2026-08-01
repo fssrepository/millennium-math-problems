@@ -555,6 +555,10 @@ Real dynamic_objective_value(const EvolutionResult& evolution,
         return std::log(evolution.final_energy_level_quantity /
                         evolution.initial_energy_level_quantity);
     }
+    if (objective == "q-increase") {
+        return evolution.final_energy_level_quantity -
+               evolution.initial_energy_level_quantity;
+    }
     throw std::invalid_argument("unknown dynamic objective: " + objective);
 }
 
@@ -1319,6 +1323,65 @@ bool self_test(std::ostream& out) {
         trajectory_gradient.objective_step == trajectory_steps &&
         trajectory_gradient.checkpoint_count ==
             static_cast<std::size_t>(trajectory_steps + 1);
+    const QTrajectoryGradient q_gain_gradient =
+        active_adjoint.q_gain_gradient(
+            adjoint_state, adjoint_viscosity, adjoint_dt,
+            trajectory_steps);
+    const Real q_gain_directional_adjoint = increment_inner_product(
+        q_gain_gradient.initial_gradient, tangent);
+    const Real q_gain_plus = std::log(trajectory_q_plus / q_plus);
+    const Real q_gain_minus = std::log(trajectory_q_minus / q_minus);
+    const Real q_gain_directional_finite_difference =
+        (q_gain_plus - q_gain_minus) /
+        (2.0L * finite_difference_step);
+    const Real q_gain_gradient_error =
+        std::abs(q_gain_directional_adjoint -
+                 q_gain_directional_finite_difference) /
+        std::max(1e-30L,
+                 std::max(std::abs(q_gain_directional_adjoint),
+                          std::abs(q_gain_directional_finite_difference)));
+    const bool q_gain_gradient_ok = q_gain_gradient_error < 1e-9L;
+    const QTrajectoryGradient q_increase_gradient =
+        active_adjoint.q_increase_gradient(
+            adjoint_state, adjoint_viscosity, adjoint_dt,
+            trajectory_steps);
+    const Real q_increase_directional_adjoint = increment_inner_product(
+        q_increase_gradient.initial_gradient, tangent);
+    const Real q_increase_plus = trajectory_q_plus - q_plus;
+    const Real q_increase_minus = trajectory_q_minus - q_minus;
+    const Real q_increase_directional_finite_difference =
+        (q_increase_plus - q_increase_minus) /
+        (2.0L * finite_difference_step);
+    const Real q_increase_gradient_error =
+        std::abs(q_increase_directional_adjoint -
+                 q_increase_directional_finite_difference) /
+        std::max(1e-30L,
+                 std::max(std::abs(q_increase_directional_adjoint),
+                          std::abs(
+                              q_increase_directional_finite_difference)));
+    const bool q_increase_gradient_ok = q_increase_gradient_error < 1e-9L;
+    Real q_increase_divergence_residual = 0.0L;
+    Real q_increase_reality_residual = 0.0L;
+    for (std::size_t mode = 0;
+         mode < q_increase_gradient.initial_gradient.size(); ++mode) {
+        const WaveVector wave = adjoint_state.waves[mode];
+        const ComplexVector& value =
+            q_increase_gradient.initial_gradient[mode];
+        q_increase_divergence_residual = std::max(
+            q_increase_divergence_residual,
+            std::abs(wave_dot(wave, value)));
+        const std::size_t negative = adjoint_state.index.at(-wave);
+        for (std::size_t component = 0; component < 3; ++component) {
+            q_increase_reality_residual = std::max(
+                q_increase_reality_residual,
+                std::abs(q_increase_gradient.initial_gradient[negative]
+                             [component] -
+                         std::conj(value[component])));
+        }
+    }
+    const bool q_increase_constraints_ok =
+        q_increase_divergence_residual < 1e-15L &&
+        q_increase_reality_residual < 1e-15L;
     GradientSearchOptions gradient_options;
     gradient_options.iterations = 3;
     gradient_options.line_search_steps = 8;
@@ -1332,9 +1395,30 @@ bool self_test(std::ostream& out) {
     const Real gradient_energy_error = std::abs(
         SpectralStateOps::energy(gradient_search.state) -
         SpectralStateOps::energy(adjoint_state));
+    Real gradient_constraint_error = 0.0L;
+    for (std::size_t mode = 0;
+         mode < gradient_search.state.waves.size(); ++mode) {
+        const WaveVector wave = gradient_search.state.waves[mode];
+        gradient_constraint_error = std::max(
+            gradient_constraint_error,
+            std::abs(wave_dot(
+                wave, gradient_search.state.velocity[mode])));
+        const std::size_t negative =
+            gradient_search.state.index.at(-wave);
+        for (std::size_t component = 0; component < 3; ++component) {
+            gradient_constraint_error = std::max(
+                gradient_constraint_error,
+                std::abs(gradient_search.state.velocity[negative]
+                             [component] -
+                         std::conj(gradient_search.state.velocity[mode]
+                                      [component])));
+        }
+    }
     const bool gradient_search_ok =
         gradient_search.objective >= gradient_search.initial_objective &&
-        gradient_search.accepted_steps > 0 && gradient_energy_error < 1e-14L;
+        gradient_search.accepted_steps > 0 &&
+        gradient_energy_error < 1e-14L &&
+        gradient_constraint_error < 1e-15L;
     const AdversaryResult adversary =
         optimize_static_depletion(1, 1, 2, 0.1L, 11);
     const bool adversary_ok = adversary.modes == 26 &&
@@ -1385,12 +1469,26 @@ bool self_test(std::ostream& out) {
         << " (relative error="
         << static_cast<double>(trajectory_gradient_error)
         << ", checkpoints=" << trajectory_gradient.checkpoint_count << ")\n"
+        << "Q-gain trajectory gradient test: "
+        << (q_gain_gradient_ok ? "PASS" : "FAIL")
+        << " (relative error=" << static_cast<double>(q_gain_gradient_error)
+        << ")\n"
+        << "Q-increase trajectory gradient test: "
+        << (q_increase_gradient_ok ? "PASS" : "FAIL")
+        << " (relative error="
+        << static_cast<double>(q_increase_gradient_error)
+        << ", divergence="
+        << static_cast<double>(q_increase_divergence_residual)
+        << ", reality="
+        << static_cast<double>(q_increase_reality_residual) << ")\n"
         << "projected gradient adversary test: "
         << (gradient_search_ok ? "PASS" : "FAIL")
         << " (Q " << static_cast<double>(gradient_search.initial_objective)
         << " -> " << static_cast<double>(gradient_search.objective)
         << ", accepted=" << gradient_search.accepted_steps
         << ", energy error=" << static_cast<double>(gradient_energy_error)
+        << ", constraint error="
+        << static_cast<double>(gradient_constraint_error)
         << ")\n"
         << "static adversary test: " << (adversary_ok ? "PASS" : "FAIL")
         << " (Q=" << static_cast<double>(adversary.objective.energy_level_quantity)
@@ -1404,8 +1502,10 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(evolution.energy_balance_residual) << ")\n";
     return rational_ok && scaling_ok && concentration_ok && strong_l4_ok &&
            triad_ok && fft_ok && fft_adjoint_ok && adjoint_ok && q_gradient_ok &&
-           trajectory_gradient_ok && gradient_search_ok && adversary_ok &&
-           q_derivative_ok && evolution_ok;
+           trajectory_gradient_ok && q_gain_gradient_ok &&
+           q_increase_gradient_ok && q_increase_constraints_ok &&
+           gradient_search_ok && adversary_ok && q_derivative_ok &&
+           evolution_ok;
 }
 
 int run_adversary(const AdversaryOptions& options, std::ostream& out) {
@@ -1566,6 +1666,14 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
         row.dynamic_nonlocal_integral = evolution.integral_nonlocal_critical;
         row.dynamic_dt_relative_error = dynamic.time_step_relative_error;
         row.dynamic_maximum_q = evolution.maximum_energy_level_quantity;
+        row.dynamic_initial_q = evolution.initial_energy_level_quantity;
+        row.dynamic_final_q = evolution.final_energy_level_quantity;
+        row.dynamic_log_q_gain =
+            evolution.initial_energy_level_quantity > 1e-30L &&
+                    evolution.final_energy_level_quantity > 1e-30L
+                ? std::log(evolution.final_energy_level_quantity /
+                           evolution.initial_energy_level_quantity)
+                : -std::numeric_limits<Real>::infinity();
         row.dynamic_maximum_local_q =
             evolution.maximum_local_energy_level_quantity;
         row.dynamic_maximum_nonlocal_q =

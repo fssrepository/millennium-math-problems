@@ -168,6 +168,13 @@ Long searches can resume from a saved state without repeating lower cutoffs:
   --state-dir proof/l4/states/gradient-continuation-refined
 ```
 
+`--dynamic-objective q-gain` instead maximizes
+`log(Q(T)/Q(0))`. This removes the reward for merely starting with a large `Q`
+and targets relative time amplification, but it is ill-conditioned when
+`Q(0)` approaches zero. The nondegenerate default for growth experiments is
+`q-increase = Q(T)-Q(0)`. `terminal-q` is also available when the endpoint
+value itself is the desired objective.
+
 The self-test validates each derivative layer independently. Current relative
 errors on the deterministic test state are approximately `2.6e-19` for FFT
 JVP versus direct JVP, `1.9e-19` for FFT VJP versus direct VJP, `5.6e-19` for

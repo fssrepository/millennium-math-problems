@@ -92,6 +92,28 @@ QTrajectoryGradient SpectralAdjoint::q_gain_gradient(
     return result;
 }
 
+QTrajectoryGradient SpectralAdjoint::q_increase_gradient(
+    const SpectralState& initial, SpectralReal viscosity,
+    SpectralReal time_step, int steps) const {
+    const std::vector<SpectralState> checkpoints = build_checkpoints(
+        dynamics_, initial, viscosity, time_step, steps);
+    QTrajectoryGradient result = reverse_from_step(
+        checkpoints, viscosity, time_step, steps);
+    const SpectralReal initial_q =
+        objective_.evaluate(initial).energy_level_quantity;
+    const SpectralReal terminal_q = result.objective_value;
+    const SpectralIncrement initial_q_gradient =
+        objective_.energy_level_gradient(initial);
+    for (std::size_t mode = 0; mode < result.initial_gradient.size(); ++mode) {
+        for (std::size_t component = 0; component < 3; ++component) {
+            result.initial_gradient[mode][component] -=
+                initial_q_gradient[mode][component];
+        }
+    }
+    result.objective_value = terminal_q - initial_q;
+    return result;
+}
+
 QTrajectoryGradient SpectralAdjoint::reverse_from_step(
     const std::vector<SpectralState>& checkpoints,
     SpectralReal viscosity, SpectralReal time_step,

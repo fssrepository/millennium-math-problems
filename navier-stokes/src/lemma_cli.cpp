@@ -133,9 +133,12 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
     }
     validate_threads(options.threads);
     if (options.dynamic_objective != "critical-integral" &&
-        options.dynamic_objective != "max-q") {
+        options.dynamic_objective != "max-q" &&
+        options.dynamic_objective != "terminal-q" &&
+        options.dynamic_objective != "q-gain" &&
+        options.dynamic_objective != "q-increase") {
         throw std::invalid_argument(
-            "--dynamic-objective must be critical-integral or max-q");
+            "--dynamic-objective must be critical-integral, max-q, terminal-q, q-gain, or q-increase");
     }
     if (options.dynamic_optimizer != "gradient" &&
         options.dynamic_optimizer != "mutate" &&
@@ -143,10 +146,10 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
         throw std::invalid_argument(
             "--dynamic-optimizer must be gradient, mutate, or hybrid");
     }
-    if (options.dynamic_objective != "max-q" &&
+    if (options.dynamic_objective == "critical-integral" &&
         options.dynamic_optimizer != "mutate") {
         throw std::invalid_argument(
-            "gradient and hybrid optimizers currently require --dynamic-objective max-q");
+            "critical-integral currently requires --dynamic-optimizer mutate");
     }
     return options;
 }
@@ -221,7 +224,7 @@ void LemmaCli::print_adversary_help(std::ostream& out) {
         << "  --state-prefix PATH   dump each winning Fourier state as TSV\n"
         << "  --state-dir PATH      write states under PATH/{static,dynamic}\n"
         << "  --dynamic-warm-state PATH  replay a TSV as first dynamic warm start\n"
-        << "  --dynamic-objective NAME  critical-integral or max-q\n"
+        << "  --dynamic-objective NAME  max-q, terminal-q, q-increase, q-gain, or critical-integral\n"
         << "  --dynamic-optimizer NAME  gradient, mutate, or hybrid\n"
         << "  --threads N           worker threads; 0 uses up to 12 CPUs\n"
         << "  --backend NAME        auto, direct, or dealiased fft\n";
