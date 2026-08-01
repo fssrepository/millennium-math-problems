@@ -4,6 +4,8 @@
   "ordered_signature_degree_bound": "2(2K+1)",
   "square_summed_transfer_bound": "(sum_sigma |V_sigma|^2)^(1/2) <= C K^(7/2) E_K^(3/2)",
   "effective_signature_identity": "sum_sigma |V_sigma| = sqrt(N_eff) (sum_sigma |V_sigma|^2)^(1/2)",
+  "signed_amplification_identity": "|sum_sigma V_sigma| = A_sig (sum_sigma |V_sigma|^2)^(1/2)",
+  "critical_signed_amplification_power": "1/2",
   "maximum_input_degree_ratio": 0.800000000000000044,
   "maximum_target_degree_ratio": 0.800000000000000044,
   "all_fixed_signature_degree_bounds_hold": true,
