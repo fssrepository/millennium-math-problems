@@ -36,12 +36,15 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
         << ", minimum_dyadic_gap=" << report.minimum_dyadic_gap
         << ", H" << report.sobolev_order << "_cap="
         << static_cast<double>(report.sobolev_cap)
+        << ", critical_density_shift="
+        << static_cast<double>(report.critical_density_shift)
         << ", dynamic_restarts=" << report.dynamic_restarts << ")\n"
         << "cutoff,steps,int_D4Z2_refined,int_local_D4Z2,int_nonlocal_D4Z2,"
            "int_near_nonlocal_D4Z2,int_far_nonlocal_D4Z2,"
            "int_selected_gap_tail_D4Z2,"
            "dt_relative_error,search_obj_initial,search_obj_final,"
-           "initial_local_density,final_local_density,"
+           "initial_local_density,final_local_density,initial_Z,"
+           "local_log_gain,local_log_gain_over_Tk0Z,"
            "initial_D4Z,final_D4Z,log_Q_gain,max_D4Z,max_local_D4Z,max_nonlocal_D4Z,"
            "max_positive_dlogQ_over_k0Z,q_derivative_error,strong_L4_envelope,"
            "envelope_use,max_Z,max_omega_inf,max_holder_half,"
@@ -63,6 +66,11 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
                    row.dynamic_initial_local_critical_density) << ','
             << static_cast<double>(
                    row.dynamic_final_local_critical_density) << ','
+            << static_cast<double>(row.dynamic_initial_enstrophy) << ','
+            << static_cast<double>(
+                   row.dynamic_local_critical_log_gain) << ','
+            << static_cast<double>(
+                   row.dynamic_local_log_gain_rate_ratio) << ','
             << static_cast<double>(row.dynamic_initial_q) << ','
             << static_cast<double>(row.dynamic_final_q) << ','
             << static_cast<double>(row.dynamic_log_q_gain) << ','
@@ -117,6 +125,8 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
         << ", \"sobolev_order\": " << report.sobolev_order
         << ", \"sobolev_cap\": "
         << static_cast<double>(report.sobolev_cap)
+        << ", \"critical_density_shift\": "
+        << static_cast<double>(report.critical_density_shift)
         << ", \"mutation\": " << static_cast<double>(report.mutation)
         << ", \"seed\": " << report.seed << "},\n"
         << "  \"threads\": " << report.workers << ",\n"
@@ -156,6 +166,12 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
             << ", \"dynamic_final_local_critical_density\": "
             << static_cast<double>(
                    row.dynamic_final_local_critical_density)
+            << ", \"dynamic_initial_Z\": "
+            << static_cast<double>(row.dynamic_initial_enstrophy)
+            << ", \"dynamic_local_critical_log_gain\": "
+            << static_cast<double>(row.dynamic_local_critical_log_gain)
+            << ", \"dynamic_local_log_gain_over_Tk0Z\": "
+            << static_cast<double>(row.dynamic_local_log_gain_rate_ratio)
             << ", \"dynamic_max_D4Z\": "
             << static_cast<double>(row.dynamic_maximum_q)
             << ", \"dynamic_initial_D4Z\": "

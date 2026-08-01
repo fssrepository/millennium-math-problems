@@ -20,6 +20,7 @@ struct GradientSearchOptions {
     int lbfgs_history = 8;
     int sobolev_order = 0;
     SpectralReal sobolev_cap = 0.0L;
+    SpectralReal critical_density_shift = 0.0L;
     int minimum_dyadic_gap = 2;
 };
 

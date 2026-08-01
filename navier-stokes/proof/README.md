@@ -85,3 +85,9 @@ pointwise hypothesis. The surviving target is the time integral of the exact
 coupled factorization `A_sig^4 R^2/(Z P^3)`. A true 12-worker dynamic
 multistart in `l4/analysis/local-signature-coupled-integral/` converges to the
 same smooth K3--K6 branch and does not expose cutoff concentration.
+
+`l4/analysis/local-critical-increase/` uses the exact discrete endpoint
+gradient to reject monotonic decay of the coupled local density (F010). Its
+positive-growth K3--K6 branch is time-step stable and spectrally convergent,
+but its increase flattens with cutoff and therefore supplies a mechanism test,
+not a blow-up certificate.

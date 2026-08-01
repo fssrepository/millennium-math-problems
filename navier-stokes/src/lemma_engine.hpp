@@ -32,6 +32,7 @@ struct AdversaryOptions {
     std::string dynamic_warm_state;
     int sobolev_order = 0;
     double sobolev_cap = 0.0;
+    double critical_density_shift = 0.0;
     std::string dynamic_objective = "critical-integral";
     std::string dynamic_optimizer = "gradient";
     std::string gradient_method = "steepest";

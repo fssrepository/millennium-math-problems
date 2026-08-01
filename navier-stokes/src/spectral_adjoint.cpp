@@ -203,6 +203,58 @@ QTrajectoryGradient SpectralAdjoint::critical_increase_gradient(
     return result;
 }
 
+QTrajectoryGradient SpectralAdjoint::critical_log_gain_gradient(
+    const SpectralState& initial, SpectralReal viscosity,
+    SpectralReal time_step, int steps, TriadSelection selection,
+    SpectralReal critical_density_shift) const {
+    if (!(critical_density_shift >= 0.0L)) {
+        throw std::invalid_argument(
+            "critical density shift cannot be negative");
+    }
+    const std::vector<SpectralState> checkpoints = build_checkpoints(
+        dynamics_, initial, viscosity, time_step, steps);
+    QTrajectoryGradient result;
+    result.objective_step = steps;
+    result.total_steps = steps;
+    result.checkpoint_count = checkpoints.size();
+    const StaticObjective initial_objective =
+        objective_.evaluate(checkpoints.front(), selection);
+    const StaticObjective terminal_objective =
+        objective_.evaluate(checkpoints.back(), selection);
+    const SpectralReal initial_density =
+        initial_objective.critical_integrand + critical_density_shift;
+    const SpectralReal terminal_density =
+        terminal_objective.critical_integrand + critical_density_shift;
+    if (!(initial_density > 1e-30L) || !(terminal_density > 1e-30L)) {
+        throw std::runtime_error(
+            "critical log-gain gradient requires positive endpoint densities");
+    }
+    result.objective_value = std::log(terminal_density / initial_density);
+    result.initial_gradient = objective_.critical_integrand_gradient(
+        checkpoints.back(), selection);
+    for (ComplexVector& value : result.initial_gradient) {
+        for (SpectralComplex& component : value) {
+            component /= terminal_density;
+        }
+    }
+    for (int step = steps - 1; step >= 0; --step) {
+        result.initial_gradient = dynamics_.rk4_vjp(
+            checkpoints[static_cast<std::size_t>(step)],
+            result.initial_gradient, viscosity, time_step);
+    }
+    const SpectralIncrement initial_gradient =
+        objective_.critical_integrand_gradient(
+            checkpoints.front(), selection);
+    for (std::size_t mode = 0;
+         mode < result.initial_gradient.size(); ++mode) {
+        for (std::size_t component = 0; component < 3; ++component) {
+            result.initial_gradient[mode][component] -=
+                initial_gradient[mode][component] / initial_density;
+        }
+    }
+    return result;
+}
+
 QTrajectoryGradient SpectralAdjoint::reverse_from_step(
     const std::vector<SpectralState>& checkpoints,
     SpectralReal viscosity, SpectralReal time_step,

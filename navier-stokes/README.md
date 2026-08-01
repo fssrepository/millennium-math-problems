@@ -81,8 +81,12 @@ source file:
 - `SpectralFftOperator` implements the dealiased forward, tangent, and adjoint
   pseudospectral kernels and is checked against direct triad summation;
 - `SpectralObjective`, `SpectralAdjoint`, and `GradientAdversary` provide the
-  exact `Q=D^4 Z` and `integral D^4 Z^2 dt` gradients, checkpointed reverse
-  RK4 passes, and fixed-energy Riemannian gradient search;
+  exact `Q=D^4 Z`, `integral D^4 Z^2 dt`, endpoint critical-density increase,
+  and shifted log-gain gradients, checkpointed reverse RK4 passes, and
+  fixed-energy Riemannian gradient search;
+- `DynamicAdversary` owns one complete forward/adjoint optimization context,
+  while `DynamicAdversaryEnsemble` runs independent contexts concurrently and
+  refines only the winning trajectory with a halved time step;
 - `InitialSobolevConstraint` projects search directions and retracts trials
   onto a cutoff-independent initial homogeneous Sobolev cap;
 - `TrajectoryAnalyzer` evolves and samples trajectories, including the

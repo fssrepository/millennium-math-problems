@@ -21,6 +21,7 @@ struct DynamicAdversaryOptions {
     std::string gradient_method = "steepest";
     int sobolev_order = 0;
     SpectralReal sobolev_cap = 0.0L;
+    SpectralReal critical_density_shift = 0.0L;
     int minimum_dyadic_gap = 2;
 };
 
@@ -54,7 +55,8 @@ public:
                 const DynamicAdversaryOptions& options) const;
 
     [[nodiscard]] static SpectralReal objective_value(
-        const EvolutionResult& evolution, const std::string& objective);
+        const EvolutionResult& evolution, const std::string& objective,
+        SpectralReal critical_density_shift = 0.0L);
 
 private:
     SpectralGalerkin galerkin_;

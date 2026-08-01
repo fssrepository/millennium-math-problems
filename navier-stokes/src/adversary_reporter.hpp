@@ -45,6 +45,9 @@ struct AdversaryReportRow {
     long double dynamic_search_final_objective = 0.0L;
     long double dynamic_initial_local_critical_density = 0.0L;
     long double dynamic_final_local_critical_density = 0.0L;
+    long double dynamic_initial_enstrophy = 0.0L;
+    long double dynamic_local_critical_log_gain = 0.0L;
+    long double dynamic_local_log_gain_rate_ratio = 0.0L;
     long double dynamic_maximum_q = 0.0L;
     long double dynamic_initial_q = 0.0L;
     long double dynamic_final_q = 0.0L;
@@ -88,6 +91,7 @@ struct AdversaryReport {
     int minimum_dyadic_gap = 2;
     int sobolev_order = 0;
     long double sobolev_cap = 0.0L;
+    long double critical_density_shift = 0.0L;
     int restarts = 0;
     int dynamic_restarts = 1;
     int generations = 0;

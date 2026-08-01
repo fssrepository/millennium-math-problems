@@ -17,6 +17,7 @@ namespace {
 bool collects_partition(const std::string& objective) {
     return objective == "critical-local-integral" ||
            objective == "critical-local-increase" ||
+           objective == "critical-local-log-gain" ||
            objective == "critical-nonlocal-integral" ||
            objective == "critical-near-nonlocal-integral" ||
            objective == "critical-far-nonlocal-integral" ||
@@ -43,7 +44,8 @@ DynamicAdversary::DynamicAdversary(std::string backend, int compute_threads)
 }
 
 SpectralReal DynamicAdversary::objective_value(
-    const EvolutionResult& evolution, const std::string& objective) {
+    const EvolutionResult& evolution, const std::string& objective,
+    SpectralReal critical_density_shift) {
     if (objective == "critical-integral") {
         return evolution.integral_critical;
     }
@@ -53,6 +55,19 @@ SpectralReal DynamicAdversary::objective_value(
     if (objective == "critical-local-increase") {
         return evolution.final_local_critical_integrand -
                evolution.initial_local_critical_integrand;
+    }
+    if (objective == "critical-local-log-gain") {
+        const SpectralReal shifted_initial =
+            evolution.initial_local_critical_integrand +
+            critical_density_shift;
+        const SpectralReal shifted_terminal =
+            evolution.final_local_critical_integrand +
+            critical_density_shift;
+        if (!(shifted_initial > 1e-30L) ||
+            !(shifted_terminal > 1e-30L)) {
+            return -std::numeric_limits<SpectralReal>::infinity();
+        }
+        return std::log(shifted_terminal / shifted_initial);
     }
     if (objective == "critical-nonlocal-integral") {
         return evolution.integral_nonlocal_critical;
@@ -95,6 +110,11 @@ DynamicAdversaryResult DynamicAdversary::optimize(
     if (options.generations < 0) {
         throw std::invalid_argument("--dynamic-generations cannot be negative");
     }
+    if (!(options.critical_density_shift >= 0.0L) ||
+        !std::isfinite(options.critical_density_shift)) {
+        throw std::invalid_argument(
+            "critical density shift must be finite and nonnegative");
+    }
     std::mt19937_64 generator(
         options.seed ^ UINT64_C(0xd1b54a32d192ed03) ^
         static_cast<std::uint64_t>(SpectralStateOps::cutoff(primary_start)));
@@ -124,8 +144,10 @@ DynamicAdversaryResult DynamicAdversary::optimize(
         const bool secondary_admissible = sobolev.admissible(secondary);
         if (secondary_admissible &&
             (!result_admissible ||
-             objective_value(secondary_evolution, options.objective) >
-                 objective_value(result.evolution, options.objective))) {
+             objective_value(secondary_evolution, options.objective,
+                             options.critical_density_shift) >
+                 objective_value(result.evolution, options.objective,
+                                 options.critical_density_shift))) {
             result.state = std::move(secondary);
             result.initial_objective =
                 trajectory_.evaluate_static(result.state);
@@ -138,7 +160,8 @@ DynamicAdversaryResult DynamicAdversary::optimize(
             "no dynamic start satisfies the configured Sobolev cap");
     }
     result.search_initial_objective =
-        objective_value(result.evolution, options.objective);
+        objective_value(result.evolution, options.objective,
+                        options.critical_density_shift);
 
     const bool use_mutations = options.optimizer == "mutate" ||
                                options.optimizer == "hybrid";
@@ -165,8 +188,10 @@ DynamicAdversaryResult DynamicAdversary::optimize(
             options.minimum_dyadic_gap);
         ++result.evaluations;
         if (candidate_evolution.finite &&
-            objective_value(candidate_evolution, options.objective) >
-                objective_value(result.evolution, options.objective)) {
+            objective_value(candidate_evolution, options.objective,
+                            options.critical_density_shift) >
+                objective_value(result.evolution, options.objective,
+                                options.critical_density_shift)) {
             result.state = std::move(candidate);
             result.initial_objective =
                 trajectory_.evaluate_static(result.state);
@@ -190,6 +215,8 @@ DynamicAdversaryResult DynamicAdversary::optimize(
         gradient_options.method = options.gradient_method;
         gradient_options.sobolev_order = options.sobolev_order;
         gradient_options.sobolev_cap = options.sobolev_cap;
+        gradient_options.critical_density_shift =
+            options.critical_density_shift;
         gradient_options.minimum_dyadic_gap = options.minimum_dyadic_gap;
         const GradientSearchResult gradient =
             gradient_.maximize_q(result.state, gradient_options);
@@ -204,7 +231,8 @@ DynamicAdversaryResult DynamicAdversary::optimize(
         result.gradient_trace = gradient.trace;
     }
     result.search_final_objective =
-        objective_value(result.evolution, options.objective);
+        objective_value(result.evolution, options.objective,
+                        options.critical_density_shift);
     if (refine_result) {
         refine(result, options);
     }
@@ -218,9 +246,11 @@ void DynamicAdversary::refine(
         result.state, options.viscosity, options.final_time,
         0.5L * options.time_step, true, options.minimum_dyadic_gap);
     const SpectralReal refined_objective = objective_value(
-        result.refined_evolution, options.objective);
+        result.refined_evolution, options.objective,
+        options.critical_density_shift);
     const SpectralReal coarse_objective = objective_value(
-        result.evolution, options.objective);
+        result.evolution, options.objective,
+        options.critical_density_shift);
     const SpectralReal difference =
         std::abs(refined_objective - coarse_objective);
     result.time_step_relative_error =

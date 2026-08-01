@@ -149,3 +149,55 @@ Reproduce the falsification with
   --nu 0.1 --dt 0.0001 \
   --certificate proof/l4/analysis/local-signature-coupled-integral/factor-adversary-K2-K6.json
 ```
+
+A larger screen with 128 samples per profile and cutoff contains 1,920 valid
+states and 320 simultaneous-growth states. Its largest simultaneous initial
+critical density is `3.18277e-8`, still only `7.23e-5` of the optimized smooth
+branch's approximately `4.40293e-4`. At K6 the ratio is `5.38e-8`. The random
+counterexamples therefore reject the sign identity but do not compete with the
+high-density extremizing branch. See
+[`factor-adversary-K2-K6-samples128.json`](factor-adversary-K2-K6-samples128.json).
+
+## Exact endpoint-increase adversary
+
+Anticorrelation on the optimized branch does not imply monotonicity of the
+coupled density. The discrete adjoint now differentiates
+
+```text
+C_local(u(T)) - C_local(u(0)),
+C_local(u) = |V_local(u)|^4/(Z(u) P(u)^3),
+```
+
+through every RK4 stage and subtracts the exact initial-state gradient. Its
+directional derivative agrees with a centered finite difference to
+`5.23e-12` relatively in the deterministic self-test.
+
+At `E(0)=1`, `H4^2<=100`, `nu=0.1`, `T=0.001`, and `dt=0.0005`, twelve
+parallel starts with eight projected L-BFGS iterations give
+
+```text
+K                     3             4             5             6
+C_local(0)       2.228636e-4  2.261852e-4  2.213693e-4  2.234314e-4
+C_local(T)-C(0)  9.648047e-7  1.099410e-6  1.125187e-6  1.134951e-6
+top-shell E      5.013e-4     1.253e-4     2.259e-5     1.408e-6
+```
+
+The time-step refinement error is below `2.5e-14` at every cutoff. The fitted
+top-shell energy exponent is `-8.18`, and the K5-to-K6 projection residual is
+`1.74e-3`. Thus F010 rejects universal pointwise monotonicity with a smooth,
+cutoff-stabilizing positive-growth branch. The increase itself also flattens
+from K4 to K6, so this run does not exhibit blow-up scaling and does not reject
+the time-integrated L4 lemma.
+
+After 24 additional K6 iterations, doubling the horizon gives
+`Delta C_local(0.002)/(2 Delta C_local(0.001))=0.999368654`. On that
+endpoint-optimized trajectory the factor correlation reverses sign to
+`+0.999994857`, and both factors peak at the final sample. This supplies a
+high-density simultaneous-growth branch but still no accelerating or
+cutoff-concentrating mechanism.
+
+Artifacts:
+
+- [`../../adversary/local-critical-increase-h4-cap100-K3-K6-multistart12-lbfgs8.json`](../../adversary/local-critical-increase-h4-cap100-K3-K6-multistart12-lbfgs8.json)
+- [`critical-increase-family.json`](critical-increase-family.json)
+- [`../local-critical-increase/K6-T002-factor-trajectory.json`](../local-critical-increase/K6-T002-factor-trajectory.json)

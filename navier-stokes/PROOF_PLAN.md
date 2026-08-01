@@ -542,3 +542,53 @@ adversary finds 41 states in which both factors grow simultaneously. The same
 counts survive halving the RK4 probe step. F009 therefore rejects universal
 factor antimonotonicity. Any viable proof must derive a trajectory-integrated
 estimate tied to the fixed smooth datum, not a pointwise sign identity.
+
+The coupled density is not pointwise monotone either. An exact discrete
+endpoint adjoint for
+
+```text
+C_local(u(T))-C_local(u(0)),
+C_local=|V_local|^4/(ZP^3),
+```
+
+passes its centered-difference test at `5.23e-12`. Twelve-start projected
+L-BFGS searches at `T=0.001` find positive increases
+`9.64805e-7, 1.09941e-6, 1.12519e-6, 1.13495e-6` on K3--K6. Time-step errors
+are below `2.5e-14`; top-shell energy decays with fitted exponent `-8.18`, and
+the K5-to-K6 projection residual is `1.74e-3`. F010 therefore rejects the
+nonincreasing-density route. The increase is already flattening in cutoff, so
+the data identify a real transient-growth mechanism but not a singularity or
+a failure of the time-integrated lemma. The next machine task is horizon
+continuation of the refined K6 branch; the analytical restart point remains a
+cutoff-uniform integral estimate rather than a pointwise sign argument.
+
+The first horizon continuation resolves that diagnostic. At K6,
+`Delta C_local(0.002)/(2 Delta C_local(0.001))=0.999368654`, so the positive
+short-time growth is nearly linear rather than accelerating. The signature
+factor correlation on this endpoint-optimized trajectory is `+0.999994857`,
+with both factors peaking at the final sample and factorization residual
+`2.32e-19`. This shows that the strong anticorrelation selected by the
+integral maximizer is branch-dependent even at substantial critical density.
+The next falsification axis is lower viscosity; absent accelerated or cutoff
+growth, the proof restart remains an integrated estimate exploiting more than
+pointwise factor signs.
+
+Reducing viscosity fivefold to `nu=0.02` at K6 and `T=0.002` lowers the
+optimized absolute increase by a factor `0.909393069` and its logarithmic gain
+by a factor `0.823480963`. The endpoint error under time-step halving is
+`2.00e-15`. Thus neither horizon nor viscosity continuation reveals an
+accelerating branch. The engine now differentiates the more lemma-directed
+objective `log(C_local(T)/C_local(0))`; its central-difference error is
+`2.08e-11`, and cutoff searches report the normalized average
+`log(C(T)/C(0))/(T k0 Z(0))` directly.
+
+The unshifted objective immediately exposes a zero-set obstruction rather than
+a high-density extremizer. It drives `C_local(0)` to the `1e-30` numerical
+guard and reaches log gain `31.81` at K6, with projected gradient `3.8e7`.
+Consequently a purely multiplicative estimate is not a stable analytical
+restart point near vanishing local transfer. The exact adjoint and CLI now
+support an additive density shift `B` and optimize
+`log((C_local(T)+B)/(C_local(0)+B))`; the shifted gradient passes centered
+differences at `2.79e-10`. The next finite test uses `B=1e-4`, comparable to
+the high-density branch, before any shifted inequality is considered as a
+lemma candidate.
