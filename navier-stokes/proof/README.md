@@ -55,3 +55,7 @@ moving-gap Young closure that leaves the logarithmic transition/local block.
 `l4/lemmas/transition-block/` records the exact scaling obstruction showing
 that counting the remaining `O(log Z)` bands does not by itself close the
 enstrophy inequality.
+
+`l4/lemmas/local-helicity/` records the exact eight-sector helical triad
+decomposition, the heterochiral dominance of current local extremizers, and
+the pure-helicity counterexample to exact homochiral cancellation.

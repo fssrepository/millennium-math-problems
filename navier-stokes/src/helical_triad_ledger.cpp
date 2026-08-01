@@ -86,14 +86,22 @@ SpectralReal interaction_stretching(
 }
 
 SpectralReal relative_residual(
-    SpectralReal difference, SpectralReal reference) {
-    if (reference == 0.0L) {
+    SpectralReal difference, SpectralReal scale) {
+    if (scale == 0.0L) {
         return std::abs(difference);
     }
-    return std::abs(difference) / std::abs(reference);
+    return std::abs(difference) / std::abs(scale);
 }
 
 }  // namespace
+
+ComplexVector HelicalTriadLedger::project_vector(
+    WaveVector wave, const ComplexVector& value, int sign) {
+    if (sign != -1 && sign != 1) {
+        throw std::invalid_argument("helical sign must be -1 or +1");
+    }
+    return helical_components(wave, value)[sign < 0 ? 0U : 1U];
+}
 
 SpectralState HelicalTriadLedger::project_helicity(
     const SpectralState& state, int sign) {
@@ -199,12 +207,19 @@ HelicalTriadReport HelicalTriadLedger::analyze(
         }
     }
     const TriadLedgerReport ledger = TriadLedger::analyze(state);
+    SpectralReal local_absolute_scale = 0.0L;
+    for (const TriadGapLedgerRow& row : ledger.gaps) {
+        if (row.dyadic_gap == 0) {
+            local_absolute_scale = row.absolute_pair_stretching;
+            break;
+        }
+    }
     report.relative_total_reconstruction_residual = relative_residual(
         report.signed_total_stretching - ledger.signed_total,
-        ledger.signed_total);
+        ledger.absolute_pair_total);
     report.relative_local_reconstruction_residual = relative_residual(
         report.signed_local_stretching - ledger.signed_local,
-        ledger.signed_local);
+        local_absolute_scale);
     return report;
 }
 

@@ -51,6 +51,8 @@ struct HelicalTriadCertificate {
 
 class HelicalTriadLedger {
 public:
+    [[nodiscard]] static ComplexVector project_vector(
+        WaveVector wave, const ComplexVector& value, int sign);
     [[nodiscard]] static SpectralState project_helicity(
         const SpectralState& state, int sign);
     [[nodiscard]] static HelicalTriadReport analyze(

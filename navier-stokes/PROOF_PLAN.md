@@ -366,3 +366,13 @@ cutoff. The active L4 task is now the remaining local/transition block of
 `O(log Z(t))` dyadic gaps. Plain band counting is rejected as F005 because it
 leaves `Z^3 log(1+Z)^4`. See
 `proof/l4/lemmas/dynamic-far-tail/README.md`.
+
+The local block is now decomposed into all eight helical sign sectors. On the
+K3 local-objective endpoint, `V_local=-0.227783`, while its homochiral part is
+only `-3.71e-6`; the heterochiral sectors carry the signed extremum. This is
+not an exact identity: pure positive- and negative-helicity states have
+nonzero homochiral local stretching, so F006 rejects universal homochiral
+cancellation. The next computational target is a sector-selective local
+objective; the next analytical target is a quantitative heterochiral
+depletion statement strong enough to supply the missing `Z^(-1/2)` factor.
+See `proof/l4/lemmas/local-helicity/README.md`.

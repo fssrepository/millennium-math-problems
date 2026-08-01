@@ -105,12 +105,12 @@
     "samples": 4,
     "seed": 97794912,
     "maximum_velocity_reconstruction_residual": 1.79785645044440763e-19,
-    "maximum_total_reconstruction_residual": 6.11384249146032226e-15,
-    "maximum_local_reconstruction_residual": 3.82301712162337711e-17,
+    "maximum_total_reconstruction_residual": 2.43116994523236393e-20,
+    "maximum_local_reconstruction_residual": 1.3631824257177798e-20,
     "maximum_pure_heterochiral_absolute_local": 2.55524252145640191e-19,
     "maximum_pure_homochiral_local_stretching": 0.00635946835736285378,
     "nonzero_pure_homochiral_local_seen": true,
-    "all_reconstruction_checks_hold": false
+    "all_reconstruction_checks_hold": true
   },
   "fourier_galerkin": {
     "cutoff": 3,

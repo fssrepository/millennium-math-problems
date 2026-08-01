@@ -99,6 +99,8 @@ source file:
   frequency gain after enstrophy weighting;
 - `TriadTailEnvelope` verifies the low-advecting, low-advected, and low-target
   frequency/amplitude bounds and reconstructs the separated signed ledger;
+- `HelicalTriadLedger` reconstructs local and total stretching from all eight
+  curl-eigenmode sign sectors and produces pure-helicity counterexamples;
 - `MovingGapController` implements the logarithmic gap choice that turns the
   post-Young far-tail remainder from `Z^3` into a linear `Z` term;
 - `DyadicShellBounds` isolates the cutoff-independent scalar shell sums,
