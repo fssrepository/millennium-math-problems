@@ -1,0 +1,16 @@
+{
+  "schema": "navier-stokes-local-signature-trajectory-v1",
+  "state": "proof/l4/states/helical-heterochiral-broad-spread/dynamic/K3.tsv",
+  "workers": 12,
+  "steps": 10,
+  "viscosity": 0.100000000000000006,
+  "time_step": 0.00100000000000000002,
+  "last_relative_critical_integral_difference": 1.50960851101163657e-15,
+  "exact_factorization": "V^4/(Z P^3) = A_sig^4 R^2/(Z P^3)",
+  "rows": [
+    {"cutoff": 3, "initial_amplification": 1.09095551858137196, "maximum_amplification": 1.09344516910672063, "final_amplification": 1.09344516910672063, "critical_integral": 4.3912173349297838e-06, "square_signature_integral": 3.08593418691157441e-06, "maximum_critical_density": 0.000440281205086389923, "maximum_factorization_residual": 1.81130420990776308e-19},
+    {"cutoff": 4, "initial_amplification": 1.09095551858137196, "maximum_amplification": 1.09344571155454529, "final_amplification": 1.09344571155454529, "critical_integral": 4.39122155237186083e-06, "square_signature_integral": 3.08593412072773901e-06, "maximum_critical_density": 0.000440281205086389923, "maximum_factorization_residual": 3.00907602424952645e-19},
+    {"cutoff": 5, "initial_amplification": 1.09095551858137196, "maximum_amplification": 1.0934457115470757, "final_amplification": 1.0934457115470757, "critical_integral": 4.39122155224048348e-06, "square_signature_integral": 3.08593412065465997e-06, "maximum_critical_density": 0.000440281205086389923, "maximum_factorization_residual": 2.41239201503278168e-19},
+    {"cutoff": 6, "initial_amplification": 1.09095551858137196, "maximum_amplification": 1.0934457115470646, "final_amplification": 1.0934457115470646, "critical_integral": 4.3912215522404767e-06, "square_signature_integral": 3.08593412065462991e-06, "maximum_critical_density": 0.000440281205086389923, "maximum_factorization_residual": 2.41781876497976009e-19}
+  ]
+}

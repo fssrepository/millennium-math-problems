@@ -30,6 +30,7 @@ add_executable(navier_stokes_lab
     src/local_signature_geometry.cpp
     src/local_signature_objective.cpp
     src/local_signature_state_factory.cpp
+    src/local_signature_trajectory.cpp
     src/moving_gap_controller.cpp
     src/orthogonal_triad_geometry.cpp
     src/periodic_shell_geometry.cpp
