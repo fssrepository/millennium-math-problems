@@ -1,0 +1,19 @@
+{
+  "schema": "navier-stokes-orthogonal-triad-v1",
+  "maximum_cutoff": 8,
+  "elementary_degree_bound": "2(2K+1)",
+  "maximum_input_degree_ratio": 0.66666666666666663,
+  "maximum_target_degree_ratio": 0.428571428571428548,
+  "all_degree_bounds_hold": true,
+  "closure": {"transfer_frequency_power": "7/2", "orthogonal_degree_power": "1", "generic_local_degree_power": "3", "critical_degree_power": "2", "generic_local_transfer_frequency_power": "9/2", "critical_transfer_frequency_power": "4", "transfer_shell_energy_power": "3/2", "viscous_frequency_power": "4", "transfer_to_viscosity_frequency_power": "-1/2", "transfer_to_viscosity_energy_power": "1/2", "high_frequency_absorbable_from_energy": true, "orthogonal_degree_is_subcritical": true, "generic_local_degree_is_supercritical": true},
+  "rows": [
+    {"cutoff": 1, "ordered_pairs": 24, "maximum_input_degree": 4, "maximum_target_degree": 2, "elementary_degree_bound": 6},
+    {"cutoff": 2, "ordered_pairs": 72, "maximum_input_degree": 4, "maximum_target_degree": 4, "elementary_degree_bound": 10},
+    {"cutoff": 3, "ordered_pairs": 192, "maximum_input_degree": 4, "maximum_target_degree": 6, "elementary_degree_bound": 14},
+    {"cutoff": 4, "ordered_pairs": 432, "maximum_input_degree": 4, "maximum_target_degree": 6, "elementary_degree_bound": 18},
+    {"cutoff": 5, "ordered_pairs": 648, "maximum_input_degree": 12, "maximum_target_degree": 6, "elementary_degree_bound": 22},
+    {"cutoff": 6, "ordered_pairs": 840, "maximum_input_degree": 12, "maximum_target_degree": 6, "elementary_degree_bound": 26},
+    {"cutoff": 7, "ordered_pairs": 1104, "maximum_input_degree": 12, "maximum_target_degree": 6, "elementary_degree_bound": 30},
+    {"cutoff": 8, "ordered_pairs": 1728, "maximum_input_degree": 12, "maximum_target_degree": 6, "elementary_degree_bound": 34}
+  ]
+}

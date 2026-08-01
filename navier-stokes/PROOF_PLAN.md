@@ -272,15 +272,14 @@ These are separate projections of the same K6 winner, so the saturation is not
 an optimizer-progress artifact. The revised analytical ledger is therefore:
 
 ```text
-L4.1a  control the geometric far tail, dyadic gap >= 2;
-L4.1b  merge gap 1 into a quasilocal transition estimate;
-L4.2   control the combined local/transition block.
+L4.1a-D  control the dynamic far tail, gap >= m(Z);
+L4.1b    control the transition gaps 1 <= gap < m(Z);
+L4.2     control the local gap-zero block.
 ```
 
-All three statements remain open. The far-tail numerics identify L4.1a as the
-first proof target because it has genuine scale separation and a rapidly
-decaying optimized frequency envelope. The code evidence is not substituted
-for the required cutoff-independent paraproduct estimate.
+`L4.1a-D` is now proved with explicit cutoff-independent hard-shell constants
+and a moving-gap Young remainder linear in `Z`; the finite numerics remain
+regressions rather than part of that proof. `L4.1b` and `L4.2` remain open.
 
 The far-tail objective is now parameterized by its minimum dyadic gap. For
 `gap >= 3` (`high/low > 8`), the absolute stopping tolerances in the optimizer
@@ -304,9 +303,9 @@ sup_N integral_0^T |V_{N,gap>=m}|^4/(Z_N P_N^3) dt
     <= C(E(0), nu, T, u_0) 2^(-alpha m),  alpha > 0,
 ```
 
-derived without assuming a uniform high-Sobolev solution bound. Establishing
-such an envelope, or producing a continuation that falsifies it, is the active
-L4.1a task.
+derived without assuming a uniform high-Sobolev solution bound. The fixed-gap
+envelope alone does not close in time, but it is now one input to the proved
+dynamic-tail split below.
 
 One exact factor in that envelope is now certified. For `k=p+q` with `p` the
 unique low advecting wave, define
@@ -332,10 +331,13 @@ reconstructs the full separated signed ledger from these three roles with
 `3.21e-19` relative error in self-test and verifies every termwise amplitude
 and normalized frequency inequality with ratio at most one.
 
-The resulting shell candidate is
+The resulting hard-shell estimate is
 
 ```text
-|V_gap>=m| <= C (2^(-m/2)+2^(-3m/2)) Z^(3/4) P^(3/4).       (FT-1)
+|V_gap>=m| <= (C1 2^(-m/2)+C3 2^(-3m/2)) Z^(3/4) P^(3/4),
+
+C1=192(2+2^(5/2))sqrt(2),
+C3=64(2+2^(5/2))sqrt(8/7).                                  (FT-1)
 ```
 
 Its fixed-gap fourth-power density is bounded by `C 2^(-2m) Z^2`, which is
@@ -354,9 +356,105 @@ m(t) = m0 + ceil(log2(max(1,Z(t))))
 
 reduces the cubic remainder to `C nu^(-3) 2^(-2m0) Z(t)` without assuming a
 future bound for `Z`. `MovingGapController` checks the integer inequality and
-the scaling certificate checks the exact Young exponents. This conditionally
-closes only the dynamically selected far tail. The active L4 task is to write
-a conventional cutoff-independent Littlewood-Paley proof of (FT-1), with all
-constants, and to control the remaining local/transition block of
-`O(log Z(t))` dyadic gaps. See
+the scaling certificate checks the exact Young exponents. `DyadicShellBounds`
+separately certifies the scalar sequence sums with constants `sqrt(2)`,
+`sqrt(8/7)`, and one for the interpolated high moment.
+`PeriodicShellGeometry` supplies the Fourier lattice count, adjacent-shell,
+and role constants; `FarTailClosure` verifies the explicit Young remainder.
+This closes the dynamically selected far tail, uniformly in the Galerkin
+cutoff. The active L4 task is now the remaining local/transition block of
+`O(log Z(t))` dyadic gaps. Plain band counting is rejected as F005 because it
+leaves `Z^3 log(1+Z)^4`. See
 `proof/l4/lemmas/dynamic-far-tail/README.md`.
+
+The local block is now decomposed into all eight helical sign sectors. On the
+K3 local-objective endpoint, `V_local=-0.227783`, while its homochiral part is
+only `-3.71e-6`; the heterochiral sectors carry the signed extremum. This is
+not an exact identity: pure positive- and negative-helicity states have
+nonzero homochiral local stretching, so F006 rejects universal homochiral
+cancellation. The next computational target is a sector-selective local
+objective; its exact static and checkpointed trajectory gradients now pass at
+`6.71e-12` and `3.56e-13`. Twelve parallel restarts reach static critical
+density `1.33682e-4` and short-time critical integral `5.07257e-8`.
+
+The same-state cutoff continuation is now complete through K6. At
+`nu=0.1`, `dt=0.001`, and `T=0.01`, its heterochiral local critical integral is
+
+```text
+K:       3                  4                  5                  6
+J: 4.39045255695e-6   4.39045682754e-6   4.39045682741e-6   4.39045682741e-6
+```
+
+The K5-to-K6 relative difference is `2.67e-15`. Twelve large-perturbation
+static multistarts through K5 also select the smooth original continuation,
+with critical density saturating near `4.40316e-4`. Thus the current branch is
+cutoff-stable and does not falsify the dynamic lemma. This finite convergence
+does not provide the uniform analytical estimate.
+
+The next analytical target is a quantitative heterochiral depletion statement
+strong enough to supply the missing `Z^(-1/2)` factor. The next computational
+task is no longer another lift of this same branch: it is to encode and
+falsify candidate dynamic mechanisms (sector cancellation, relative-helicity
+coercivity, or time-integrated shell transfer) that could produce that factor.
+See `proof/l4/lemmas/local-helicity/README.md`.
+
+The first two mechanisms are now excluded on the converged branch: it has
+balanced positive/negative helical energy and a nonvanishing heterochiral
+signed-to-absolute ratio near `0.202`. `HelicalGapLedger` places
+`-0.226934` of signed heterochiral transfer in gap zero, `3.45e-4` in gap one,
+and only `-4.61e-9` in gap two.
+
+For the remaining gap-zero block, complete-triad symmetrization proves the
+cutoff-independent identity
+
+```text
+|V_triad| <= (max |k_i|^2-min |k_i|^2) sum_i |T_i|.          (LS-1)
+```
+
+Equal-frequency triads therefore contribute exactly zero. The K3 endpoint,
+however, places `-0.207019` of its total `-0.226938` local transfer in the
+squared-frequency-spread interval `(1/4,1/2]`. Consequently LS-1 is a genuine
+partial lemma but supplies no small scale factor on the dominant broad-spread
+class. The restart point is now a dynamic/time-integrated estimate for those
+broad-spread gap-zero triads. See
+`proof/l4/lemmas/local-triad-symmetry/README.md`.
+
+The objective/adjoint now masks this exact broad class. A 12-restart K3 search
+reaches `4.39098e-6`; the narrow and equal-frequency objectives on the same
+state are only `2.71e-27` and `8.01e-89`. The broad same-state K3--K6 scan has
+last relative difference `2.66e-15`. This removes cutoff and optimizer
+artifacts from the current branch and isolates the analytical gap still
+further: prove a trajectory-integrated estimate specifically for broad-spread,
+gap-zero heterochiral triads.
+
+Signature aggregation makes that target concrete. The squared-length family
+`(1,1,2)` carries `91.27%` of the broad K3 endpoint's signed local transfer,
+and `(1,1,2)` plus `(2,2,6)` carry `99.74%`. The first family is the geometry
+of equal-length orthogonal input waves. The next lemma attempt must therefore
+bound the time-integrated coherent multiplicity of scaled orthogonal local
+triads; an estimate for one isolated triad would miss the lattice-count growth.
+
+That exact signature family is now controlled analytically. For fixed `p`, the
+integer constraints `|p|=|q|` and `p dot q=0` admit at most `2(2K+1)` partners
+in a cutoff-K cube; the same bound holds for a fixed target. The resulting
+hypergraph Cauchy bound is
+
+```text
+|V_(r,r,2r),R| <= C R^(7/2) E_R^(3/2)
+                 <= C R^(-1/2) E(0)^(1/2) P_R.
+```
+
+Hence viscosity absorbs this family on all sufficiently high shells, and only
+finitely many low shells remain. This is a proved partial local lemma, not a
+finite numerical inference. It covers the signature carrying `91.27%` of the
+current K3 endpoint, but that experimental fraction cannot remove the other
+signatures. The restart point is the degree/multiplicity classification of
+nearby broad-spread squared-length triples. See
+`proof/l4/lemmas/local-orthogonal-triads/README.md`.
+
+The exact multiplicity threshold is now encoded. If the coherent partner
+degree is `D(R)=O(R^d)`, the transfer has frequency power `3+d/2`.
+Unrestricted local interactions have `d=3` and power `9/2`; viscosity has
+power `4`; the critical degree is `d=2`; the controlled orthogonal family has
+`d=1` and power `7/2`. A closing extension must therefore produce effective
+degree `d<2` on the unresolved broad class.

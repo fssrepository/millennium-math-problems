@@ -1,5 +1,12 @@
 #pragma once
 
+#include "dyadic_shell_bounds.hpp"
+#include "far_tail_closure.hpp"
+#include "helical_triad_ledger.hpp"
+#include "periodic_shell_geometry.hpp"
+#include "periodic_tail_bound.hpp"
+#include "transition_block_scaling.hpp"
+
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
@@ -37,6 +44,24 @@ struct LemmaReport {
     std::string moving_gap_log_enstrophy_slope;
     std::string moving_gap_remaining_enstrophy_power;
     bool moving_gap_closes_far_tail = false;
+    DyadicShellRandomCertificate dyadic_shell_bounds;
+    PeriodicShellGeometryCertificate periodic_shell_geometry;
+    PeriodicTailBoundCertificate periodic_tail_bound;
+    FarTailClosureCertificate far_tail_closure;
+    TransitionBlockScalingReport transition_block_scaling;
+    HelicalTriadCertificate helical_triad_certificate;
+    long double helical_adversary_initial_objective = 0.0L;
+    long double helical_adversary_final_objective = 0.0L;
+    int helical_adversary_accepted_steps = 0;
+    int helical_adversary_evaluations = 0;
+    int helical_adversary_restarts = 0;
+    int helical_adversary_threads = 0;
+    long double helical_trajectory_initial_objective = 0.0L;
+    long double helical_trajectory_final_objective = 0.0L;
+    int helical_trajectory_accepted_steps = 0;
+    int helical_trajectory_evaluations = 0;
+    int helical_trajectory_restarts = 0;
+    int helical_trajectory_threads = 0;
     int triad_cutoff = 0;
     int triad_modes = 0;
     int triad_samples = 0;

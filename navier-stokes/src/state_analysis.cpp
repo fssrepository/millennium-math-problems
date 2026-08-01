@@ -78,6 +78,9 @@ StateAnalysisReport SpectralStateAnalyzer::analyze(
     report.triad_ledger = TriadLedger::analyze(state);
     report.triad_commutator = TriadCommutator::analyze(state);
     report.triad_tail_envelope = TriadTailEnvelope::analyze(state);
+    report.helical_triad_ledger = HelicalTriadLedger::analyze(state);
+    report.helical_gap_ledger = HelicalGapLedger::analyze(state);
+    report.local_triad_symmetry = LocalTriadSymmetrizer::analyze(state);
     report.triad_ledger_objective_residual = std::abs(
         report.triad_ledger.signed_total -
         report.objective.signed_vortex_stretching);
@@ -322,6 +325,113 @@ void StateAnalysisReporter::write_console(const StateAnalysisReport& report,
                 << '\n';
         }
     }
+    out << "\nhelical_sector,advecting_sign,advected_sign,target_sign,"
+           "signed_total,absolute_total,signed_local,absolute_local\n";
+    for (std::size_t sector = 0; sector < helical_sector_count; ++sector) {
+        const HelicalSectorRow& row =
+            report.helical_triad_ledger.sectors[sector];
+        out << sector << ',' << row.advecting_sign << ','
+            << row.advected_sign << ',' << row.target_sign << ','
+            << static_cast<double>(row.signed_total_stretching) << ','
+            << static_cast<double>(row.absolute_total_stretching) << ','
+            << static_cast<double>(row.signed_local_stretching) << ','
+            << static_cast<double>(row.absolute_local_stretching) << '\n';
+    }
+    out << "helical_summary,positive_energy,negative_energy,helicity,"
+           "homochiral_local,heterochiral_local,homochiral_absolute_local,"
+           "heterochiral_absolute_local,velocity_residual,total_residual,"
+           "local_residual\n"
+        << "helical_summary,"
+        << static_cast<double>(
+               report.helical_triad_ledger.positive_helical_energy)
+        << ','
+        << static_cast<double>(
+               report.helical_triad_ledger.negative_helical_energy)
+        << ',' << static_cast<double>(report.helical_triad_ledger.helicity)
+        << ','
+        << static_cast<double>(
+               report.helical_triad_ledger.homochiral_local_stretching)
+        << ','
+        << static_cast<double>(
+               report.helical_triad_ledger.heterochiral_local_stretching)
+        << ','
+        << static_cast<double>(
+               report.helical_triad_ledger
+                   .homochiral_absolute_local_stretching)
+        << ','
+        << static_cast<double>(
+               report.helical_triad_ledger
+                   .heterochiral_absolute_local_stretching)
+        << ','
+        << static_cast<double>(report.helical_triad_ledger
+                                   .relative_velocity_reconstruction_residual)
+        << ','
+        << static_cast<double>(report.helical_triad_ledger
+                                   .relative_total_reconstruction_residual)
+        << ','
+        << static_cast<double>(report.helical_triad_ledger
+                                   .relative_local_reconstruction_residual)
+        << '\n';
+    out << "\nhelical_gap,interactions,homochiral_signed,"
+           "homochiral_absolute,heterochiral_signed,"
+           "heterochiral_absolute,heterochiral_cancellation_ratio\n";
+    for (const HelicalGapLedgerRow& gap :
+         report.helical_gap_ledger.gaps) {
+        out << gap.dyadic_gap << ',' << gap.interactions << ','
+            << static_cast<double>(gap.homochiral_signed) << ','
+            << static_cast<double>(gap.homochiral_absolute) << ','
+            << static_cast<double>(gap.heterochiral_signed) << ','
+            << static_cast<double>(gap.heterochiral_absolute) << ','
+            << static_cast<double>(
+                   std::abs(gap.heterochiral_signed) /
+                   std::max(1e-30L, gap.heterochiral_absolute)) << '\n';
+    }
+    out << "\nlocal_triad_spread,triads,signed_enstrophy_transfer,"
+           "absolute_group_transfer,raw_absolute_transfer,"
+           "frequency_spread_envelope,group_cancellation_ratio,"
+           "spread_envelope_efficiency\n";
+    for (const LocalTriadSpreadBin& bin :
+         report.local_triad_symmetry.spread_bins) {
+        out << bin.label << ',' << bin.triads << ','
+            << static_cast<double>(bin.signed_enstrophy_transfer) << ','
+            << static_cast<double>(bin.absolute_group_enstrophy_transfer)
+            << ',' << static_cast<double>(bin.raw_absolute_enstrophy_transfer)
+            << ',' << static_cast<double>(bin.frequency_spread_envelope)
+            << ',' << static_cast<double>(
+                   bin.absolute_group_enstrophy_transfer /
+                   std::max(1e-30L, bin.raw_absolute_enstrophy_transfer))
+            << ',' << static_cast<double>(
+                   bin.absolute_group_enstrophy_transfer /
+                   std::max(1e-30L, bin.frequency_spread_envelope))
+            << '\n';
+    }
+    out << "local_triad_symmetry_residuals,energy,reconstruction,"
+           "maximum_spread_bound_ratio\n"
+        << "local_triad_symmetry_residuals,"
+        << static_cast<double>(report.local_triad_symmetry
+                                   .maximum_energy_cancellation_residual)
+        << ',' << static_cast<double>(report.local_triad_symmetry
+                                          .local_reconstruction_residual)
+        << ',' << static_cast<double>(report.local_triad_symmetry
+                                          .maximum_frequency_spread_bound_ratio)
+        << '\n';
+    out << "\nlocal_triad_signature,k2_a,k2_b,k2_c,triads,"
+           "signed_enstrophy_transfer,absolute_group_transfer,"
+           "frequency_spread_envelope\n";
+    const std::size_t signature_count = std::min<std::size_t>(
+        16, report.local_triad_symmetry.signatures.size());
+    for (std::size_t index = 0; index < signature_count; ++index) {
+        const auto& signature =
+            report.local_triad_symmetry.signatures[index];
+        out << index + 1 << ',' << signature.squared_lengths[0] << ','
+            << signature.squared_lengths[1] << ','
+            << signature.squared_lengths[2] << ',' << signature.triads << ','
+            << static_cast<double>(signature.signed_enstrophy_transfer) << ','
+            << static_cast<double>(
+                   signature.absolute_group_enstrophy_transfer) << ','
+            << static_cast<double>(signature.frequency_spread_envelope)
+            << '\n';
+    }
     out << "\ntop_mode,kx,ky,kz,energy,q_gradient_norm\n";
     for (std::size_t rank = 0; rank < report.top_modes.size(); ++rank) {
         const StateModeAnalysis& mode = report.top_modes[rank];
@@ -495,6 +605,140 @@ void StateAnalysisReporter::write_json(const StateAnalysisReport& report,
                 << '}';
             first_envelope_row = false;
         }
+    }
+    out << "]},\n  \"helical_triad_ledger\": {"
+        << "\"positive_helical_energy\": "
+        << static_cast<double>(
+               report.helical_triad_ledger.positive_helical_energy)
+        << ", \"negative_helical_energy\": "
+        << static_cast<double>(
+               report.helical_triad_ledger.negative_helical_energy)
+        << ", \"helicity\": "
+        << static_cast<double>(report.helical_triad_ledger.helicity)
+        << ", \"homochiral_local_stretching\": "
+        << static_cast<double>(
+               report.helical_triad_ledger.homochiral_local_stretching)
+        << ", \"heterochiral_local_stretching\": "
+        << static_cast<double>(
+               report.helical_triad_ledger.heterochiral_local_stretching)
+        << ", \"homochiral_absolute_local_stretching\": "
+        << static_cast<double>(report.helical_triad_ledger
+                                   .homochiral_absolute_local_stretching)
+        << ", \"heterochiral_absolute_local_stretching\": "
+        << static_cast<double>(report.helical_triad_ledger
+                                   .heterochiral_absolute_local_stretching)
+        << ", \"relative_velocity_reconstruction_residual\": "
+        << static_cast<double>(report.helical_triad_ledger
+                                   .relative_velocity_reconstruction_residual)
+        << ", \"relative_total_reconstruction_residual\": "
+        << static_cast<double>(report.helical_triad_ledger
+                                   .relative_total_reconstruction_residual)
+        << ", \"relative_local_reconstruction_residual\": "
+        << static_cast<double>(report.helical_triad_ledger
+                                   .relative_local_reconstruction_residual)
+        << ", \"sectors\": [";
+    for (std::size_t sector = 0; sector < helical_sector_count; ++sector) {
+        const HelicalSectorRow& row =
+            report.helical_triad_ledger.sectors[sector];
+        out << "{\"sector\": " << sector
+            << ", \"advecting_sign\": " << row.advecting_sign
+            << ", \"advected_sign\": " << row.advected_sign
+            << ", \"target_sign\": " << row.target_sign
+            << ", \"signed_total_stretching\": "
+            << static_cast<double>(row.signed_total_stretching)
+            << ", \"absolute_total_stretching\": "
+            << static_cast<double>(row.absolute_total_stretching)
+            << ", \"signed_local_stretching\": "
+            << static_cast<double>(row.signed_local_stretching)
+            << ", \"absolute_local_stretching\": "
+            << static_cast<double>(row.absolute_local_stretching) << '}'
+            << (sector + 1 == helical_sector_count ? "" : ", ");
+    }
+    out << "]},\n  \"helical_gap_ledger\": {"
+        << "\"maximum_gap_reconstruction_residual\": "
+        << static_cast<double>(report.helical_gap_ledger
+                                   .maximum_gap_reconstruction_residual)
+        << ", \"total_reconstruction_residual\": "
+        << static_cast<double>(
+               report.helical_gap_ledger.total_reconstruction_residual)
+        << ", \"gaps\": [";
+    for (std::size_t index = 0;
+         index < report.helical_gap_ledger.gaps.size(); ++index) {
+        const HelicalGapLedgerRow& gap =
+            report.helical_gap_ledger.gaps[index];
+        out << "{\"dyadic_gap\": " << gap.dyadic_gap
+            << ", \"interactions\": " << gap.interactions
+            << ", \"homochiral_signed\": "
+            << static_cast<double>(gap.homochiral_signed)
+            << ", \"homochiral_absolute\": "
+            << static_cast<double>(gap.homochiral_absolute)
+            << ", \"heterochiral_signed\": "
+            << static_cast<double>(gap.heterochiral_signed)
+            << ", \"heterochiral_absolute\": "
+            << static_cast<double>(gap.heterochiral_absolute)
+            << ", \"heterochiral_cancellation_ratio\": "
+            << static_cast<double>(
+                   std::abs(gap.heterochiral_signed) /
+                   std::max(1e-30L, gap.heterochiral_absolute)) << '}'
+            << (index + 1 == report.helical_gap_ledger.gaps.size()
+                    ? ""
+                    : ", ");
+    }
+    out << "]},\n  \"local_triad_symmetry\": {"
+        << "\"maximum_energy_cancellation_residual\": "
+        << static_cast<double>(report.local_triad_symmetry
+                                   .maximum_energy_cancellation_residual)
+        << ", \"local_reconstruction_residual\": "
+        << static_cast<double>(report.local_triad_symmetry
+                                   .local_reconstruction_residual)
+        << ", \"maximum_frequency_spread_bound_ratio\": "
+        << static_cast<double>(report.local_triad_symmetry
+                                   .maximum_frequency_spread_bound_ratio)
+        << ", \"spread_bins\": [";
+    for (std::size_t index = 0;
+         index < report.local_triad_symmetry.spread_bins.size(); ++index) {
+        const LocalTriadSpreadBin& bin =
+            report.local_triad_symmetry.spread_bins[index];
+        out << "{\"label\": \"" << bin.label
+            << "\", \"triads\": " << bin.triads
+            << ", \"signed_enstrophy_transfer\": "
+            << static_cast<double>(bin.signed_enstrophy_transfer)
+            << ", \"absolute_group_enstrophy_transfer\": "
+            << static_cast<double>(bin.absolute_group_enstrophy_transfer)
+            << ", \"raw_absolute_enstrophy_transfer\": "
+            << static_cast<double>(bin.raw_absolute_enstrophy_transfer)
+            << ", \"frequency_spread_envelope\": "
+            << static_cast<double>(bin.frequency_spread_envelope)
+            << ", \"group_cancellation_ratio\": "
+            << static_cast<double>(
+                   bin.absolute_group_enstrophy_transfer /
+                   std::max(1e-30L, bin.raw_absolute_enstrophy_transfer))
+            << '}'
+            << (index + 1 ==
+                        report.local_triad_symmetry.spread_bins.size()
+                    ? ""
+                    : ", ");
+    }
+    out << "], \"signatures\": [";
+    for (std::size_t index = 0;
+         index < report.local_triad_symmetry.signatures.size(); ++index) {
+        const auto& signature =
+            report.local_triad_symmetry.signatures[index];
+        out << "{\"squared_lengths\": ["
+            << signature.squared_lengths[0] << ", "
+            << signature.squared_lengths[1] << ", "
+            << signature.squared_lengths[2] << "], \"triads\": "
+            << signature.triads << ", \"signed_enstrophy_transfer\": "
+            << static_cast<double>(signature.signed_enstrophy_transfer)
+            << ", \"absolute_group_enstrophy_transfer\": "
+            << static_cast<double>(
+                   signature.absolute_group_enstrophy_transfer)
+            << ", \"frequency_spread_envelope\": "
+            << static_cast<double>(signature.frequency_spread_envelope)
+            << '}'
+            << (index + 1 == report.local_triad_symmetry.signatures.size()
+                    ? ""
+                    : ", ");
     }
     out << "]},\n  \"shells\": [\n";
     for (std::size_t index = 0; index < report.shells.size(); ++index) {
@@ -678,6 +922,11 @@ int run_state_analysis(const StateAnalysisOptions& options, std::ostream& out) {
         SpectralStateAnalyzer::analyze(state, objective, options);
     StateAnalysisReporter::write_console(report, out);
     if (!options.certificate_path.empty()) {
+        const std::filesystem::path parent =
+            std::filesystem::path(options.certificate_path).parent_path();
+        if (!parent.empty()) {
+            std::filesystem::create_directories(parent);
+        }
         std::ofstream certificate(options.certificate_path);
         if (!certificate) {
             throw std::runtime_error(
@@ -703,6 +952,11 @@ int run_state_family_analysis(const StateFamilyAnalysisOptions& options,
         StateFamilyAnalyzer::analyze(options, objective);
     StateFamilyAnalysisReporter::write_console(report, out);
     if (!options.certificate_path.empty()) {
+        const std::filesystem::path parent =
+            std::filesystem::path(options.certificate_path).parent_path();
+        if (!parent.empty()) {
+            std::filesystem::create_directories(parent);
+        }
         std::ofstream certificate(options.certificate_path);
         if (!certificate) {
             throw std::runtime_error(

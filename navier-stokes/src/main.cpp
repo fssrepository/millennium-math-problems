@@ -17,7 +17,10 @@
 #include <vector>
 
 #include "lemma_engine.hpp"
+#include "helical_adversary_cli.hpp"
+#include "helical_cutoff_scan.hpp"
 #include "state_analysis.hpp"
+#include "orthogonal_triad_geometry.hpp"
 
 namespace ns {
 
@@ -864,6 +867,9 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab lemma [options]\n"
         << "  navier_stokes_lab adversary [options]\n"
         << "  navier_stokes_lab family [options]\n"
+        << "  navier_stokes_lab helical-adversary [options]\n"
+        << "  navier_stokes_lab helical-cutoff-scan [options]\n"
+        << "  navier_stokes_lab orthogonal-triad-certificate [options]\n"
         << "  navier_stokes_lab self-test\n\n"
         << "Simulation options:\n"
         << "  --n N                 grid N^3 (default 16)\n"
@@ -888,6 +894,12 @@ void print_help(std::ostream& out) {
     lemma::LemmaCli::print_adversary_help(out);
     out << '\n';
     lemma::LemmaCli::print_family_help(out);
+    out << '\n';
+    lemma::HelicalAdversaryCli::print_help(out);
+    out << '\n';
+    lemma::HelicalCutoffScan::print_help(out);
+    out << '\n';
+    lemma::OrthogonalTriadCli::print_help(out);
     out << '\n';
     lemma::StateAnalysisCli::print_help(out);
     out << '\n';
@@ -918,6 +930,21 @@ int main(int argc, char** argv) {
         if (command == "family") {
             return lemma::run_family(
                 lemma::LemmaCli::parse_family_options(argc, argv, 2), std::cout);
+        }
+        if (command == "helical-adversary") {
+            return lemma::run_helical_adversary(
+                lemma::HelicalAdversaryCli::parse(argc, argv, 2),
+                std::cout);
+        }
+        if (command == "helical-cutoff-scan") {
+            return lemma::HelicalCutoffScan::run(
+                lemma::HelicalCutoffScan::parse(argc, argv, 2),
+                std::cout);
+        }
+        if (command == "orthogonal-triad-certificate") {
+            return lemma::OrthogonalTriadCli::run(
+                lemma::OrthogonalTriadCli::parse(argc, argv, 2),
+                std::cout);
         }
         if (command == "state-analysis") {
             return lemma::run_state_analysis(

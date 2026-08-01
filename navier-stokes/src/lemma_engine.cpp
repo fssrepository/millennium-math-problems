@@ -1,11 +1,23 @@
 #include "lemma_engine.hpp"
 #include "adversary_reporter.hpp"
+#include "dyadic_shell_bounds.hpp"
 #include "family_reporter.hpp"
+#include "far_tail_closure.hpp"
 #include "gradient_adversary.hpp"
+#include "helical_triad_ledger.hpp"
+#include "helical_gap_ledger.hpp"
+#include "helical_sector_objective.hpp"
+#include "helical_sector_adversary.hpp"
+#include "helical_sector_adjoint.hpp"
+#include "helical_trajectory_adversary.hpp"
 #include "proof_scaling.hpp"
 #include "parallel_executor.hpp"
+#include "periodic_shell_geometry.hpp"
+#include "periodic_tail_bound.hpp"
+#include "orthogonal_triad_geometry.hpp"
 #include "lemma_adversary.hpp"
 #include "lemma_reporter.hpp"
+#include "local_triad_symmetrizer.hpp"
 #include "moving_gap_controller.hpp"
 #include "projective_family.hpp"
 #include "spectral_adjoint.hpp"
@@ -15,6 +27,7 @@
 #include "spectral_state.hpp"
 #include "state_analysis.hpp"
 #include "trajectory_analyzer.hpp"
+#include "transition_block_scaling.hpp"
 #include "triad_commutator.hpp"
 #include "triad_tail_envelope.hpp"
 #include "triad_verifier.hpp"
@@ -371,6 +384,92 @@ int run(const Options& options, std::ostream& out) {
         ScalingAnalyzer::analyze_strong_l4_reduction();
     const DyadicTailScaling dyadic_tail =
         ScalingAnalyzer::analyze_dyadic_tail();
+    const DyadicShellRandomCertificate dyadic_shell_bounds =
+        DyadicShellBounds::verify_random(
+            32, 2, 512, options.seed ^ UINT64_C(0xd1a61c5e11));
+    const PeriodicShellGeometryCertificate periodic_shell_geometry =
+        PeriodicShellGeometry::certify(
+            5, 512, options.seed ^ UINT64_C(0x5e1106e7));
+    const PeriodicTailBoundCertificate periodic_tail_bound =
+        PeriodicTailBound::verify_random(
+            3, 2, 4, options.seed ^ UINT64_C(0xfa47a11),
+            periodic_shell_geometry);
+    const FarTailClosureCertificate far_tail_closure =
+        FarTailClosure::verify_random(
+            0.1L, 2, 512, options.seed ^ UINT64_C(0xc105ed),
+            periodic_shell_geometry);
+    const TransitionBlockScalingReport transition_block_scaling =
+        TransitionBlockScaling::analyze();
+    const HelicalTriadCertificate helical_triad_certificate =
+        HelicalTriadLedger::verify_random(
+            2, 4, options.seed ^ UINT64_C(0x4e11ca1));
+    HelicalSectorAdversaryOptions helical_adversary_options;
+    helical_adversary_options.iterations = 8;
+    helical_adversary_options.line_search_steps = 16;
+    helical_adversary_options.initial_step = 0.1L;
+    constexpr int helical_restart_count = 12;
+    const LemmaAdversary helical_restart_executor(12);
+    std::mt19937_64 helical_layout_generator(0);
+    const SpectralState helical_layout =
+        SpectralStateFactory::random(2, helical_layout_generator);
+    static_cast<void>(SpectralStateOps::interactions(helical_layout));
+    std::array<HelicalSectorAdversaryResult, helical_restart_count>
+        helical_restart_results;
+    helical_restart_executor.run_restarts(
+        helical_restart_results.size(), [&](std::size_t restart) {
+            std::mt19937_64 generator(
+                (options.seed ^ UINT64_C(0xad6e25a)) +
+                static_cast<std::uint64_t>(restart) *
+                    UINT64_C(0x9e3779b97f4a7c15));
+            SpectralState state = SpectralStateFactory::random(2, generator);
+            SpectralStateOps::normalize_energy(state);
+            helical_restart_results[restart] =
+                HelicalSectorAdversary::maximize(
+                    state, helical_adversary_options);
+        });
+    HelicalSectorAdversaryResult helical_adversary =
+        helical_restart_results.front();
+    int helical_total_evaluations = 0;
+    for (const HelicalSectorAdversaryResult& candidate :
+         helical_restart_results) {
+        helical_total_evaluations += candidate.evaluations;
+        if (candidate.objective > helical_adversary.objective) {
+            helical_adversary = candidate;
+        }
+    }
+    const HelicalSectorAdjoint helical_trajectory_adjoint(active_dynamics);
+    HelicalTrajectoryAdversaryOptions helical_trajectory_options;
+    helical_trajectory_options.iterations = 4;
+    helical_trajectory_options.line_search_steps = 16;
+    helical_trajectory_options.trajectory_steps = 2;
+    helical_trajectory_options.initial_step = 0.1L;
+    helical_trajectory_options.viscosity = 0.1L;
+    helical_trajectory_options.time_step = 0.001L;
+    std::array<HelicalTrajectoryAdversaryResult, helical_restart_count>
+        helical_trajectory_results;
+    helical_restart_executor.run_restarts(
+        helical_trajectory_results.size(), [&](std::size_t restart) {
+            std::mt19937_64 generator(
+                (options.seed ^ UINT64_C(0x7a6ec70)) +
+                static_cast<std::uint64_t>(restart) *
+                    UINT64_C(0xbf58476d1ce4e5b9));
+            SpectralState state = SpectralStateFactory::random(2, generator);
+            SpectralStateOps::normalize_energy(state);
+            helical_trajectory_results[restart] =
+                HelicalTrajectoryAdversary::maximize(
+                    state, helical_trajectory_options,
+                    helical_trajectory_adjoint);
+        });
+    HelicalTrajectoryAdversaryResult helical_trajectory =
+        helical_trajectory_results.front();
+    int helical_trajectory_total_evaluations = 0;
+    for (const HelicalTrajectoryAdversaryResult& candidate :
+         helical_trajectory_results) {
+        helical_trajectory_total_evaluations += candidate.evaluations;
+        if (candidate.objective > helical_trajectory.objective) {
+            helical_trajectory = candidate;
+        }
+    }
     const TriadCertificate triads =
         TriadVerifier::analyze(
             options.triad_cutoff, options.triad_samples, options.seed);
@@ -424,6 +523,30 @@ int run(const Options& options, std::ostream& out) {
         dyadic_tail.moving_gap_remaining_enstrophy_power.str();
     report.moving_gap_closes_far_tail =
         dyadic_tail.moving_gap_closes_far_tail;
+    report.dyadic_shell_bounds = dyadic_shell_bounds;
+    report.periodic_shell_geometry = periodic_shell_geometry;
+    report.periodic_tail_bound = periodic_tail_bound;
+    report.far_tail_closure = far_tail_closure;
+    report.transition_block_scaling = transition_block_scaling;
+    report.helical_triad_certificate = helical_triad_certificate;
+    report.helical_adversary_initial_objective =
+        helical_adversary.initial_objective;
+    report.helical_adversary_final_objective = helical_adversary.objective;
+    report.helical_adversary_accepted_steps =
+        helical_adversary.accepted_steps;
+    report.helical_adversary_restarts = helical_restart_count;
+    report.helical_adversary_threads = helical_restart_executor.threads();
+    report.helical_adversary_evaluations = helical_total_evaluations;
+    report.helical_trajectory_initial_objective =
+        helical_trajectory.initial_objective;
+    report.helical_trajectory_final_objective =
+        helical_trajectory.objective;
+    report.helical_trajectory_accepted_steps =
+        helical_trajectory.accepted_steps;
+    report.helical_trajectory_evaluations =
+        helical_trajectory_total_evaluations;
+    report.helical_trajectory_restarts = helical_restart_count;
+    report.helical_trajectory_threads = helical_restart_executor.threads();
     report.triad_cutoff = options.triad_cutoff;
     report.triad_modes = triads.modes;
     report.triad_samples = triads.samples;
@@ -463,6 +586,20 @@ int run(const Options& options, std::ostream& out) {
                         dyadic_tail.frequency_tail_is_summable &&
                         !dyadic_tail.energy_identity_closes_time_integral &&
                         dyadic_tail.moving_gap_closes_far_tail &&
+                        dyadic_shell_bounds.all_bounds_hold &&
+                        periodic_shell_geometry.all_bounds_hold &&
+                        periodic_tail_bound.all_bounds_hold &&
+                        far_tail_closure.all_bounds_hold &&
+                        !transition_block_scaling
+                             .energy_identity_closes_transition_block &&
+                        helical_triad_certificate
+                            .all_reconstruction_checks_hold &&
+                        helical_triad_certificate
+                            .nonzero_pure_homochiral_local_seen &&
+                        helical_adversary.objective >
+                            helical_adversary.initial_objective &&
+                        helical_trajectory.objective >
+                            helical_trajectory.initial_objective &&
                         !scaling.closing_candidate_exists &&
                         triads.maximum_normalized_energy_residual < 1e-15L &&
                         triads.maximum_divergence_residual < 1e-15L &&
@@ -481,6 +618,18 @@ bool self_test(std::ostream& out) {
         ScalingAnalyzer::analyze_strong_l4_reduction();
     const DyadicTailScaling dyadic_tail =
         ScalingAnalyzer::analyze_dyadic_tail();
+    const DyadicShellRandomCertificate dyadic_shell_bounds =
+        DyadicShellBounds::verify_random(32, 2, 512, 1701);
+    const PeriodicShellGeometryCertificate periodic_shell_geometry =
+        PeriodicShellGeometry::certify(5, 512, 1702);
+    const PeriodicTailBoundCertificate periodic_tail_bound =
+        PeriodicTailBound::verify_random(
+            3, 2, 4, 1703, periodic_shell_geometry);
+    const FarTailClosureCertificate far_tail_closure =
+        FarTailClosure::verify_random(
+            0.1L, 2, 512, 1704, periodic_shell_geometry);
+    const TransitionBlockScalingReport transition_block_scaling =
+        TransitionBlockScaling::analyze();
     const bool rational_ok = Rational(1, 2) + Rational(1, 3) == Rational(5, 6) &&
                              Rational(3, 4) * Rational(8, 9) == Rational(2, 3);
     const bool scaling_ok = scaling.has_absorbable_candidate &&
@@ -510,6 +659,41 @@ bool self_test(std::ostream& out) {
         dyadic_tail.frequency_tail_is_summable &&
         !dyadic_tail.energy_identity_closes_time_integral &&
         dyadic_tail.moving_gap_closes_far_tail;
+    const bool dyadic_shell_bounds_ok =
+        dyadic_shell_bounds.all_bounds_hold &&
+        dyadic_shell_bounds.maximum_high_moment_ratio <= 1.0L &&
+        dyadic_shell_bounds.maximum_low_one_derivative_ratio <= 1.0L &&
+        dyadic_shell_bounds.maximum_low_three_derivative_ratio <= 1.0L &&
+        dyadic_shell_bounds.maximum_one_gain_tail_ratio <= 1.0L &&
+        dyadic_shell_bounds.maximum_three_gain_tail_ratio <= 1.0L;
+    const bool periodic_shell_geometry_ok =
+        periodic_shell_geometry.all_bounds_hold &&
+        periodic_shell_geometry.lattice_count_constant == 64.0L &&
+        periodic_shell_geometry.l2_to_linf_bernstein_constant == 8.0L &&
+        periodic_shell_geometry.gradient_bernstein_constant == 16.0L &&
+        periodic_shell_geometry.separated_high_shell_neighbor_width == 1 &&
+        periodic_shell_geometry.maximum_count_ratio <= 1.0L &&
+        periodic_shell_geometry.maximum_one_gain_overlap_ratio <= 1.0L &&
+        periodic_shell_geometry.maximum_three_gain_overlap_ratio <= 1.0L;
+    const bool periodic_tail_bound_ok =
+        periodic_tail_bound.all_bounds_hold &&
+        periodic_tail_bound.nonzero_tail_seen &&
+        periodic_tail_bound.maximum_bound_ratio <= 1.0L;
+    const bool far_tail_closure_ok =
+        far_tail_closure.all_bounds_hold &&
+        far_tail_closure.maximum_normalized_remainder_ratio <= 1.0L;
+    const bool transition_block_scaling_ok =
+        transition_block_scaling.post_young_logarithm_power == Rational(4) &&
+        transition_block_scaling.post_young_enstrophy_power == Rational(3) &&
+        transition_block_scaling.required_pointwise_depletion_power ==
+            Rational(1, 2) &&
+        !transition_block_scaling
+             .logarithmic_band_count_changes_polynomial_power &&
+        !transition_block_scaling.energy_identity_closes_transition_block &&
+        TransitionBlockScaling::normalized_remainder(2.0L) <
+            TransitionBlockScaling::normalized_remainder(16.0L) &&
+        TransitionBlockScaling::normalized_remainder(16.0L) <
+            TransitionBlockScaling::normalized_remainder(256.0L);
     const std::array<Real, 7> moving_gap_enstrophies{
         0.0L, 0.25L, 1.0L, 1.1L, 4.0L, 4.1L, 1024.0L};
     bool moving_gap_controller_ok = true;
@@ -534,6 +718,71 @@ bool self_test(std::ostream& out) {
                           triads.maximum_detailed_triad_residual < 1e-15L &&
                           triads.maximum_flux_partition_residual < 1e-15L &&
                           triads.nonzero_vortex_stretching_seen;
+    std::mt19937_64 helical_generator(11);
+    SpectralState helical_state =
+        SpectralStateFactory::random(2, helical_generator);
+    SpectralStateOps::normalize_energy(helical_state);
+    const HelicalTriadReport helical =
+        HelicalTriadLedger::analyze(helical_state);
+    const HelicalGapLedgerReport helical_gaps =
+        HelicalGapLedger::analyze(helical_state);
+    const LocalTriadSymmetryReport local_symmetry =
+        LocalTriadSymmetrizer::analyze(helical_state);
+    const OrthogonalTriadGeometryCertificate orthogonal_geometry =
+        OrthogonalTriadGeometry::certify(5);
+    const OrthogonalTriadClosure orthogonal_closure =
+        OrthogonalTriadGeometry::analyze_closure();
+    SpectralState positive_helical_state =
+        HelicalTriadLedger::project_helicity(helical_state, 1);
+    SpectralStateOps::normalize_energy(positive_helical_state);
+    const HelicalTriadReport positive_helical =
+        HelicalTriadLedger::analyze(positive_helical_state);
+    SpectralState negative_helical_state =
+        HelicalTriadLedger::project_helicity(helical_state, -1);
+    SpectralStateOps::normalize_energy(negative_helical_state);
+    const HelicalTriadReport negative_helical =
+        HelicalTriadLedger::analyze(negative_helical_state);
+    const bool helical_ok =
+        helical.relative_velocity_reconstruction_residual < 1e-15L &&
+        helical.relative_total_reconstruction_residual < 1e-15L &&
+        helical.relative_local_reconstruction_residual < 1e-15L &&
+        std::abs(helical.signed_local_stretching -
+                 helical.homochiral_local_stretching -
+                 helical.heterochiral_local_stretching) < 1e-15L;
+    const bool helical_gap_ok =
+        helical_gaps.maximum_gap_reconstruction_residual < 1e-15L &&
+        helical_gaps.total_reconstruction_residual < 1e-15L &&
+        !helical_gaps.gaps.empty() &&
+        std::abs(helical_gaps.gaps.front().homochiral_signed -
+                 helical.homochiral_local_stretching) < 1e-15L &&
+        std::abs(helical_gaps.gaps.front().heterochiral_signed -
+                 helical.heterochiral_local_stretching) < 1e-15L;
+    const bool local_symmetry_ok =
+        local_symmetry.maximum_energy_cancellation_residual < 1e-15L &&
+        local_symmetry.local_reconstruction_residual < 1e-15L &&
+        local_symmetry.maximum_frequency_spread_bound_ratio <=
+            1.0L + 1e-15L &&
+        local_symmetry.local_triads > 0;
+    const bool orthogonal_geometry_ok =
+        orthogonal_geometry.all_degree_bounds_hold &&
+        orthogonal_geometry.maximum_input_degree_ratio <= 1.0L &&
+        orthogonal_geometry.maximum_target_degree_ratio <= 1.0L &&
+        orthogonal_closure.transfer_frequency_power == Rational(7, 2) &&
+        orthogonal_closure.generic_local_transfer_frequency_power ==
+            Rational(9, 2) &&
+        orthogonal_closure.critical_transfer_frequency_power == Rational(4) &&
+        orthogonal_closure.transfer_to_viscosity_frequency_power ==
+            Rational(-1, 2) &&
+        orthogonal_closure.high_frequency_absorbable_from_energy &&
+        orthogonal_closure.orthogonal_degree_is_subcritical &&
+        orthogonal_closure.generic_local_degree_is_supercritical;
+    const bool pure_helical_ok =
+        positive_helical.negative_helical_energy < 1e-15L &&
+        negative_helical.positive_helical_energy < 1e-15L &&
+        positive_helical.heterochiral_absolute_local_stretching < 1e-15L &&
+        negative_helical.heterochiral_absolute_local_stretching < 1e-15L &&
+        positive_helical.relative_local_reconstruction_residual < 1e-15L &&
+        negative_helical.relative_local_reconstruction_residual < 1e-15L;
     std::mt19937_64 fft_generator(19);
     SpectralState fft_state = SpectralStateFactory::random(2, fft_generator);
     SpectralStateOps::normalize_energy(fft_state);
@@ -586,6 +835,184 @@ bool self_test(std::ostream& out) {
         }
         return std::sqrt(error2 / std::max(1e-30L, reference2));
     };
+    SpectralState helical_direction_state =
+        SpectralStateFactory::random(2, helical_generator);
+    SpectralStateOps::normalize_energy(helical_direction_state);
+    constexpr Real helical_gradient_step = 1e-6L;
+    const SpectralState helical_plus = active_dynamics.add_increment(
+        helical_state, helical_direction_state.velocity,
+        helical_gradient_step);
+    const SpectralState helical_minus = active_dynamics.add_increment(
+        helical_state, helical_direction_state.velocity,
+        -helical_gradient_step);
+    const HelicalSectorSelection homochiral_selection =
+        HelicalSectorSelection::homochiral();
+    const HelicalSectorSelection heterochiral_selection =
+        HelicalSectorSelection::heterochiral();
+    const HelicalSectorSelection broad_heterochiral_selection =
+        heterochiral_selection.with_spread(HelicalLocalSpread::broad);
+    const HelicalSectorObjectiveValue homochiral_value =
+        HelicalSectorObjective::evaluate(
+            helical_state, homochiral_selection);
+    const HelicalSectorObjectiveValue heterochiral_value =
+        HelicalSectorObjective::evaluate(
+            helical_state, heterochiral_selection);
+    const SpectralIncrement helical_signed_gradient =
+        HelicalSectorObjective::signed_stretching_gradient(
+            helical_state, heterochiral_selection);
+    const SpectralIncrement helical_critical_gradient =
+        HelicalSectorObjective::critical_integrand_gradient(
+            helical_state, heterochiral_selection);
+    const Real helical_signed_directional = increment_inner_product(
+        helical_signed_gradient, helical_direction_state.velocity);
+    const Real helical_signed_finite_difference =
+        (HelicalSectorObjective::evaluate(
+             helical_plus, heterochiral_selection)
+             .signed_local_stretching -
+         HelicalSectorObjective::evaluate(
+             helical_minus, heterochiral_selection)
+             .signed_local_stretching) /
+        (2.0L * helical_gradient_step);
+    const Real helical_signed_gradient_error = std::abs(
+        helical_signed_directional - helical_signed_finite_difference) /
+        std::max(1e-30L, std::max(
+            std::abs(helical_signed_directional),
+            std::abs(helical_signed_finite_difference)));
+    const Real helical_critical_directional = increment_inner_product(
+        helical_critical_gradient, helical_direction_state.velocity);
+    const Real helical_critical_finite_difference =
+        (HelicalSectorObjective::evaluate(
+             helical_plus, heterochiral_selection)
+             .critical_integrand -
+         HelicalSectorObjective::evaluate(
+             helical_minus, heterochiral_selection)
+             .critical_integrand) /
+        (2.0L * helical_gradient_step);
+    const Real helical_critical_gradient_error = std::abs(
+        helical_critical_directional - helical_critical_finite_difference) /
+        std::max(1e-30L, std::max(
+            std::abs(helical_critical_directional),
+            std::abs(helical_critical_finite_difference)));
+    const SpectralIncrement broad_helical_signed_gradient =
+        HelicalSectorObjective::signed_stretching_gradient(
+            helical_state, broad_heterochiral_selection);
+    const Real broad_helical_signed_directional = increment_inner_product(
+        broad_helical_signed_gradient, helical_direction_state.velocity);
+    const Real broad_helical_signed_finite_difference =
+        (HelicalSectorObjective::evaluate(
+             helical_plus, broad_heterochiral_selection)
+             .signed_local_stretching -
+         HelicalSectorObjective::evaluate(
+             helical_minus, broad_heterochiral_selection)
+             .signed_local_stretching) /
+        (2.0L * helical_gradient_step);
+    const Real broad_helical_signed_gradient_error = std::abs(
+        broad_helical_signed_directional -
+        broad_helical_signed_finite_difference) /
+        std::max(1e-30L, std::max(
+            std::abs(broad_helical_signed_directional),
+            std::abs(broad_helical_signed_finite_difference)));
+    const SpectralIncrement broad_helical_critical_gradient =
+        HelicalSectorObjective::critical_integrand_gradient(
+            helical_state, broad_heterochiral_selection);
+    const Real broad_helical_critical_directional = increment_inner_product(
+        broad_helical_critical_gradient, helical_direction_state.velocity);
+    const Real broad_helical_critical_finite_difference =
+        (HelicalSectorObjective::evaluate(
+             helical_plus, broad_heterochiral_selection)
+             .critical_integrand -
+         HelicalSectorObjective::evaluate(
+             helical_minus, broad_heterochiral_selection)
+             .critical_integrand) /
+        (2.0L * helical_gradient_step);
+    const Real broad_helical_critical_gradient_error = std::abs(
+        broad_helical_critical_directional -
+        broad_helical_critical_finite_difference) /
+        std::max(1e-30L, std::max(
+            std::abs(broad_helical_critical_directional),
+            std::abs(broad_helical_critical_finite_difference)));
+    const Real helical_sector_partition_error = std::abs(
+        homochiral_value.signed_local_stretching +
+        heterochiral_value.signed_local_stretching -
+        helical.signed_local_stretching) /
+        std::max(1e-30L, helical.homochiral_absolute_local_stretching +
+                            helical.heterochiral_absolute_local_stretching);
+    const bool helical_sector_objective_ok =
+        helical_sector_partition_error < 1e-15L &&
+        helical_signed_gradient_error < 1e-9L &&
+        helical_critical_gradient_error < 1e-9L &&
+        broad_helical_signed_gradient_error < 1e-9L &&
+        broad_helical_critical_gradient_error < 1e-9L;
+    HelicalSectorAdversaryOptions helical_adversary_options;
+    helical_adversary_options.iterations = 3;
+    helical_adversary_options.line_search_steps = 16;
+    helical_adversary_options.initial_step = 0.1L;
+    const HelicalSectorAdversaryResult helical_adversary =
+        HelicalSectorAdversary::maximize(
+            helical_state, helical_adversary_options);
+    const bool helical_adversary_ok =
+        helical_adversary.accepted_steps > 0 &&
+        helical_adversary.objective > helical_adversary.initial_objective &&
+        std::abs(SpectralStateOps::energy(helical_adversary.state) -
+                 SpectralStateOps::energy(helical_state)) < 1e-15L;
+    constexpr Real helical_trajectory_viscosity = 0.1L;
+    constexpr Real helical_trajectory_dt = 0.001L;
+    constexpr int helical_trajectory_steps = 2;
+    const HelicalSectorAdjoint helical_sector_adjoint(active_dynamics);
+    const HelicalSectorTrajectoryGradient helical_trajectory_gradient =
+        helical_sector_adjoint.critical_integral_gradient(
+            helical_state, helical_trajectory_viscosity,
+            helical_trajectory_dt, helical_trajectory_steps,
+            heterochiral_selection);
+    auto helical_trajectory_integral = [&](SpectralState state) {
+        Real integral = 0.5L * helical_trajectory_dt *
+            HelicalSectorObjective::evaluate(
+                state, heterochiral_selection).critical_integrand;
+        for (int step = 0; step < helical_trajectory_steps; ++step) {
+            active_dynamics.rk4_step(
+                state, helical_trajectory_viscosity,
+                helical_trajectory_dt);
+            const Real weight = step + 1 == helical_trajectory_steps
+                ? 0.5L * helical_trajectory_dt
+                : helical_trajectory_dt;
+            integral += weight * HelicalSectorObjective::evaluate(
+                state, heterochiral_selection).critical_integrand;
+        }
+        return integral;
+    };
+    const Real helical_trajectory_directional = increment_inner_product(
+        helical_trajectory_gradient.initial_gradient,
+        helical_direction_state.velocity);
+    const Real helical_trajectory_finite_difference =
+        (helical_trajectory_integral(helical_plus) -
+         helical_trajectory_integral(helical_minus)) /
+        (2.0L * helical_gradient_step);
+    const Real helical_trajectory_gradient_error = std::abs(
+        helical_trajectory_directional -
+        helical_trajectory_finite_difference) /
+        std::max(1e-30L, std::max(
+            std::abs(helical_trajectory_directional),
+            std::abs(helical_trajectory_finite_difference)));
+    const bool helical_trajectory_adjoint_ok =
+        helical_trajectory_gradient_error < 1e-9L;
+    HelicalTrajectoryAdversaryOptions helical_trajectory_options;
+    helical_trajectory_options.iterations = 2;
+    helical_trajectory_options.line_search_steps = 16;
+    helical_trajectory_options.trajectory_steps = helical_trajectory_steps;
+    helical_trajectory_options.initial_step = 0.1L;
+    helical_trajectory_options.viscosity = helical_trajectory_viscosity;
+    helical_trajectory_options.time_step = helical_trajectory_dt;
+    const HelicalTrajectoryAdversaryResult helical_trajectory_adversary =
+        HelicalTrajectoryAdversary::maximize(
+            helical_state, helical_trajectory_options,
+            helical_sector_adjoint);
+    const bool helical_trajectory_adversary_ok =
+        helical_trajectory_adversary.accepted_steps > 0 &&
+        helical_trajectory_adversary.objective >
+            helical_trajectory_adversary.initial_objective &&
+        std::abs(SpectralStateOps::energy(
+                     helical_trajectory_adversary.state) -
+                 SpectralStateOps::energy(helical_state)) < 1e-15L;
     SpectralState fft_tangent_state =
         SpectralStateFactory::random(2, adjoint_generator);
     SpectralState fft_cotangent_state =
@@ -1111,6 +1538,51 @@ bool self_test(std::ostream& out) {
         << ", moving-gap remainder Z^"
         << dyadic_tail.moving_gap_remaining_enstrophy_power.str()
         << ")\n"
+        << "dyadic shell sequence test: "
+        << (dyadic_shell_bounds_ok ? "PASS" : "FAIL")
+        << " (high="
+        << static_cast<double>(dyadic_shell_bounds.maximum_high_moment_ratio)
+        << ", one-gain="
+        << static_cast<double>(dyadic_shell_bounds.maximum_one_gain_tail_ratio)
+        << ", three-gain="
+        << static_cast<double>(dyadic_shell_bounds.maximum_three_gain_tail_ratio)
+        << ")\n"
+        << "periodic shell geometry test: "
+        << (periodic_shell_geometry_ok ? "PASS" : "FAIL")
+        << " (count="
+        << static_cast<double>(periodic_shell_geometry.maximum_count_ratio)
+        << ", overlap2="
+        << static_cast<double>(
+               periodic_shell_geometry.maximum_one_gain_overlap_ratio)
+        << ", overlap1="
+        << static_cast<double>(
+               periodic_shell_geometry.maximum_three_gain_overlap_ratio)
+        << ", C1="
+        << static_cast<double>(periodic_shell_geometry.ft1_one_gain_constant)
+        << ")\n"
+        << "explicit periodic FT-1 test: "
+        << (periodic_tail_bound_ok ? "PASS" : "FAIL")
+        << " (cutoff=" << periodic_tail_bound.cutoff
+        << ", samples=" << periodic_tail_bound.samples
+        << ", max ratio="
+        << static_cast<double>(periodic_tail_bound.maximum_bound_ratio)
+        << ")\n"
+        << "moving far-tail closure test: "
+        << (far_tail_closure_ok ? "PASS" : "FAIL")
+        << " (samples=" << far_tail_closure.samples
+        << ", max remainder ratio="
+        << static_cast<double>(
+               far_tail_closure.maximum_normalized_remainder_ratio)
+        << ")\n"
+        << "transition block scaling test: "
+        << (transition_block_scaling_ok ? "PASS" : "FAIL")
+        << " (remainder=log(1+Z)^"
+        << transition_block_scaling.post_young_logarithm_power.str()
+        << " Z^"
+        << transition_block_scaling.post_young_enstrophy_power.str()
+        << ", required depletion=Z^(-"
+        << transition_block_scaling.required_pointwise_depletion_power.str()
+        << "))\n"
         << "moving gap controller test: "
         << (moving_gap_controller_ok ? "PASS" : "FAIL")
         << " (m(1.1)="
@@ -1121,6 +1593,89 @@ bool self_test(std::ostream& out) {
         << "spectral triad test: " << (triad_ok ? "PASS" : "FAIL")
         << " (energy residual="
         << static_cast<double>(triads.maximum_normalized_energy_residual) << ")\n"
+        << "helical triad ledger test: "
+        << (helical_ok ? "PASS" : "FAIL")
+        << " (velocity="
+        << static_cast<double>(
+               helical.relative_velocity_reconstruction_residual)
+        << ", total="
+        << static_cast<double>(helical.relative_total_reconstruction_residual)
+        << ", local="
+        << static_cast<double>(helical.relative_local_reconstruction_residual)
+        << ")\n"
+        << "helical gap ledger test: "
+        << (helical_gap_ok ? "PASS" : "FAIL")
+        << " (gap="
+        << static_cast<double>(
+               helical_gaps.maximum_gap_reconstruction_residual)
+        << ", total="
+        << static_cast<double>(helical_gaps.total_reconstruction_residual)
+        << ")\n"
+        << "local triad symmetrizer test: "
+        << (local_symmetry_ok ? "PASS" : "FAIL")
+        << " (energy="
+        << static_cast<double>(
+               local_symmetry.maximum_energy_cancellation_residual)
+        << ", reconstruction="
+        << static_cast<double>(local_symmetry.local_reconstruction_residual)
+        << ", spread="
+        << static_cast<double>(
+               local_symmetry.maximum_frequency_spread_bound_ratio)
+        << ")\n"
+        << "orthogonal triad closure test: "
+        << (orthogonal_geometry_ok ? "PASS" : "FAIL")
+        << " (input degree="
+        << static_cast<double>(
+               orthogonal_geometry.maximum_input_degree_ratio)
+        << ", target degree="
+        << static_cast<double>(
+               orthogonal_geometry.maximum_target_degree_ratio)
+        << ", high-frequency power="
+        << orthogonal_closure.transfer_to_viscosity_frequency_power.str()
+        << ")\n"
+        << "pure helical local test: "
+        << (pure_helical_ok ? "PASS" : "FAIL")
+        << " (plus local="
+        << static_cast<double>(
+               positive_helical.homochiral_local_stretching)
+        << ", minus local="
+        << static_cast<double>(
+               negative_helical.homochiral_local_stretching)
+        << ")\n"
+        << "helical sector objective gradient test: "
+        << (helical_sector_objective_ok ? "PASS" : "FAIL")
+        << " (partition="
+        << static_cast<double>(helical_sector_partition_error)
+        << ", signed="
+        << static_cast<double>(helical_signed_gradient_error)
+        << ", critical="
+        << static_cast<double>(helical_critical_gradient_error)
+        << ", broad="
+        << static_cast<double>(broad_helical_signed_gradient_error)
+        << "/"
+        << static_cast<double>(broad_helical_critical_gradient_error)
+        << ")\n"
+        << "helical sector adversary test: "
+        << (helical_adversary_ok ? "PASS" : "FAIL")
+        << " (objective="
+        << static_cast<double>(helical_adversary.initial_objective)
+        << " -> " << static_cast<double>(helical_adversary.objective)
+        << ", accepted=" << helical_adversary.accepted_steps << ")\n"
+        << "helical trajectory adjoint test: "
+        << (helical_trajectory_adjoint_ok ? "PASS" : "FAIL")
+        << " (relative error="
+        << static_cast<double>(helical_trajectory_gradient_error)
+        << ", checkpoints="
+        << helical_trajectory_gradient.checkpoint_count << ")\n"
+        << "helical trajectory adversary test: "
+        << (helical_trajectory_adversary_ok ? "PASS" : "FAIL")
+        << " (objective="
+        << static_cast<double>(
+               helical_trajectory_adversary.initial_objective)
+        << " -> "
+        << static_cast<double>(helical_trajectory_adversary.objective)
+        << ", accepted="
+        << helical_trajectory_adversary.accepted_steps << ")\n"
         << "dealiased FFT/direct test: " << (fft_ok ? "PASS" : "FAIL")
         << " (relative error=" << static_cast<double>(fft_relative_error) << ")\n"
         << "FFT adjoint/direct oracle test: "
@@ -1210,9 +1765,17 @@ bool self_test(std::ostream& out) {
         << " (energy residual="
         << static_cast<double>(evolution.energy_balance_residual) << ")\n";
     return rational_ok && scaling_ok && concentration_ok && strong_l4_ok &&
-           dyadic_tail_scaling_ok &&
+           dyadic_tail_scaling_ok && dyadic_shell_bounds_ok &&
+           periodic_shell_geometry_ok && periodic_tail_bound_ok &&
+           far_tail_closure_ok &&
+           transition_block_scaling_ok &&
            moving_gap_controller_ok &&
-           triad_ok && fft_ok && fft_adjoint_ok && adjoint_ok && q_gradient_ok &&
+           triad_ok && helical_ok && helical_gap_ok && local_symmetry_ok &&
+           orthogonal_geometry_ok && pure_helical_ok && fft_ok &&
+           helical_sector_objective_ok && helical_adversary_ok &&
+           helical_trajectory_adjoint_ok &&
+           helical_trajectory_adversary_ok && fft_adjoint_ok && adjoint_ok &&
+           q_gradient_ok &&
            trajectory_gradient_ok && q_gain_gradient_ok &&
            q_increase_gradient_ok && q_increase_constraints_ok &&
            critical_integral_gradient_ok &&

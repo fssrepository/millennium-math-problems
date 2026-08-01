@@ -51,3 +51,23 @@ checks and both downward projections and zero-padded upward cutoff controls.
 `l4/lemmas/dynamic-far-tail/` contains the current human-checkable proof draft:
 the three-role paraproduct envelope, the fixed-gap obstruction, and the
 moving-gap Young closure that leaves the logarithmic transition/local block.
+
+`l4/lemmas/transition-block/` records the exact scaling obstruction showing
+that counting the remaining `O(log Z)` bands does not by itself close the
+enstrophy inequality.
+
+`l4/lemmas/local-helicity/` records the exact eight-sector helical triad
+decomposition, the heterochiral dominance of current local extremizers, and
+the pure-helicity counterexample to exact homochiral cancellation. The
+replayable K3--K6 same-state continuation is summarized there and certified by
+`l4/adversary/helical-heterochiral-cutoff-scan-K3-K6.json`.
+
+`l4/lemmas/local-triad-symmetry/` proves the exact complete-triad
+frequency-spread estimate `LS-1`. It eliminates equal-frequency enstrophy
+transfer but records why broad-spread local triads still leave the key L4
+depletion open.
+
+`l4/lemmas/local-orthogonal-triads/` controls the infinite signature family
+`(|p|^2,|q|^2,|p+q|^2)=(r,r,2r)`. Its bounded lattice degree improves the
+local transfer from critical frequency power `9/2` to `7/2`, making the family
+viscosity-absorbable at high frequency.
