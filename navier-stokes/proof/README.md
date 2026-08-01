@@ -96,4 +96,7 @@ not a blow-up certificate.
 candidate. The initial shift `B0=E(0)P(0)` has exactly the same amplitude and
 Navier--Stokes scaling as the local critical density. A cutoff-uniform bound on
 `d log(C_local+B0)/dt` by `k0 Z` would close the local time integral through
-the energy identity; this differential estimate remains open.
+the energy identity; this differential estimate remains open. The directory
+also records the exact derivative ledger, its local/nonlocal and
+Euler/viscous decomposition, and the denominator-free polynomial obligation
+`SLD-1P` that is now the analytical restart point.

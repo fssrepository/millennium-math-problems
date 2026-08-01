@@ -119,8 +119,10 @@ dC_local/dt = <gradient C_local, Navier--Stokes RHS>,
 R_SLD       = (d/dt log(C_local+E0P0))/(k0 Z(0)).
 ```
 
-It evaluates the K6 winner in `0.22 s`. Direct-triad and FFT RHS backends give
-identical serialized values. The separately optimized winners give
+The original scalar oracle evaluates the K6 winner in `0.22 s`; the complete
+12-thread derivative/role ledger takes `0.48 s`. Direct-triad and FFT backends
+give identical main diagnostic values, while the expanded budget components
+agree within `1.1e-19`. The separately optimized winners give
 
 ```text
 K                  3             4             5             6
@@ -150,3 +152,122 @@ Artifacts:
 - [`../../adversary/local-critical-ep-log-gain-K6-projections-K3-K6.json`](../../adversary/local-critical-ep-log-gain-K6-projections-K3-K6.json)
 - [`../../adversary/local-critical-ep-log-gain-K6-lifts-K6-K8.json`](../../adversary/local-critical-ep-log-gain-K6-lifts-K6-K8.json)
 - [`../../analysis/local-critical-increase/K6-instantaneous-E0P0-shifted-density.json`](../../analysis/local-critical-increase/K6-instantaneous-E0P0-shifted-density.json)
+
+## Exact derivative ledger
+
+Write `S=V_N,local` with its sign, so `C=S^4/(Z P^3)`. The new
+`LocalCriticalDerivativeLedger` evaluates the exact chain rule
+
+```text
+C' = 4 S^3 S'/(Z P^3)
+     - S^4 Z'/(Z^2 P^3)
+     - 3 S^4 P'/(Z P^4).
+```
+
+Every term is independently split into the Euler and viscous parts of the
+Galerkin right-hand side. The reconstructed derivative agrees with the
+independent `gradient C dot RHS` oracle to `1.18e-18` relatively on the K6
+winner. The ledger also certifies
+
+```text
+Z'_NL = -2 S_global,
+Z'_nu = -2 nu P,
+P'_nu = -2 nu H3,
+H3    = sum_k |k|^6 |u_k|^2.
+```
+
+For `S=<A u,B_local(u,u)>`, `StretchingDerivativeLedger` keeps the three
+Frechet slots separate:
+
+```text
+S'[h] = <A h,B_local(u,u)>
+      + <A u,B_local(h,u)>
+      + <A u,B_local(u,h)>.
+```
+
+At K6, for the nonlinear direction `h=-B_all(u,u)`, these terms are
+
+```text
+outer state       -0.609617445980
+advecting slot    +0.016052994246
+advected slot     +0.328901428531
+total             -0.264663023203
+```
+
+Their sum agrees with the VJP derivative to `9.22e-19` relatively. For the
+viscous direction, the advected slot vanishes to `1.03e-20` relative to the
+other two slots. This is the transport cancellation
+`<A u,B_local(u,A u)>=0`, preserved because the local triad mask is symmetric.
+`LocalQuarticIdentityLedger` further certifies the exact signed square
+
+```text
+<A(-B_local),B_local> = -||A^(1/2) B_local||_2^2.
+```
+
+Both sides equal `-0.603413126167` at K6 with zero serialized residual. Thus
+the dominant outer term has a rigorous sign and norm representation; only its
+combination with the other slots and the `P'` contribution remains open.
+
+The dimensionless K6 SLD-1 budget is
+
+```text
+source                         contribution /(k0 Z)
+S' chain term                   +7.9252418586e-4
+Z' chain term                   -2.3985915123e-6
+P' chain term                   -8.6135345824e-6
+local nonlinear RHS             +6.8716890362e-4
+nonlocal nonlinear RHS          +6.4812110181e-5
+viscous RHS                      +2.9531045965e-5
+total                            +7.8151205976e-4
+```
+
+Thus `91.38%` of the nonlinear source on this extremizer is the pure local
+quartic block. The nonlocal feedback is measurable but secondary. Viscosity
+does not have a fixed favorable sign for the quotient: at K6 its net
+contribution is positive even though it dissipates both `Z` and `P`.
+
+The pure local normalized block retains substantial internal cancellation:
+
+```text
+outer negative square             +2.3068042175e-3
+advecting slot                    -6.1297970097e-5
+advected slot                     -1.2458880655e-3
+local enstrophy term              -3.5140539404e-5
+local palinstrophy term           -2.7730873889e-4
+reconstructed local source        +6.8716890362e-4
+```
+
+The last four terms cancel `70.21%` of the outer source. The typed budget
+reconstructs the local nonlinear value to `6.93e-19` relatively. This is why
+the proof target is the combined quartet expression, not five independent
+absolute-value estimates.
+
+Zero-padding the identical K6 state gives total instantaneous rates
+`7.8151205976e-4`, `7.8151207993e-4`, and `7.8151208069e-4` at K6, K7, and K8.
+Only the nonlinear stretching channel changes. The K7-to-K8 increment is
+`7.54e-13` absolutely, so the role decomposition itself is cutoff converged
+on this branch.
+
+## Reduced proof obligation
+
+Multiplying SLD-1 by the positive denominator `Z^2 P^4` removes all quotient
+singularities. The remaining pointwise polynomial inequality is
+
+```text
+4 S^3 S' Z P - S^4 Z' P - 3 S^4 Z P'
+  <= A k0 (S^4 Z^2 P + B0 Z^3 P^4).                 (SLD-1P)
+```
+
+This is algebraically equivalent to SLD-1 wherever `Z,P>0`, and it extends
+continuously through `S=0`. The active analytical task is now to symmetrize
+the local-local quartic contributions to `S'` together with the `P'` term;
+bounding the three stretching slots independently would discard the observed
+large cancellation and reintroduce a non-closing high-Sobolev norm. The
+nonlocal part can be routed through the existing moving far-tail estimate,
+leaving the finite transition block explicit.
+
+`ShiftedCriticalDensityBudgetAnalyzer` evaluates SLD-1P through this second,
+denominator-free route. At K6 its polynomial numerator is
+`0.00300958572245`, its positive denominator is `3.85097796617`, and their
+ratio is `7.81512059765e-4`. The relative error against the original shifted
+logarithmic route is `4.74e-19`.

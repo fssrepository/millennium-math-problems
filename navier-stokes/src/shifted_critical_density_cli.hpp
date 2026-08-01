@@ -1,6 +1,9 @@
 #pragma once
 
+#include "local_critical_derivative_ledger.hpp"
+#include "local_quartic_identity_ledger.hpp"
 #include "shifted_critical_density.hpp"
+#include "shifted_critical_density_budget.hpp"
 
 #include <iosfwd>
 #include <string>
@@ -21,6 +24,9 @@ struct ShiftedCriticalDensityReport {
     int modes = 0;
     SpectralReal viscosity = 0.0L;
     ShiftedCriticalDensityDiagnostic diagnostic;
+    LocalCriticalDerivativeLedgerReport derivative_ledger;
+    LocalQuarticIdentityReport quartic_identity;
+    ShiftedCriticalDensityBudget derivative_budget;
 };
 
 class ShiftedCriticalDensityReporter {

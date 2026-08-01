@@ -623,10 +623,59 @@ the active task; the restart point is the symbolic/local-triad expansion of
 `dC_local/dt` needed to prove or reject SLD-1 analytically.
 
 The new `shifted-density` oracle computes that instantaneous derivative as
-`<gradient C_local,RHS>` in about `0.22 s` at K6. Direct and FFT RHS backends
-agree in the serialized result. Its normalized rates on the four optimized
+`<gradient C_local,RHS>` in about `0.22 s` at K6; the later complete role
+ledger takes `0.48 s` on twelve threads. Direct and FFT RHS backends agree in
+the main serialized values and within `1.1e-19` in the expanded budgets. Its
+normalized rates on the four optimized
 K3--K6 winners are `7.2396e-4, 7.5341e-4, 7.7546e-4, 7.8151e-4`; the K6 value
 is only `6.10e-4` above the short-horizon average relatively. This removes the
 need to use RK4 for first-pass SLD falsification. The unresolved work is still
 analytical: split this exact derivative into local signature/triad terms and
 prove a cutoff-independent upper bound, or produce a scalable counterfamily.
+
+That first derivative split is now exact and implemented. With signed local
+stretching `S`, the engine reconstructs
+
+```text
+C'_local = 4 S^3 S'/(Z P^3)
+           - S^4 Z'/(Z^2 P^3)
+           - 3 S^4 P'/(Z P^4)
+```
+
+from independently differentiated `S`, `Z`, and `P`; its K6 relative residual
+against `gradient C dot RHS` is `1.18e-18`. It also certifies the exact PDE
+identities `Z'_NL=-2S_global`, `Z'_nu=-2nu P`, and `P'_nu=-2nu H3`. The
+stretching derivative is split into the outer, advecting, and advected
+Frechet slots. On the K6 extremizer they are `-0.609617`, `+0.016053`, and
+`+0.328901` for the nonlinear direction, so a large cancellation would be
+lost by separate absolute-value estimates.
+The pure local part of the outer slot is exactly
+`-||A^(1/2)B_local||_2^2=-0.603413126167`; the new quartic identity ledger
+certifies this with zero serialized residual rather than treating its sign as
+numerical evidence.
+
+After normalization by `(C_local+B0) k0 Z`, the K6 budget is `6.87169e-4`
+from the local nonlinear RHS, `6.48121e-5` from the nonlocal nonlinear RHS,
+and `2.95310e-5` from viscosity. The local block therefore supplies `91.38%`
+of the nonlinear source on the current extremizer. A same-state K6--K8 audit
+changes only the nonlinear stretching channel and converges from
+`7.8151205976e-4` to `7.8151208069e-4`.
+
+The active restart point is no longer differentiation. It is the complete-
+quartet symmetrization of the local-local contributions to `S'` together with
+the nonlinear `P'` term in the denominator-free form
+
+```text
+4 S^3 S' Z P - S^4 Z' P - 3 S^4 Z P'
+ <= A k0 (S^4 Z^2 P + B0 Z^3 P^4).                 (SLD-1P)
+```
+
+The proof must preserve the cross-slot cancellation recorded by the ledger;
+a separate norm bound for each slot is not an acceptable closure because it
+requires the future high-Sobolev control being sought.
+On the K6 oracle, the outer negative-square source is `2.30680e-3` after SLD
+normalization, while the advecting, advected, enstrophy, and palinstrophy terms
+reduce it to `6.87169e-4`, a `70.21%` cancellation. The denominator-free
+SLD-1P evaluation agrees with the shifted-log route to `4.74e-19` relatively,
+so future quartet algebra can be regression-tested without differentiating a
+quotient.

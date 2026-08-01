@@ -27,10 +27,11 @@ public:
     [[nodiscard]] SpectralIncrement critical_integrand_gradient(
         const SpectralState& state,
         TriadSelection selection = {}) const;
+    [[nodiscard]] SpectralIncrement signed_stretching_gradient(
+        const SpectralState& state,
+        TriadSelection selection = {}) const;
 
 private:
-    [[nodiscard]] SpectralIncrement signed_stretching_gradient(
-        const SpectralState& state, TriadSelection selection) const;
     const SpectralDynamics& dynamics_;
 };
 

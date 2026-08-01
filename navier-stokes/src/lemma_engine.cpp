@@ -21,6 +21,8 @@
 #include "local_signature_geometry.hpp"
 #include "local_signature_density.hpp"
 #include "local_signature_objective.hpp"
+#include "local_critical_derivative_ledger.hpp"
+#include "local_quartic_identity_ledger.hpp"
 #include "local_triad_symmetrizer.hpp"
 #include "moving_gap_controller.hpp"
 #include "projective_family.hpp"
@@ -30,6 +32,7 @@
 #include "spectral_objective.hpp"
 #include "spectral_state.hpp"
 #include "shifted_critical_density.hpp"
+#include "shifted_critical_density_budget.hpp"
 #include "state_analysis.hpp"
 #include "trajectory_analyzer.hpp"
 #include "transition_block_scaling.hpp"
@@ -1171,6 +1174,21 @@ bool self_test(std::ostream& out) {
         SpectralStateFactory::random(2, adjoint_generator);
     SpectralStateOps::normalize_energy(partition_state);
     SpectralStateOps::normalize_energy(partition_tangent_state);
+    const LocalCriticalDerivativeLedgerReport critical_derivative_ledger =
+        LocalCriticalDerivativeLedger::evaluate(
+            active_dynamics, active_objective, partition_state,
+            adjoint_viscosity);
+    const ShiftedCriticalDensityDiagnostic shifted_density_diagnostic =
+        ShiftedCriticalDensityAnalyzer::evaluate(
+            active_dynamics, active_objective, partition_state,
+            adjoint_viscosity);
+    const LocalQuarticIdentityReport local_quartic_identity =
+        LocalQuarticIdentityLedger::evaluate(
+            active_dynamics, partition_state,
+            critical_derivative_ledger);
+    const ShiftedCriticalDensityBudget shifted_density_budget =
+        ShiftedCriticalDensityBudgetAnalyzer::evaluate(
+            shifted_density_diagnostic, critical_derivative_ledger);
     const SpectralIncrement& partition_tangent =
         partition_tangent_state.velocity;
     active_galerkin.set_compute_threads(1);
@@ -1455,6 +1473,8 @@ bool self_test(std::ostream& out) {
             WaveVector{8, 0, 0}, TriadSelection::dyadic_tail(3));
     const bool partition_integral_gradients_ok =
         triad_partition_ok && partition_parallel_ok &&
+        critical_derivative_ledger.finite &&
+        local_quartic_identity.finite && shifted_density_budget.finite &&
         local_integral_gradient_error < 1e-9L &&
         nonlocal_integral_gradient_error < 1e-9L &&
         near_nonlocal_integral_gradient_error < 1e-9L &&
@@ -1814,6 +1834,24 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(configurable_tail_trajectory_error)
         << ", far_static="
         << static_cast<double>(far_partition_static_gradient_error)
+        << ")\n"
+        << "local critical derivative ledger test: "
+        << (critical_derivative_ledger.finite ? "PASS" : "FAIL")
+        << " (relative reconstruction error="
+        << static_cast<double>(critical_derivative_ledger
+                                   .relative_reconstruction_error)
+        << ", nonlinear="
+        << static_cast<double>(critical_derivative_ledger
+                 .reconstructed_density_derivative.nonlinear)
+        << ", viscous="
+        << static_cast<double>(critical_derivative_ledger
+                 .reconstructed_density_derivative.viscous)
+        << ", normalized budget="
+        << static_cast<double>(
+               shifted_density_budget.reconstructed_normalized_rate)
+        << ", quartic square error="
+        << static_cast<double>(local_quartic_identity
+                                   .local_outer_negative_square_error)
         << ")\n"
         << "projected gradient adversary test: "
         << (gradient_search_ok ? "PASS" : "FAIL")

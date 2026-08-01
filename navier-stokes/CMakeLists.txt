@@ -34,6 +34,8 @@ add_executable(navier_stokes_lab
     src/local_signature_objective.cpp
     src/local_signature_state_factory.cpp
     src/local_signature_trajectory.cpp
+    src/local_critical_derivative_ledger.cpp
+    src/local_quartic_identity_ledger.cpp
     src/moving_gap_controller.cpp
     src/orthogonal_triad_geometry.cpp
     src/periodic_shell_geometry.cpp
@@ -48,8 +50,10 @@ add_executable(navier_stokes_lab
     src/spectral_objective.cpp
     src/spectral_state.cpp
     src/shifted_critical_density.cpp
+    src/shifted_critical_density_budget.cpp
     src/shifted_critical_density_cli.cpp
     src/state_analysis.cpp
+    src/stretching_derivative_ledger.cpp
     src/trajectory_analyzer.cpp
     src/transition_block_scaling.cpp
     src/triad_commutator.cpp

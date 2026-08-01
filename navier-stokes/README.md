@@ -123,6 +123,14 @@ source file:
   conditional Gronwall closure of the scale-compatible `E(0)P(0)` shift;
   `ShiftedCriticalDensityAnalyzer` evaluates its exact instantaneous
   Navier--Stokes derivative without an RK4 horizon;
+- `LocalCriticalDerivativeLedger`, `StretchingDerivativeLedger`, and
+  `ShiftedCriticalDensityBudgetAnalyzer` split that derivative by `S/Z/P`
+  chain-rule source, Euler/viscous dynamics, local/nonlocal RHS, and all three
+  Frechet slots of `<A u,B_local(u,u)>`, with independent reconstruction and
+  PDE-identity residuals;
+- `LocalQuarticIdentityLedger` preserves the exact negative-square outer-slot
+  identity and the local/nonlocal enstrophy-transfer identities before any
+  inequality discards their signs;
 - `LocalSignatureGradientAdversary` runs 12-worker targeted counterexample
   searches, while `LocalSignatureTrajectoryAnalyzer` verifies the exact
   dynamic signature factorization across Galerkin cutoffs;
