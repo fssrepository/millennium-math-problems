@@ -60,6 +60,32 @@ SpectralState SpectralStateReader::read_tsv(const std::string& path) {
     return state;
 }
 
+void SpectralStateWriter::write_tsv(
+    const std::string& path, const SpectralState& state,
+    const std::string& metadata) {
+    const std::filesystem::path parent =
+        std::filesystem::path(path).parent_path();
+    if (!parent.empty()) {
+        std::filesystem::create_directories(parent);
+    }
+    std::ofstream output(path);
+    if (!output) {
+        throw std::runtime_error("cannot write spectral state: " + path);
+    }
+    output << std::setprecision(20);
+    output << "# " << metadata << '\n';
+    output << "kx\tky\tkz\tux_re\tux_im\tuy_re\tuy_im\tuz_re\tuz_im\n";
+    for (std::size_t mode = 0; mode < state.waves.size(); ++mode) {
+        const WaveVector wave = state.waves[mode];
+        output << wave.x << '\t' << wave.y << '\t' << wave.z;
+        for (const SpectralComplex component : state.velocity[mode]) {
+            output << '\t' << static_cast<double>(component.real())
+                   << '\t' << static_cast<double>(component.imag());
+        }
+        output << '\n';
+    }
+}
+
 StateAnalysisReport SpectralStateAnalyzer::analyze(
     const SpectralState& state, const SpectralObjective& objective,
     const StateAnalysisOptions& options) {

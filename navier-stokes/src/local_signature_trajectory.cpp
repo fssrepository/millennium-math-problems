@@ -1,6 +1,6 @@
 #include "local_signature_trajectory.hpp"
 
-#include "local_signature_objective.hpp"
+#include "local_signature_density.hpp"
 #include "parallel_executor.hpp"
 #include "spectral_dynamics.hpp"
 #include "spectral_galerkin.hpp"
@@ -21,47 +21,69 @@
 namespace lemma {
 namespace {
 
-struct DensitySample {
-    SpectralReal amplification = 0.0L;
-    SpectralReal critical_density = 0.0L;
-    SpectralReal square_signature_density = 0.0L;
-    SpectralReal factorization_residual = 0.0L;
+struct LogCorrelation {
+    SpectralReal sum_x = 0.0L;
+    SpectralReal sum_y = 0.0L;
+    SpectralReal sum_x2 = 0.0L;
+    SpectralReal sum_y2 = 0.0L;
+    SpectralReal sum_xy = 0.0L;
+    int count = 0;
+
+    void add(const LocalSignatureDensitySample& sample) {
+        if (!(sample.amplification_fourth > 0.0L) ||
+            !(sample.square_signature_density > 0.0L)) {
+            return;
+        }
+        const SpectralReal x = std::log(sample.amplification_fourth);
+        const SpectralReal y = std::log(sample.square_signature_density);
+        sum_x += x;
+        sum_y += y;
+        sum_x2 += x * x;
+        sum_y2 += y * y;
+        sum_xy += x * y;
+        ++count;
+    }
+
+    [[nodiscard]] SpectralReal coefficient() const {
+        if (count < 2) {
+            return 0.0L;
+        }
+        const SpectralReal n = static_cast<SpectralReal>(count);
+        const SpectralReal covariance = n * sum_xy - sum_x * sum_y;
+        const SpectralReal variance_x = n * sum_x2 - sum_x * sum_x;
+        const SpectralReal variance_y = n * sum_y2 - sum_y * sum_y;
+        const SpectralReal denominator = std::sqrt(
+            std::max(0.0L, variance_x) * std::max(0.0L, variance_y));
+        return denominator > 0.0L ? covariance / denominator : 0.0L;
+    }
 };
 
-DensitySample sample_density(const SpectralState& state) {
-    const LocalSignatureObjectiveValue signature =
-        LocalSignatureObjective::evaluate(state);
-    SpectralReal enstrophy = 0.0L;
-    SpectralReal palinstrophy = 0.0L;
-    for (std::size_t mode = 0; mode < state.waves.size(); ++mode) {
-        const SpectralReal wave2 = static_cast<SpectralReal>(
-            norm_squared(state.waves[mode]));
-        const SpectralReal energy = std::real(dot_hermitian(
-            state.velocity[mode], state.velocity[mode]));
-        enstrophy += wave2 * energy;
-        palinstrophy += wave2 * wave2 * energy;
+void update_peaks(LocalSignatureTrajectoryRow& row,
+                  const LocalSignatureDensitySample& sample, int step) {
+    if (sample.amplification > row.maximum_amplification) {
+        row.maximum_amplification = sample.amplification;
+        row.amplification_peak_step = step;
+        row.square_density_at_amplification_peak =
+            sample.square_signature_density;
+        row.critical_density_at_amplification_peak =
+            sample.critical_density;
     }
-    DensitySample result;
-    result.amplification = signature.signed_amplification;
-    if (!(enstrophy > 0.0L) || !(palinstrophy > 0.0L)) {
-        return result;
+    if (sample.square_signature_density >
+        row.maximum_square_signature_density) {
+        row.maximum_square_signature_density =
+            sample.square_signature_density;
+        row.square_density_peak_step = step;
+        row.amplification_at_square_density_peak = sample.amplification;
+        row.critical_density_at_square_density_peak =
+            sample.critical_density;
     }
-    const SpectralReal denominator = enstrophy * palinstrophy *
-        palinstrophy * palinstrophy;
-    const SpectralReal transfer2 = signature.signed_local_transfer *
-        signature.signed_local_transfer;
-    result.critical_density = transfer2 * transfer2 / denominator;
-    result.square_signature_density =
-        signature.squared_signature_transfer *
-        signature.squared_signature_transfer / denominator;
-    const SpectralReal factored =
-        std::pow(signature.signed_amplification, 4.0L) *
-        result.square_signature_density;
-    result.factorization_residual = std::abs(
-        result.critical_density - factored) /
-        std::max({std::numeric_limits<SpectralReal>::min(),
-                  std::abs(result.critical_density), std::abs(factored)});
-    return result;
+    if (sample.critical_density > row.maximum_critical_density) {
+        row.maximum_critical_density = sample.critical_density;
+        row.critical_peak_step = step;
+        row.amplification_at_critical_peak = sample.amplification;
+        row.square_density_at_critical_peak =
+            sample.square_signature_density;
+    }
 }
 
 LocalSignatureTrajectoryRow analyze_cutoff(
@@ -86,29 +108,34 @@ LocalSignatureTrajectoryRow analyze_cutoff(
     SpectralDynamics dynamics(galerkin);
     LocalSignatureTrajectoryRow row;
     row.cutoff = cutoff;
-    DensitySample previous = sample_density(state);
+    LocalSignatureDensitySample previous =
+        LocalSignatureDensity::evaluate(state);
     row.initial_amplification = previous.amplification;
-    row.maximum_amplification = previous.amplification;
-    row.maximum_critical_density = previous.critical_density;
+    row.maximum_amplification = -1.0L;
+    row.maximum_critical_density = -1.0L;
+    row.maximum_square_signature_density = -1.0L;
     row.maximum_factorization_residual = previous.factorization_residual;
+    LogCorrelation correlation;
+    correlation.add(previous);
+    update_peaks(row, previous, 0);
     for (int step = 0; step < options.steps; ++step) {
         dynamics.rk4_step(state, options.viscosity, options.time_step);
-        const DensitySample current = sample_density(state);
+        const LocalSignatureDensitySample current =
+            LocalSignatureDensity::evaluate(state);
         row.critical_integral += 0.5L * options.time_step *
             (previous.critical_density + current.critical_density);
         row.square_signature_integral += 0.5L * options.time_step *
             (previous.square_signature_density +
              current.square_signature_density);
-        row.maximum_amplification = std::max(
-            row.maximum_amplification, current.amplification);
-        row.maximum_critical_density = std::max(
-            row.maximum_critical_density, current.critical_density);
+        correlation.add(current);
+        update_peaks(row, current, step + 1);
         row.maximum_factorization_residual = std::max(
             row.maximum_factorization_residual,
             current.factorization_residual);
         previous = current;
     }
     row.final_amplification = previous.amplification;
+    row.log_factor_correlation = correlation.coefficient();
     return row;
 }
 
@@ -298,6 +325,32 @@ int LocalSignatureTrajectoryCli::run(
             << static_cast<double>(row.square_signature_integral)
             << ", \"maximum_critical_density\": "
             << static_cast<double>(row.maximum_critical_density)
+            << ", \"maximum_square_signature_density\": "
+            << static_cast<double>(row.maximum_square_signature_density)
+            << ", \"log_factor_correlation\": "
+            << static_cast<double>(row.log_factor_correlation)
+            << ", \"amplification_peak_step\": "
+            << row.amplification_peak_step
+            << ", \"square_density_at_amplification_peak\": "
+            << static_cast<double>(
+                   row.square_density_at_amplification_peak)
+            << ", \"critical_density_at_amplification_peak\": "
+            << static_cast<double>(
+                   row.critical_density_at_amplification_peak)
+            << ", \"square_density_peak_step\": "
+            << row.square_density_peak_step
+            << ", \"amplification_at_square_density_peak\": "
+            << static_cast<double>(
+                   row.amplification_at_square_density_peak)
+            << ", \"critical_density_at_square_density_peak\": "
+            << static_cast<double>(
+                   row.critical_density_at_square_density_peak)
+            << ", \"critical_peak_step\": "
+            << row.critical_peak_step
+            << ", \"amplification_at_critical_peak\": "
+            << static_cast<double>(row.amplification_at_critical_peak)
+            << ", \"square_density_at_critical_peak\": "
+            << static_cast<double>(row.square_density_at_critical_peak)
             << ", \"maximum_factorization_residual\": "
             << static_cast<double>(row.maximum_factorization_residual)
             << '}'
@@ -310,7 +363,9 @@ int LocalSignatureTrajectoryCli::run(
         << " steps=" << report.steps
         << "\ncutoff,initial_A,max_A,final_A,critical_integral,"
            "refined_critical_integral,time_refinement_difference,"
-           "square_signature_integral,factorization_residual\n";
+           "square_signature_integral,log_factor_correlation,"
+           "A_peak_step,R2_peak_step,critical_peak_step,"
+           "factorization_residual\n";
     for (const auto& row : report.rows) {
         out << row.cutoff << ','
             << static_cast<double>(row.initial_amplification) << ','
@@ -321,6 +376,10 @@ int LocalSignatureTrajectoryCli::run(
             << static_cast<double>(
                    row.time_refinement_relative_difference) << ','
             << static_cast<double>(row.square_signature_integral) << ','
+            << static_cast<double>(row.log_factor_correlation) << ','
+            << row.amplification_peak_step << ','
+            << row.square_density_peak_step << ','
+            << row.critical_peak_step << ','
             << static_cast<double>(row.maximum_factorization_residual)
             << '\n';
     }

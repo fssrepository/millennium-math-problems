@@ -502,3 +502,43 @@ relatively. The analytical restart point is a
 trajectory-integrated bound for this product tied to a fixed smooth initial
 datum; neither factor has a sufficient pointwise bound by itself. See
 `proof/l4/lemmas/local-signature-families/README.md`.
+
+The coupled local objective has now also passed a true independent dynamic
+multistart screen. Twelve concurrent exact-adjoint starts with eight L-BFGS
+steps at each cutoff give
+
+```text
+K:          3             4             5             6
+J_local: 4.392286e-6  4.392821e-6  4.392876e-6  4.392883e-6
+top E:   2.475e-7     2.130e-8     3.557e-11    1.133e-13
+```
+
+The smooth continuation wins every cutoff; at K6 an independent competitor
+is only `2.91e-5` lower relatively. This removes the former single-dynamic-
+start weakness but remains finite evidence. The restart point stays the same:
+prove or falsify a cutoff-uniform trajectory estimate for the coupled product,
+next under longer time horizons and lower viscosity. See
+`proof/l4/analysis/local-signature-coupled-integral/README.md`.
+
+The first longer-horizon local multistart at K6 gives
+`J_local(0.02)/(2J_local(0.01))=0.9974002` and normalized log-Q gain
+`0.9655509`. Thus the current branch accumulates the critical integral
+slightly slower than linearly; no accelerating short-time branch appears.
+Lower-viscosity continuation remains the next finite falsification check.
+
+At the same K6 horizon, reducing viscosity from `0.1` to `0.02` changes the
+optimized local integral by a factor `1.0038754`, while the log-Q gain grows by
+`1.3093501`. Twelve independent starts again select the smooth continuation,
+with the next branch only `2.43e-5` lower. This still does not prove the
+uniform lemma, but neither time nor viscosity continuation has produced a
+short-time concentration obstruction. The next diagnostic is the timewise
+correlation inside the exact coupled signature factorization.
+
+That correlation is nearly perfect on the optimized branch:
+`corr(log A_sig^4, log(R^2/(ZP^3)))` lies between `-0.999980` and
+`-0.999978` on its K3--K6 trajectories, and is `-0.999848` on the
+lower-viscosity K6 trajectory. However, a 240-state parallel one-step
+adversary finds 41 states in which both factors grow simultaneously. The same
+counts survive halving the RK4 probe step. F009 therefore rejects universal
+factor antimonotonicity. Any viable proof must derive a trajectory-integrated
+estimate tied to the fixed smooth datum, not a pointwise sign identity.

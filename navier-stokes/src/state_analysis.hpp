@@ -102,6 +102,13 @@ public:
     [[nodiscard]] static SpectralState read_tsv(const std::string& path);
 };
 
+class SpectralStateWriter {
+public:
+    static void write_tsv(const std::string& path,
+                          const SpectralState& state,
+                          const std::string& metadata = {});
+};
+
 class SpectralStateAnalyzer {
 public:
     [[nodiscard]] static StateAnalysisReport analyze(

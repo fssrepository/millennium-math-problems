@@ -30,6 +30,17 @@ struct LocalSignatureTrajectoryRow {
     SpectralReal time_refinement_relative_difference = 0.0L;
     SpectralReal square_signature_integral = 0.0L;
     SpectralReal maximum_critical_density = 0.0L;
+    SpectralReal maximum_square_signature_density = 0.0L;
+    SpectralReal log_factor_correlation = 0.0L;
+    SpectralReal square_density_at_amplification_peak = 0.0L;
+    SpectralReal critical_density_at_amplification_peak = 0.0L;
+    SpectralReal amplification_at_square_density_peak = 0.0L;
+    SpectralReal critical_density_at_square_density_peak = 0.0L;
+    SpectralReal amplification_at_critical_peak = 0.0L;
+    SpectralReal square_density_at_critical_peak = 0.0L;
+    int amplification_peak_step = 0;
+    int square_density_peak_step = 0;
+    int critical_peak_step = 0;
     SpectralReal maximum_factorization_residual = 0.0L;
 };
 

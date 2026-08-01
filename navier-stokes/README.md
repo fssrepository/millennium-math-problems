@@ -112,6 +112,9 @@ source file:
   that an effective-signature exponent below one is viscosity-subcritical;
 - `LocalSignatureObjective` supplies central-difference-certified analytic
   gradients for signed amplification and absolute local transfer;
+- `LocalSignatureDensity` owns the exact coupled critical factorization, while
+  `LocalSignatureFactorAdversary` falsifies pointwise factor-correlation
+  mechanisms with parallel one-step RK4 probes;
 - `LocalSignatureGradientAdversary` runs 12-worker targeted counterexample
   searches, while `LocalSignatureTrajectoryAnalyzer` verifies the exact
   dynamic signature factorization across Galerkin cutoffs;
@@ -230,6 +233,7 @@ strong quarter-depletion quantity `Q = D^4 Z` at fixed unit energy:
 ```bash
 ./build/navier_stokes_lab adversary \
   --cutoffs 1,2,3 --restarts 4 --generations 80 \
+  --dynamic-restarts 1 \
   --dynamic-generations 24 --dynamic-objective max-q \
   --dynamic-optimizer gradient \
   --nu 0.1 --evolve-time 0.1 --dt 0.002 \
@@ -250,6 +254,12 @@ each iteration. `max-q` remains available for the stronger L4-S route.
 `hybrid` runs both. The command then directly integrates `D^4 Z^2`. Cutoff
 growth attacks the strong pointwise lemma; growth of the dynamic integral
 attacks the weaker time-integrated L4-A candidate.
+
+`--dynamic-restarts N` launches genuinely independent dynamic adjoint
+optimizations. Additional starts alternate between Sobolev-retracted
+perturbations of the warm continuation and retracted random states. Their
+final objectives and the winning restart are recorded in the JSON artifact;
+the winning state alone receives the refined `dt/2` trajectory check.
 
 The two terms of the local/nonlocal proof split can be attacked directly:
 

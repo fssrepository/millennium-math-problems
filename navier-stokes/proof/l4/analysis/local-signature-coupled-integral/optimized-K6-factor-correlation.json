@@ -1,0 +1,15 @@
+{
+  "schema": "navier-stokes-local-signature-trajectory-v1",
+  "state": "proof/l4/states/local-signature-coupled-multistart/dynamic/K6.tsv",
+  "workers": 3,
+  "kernel_threads_per_cutoff": 3,
+  "steps": 10,
+  "time_refinement": 2,
+  "viscosity": 0.100000000000000006,
+  "time_step": 0.00100000000000000002,
+  "last_relative_critical_integral_difference": 0,
+  "exact_factorization": "V^4/(Z P^3) = A_sig^4 R^2/(Z P^3)",
+  "rows": [
+    {"cutoff": 6, "initial_amplification": 1.0879056123982096, "maximum_amplification": 1.09033268981047815, "final_amplification": 1.09033268981047815, "critical_integral": 4.39288068940666269e-06, "refined_critical_integral": 4.39288269613977211e-06, "time_refinement_relative_difference": 4.5681463588497251e-07, "square_signature_integral": 3.1221840059982595e-06, "maximum_critical_density": 0.000440345503397986517, "maximum_square_signature_density": 0.00031436102554901113, "log_factor_correlation": -0.999978201140338863, "amplification_peak_step": 10, "square_density_at_amplification_peak": 0.000310037406861378016, "critical_density_at_amplification_peak": 0.000438177656337540567, "square_density_peak_step": 0, "amplification_at_square_density_peak": 1.0879056123982096, "critical_density_at_square_density_peak": 0.000440345503397986517, "critical_peak_step": 0, "amplification_at_critical_peak": 1.0879056123982096, "square_density_at_critical_peak": 0.00031436102554901113, "maximum_factorization_residual": 3.62261615491197851e-19}
+  ]
+}

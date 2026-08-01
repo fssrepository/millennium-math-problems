@@ -19,6 +19,7 @@
 #include "lemma_adversary.hpp"
 #include "lemma_reporter.hpp"
 #include "local_signature_geometry.hpp"
+#include "local_signature_density.hpp"
 #include "local_signature_objective.hpp"
 #include "local_triad_symmetrizer.hpp"
 #include "moving_gap_controller.hpp"
@@ -166,24 +167,14 @@ AdversaryResult optimize_static_depletion_parallel(
 }
 
 void write_spectral_state(const std::string& path, const AdversaryResult& result) {
-    std::ofstream state_file(path);
-    if (!state_file) {
-        throw std::runtime_error("cannot open adversarial state file: " + path);
-    }
-    state_file << "# cutoff=" << result.cutoff << " energy=" << std::setprecision(20)
-               << static_cast<double>(result.objective.energy)
-               << " Q=D^4*Z=" << static_cast<double>(result.objective.energy_level_quantity)
-               << '\n'
-               << "kx\tky\tkz\tux_re\tux_im\tuy_re\tuy_im\tuz_re\tuz_im\n";
-    for (std::size_t index = 0; index < result.state.waves.size(); ++index) {
-        const WaveVector wave = result.state.waves[index];
-        state_file << wave.x << '\t' << wave.y << '\t' << wave.z;
-        for (const Complex component : result.state.velocity[index]) {
-            state_file << '\t' << static_cast<double>(component.real()) << '\t'
-                       << static_cast<double>(component.imag());
-        }
-        state_file << '\n';
-    }
+    std::ostringstream metadata;
+    metadata << std::setprecision(20)
+             << "cutoff=" << result.cutoff
+             << " energy=" << static_cast<double>(result.objective.energy)
+             << " Q=D^4*Z="
+             << static_cast<double>(
+                    result.objective.energy_level_quantity);
+    SpectralStateWriter::write_tsv(path, result.state, metadata.str());
 }
 
 }  // namespace
@@ -700,6 +691,8 @@ bool self_test(std::ostream& out) {
         -helical_gradient_step);
     const LocalSignatureObjectiveValue local_signature_objective =
         LocalSignatureObjective::evaluate(helical_state);
+    const LocalSignatureDensitySample local_signature_density =
+        LocalSignatureDensity::evaluate(helical_state);
     const SpectralIncrement local_signature_gradient =
         LocalSignatureObjective::signed_amplification_gradient(
             helical_state);
@@ -743,6 +736,7 @@ bool self_test(std::ostream& out) {
             std::abs(local_signature_transfer_finite_difference)));
     const bool local_signature_objective_ok =
         local_signature_objective_error < 1e-15L &&
+        local_signature_density.factorization_residual < 1e-15L &&
         local_signature_gradient_error < 1e-9L &&
         local_signature_transfer_gradient_error < 1e-9L;
     const HelicalSectorSelection homochiral_selection =
@@ -1410,6 +1404,24 @@ bool self_test(std::ostream& out) {
                               adversary.objective.energy_level_quantity >= 0.0L;
     const EvolutionResult evolution =
         active_trajectory_analyzer.evolve(adversary.state, 0.1L, 0.002L, 0.001L);
+    DynamicAdversaryOptions dynamic_class_options;
+    dynamic_class_options.generations = 0;
+    dynamic_class_options.viscosity = 0.1L;
+    dynamic_class_options.final_time = 0.002L;
+    dynamic_class_options.time_step = 0.001L;
+    dynamic_class_options.objective = "critical-integral";
+    dynamic_class_options.seed = 17;
+    const DynamicAdversaryEnsemble dynamic_class_adversary("direct", 2);
+    const DynamicAdversaryResult dynamic_class_result =
+        dynamic_class_adversary.optimize(
+            adversary.state, nullptr, dynamic_class_options, 2);
+    const bool dynamic_class_ok =
+        dynamic_class_result.refined_evolution.finite &&
+        dynamic_class_result.restart_objectives.size() == 2 &&
+        dynamic_class_result.winning_restart >= 0 &&
+        dynamic_class_result.winning_restart < 2 &&
+        std::isfinite(dynamic_class_result.search_final_objective) &&
+        dynamic_class_result.time_step_relative_error < 1e-4L;
     const QDerivativeDiagnostic q_derivative =
         active_trajectory_analyzer.evaluate_q_derivative(adversary.state, 0.1L);
     const bool q_derivative_ok = q_derivative.valid &&
@@ -1565,6 +1577,9 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(local_signature_gradient_error)
         << ", transfer gradient="
         << static_cast<double>(local_signature_transfer_gradient_error)
+        << ", factorization="
+        << static_cast<double>(
+               local_signature_density.factorization_residual)
         << ", A_sig="
         << static_cast<double>(
                local_signature_objective.signed_amplification)
@@ -1693,6 +1708,10 @@ bool self_test(std::ostream& out) {
         << "static adversary test: " << (adversary_ok ? "PASS" : "FAIL")
         << " (Q=" << static_cast<double>(adversary.objective.energy_level_quantity)
         << ")\n"
+        << "dynamic adversary ensemble test: "
+        << (dynamic_class_ok ? "PASS" : "FAIL")
+        << " (restarts=" << dynamic_class_result.restart_objectives.size()
+        << ", winner=" << dynamic_class_result.winning_restart << ")\n"
         << "Q directional derivative test: "
         << (q_derivative_ok ? "PASS" : "FAIL")
         << " (refinement error="
@@ -1717,7 +1736,7 @@ bool self_test(std::ostream& out) {
            q_increase_gradient_ok && q_increase_constraints_ok &&
            critical_integral_gradient_ok &&
            partition_integral_gradients_ok && gradient_search_ok &&
-           adversary_ok && q_derivative_ok && evolution_ok;
+           adversary_ok && dynamic_class_ok && q_derivative_ok && evolution_ok;
 }
 
 int run_adversary(const AdversaryOptions& options, std::ostream& out) {

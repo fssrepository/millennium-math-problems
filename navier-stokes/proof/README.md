@@ -82,4 +82,6 @@ signature count is `O(K^mu)` for any `mu<1`; the replayed K3 broad endpoint has
 `2.33549` under random sampling, but the exact-gradient adversary in
 `l4/analysis/local-signature-gradient/` raises it to `49.3891` and rejects the
 pointwise hypothesis. The surviving target is the time integral of the exact
-coupled factorization `A_sig^4 R^2/(Z P^3)`.
+coupled factorization `A_sig^4 R^2/(Z P^3)`. A true 12-worker dynamic
+multistart in `l4/analysis/local-signature-coupled-integral/` converges to the
+same smooth K3--K6 branch and does not expose cutoff concentration.
