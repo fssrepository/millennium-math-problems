@@ -33,10 +33,12 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
         << ", objective=" << report.dynamic_objective
         << ", optimizer=" << report.dynamic_optimizer
         << ", gradient_method=" << report.gradient_method
+        << ", minimum_dyadic_gap=" << report.minimum_dyadic_gap
         << ", H" << report.sobolev_order << "_cap="
         << static_cast<double>(report.sobolev_cap) << ")\n"
         << "cutoff,steps,int_D4Z2_refined,int_local_D4Z2,int_nonlocal_D4Z2,"
            "int_near_nonlocal_D4Z2,int_far_nonlocal_D4Z2,"
+           "int_selected_gap_tail_D4Z2,"
            "dt_relative_error,search_obj_initial,search_obj_final,"
            "initial_D4Z,final_D4Z,log_Q_gain,max_D4Z,max_local_D4Z,max_nonlocal_D4Z,"
            "max_positive_dlogQ_over_k0Z,q_derivative_error,strong_L4_envelope,"
@@ -50,6 +52,8 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
             << static_cast<double>(row.dynamic_nonlocal_integral) << ','
             << static_cast<double>(row.dynamic_near_nonlocal_integral) << ','
             << static_cast<double>(row.dynamic_far_nonlocal_integral) << ','
+            << static_cast<double>(row.dynamic_selected_gap_tail_integral)
+            << ','
             << static_cast<double>(row.dynamic_dt_relative_error) << ','
             << static_cast<double>(row.dynamic_search_initial_objective) << ','
             << static_cast<double>(row.dynamic_search_final_objective) << ','
@@ -101,6 +105,7 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
         << ", \"dynamic_objective\": \"" << report.dynamic_objective << "\""
         << ", \"dynamic_optimizer\": \"" << report.dynamic_optimizer << "\""
         << ", \"gradient_method\": \"" << report.gradient_method << "\""
+        << ", \"minimum_dyadic_gap\": " << report.minimum_dyadic_gap
         << ", \"sobolev_order\": " << report.sobolev_order
         << ", \"sobolev_cap\": "
         << static_cast<double>(report.sobolev_cap)
@@ -180,6 +185,10 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
             << static_cast<double>(row.dynamic_near_nonlocal_integral)
             << ", \"dynamic_integral_far_nonlocal_D4Z2\": "
             << static_cast<double>(row.dynamic_far_nonlocal_integral)
+            << ", \"dynamic_integral_selected_gap_tail_D4Z2\": "
+            << static_cast<double>(row.dynamic_selected_gap_tail_integral)
+            << ", \"dynamic_max_selected_gap_tail_D4Z\": "
+            << static_cast<double>(row.dynamic_maximum_selected_gap_tail_q)
             << ", \"dynamic_max_V_partition_residual\": "
             << static_cast<double>(row.dynamic_partition_residual)
             << ", \"dynamic_final_E\": "

@@ -128,7 +128,8 @@ SpectralIncrement lbfgs_ascent_direction(
     return direction;
 }
 
-TriadPartition objective_partition(const std::string& objective) {
+TriadSelection objective_selection(
+    const std::string& objective, int minimum_dyadic_gap) {
     if (objective == "critical-local-integral") {
         return TriadPartition::local;
     }
@@ -140,6 +141,9 @@ TriadPartition objective_partition(const std::string& objective) {
     }
     if (objective == "critical-far-nonlocal-integral") {
         return TriadPartition::far_nonlocal;
+    }
+    if (objective == "critical-gap-tail-integral") {
+        return TriadSelection::dyadic_tail(minimum_dyadic_gap);
     }
     return TriadPartition::all;
 }
@@ -155,16 +159,17 @@ SpectralReal GradientAdversary::objective_value(
     const SpectralState& initial,
     const GradientSearchOptions& options) const {
     SpectralState state = initial;
-    const TriadPartition partition = objective_partition(options.objective);
+    const TriadSelection selection = objective_selection(
+        options.objective, options.minimum_dyadic_gap);
     const SpectralReal initial_q =
         objective_.evaluate(state).energy_level_quantity;
     SpectralReal previous_integrand =
-        objective_.evaluate(state, partition).critical_integrand;
+        objective_.evaluate(state, selection).critical_integrand;
     SpectralReal critical_integral = 0.0L;
     SpectralReal maximum_q = initial_q;
     for (int step = 0; step < options.trajectory_steps; ++step) {
         dynamics_.rk4_step(state, options.viscosity, options.time_step);
-        const StaticObjective sample = objective_.evaluate(state, partition);
+        const StaticObjective sample = objective_.evaluate(state, selection);
         maximum_q = std::max(maximum_q, sample.energy_level_quantity);
         critical_integral += 0.5L * options.time_step *
                              (previous_integrand + sample.critical_integrand);
@@ -191,7 +196,8 @@ SpectralReal GradientAdversary::objective_value(
         options.objective == "critical-local-integral" ||
         options.objective == "critical-nonlocal-integral" ||
         options.objective == "critical-near-nonlocal-integral" ||
-        options.objective == "critical-far-nonlocal-integral") {
+        options.objective == "critical-far-nonlocal-integral" ||
+        options.objective == "critical-gap-tail-integral") {
         return critical_integral;
     }
     throw std::invalid_argument("unknown gradient objective: " +
@@ -202,7 +208,7 @@ GradientSearchResult GradientAdversary::maximize_q(
     const SpectralState& initial,
     const GradientSearchOptions& options) const {
     if (options.iterations < 0 || options.line_search_steps < 1 ||
-        options.trajectory_steps < 0) {
+        options.trajectory_steps < 0 || options.minimum_dyadic_gap < 0) {
         throw std::invalid_argument("invalid gradient-search iteration count");
     }
     if (!(options.initial_step > 0.0L)) {
@@ -260,11 +266,14 @@ GradientSearchResult GradientAdversary::maximize_q(
                    options.objective ==
                        "critical-near-nonlocal-integral" ||
                    options.objective ==
-                       "critical-far-nonlocal-integral") {
+                       "critical-far-nonlocal-integral" ||
+                   options.objective ==
+                       "critical-gap-tail-integral") {
             trajectory = adjoint_.critical_integral_gradient(
                 result.state, options.viscosity, options.time_step,
                 options.trajectory_steps,
-                objective_partition(options.objective));
+                objective_selection(
+                    options.objective, options.minimum_dyadic_gap));
         } else {
             throw std::invalid_argument("unknown gradient objective: " +
                                         options.objective);
@@ -283,7 +292,7 @@ GradientSearchResult GradientAdversary::maximize_q(
         result.final_projected_gradient_norm = gradient_norm;
         record.projected_gradient_norm = gradient_norm;
         record.sobolev_value = sobolev_value;
-        if (!(gradient_norm > 1e-24L) || !std::isfinite(gradient_norm)) {
+        if (!(gradient_norm > 0.0L) || !std::isfinite(gradient_norm)) {
             record.objective_after = result.objective;
             result.trace.push_back(record);
             break;
@@ -328,7 +337,7 @@ GradientSearchResult GradientAdversary::maximize_q(
             direction, result.state, sobolev);
         const SpectralReal directional_derivative =
             increment_inner_product(projected_gradient, direction);
-        if (!(direction_norm > 1e-24L) ||
+        if (!(direction_norm > 0.0L) ||
             !(directional_derivative >
               1e-12L * gradient_norm * direction_norm)) {
             direction = projected_gradient;
@@ -355,8 +364,8 @@ GradientSearchResult GradientAdversary::maximize_q(
                     objective_value(candidate, options);
                 ++result.trajectory_evaluations;
                 const SpectralReal improvement_floor =
-                    1e-13L * std::max(
-                        1e-30L, std::abs(result.objective));
+                    64.0L * std::numeric_limits<SpectralReal>::epsilon() *
+                    std::abs(result.objective);
                 if (std::isfinite(candidate_objective) &&
                     candidate_objective >
                         result.objective + improvement_floor) {

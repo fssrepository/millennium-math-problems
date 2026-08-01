@@ -34,6 +34,7 @@ struct AdversaryOptions {
     std::string dynamic_objective = "critical-integral";
     std::string dynamic_optimizer = "gradient";
     std::string gradient_method = "steepest";
+    int minimum_dyadic_gap = 2;
     int threads = 0;
     std::string backend = "auto";
 };

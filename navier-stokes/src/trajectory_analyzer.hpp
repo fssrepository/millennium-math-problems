@@ -33,10 +33,12 @@ struct EvolutionResult {
     SpectralReal integral_nonlocal_critical = 0.0L;
     SpectralReal integral_near_nonlocal_critical = 0.0L;
     SpectralReal integral_far_nonlocal_critical = 0.0L;
+    SpectralReal integral_selected_gap_tail_critical = 0.0L;
     SpectralReal maximum_local_energy_level_quantity = 0.0L;
     SpectralReal maximum_nonlocal_energy_level_quantity = 0.0L;
     SpectralReal maximum_near_nonlocal_energy_level_quantity = 0.0L;
     SpectralReal maximum_far_nonlocal_energy_level_quantity = 0.0L;
+    SpectralReal maximum_selected_gap_tail_energy_level_quantity = 0.0L;
     SpectralReal maximum_vortex_partition_residual = 0.0L;
     SpectralReal maximum_vorticity_linf = 0.0L;
     SpectralReal maximum_holder_half_coherence = 0.0L;
@@ -61,14 +63,16 @@ public:
     [[nodiscard]] EvolutionResult evolve(
         SpectralState state, SpectralReal viscosity,
         SpectralReal final_time, SpectralReal requested_dt,
-        bool collect_vortex_partition = false) const;
+        bool collect_vortex_partition = false,
+        int minimum_selected_dyadic_gap = 2) const;
 
 private:
     struct VortexPartition;
     struct GeometryDiagnostic;
 
     [[nodiscard]] VortexPartition evaluate_vortex_partition(
-        const SpectralState& state) const;
+        const SpectralState& state,
+        int minimum_selected_dyadic_gap) const;
     [[nodiscard]] GeometryDiagnostic evaluate_geometry(
         const SpectralState& state,
         SpectralReal high_vorticity_fraction = 0.5L) const;

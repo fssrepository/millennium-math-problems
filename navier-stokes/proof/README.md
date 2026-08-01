@@ -43,3 +43,7 @@ negligible; they do not prove either partitioned lemma.
 `l4/analysis/far-nonlocal-h4-cap100/` refines the nonlocal class into the first
 transition band and the truly scale-separated tail. It contains the first
 fine-time-step, projection-controlled `K=3,...,6` far-tail adversary.
+
+`l4/analysis/gap-tail-min3-h4-cap100/` tests the next dyadic tail
+`high/low > 8` with a parameterized exact objective. It records fine-time-step
+checks and both downward projections and zero-padded upward cutoff controls.

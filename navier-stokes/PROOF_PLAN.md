@@ -281,3 +281,53 @@ All three statements remain open. The far-tail numerics identify L4.1a as the
 first proof target because it has genuine scale separation and a rapidly
 decaying optimized frequency envelope. The code evidence is not substituted
 for the required cutoff-independent paraproduct estimate.
+
+The far-tail objective is now parameterized by its minimum dyadic gap. For
+`gap >= 3` (`high/low > 8`), the absolute stopping tolerances in the optimizer
+were invalid: the fourth-power objective can be nonzero far below `1e-30`.
+Replacing them with relative machine-epsilon tests exposed a genuine gradient
+branch. At `E(0)=1`, initial `H4^2<=100`, `nu=0.1`, and `T=0.01`, the validated
+branch reaches `J_gap>=3=1.29741e-20` at K7. Its K6 projection retains `81.1%`;
+zero-padding the earlier K6 winner to K7 retains `98.8%`. Zero-padding the K7
+winner to K8 retains `99.9775%` in the fine-time-step check. Thus the branch persists
+after the gap-three band opens, although this finite calculation neither finds
+a global maximum nor proves a decay exponent.
+
+The separately optimized `gap>=2` value is `3.21556e-11`, about `2.48e9` times
+the current `gap>=3` value. Because the objective contains the fourth power of
+the signed tail stretching, this ratio cannot be inserted directly as a
+paraproduct decay exponent. The analytical target remains a conventional,
+cutoff-independent estimate of the form
+
+```text
+sup_N integral_0^T |V_{N,gap>=m}|^4/(Z_N P_N^3) dt
+    <= C(E(0), nu, T, u_0) 2^(-alpha m),  alpha > 0,
+```
+
+derived without assuming a uniform high-Sobolev solution bound. Establishing
+such an envelope, or producing a continuation that falsifies it, is the active
+L4.1a task.
+
+One exact factor in that envelope is now certified. For `k=p+q` with `p` the
+unique low advecting wave, define
+
+```text
+T(p,q,k) = Re <u_k, i(q dot u_p)u_q>.
+```
+
+Reality and incompressibility pair `(p,q,k)` with `(p,-k,-q)` so that
+
+```text
+T(p,q,k)+T(p,-k,-q)=0,
+|k|^2 T(p,q,k)+|q|^2 T(p,-k,-q)
+    = (|k|^2-|q|^2)T(p,q,k),
+abs(|k|^2-|q|^2) <= |p|(|k|+|q|).
+```
+
+Thus the low-advecting gap-`m` block has an exact one-factor `2^-m`
+commutator gain relative to its raw two-derivative weight. The C++ certificate
+checks the weighted identity at `2.61e-20` relative error in self-test. On the
+K7 gap-three extremizer, the pairing reduces absolute low-advecting stretching
+from `3.53962e-4` to `2.58109e-5`. The remaining proof work is to place this
+gain in a time-integrable Littlewood-Paley sum and derive corresponding bounds
+for the low-advected and low-target roles; no closure claim is made yet.

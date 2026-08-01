@@ -14,6 +14,7 @@
 #include "spectral_state.hpp"
 #include "state_analysis.hpp"
 #include "trajectory_analyzer.hpp"
+#include "triad_commutator.hpp"
 #include "triad_verifier.hpp"
 
 #include <algorithm>
@@ -87,6 +88,9 @@ Real dynamic_objective_value(const EvolutionResult& evolution,
     if (objective == "critical-far-nonlocal-integral") {
         return evolution.integral_far_nonlocal_critical;
     }
+    if (objective == "critical-gap-tail-integral") {
+        return evolution.integral_selected_gap_tail_critical;
+    }
     if (objective == "max-q") {
         return evolution.maximum_energy_level_quantity;
     }
@@ -113,7 +117,7 @@ DynamicAdversaryResult optimize_dynamic(
     int generations, Real mutation, Real viscosity, Real final_time, Real dt,
     std::uint64_t seed, const std::string& objective,
     const std::string& optimizer, const std::string& gradient_method,
-    int sobolev_order, Real sobolev_cap) {
+    int sobolev_order, Real sobolev_cap, int minimum_dyadic_gap) {
     if (generations < 0) {
         throw std::invalid_argument("--dynamic-generations cannot be negative");
     }
@@ -125,12 +129,13 @@ DynamicAdversaryResult optimize_dynamic(
         objective == "critical-local-integral" ||
         objective == "critical-nonlocal-integral" ||
         objective == "critical-near-nonlocal-integral" ||
-        objective == "critical-far-nonlocal-integral";
+        objective == "critical-far-nonlocal-integral" ||
+        objective == "critical-gap-tail-integral";
     result.state = primary_start;
     result.initial_objective = active_trajectory_analyzer.evaluate_static(result.state);
     result.evolution = active_trajectory_analyzer.evolve(
         result.state, viscosity, final_time, dt,
-        collect_search_partition);
+        collect_search_partition, minimum_dyadic_gap);
     ++result.evaluations;
     bool result_admissible = sobolev.admissible(result.state);
 
@@ -145,7 +150,7 @@ DynamicAdversaryResult optimize_dynamic(
         const EvolutionResult secondary_evolution =
             active_trajectory_analyzer.evolve(
                 secondary, viscosity, final_time, dt,
-                collect_search_partition);
+                collect_search_partition, minimum_dyadic_gap);
         ++result.evaluations;
         const bool secondary_admissible = sobolev.admissible(secondary);
         if (secondary_admissible &&
@@ -183,7 +188,7 @@ DynamicAdversaryResult optimize_dynamic(
         const EvolutionResult evolution =
             active_trajectory_analyzer.evolve(
                 candidate, viscosity, final_time, dt,
-                collect_search_partition);
+                collect_search_partition, minimum_dyadic_gap);
         ++result.evaluations;
         if (evolution.finite &&
             dynamic_objective_value(evolution, objective) >
@@ -209,6 +214,7 @@ DynamicAdversaryResult optimize_dynamic(
         gradient_options.method = gradient_method;
         gradient_options.sobolev_order = sobolev_order;
         gradient_options.sobolev_cap = sobolev_cap;
+        gradient_options.minimum_dyadic_gap = minimum_dyadic_gap;
         const GradientSearchResult gradient =
             active_gradient_adversary.maximize_q(
                 result.state, gradient_options);
@@ -217,19 +223,27 @@ DynamicAdversaryResult optimize_dynamic(
         result.evolution =
             active_trajectory_analyzer.evolve(
                 result.state, viscosity, final_time, dt,
-                collect_search_partition);
+                collect_search_partition, minimum_dyadic_gap);
         result.evaluations += gradient.trajectory_evaluations + 1;
         result.accepted_gradient_steps = gradient.accepted_steps;
         result.gradient_trace = gradient.trace;
     }
     result.search_final_objective =
         dynamic_objective_value(result.evolution, objective);
-    result.refined_evolution =
-        active_trajectory_analyzer.evolve(result.state, viscosity, final_time, 0.5L * dt, true);
-    result.time_step_relative_error =
-        std::abs(result.refined_evolution.integral_critical -
-                 result.evolution.integral_critical) /
-        std::max(1e-30L, std::abs(result.refined_evolution.integral_critical));
+    result.refined_evolution = active_trajectory_analyzer.evolve(
+        result.state, viscosity, final_time, 0.5L * dt, true,
+        minimum_dyadic_gap);
+    const Real refined_objective =
+        dynamic_objective_value(result.refined_evolution, objective);
+    const Real coarse_objective =
+        dynamic_objective_value(result.evolution, objective);
+    const Real objective_difference =
+        std::abs(refined_objective - coarse_objective);
+    result.time_step_relative_error = refined_objective != 0.0L
+        ? objective_difference / std::abs(refined_objective)
+        : (objective_difference == 0.0L
+               ? 0.0L
+               : std::numeric_limits<Real>::infinity());
     return result;
 }
 
@@ -787,6 +801,8 @@ bool self_test(std::ostream& out) {
         parallel_partition_vjp, serial_partition_vjp);
     const TriadLedgerReport partition_ledger =
         TriadLedger::analyze(partition_state);
+    const TriadCommutatorReport partition_commutator =
+        TriadCommutator::analyze(partition_state);
     const Real partition_ledger_error = std::abs(
         partition_ledger.signed_local -
         active_objective
@@ -796,7 +812,13 @@ bool self_test(std::ostream& out) {
     const bool partition_parallel_ok =
         partition_parallel_forward_error < 1e-14L &&
         partition_parallel_vjp_error < 1e-14L &&
-        partition_ledger_error < 1e-14L;
+        partition_ledger_error < 1e-14L &&
+        partition_commutator.pairs > 0 &&
+        partition_commutator
+                .relative_unweighted_cancellation_residual < 1e-14L &&
+        partition_commutator.relative_weighted_identity_residual < 1e-14L &&
+        partition_commutator.maximum_frequency_gain_ratio <=
+            1.0L + 1e-14L;
     const SpectralState partition_plus_state =
         active_dynamics.add_increment(
             partition_state, partition_tangent,
@@ -805,22 +827,22 @@ bool self_test(std::ostream& out) {
         active_dynamics.add_increment(
             partition_state, partition_tangent,
             -finite_difference_step);
-    auto partition_integral_gradient_error = [&](TriadPartition partition) {
+    auto partition_integral_gradient_error = [&](TriadSelection selection) {
         const QTrajectoryGradient partition_gradient =
             active_adjoint.critical_integral_gradient(
                 partition_state, adjoint_viscosity, adjoint_dt,
-                trajectory_steps, partition);
+                trajectory_steps, selection);
         const Real directional_adjoint = increment_inner_product(
             partition_gradient.initial_gradient, partition_tangent);
         auto partition_integral = [&](SpectralState state) {
             StaticObjective previous =
-                active_objective.evaluate(state, partition);
+                active_objective.evaluate(state, selection);
             Real integral = 0.0L;
             for (int step = 0; step < trajectory_steps; ++step) {
                 active_dynamics.rk4_step(
                     state, adjoint_viscosity, adjoint_dt);
                 const StaticObjective current =
-                    active_objective.evaluate(state, partition);
+                    active_objective.evaluate(state, selection);
                 integral += 0.5L * adjoint_dt *
                             (previous.critical_integrand +
                              current.critical_integrand);
@@ -847,6 +869,21 @@ bool self_test(std::ostream& out) {
         partition_integral_gradient_error(TriadPartition::near_nonlocal);
     const Real far_nonlocal_integral_gradient_error =
         partition_integral_gradient_error(TriadPartition::far_nonlocal);
+    const Real configurable_tail_integral_gradient_error =
+        partition_integral_gradient_error(
+            TriadSelection::dyadic_tail(1));
+    const EvolutionResult configurable_tail_evolution =
+        active_trajectory_analyzer.evolve(
+            partition_state, adjoint_viscosity,
+            adjoint_dt * static_cast<Real>(trajectory_steps),
+            adjoint_dt, true, 1);
+    const Real configurable_tail_trajectory_error = std::abs(
+        configurable_tail_evolution.integral_selected_gap_tail_critical -
+        configurable_tail_evolution.integral_nonlocal_critical) /
+        std::max(
+            1e-30L,
+            std::abs(configurable_tail_evolution
+                         .integral_nonlocal_critical));
     SpectralState far_partition_state =
         SpectralStateFactory::random(3, adjoint_generator);
     SpectralState far_partition_tangent_state =
@@ -898,13 +935,21 @@ bool self_test(std::ostream& out) {
             WaveVector{8, 0, 0}, TriadPartition::far_nonlocal) &&
         TriadPartitioner::includes(
             WaveVector{1, 0, 0}, WaveVector{2, 0, 0},
-            WaveVector{3, 0, 0}, TriadPartition::nonlocal);
+            WaveVector{3, 0, 0}, TriadPartition::nonlocal) &&
+        TriadPartitioner::includes(
+            WaveVector{1, 0, 0}, WaveVector{9, 0, 0},
+            WaveVector{10, 0, 0}, TriadSelection::dyadic_tail(3)) &&
+        !TriadPartitioner::includes(
+            WaveVector{1, 0, 0}, WaveVector{7, 0, 0},
+            WaveVector{8, 0, 0}, TriadSelection::dyadic_tail(3));
     const bool partition_integral_gradients_ok =
         triad_partition_ok && partition_parallel_ok &&
         local_integral_gradient_error < 1e-9L &&
         nonlocal_integral_gradient_error < 1e-9L &&
         near_nonlocal_integral_gradient_error < 1e-9L &&
         far_nonlocal_integral_gradient_error < 1e-9L &&
+        configurable_tail_integral_gradient_error < 1e-9L &&
+        configurable_tail_trajectory_error < 1e-14L &&
         far_partition_static_gradient_error < 1e-9L;
     GradientSearchOptions gradient_options;
     gradient_options.iterations = 3;
@@ -1018,6 +1063,12 @@ bool self_test(std::ostream& out) {
         << ", parallel_vjp="
         << static_cast<double>(partition_parallel_vjp_error)
         << ", ledger=" << static_cast<double>(partition_ledger_error)
+        << ", commutator="
+        << static_cast<double>(partition_commutator
+                                   .relative_weighted_identity_residual)
+        << ", frequency_gain="
+        << static_cast<double>(
+               partition_commutator.maximum_frequency_gain_ratio)
         << ", local=" << static_cast<double>(local_integral_gradient_error)
         << ", nonlocal="
         << static_cast<double>(nonlocal_integral_gradient_error)
@@ -1025,6 +1076,10 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(near_nonlocal_integral_gradient_error)
         << ", far="
         << static_cast<double>(far_nonlocal_integral_gradient_error)
+        << ", configurable_tail="
+        << static_cast<double>(configurable_tail_integral_gradient_error)
+        << ", tail_trajectory="
+        << static_cast<double>(configurable_tail_trajectory_error)
         << ", far_static="
         << static_cast<double>(far_partition_static_gradient_error)
         << ")\n"
@@ -1111,7 +1166,8 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
             options.dynamic_objective, options.dynamic_optimizer,
             options.gradient_method,
             options.sobolev_order,
-            static_cast<Real>(options.sobolev_cap));
+            static_cast<Real>(options.sobolev_cap),
+            options.minimum_dyadic_gap);
         active_galerkin.set_compute_threads(1);
         if (!options.state_prefix.empty()) {
             AdversaryResult dynamic_state;
@@ -1169,6 +1225,7 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
     report.dynamic_objective = options.dynamic_objective;
     report.dynamic_optimizer = options.dynamic_optimizer;
     report.gradient_method = options.gradient_method;
+    report.minimum_dyadic_gap = options.minimum_dyadic_gap;
     report.sobolev_order = options.sobolev_order;
     report.sobolev_cap = static_cast<Real>(options.sobolev_cap);
     report.restarts = options.restarts;
@@ -1222,6 +1279,8 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
             evolution.integral_near_nonlocal_critical;
         row.dynamic_far_nonlocal_integral =
             evolution.integral_far_nonlocal_critical;
+        row.dynamic_selected_gap_tail_integral =
+            evolution.integral_selected_gap_tail_critical;
         row.dynamic_dt_relative_error = dynamic.time_step_relative_error;
         row.dynamic_search_initial_objective =
             dynamic.search_initial_objective;
@@ -1244,6 +1303,8 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
             evolution.maximum_near_nonlocal_energy_level_quantity;
         row.dynamic_maximum_far_nonlocal_q =
             evolution.maximum_far_nonlocal_energy_level_quantity;
+        row.dynamic_maximum_selected_gap_tail_q =
+            evolution.maximum_selected_gap_tail_energy_level_quantity;
         row.dynamic_q_log_growth_ratio =
             evolution.maximum_positive_q_log_growth_ratio;
         row.dynamic_q_derivative_error =

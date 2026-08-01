@@ -100,12 +100,12 @@ SpectralIncrement SpectralDynamics::advection_direct(
 }
 
 SpectralIncrement SpectralDynamics::advection_direct_partition(
-    const SpectralState& state, TriadPartition partition) const {
+    const SpectralState& state, TriadSelection selection) const {
     const SpectralComplex imaginary_unit{0.0L, 1.0L};
     SpectralIncrement advection_result = reduce_interactions(
         state, configuration_.compute_threads(),
         [&](InteractionIndex interaction, SpectralIncrement& partial) {
-        if (!TriadPartitioner::includes(state, interaction, partition)) {
+        if (!TriadPartitioner::includes(state, interaction, selection)) {
             return;
         }
         const auto [p_index, q_index, target_index] = interaction;
@@ -191,7 +191,7 @@ SpectralIncrement SpectralDynamics::advection_vjp_direct(
 SpectralIncrement SpectralDynamics::advection_vjp_direct_partition(
     const SpectralState& state,
     const SpectralIncrement& output_cotangent,
-    TriadPartition partition) const {
+    TriadSelection selection) const {
     require_matching_increment(state, output_cotangent);
     SpectralIncrement cotangent = output_cotangent;
     project_increment(cotangent, state);
@@ -199,7 +199,7 @@ SpectralIncrement SpectralDynamics::advection_vjp_direct_partition(
     SpectralIncrement result = reduce_interactions(
         state, configuration_.compute_threads(),
         [&](InteractionIndex interaction, SpectralIncrement& partial) {
-        if (!TriadPartitioner::includes(state, interaction, partition)) {
+        if (!TriadPartitioner::includes(state, interaction, selection)) {
             return;
         }
         const auto [p_index, q_index, target_index] = interaction;

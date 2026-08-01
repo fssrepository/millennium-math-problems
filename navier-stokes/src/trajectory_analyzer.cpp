@@ -1,6 +1,6 @@
 #include "trajectory_analyzer.hpp"
 
-#include "triad_partition.hpp"
+#include "triad_ledger.hpp"
 
 #include <algorithm>
 #include <array>
@@ -49,6 +49,7 @@ struct TrajectoryAnalyzer::VortexPartition {
     SpectralReal nonlocal = 0.0L;
     SpectralReal near_nonlocal = 0.0L;
     SpectralReal far_nonlocal = 0.0L;
+    SpectralReal selected_gap_tail = 0.0L;
     SpectralReal absolute_local_pairs = 0.0L;
     SpectralReal absolute_nonlocal_pairs = 0.0L;
 };
@@ -77,36 +78,26 @@ StaticObjective TrajectoryAnalyzer::evaluate_static(
 
 TrajectoryAnalyzer::VortexPartition
 TrajectoryAnalyzer::evaluate_vortex_partition(
-    const SpectralState& state) const {
+    const SpectralState& state,
+    int minimum_selected_dyadic_gap) const {
     VortexPartition result;
-    const SpectralComplex imaginary_unit{0.0L, 1.0L};
-    for (const InteractionIndex interaction :
-         SpectralStateOps::interactions(state)) {
-        const auto [p_index, q_index, target_index] = interaction;
-        const WaveVector p = state.waves[p_index];
-        const WaveVector q = state.waves[q_index];
-        const WaveVector k = state.waves[target_index];
-        const SpectralComplex coefficient =
-            imaginary_unit * wave_dot(q, state.velocity[p_index]);
-        ComplexVector pair{};
-        for (std::size_t direction = 0; direction < 3; ++direction) {
-            pair[direction] = coefficient * state.velocity[q_index][direction];
+    const TriadLedgerReport ledger = TriadLedger::analyze(state);
+    result.local = ledger.signed_local;
+    result.nonlocal = ledger.signed_nonlocal;
+    result.absolute_local_pairs = ledger.gaps.empty()
+        ? 0.0L
+        : ledger.gaps.front().absolute_pair_stretching;
+    result.absolute_nonlocal_pairs =
+        ledger.absolute_pair_total - result.absolute_local_pairs;
+    for (const TriadGapLedgerRow& row : ledger.gaps) {
+        if (row.dyadic_gap == 1) {
+            result.near_nonlocal += row.signed_stretching;
         }
-        const SpectralReal enstrophy_transfer =
-            static_cast<SpectralReal>(norm_squared(k)) *
-            std::real(dot_hermitian(state.velocity[target_index], pair));
-        const int gap = TriadPartitioner::dyadic_gap(k, p, q);
-        if (gap == 0) {
-            result.local += enstrophy_transfer;
-            result.absolute_local_pairs += std::abs(enstrophy_transfer);
-        } else {
-            result.nonlocal += enstrophy_transfer;
-            result.absolute_nonlocal_pairs += std::abs(enstrophy_transfer);
-            if (gap == 1) {
-                result.near_nonlocal += enstrophy_transfer;
-            } else {
-                result.far_nonlocal += enstrophy_transfer;
-            }
+        if (row.dyadic_gap >= 2) {
+            result.far_nonlocal += row.signed_stretching;
+        }
+        if (row.dyadic_gap >= minimum_selected_dyadic_gap) {
+            result.selected_gap_tail += row.signed_stretching;
         }
     }
     return result;
@@ -334,7 +325,8 @@ QDerivativeDiagnostic TrajectoryAnalyzer::evaluate_q_derivative(
 EvolutionResult TrajectoryAnalyzer::evolve(
     SpectralState state, SpectralReal viscosity,
     SpectralReal final_time, SpectralReal requested_dt,
-    bool collect_vortex_partition) const {
+    bool collect_vortex_partition,
+    int minimum_selected_dyadic_gap) const {
     if (!(viscosity > 0.0L) || !(final_time > 0.0L) ||
         !(requested_dt > 0.0L)) {
         throw std::invalid_argument(
@@ -372,7 +364,8 @@ EvolutionResult TrajectoryAnalyzer::evolve(
     };
     VortexPartition partition_before;
     if (collect_vortex_partition) {
-        partition_before = evaluate_vortex_partition(state);
+        partition_before = evaluate_vortex_partition(
+            state, minimum_selected_dyadic_gap);
         result.maximum_local_energy_level_quantity =
             energy_level_quantity_from_stretching(
                 partition_before.local, before.enstrophy,
@@ -388,6 +381,10 @@ EvolutionResult TrajectoryAnalyzer::evolve(
         result.maximum_far_nonlocal_energy_level_quantity =
             energy_level_quantity_from_stretching(
                 partition_before.far_nonlocal, before.enstrophy,
+                before.palinstrophy);
+        result.maximum_selected_gap_tail_energy_level_quantity =
+            energy_level_quantity_from_stretching(
+                partition_before.selected_gap_tail, before.enstrophy,
                 before.palinstrophy);
         result.maximum_vortex_partition_residual =
             std::abs(before.vortex_stretching -
@@ -416,7 +413,8 @@ EvolutionResult TrajectoryAnalyzer::evolve(
         const StaticObjective after = evaluate_static(state);
         if (collect_vortex_partition) {
             const VortexPartition partition_after =
-                evaluate_vortex_partition(state);
+                evaluate_vortex_partition(
+                    state, minimum_selected_dyadic_gap);
             const SpectralReal local_critical_before =
                 critical_integrand_from_stretching(
                     partition_before.local, before.enstrophy,
@@ -449,6 +447,14 @@ EvolutionResult TrajectoryAnalyzer::evolve(
                 critical_integrand_from_stretching(
                     partition_after.far_nonlocal, after.enstrophy,
                     after.palinstrophy);
+            const SpectralReal selected_gap_tail_critical_before =
+                critical_integrand_from_stretching(
+                    partition_before.selected_gap_tail, before.enstrophy,
+                    before.palinstrophy);
+            const SpectralReal selected_gap_tail_critical_after =
+                critical_integrand_from_stretching(
+                    partition_after.selected_gap_tail, after.enstrophy,
+                    after.palinstrophy);
             const SpectralReal local_q_after =
                 energy_level_quantity_from_stretching(
                     partition_after.local, after.enstrophy,
@@ -465,6 +471,10 @@ EvolutionResult TrajectoryAnalyzer::evolve(
                 energy_level_quantity_from_stretching(
                     partition_after.far_nonlocal, after.enstrophy,
                     after.palinstrophy);
+            const SpectralReal selected_gap_tail_q_after =
+                energy_level_quantity_from_stretching(
+                    partition_after.selected_gap_tail, after.enstrophy,
+                    after.palinstrophy);
             result.integral_local_critical +=
                 0.5L * dt *
                 (local_critical_before + local_critical_after);
@@ -479,6 +489,10 @@ EvolutionResult TrajectoryAnalyzer::evolve(
                 0.5L * dt *
                 (far_nonlocal_critical_before +
                  far_nonlocal_critical_after);
+            result.integral_selected_gap_tail_critical +=
+                0.5L * dt *
+                (selected_gap_tail_critical_before +
+                 selected_gap_tail_critical_after);
             result.maximum_local_energy_level_quantity = std::max(
                 result.maximum_local_energy_level_quantity, local_q_after);
             result.maximum_nonlocal_energy_level_quantity = std::max(
@@ -490,6 +504,9 @@ EvolutionResult TrajectoryAnalyzer::evolve(
             result.maximum_far_nonlocal_energy_level_quantity = std::max(
                 result.maximum_far_nonlocal_energy_level_quantity,
                 far_nonlocal_q_after);
+            result.maximum_selected_gap_tail_energy_level_quantity = std::max(
+                result.maximum_selected_gap_tail_energy_level_quantity,
+                selected_gap_tail_q_after);
             result.integral_absolute_local_vortex +=
                 0.5L * dt * (std::abs(partition_before.local) +
                              std::abs(partition_after.local));

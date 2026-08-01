@@ -87,8 +87,13 @@ source file:
   time-step refinement diagnostics;
 - `TriadPartitioner` owns the single exact scale-ratio classification used by
   forward objectives, adjoints, trajectory sampling, and proof checks;
+  `TriadSelection` represents arbitrary dyadic gap intervals and tails without
+  adding a new hard-coded objective for every separation scale;
 - `TriadLedger` resolves nonlocal stretching by dyadic gap and by whether the
   low mode is the advecting, advected, or target Fourier factor;
+- `TriadCommutator` pairs low-advecting interactions with their exact
+  reality/incompressibility partners and certifies the resulting low/high
+  frequency gain after enstrophy weighting;
 - `TriadVerifier` owns direct interaction analysis, detailed triad
   cancellation, local/nonlocal flux partitioning, and certificate aggregation;
 - `StateAnalyzer` and `StateFamilyAnalyzer` measure shell decay, active modes,
@@ -106,7 +111,7 @@ source file:
 self-test; state construction, trajectory diagnostics, triad verification,
 forward dynamics, the discrete adjoint, constrained optimization, CLI, and
 report generation are separate compilation units. The next mathematical task
-is cutoff/time/viscosity continuation of the adjoint-generated extremizers.
+is a cutoff-independent paraproduct estimate for the measured dyadic tail.
 This keeps rebuilds dependency-free and makes each layer independently
 replaceable.
 
@@ -207,6 +212,20 @@ its limitations are recorded under
 `high/low > 4`. The latter has a nonzero K3 finite-difference gradient oracle
 error of `4.84e-13`. Its first cutoff continuation is under
 `proof/l4/analysis/far-nonlocal-h4-cap100/`.
+
+Arbitrary deeper tails use the same exact direct forward/VJP kernels:
+
+```bash
+./build/navier_stokes_lab adversary --cutoffs 7 \
+  --dynamic-objective critical-gap-tail-integral \
+  --minimum-dyadic-gap 3 \
+  --dynamic-optimizer gradient --gradient-method lbfgs \
+  --sobolev-order 4 --sobolev-cap 100 --threads 12
+```
+
+Here dyadic gap `m` means `high/low > 2^m`; the selected objective sums every
+gap at least `m`. Its first projection-controlled run is under
+`proof/l4/analysis/gap-tail-min3-h4-cap100/`.
 
 Long searches can resume from a saved state without repeating lower cutoffs:
 

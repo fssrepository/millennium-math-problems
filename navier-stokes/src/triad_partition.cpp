@@ -34,32 +34,19 @@ int TriadPartitioner::dyadic_gap(
 
 bool TriadPartitioner::includes(
     WaveVector first, WaveVector second, WaveVector third,
-    TriadPartition partition) {
-    if (partition == TriadPartition::all) {
+    TriadSelection selection) {
+    if (selection.is_all()) {
         return true;
     }
-    const int gap = dyadic_gap(first, second, third);
-    switch (partition) {
-        case TriadPartition::all:
-            return true;
-        case TriadPartition::local:
-            return gap == 0;
-        case TriadPartition::nonlocal:
-            return gap >= 1;
-        case TriadPartition::near_nonlocal:
-            return gap == 1;
-        case TriadPartition::far_nonlocal:
-            return gap >= 2;
-    }
-    return false;
+    return selection.includes_gap(dyadic_gap(first, second, third));
 }
 
 bool TriadPartitioner::includes(
     const SpectralState& state, InteractionIndex interaction,
-    TriadPartition partition) {
+    TriadSelection selection) {
     const auto [first, second, third] = interaction;
     return includes(state.waves[first], state.waves[second],
-                    state.waves[third], partition);
+                    state.waves[third], selection);
 }
 
 }  // namespace lemma

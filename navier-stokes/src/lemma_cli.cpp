@@ -119,6 +119,9 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
             options.dynamic_optimizer = next_value(argc, argv, index, name);
         } else if (name == "--gradient-method") {
             options.gradient_method = next_value(argc, argv, index, name);
+        } else if (name == "--minimum-dyadic-gap") {
+            options.minimum_dyadic_gap =
+                std::stoi(next_value(argc, argv, index, name));
         } else if (name == "--threads") {
             options.threads = std::stoi(next_value(argc, argv, index, name));
         } else if (name == "--backend") {
@@ -137,6 +140,8 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
         !std::isfinite(options.evolution_time) ||
         !(options.time_step > 0.0) || !std::isfinite(options.time_step) ||
         options.sobolev_order < 0 || options.sobolev_order > 8 ||
+        options.minimum_dyadic_gap < 1 ||
+        options.minimum_dyadic_gap > 30 ||
         !(options.sobolev_cap >= 0.0) || !std::isfinite(options.sobolev_cap) ||
         ((options.sobolev_order == 0) != (options.sobolev_cap == 0.0))) {
         throw std::invalid_argument(
@@ -148,12 +153,13 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
         options.dynamic_objective != "critical-nonlocal-integral" &&
         options.dynamic_objective != "critical-near-nonlocal-integral" &&
         options.dynamic_objective != "critical-far-nonlocal-integral" &&
+        options.dynamic_objective != "critical-gap-tail-integral" &&
         options.dynamic_objective != "max-q" &&
         options.dynamic_objective != "terminal-q" &&
         options.dynamic_objective != "q-gain" &&
         options.dynamic_objective != "q-increase") {
         throw std::invalid_argument(
-            "--dynamic-objective must be critical-integral, critical-local-integral, critical-nonlocal-integral, critical-near-nonlocal-integral, critical-far-nonlocal-integral, max-q, terminal-q, q-gain, or q-increase");
+            "--dynamic-objective must be critical-integral, critical-local-integral, critical-nonlocal-integral, critical-near-nonlocal-integral, critical-far-nonlocal-integral, critical-gap-tail-integral, max-q, terminal-q, q-gain, or q-increase");
     }
     if (options.dynamic_optimizer != "gradient" &&
         options.dynamic_optimizer != "mutate" &&
@@ -241,7 +247,8 @@ void LemmaCli::print_adversary_help(std::ostream& out) {
         << "  --dynamic-warm-state PATH  replay a TSV as first dynamic warm start\n"
         << "  --sobolev-order M     homogeneous initial H^M constraint\n"
         << "  --sobolev-cap VALUE   cutoff-independent squared H^M cap\n"
-        << "  --dynamic-objective NAME  total/local/nonlocal/near/far critical integral, max-q, terminal-q, q-increase, or q-gain\n"
+        << "  --dynamic-objective NAME  total/local/nonlocal/near/far/gap-tail critical integral, max-q, terminal-q, q-increase, or q-gain\n"
+        << "  --minimum-dyadic-gap M  tail objective selects triads with gap >= M\n"
         << "  --dynamic-optimizer NAME  gradient, mutate, or hybrid\n"
         << "  --gradient-method NAME  steepest or projected lbfgs\n"
         << "  --threads N           worker threads; 0 uses up to 12 CPUs\n"

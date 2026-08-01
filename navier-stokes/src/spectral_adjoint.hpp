@@ -35,7 +35,7 @@ public:
     [[nodiscard]] QTrajectoryGradient critical_integral_gradient(
         const SpectralState& initial, SpectralReal viscosity,
         SpectralReal time_step, int steps,
-        TriadPartition partition = TriadPartition::all) const;
+        TriadSelection selection = {}) const;
 
 private:
     [[nodiscard]] QTrajectoryGradient reverse_from_step(

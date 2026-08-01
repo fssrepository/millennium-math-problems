@@ -21,16 +21,16 @@ public:
 
     [[nodiscard]] StaticObjective evaluate(
         const SpectralState& state,
-        TriadPartition partition = TriadPartition::all) const;
+        TriadSelection selection = {}) const;
     [[nodiscard]] SpectralIncrement energy_level_gradient(
         const SpectralState& state) const;
     [[nodiscard]] SpectralIncrement critical_integrand_gradient(
         const SpectralState& state,
-        TriadPartition partition = TriadPartition::all) const;
+        TriadSelection selection = {}) const;
 
 private:
     [[nodiscard]] SpectralIncrement signed_stretching_gradient(
-        const SpectralState& state, TriadPartition partition) const;
+        const SpectralState& state, TriadSelection selection) const;
     const SpectralDynamics& dynamics_;
 };
 

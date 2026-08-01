@@ -74,6 +74,7 @@ StateAnalysisReport SpectralStateAnalyzer::analyze(
     report.modes = static_cast<int>(state.waves.size());
     report.objective = objective.evaluate(state);
     report.triad_ledger = TriadLedger::analyze(state);
+    report.triad_commutator = TriadCommutator::analyze(state);
     report.triad_ledger_objective_residual = std::abs(
         report.triad_ledger.signed_total -
         report.objective.signed_vortex_stretching);
@@ -251,6 +252,29 @@ void StateAnalysisReporter::write_console(const StateAnalysisReport& report,
         }
         out << '\n';
     }
+    out << "\ncommutator_gap,pairs,signed_paired_stretching,"
+           "absolute_unpaired_stretching,absolute_paired_stretching,"
+           "cancellation_gain,unweighted_residual,weighted_residual,"
+           "maximum_frequency_gain_ratio\n";
+    for (const TriadCommutatorGapRow& gap :
+         report.triad_commutator.gaps) {
+        out << gap.dyadic_gap << ',' << gap.pairs << ','
+            << static_cast<double>(gap.signed_paired_stretching) << ','
+            << static_cast<double>(gap.absolute_unpaired_stretching) << ','
+            << static_cast<double>(gap.absolute_paired_stretching) << ','
+            << static_cast<double>(
+                   gap.absolute_paired_stretching /
+                   std::max(1e-30L, gap.absolute_unpaired_stretching))
+            << ','
+            << static_cast<double>(
+                   gap.relative_unweighted_cancellation_residual)
+            << ','
+            << static_cast<double>(
+                   gap.relative_weighted_identity_residual)
+            << ','
+            << static_cast<double>(gap.maximum_frequency_gain_ratio)
+            << '\n';
+    }
     out << "\ntop_mode,kx,ky,kz,energy,q_gradient_norm\n";
     for (std::size_t rank = 0; rank < report.top_modes.size(); ++rank) {
         const StateModeAnalysis& mode = report.top_modes[rank];
@@ -334,7 +358,53 @@ void StateAnalysisReporter::write_json(const StateAnalysisReport& report,
                  ? "\n"
                  : ",\n");
     }
-    out << "  ],\n  \"shells\": [\n";
+    out << "  ],\n  \"triad_commutator\": {"
+        << "\"pairs\": " << report.triad_commutator.pairs
+        << ", \"signed_paired_stretching\": "
+        << static_cast<double>(
+               report.triad_commutator.signed_paired_stretching)
+        << ", \"absolute_unpaired_stretching\": "
+        << static_cast<double>(
+               report.triad_commutator.absolute_unpaired_stretching)
+        << ", \"absolute_paired_stretching\": "
+        << static_cast<double>(
+               report.triad_commutator.absolute_paired_stretching)
+        << ", \"relative_unweighted_cancellation_residual\": "
+        << static_cast<double>(report.triad_commutator
+                                   .relative_unweighted_cancellation_residual)
+        << ", \"relative_weighted_identity_residual\": "
+        << static_cast<double>(report.triad_commutator
+                                   .relative_weighted_identity_residual)
+        << ", \"maximum_frequency_gain_ratio\": "
+        << static_cast<double>(
+               report.triad_commutator.maximum_frequency_gain_ratio)
+        << ", \"gaps\": [";
+    for (std::size_t index = 0;
+         index < report.triad_commutator.gaps.size(); ++index) {
+        const TriadCommutatorGapRow& gap =
+            report.triad_commutator.gaps[index];
+        out << "{\"dyadic_gap\": " << gap.dyadic_gap
+            << ", \"pairs\": " << gap.pairs
+            << ", \"signed_paired_stretching\": "
+            << static_cast<double>(gap.signed_paired_stretching)
+            << ", \"absolute_unpaired_stretching\": "
+            << static_cast<double>(gap.absolute_unpaired_stretching)
+            << ", \"absolute_paired_stretching\": "
+            << static_cast<double>(gap.absolute_paired_stretching)
+            << ", \"relative_unweighted_cancellation_residual\": "
+            << static_cast<double>(
+                   gap.relative_unweighted_cancellation_residual)
+            << ", \"relative_weighted_identity_residual\": "
+            << static_cast<double>(
+                   gap.relative_weighted_identity_residual)
+            << ", \"maximum_frequency_gain_ratio\": "
+            << static_cast<double>(gap.maximum_frequency_gain_ratio)
+            << '}'
+            << (index + 1 == report.triad_commutator.gaps.size()
+                    ? ""
+                    : ", ");
+    }
+    out << "]},\n  \"shells\": [\n";
     for (std::size_t index = 0; index < report.shells.size(); ++index) {
         const StateShellAnalysis& shell = report.shells[index];
         out << "    {\"shell\": " << shell.shell

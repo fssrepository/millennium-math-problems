@@ -1,6 +1,7 @@
 #pragma once
 
 #include "spectral_objective.hpp"
+#include "triad_commutator.hpp"
 #include "triad_ledger.hpp"
 
 #include <iosfwd>
@@ -54,6 +55,7 @@ struct StateAnalysisReport {
     SpectralReal triad_ledger_objective_residual = 0.0L;
     StaticObjective objective;
     TriadLedgerReport triad_ledger;
+    TriadCommutatorReport triad_commutator;
     std::vector<StateShellAnalysis> shells;
     std::vector<StateModeAnalysis> top_modes;
     std::vector<StateLineSample> q_line_profile;

@@ -13,7 +13,7 @@ public:
     [[nodiscard]] SpectralIncrement advection_direct(
         const SpectralState& state) const;
     [[nodiscard]] SpectralIncrement advection_direct_partition(
-        const SpectralState& state, TriadPartition partition) const;
+        const SpectralState& state, TriadSelection selection) const;
     [[nodiscard]] SpectralIncrement advection_fft(
         const SpectralState& state) const;
     [[nodiscard]] SpectralIncrement advection_jvp_direct(
@@ -28,7 +28,7 @@ public:
     [[nodiscard]] SpectralIncrement advection_vjp_direct_partition(
         const SpectralState& state,
         const SpectralIncrement& output_cotangent,
-        TriadPartition partition) const;
+        TriadSelection selection) const;
     [[nodiscard]] SpectralIncrement advection_vjp_fft(
         const SpectralState& state,
         const SpectralIncrement& output_cotangent) const;
