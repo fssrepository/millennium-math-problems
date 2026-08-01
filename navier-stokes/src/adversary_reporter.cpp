@@ -72,7 +72,7 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
             << ", accepted_mutations=" << row.dynamic_accepted_mutations
             << ", accepted_gradient="
             << row.dynamic_accepted_gradient_steps
-            << ", initial_sobolev="
+            << ", final_sobolev="
             << static_cast<double>(row.dynamic_sobolev_value);
         if (!row.dynamic_gradient_trace.empty()) {
             const auto& final_trace = row.dynamic_gradient_trace.back();
@@ -180,7 +180,7 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
             << row.dynamic_accepted_mutations
             << ", \"dynamic_accepted_gradient_steps\": "
             << row.dynamic_accepted_gradient_steps
-            << ", \"dynamic_initial_sobolev_value\": "
+            << ", \"dynamic_final_sobolev_value\": "
             << static_cast<double>(row.dynamic_sobolev_value)
             << ", \"dynamic_gradient_trace\": [";
         for (std::size_t trace_index = 0;
@@ -200,6 +200,8 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
                 << static_cast<double>(point.sobolev_value)
                 << ", \"line_search_evaluations\": "
                 << point.line_search_evaluations
+                << ", \"used_steepest_fallback\": "
+                << (point.used_steepest_fallback ? "true" : "false")
                 << ", \"accepted\": "
                 << (point.accepted ? "true" : "false") << '}'
                 << (trace_index + 1 == row.dynamic_gradient_trace.size()

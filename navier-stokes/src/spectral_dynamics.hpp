@@ -1,6 +1,7 @@
 #pragma once
 
 #include "spectral_galerkin.hpp"
+#include "triad_partition.hpp"
 #include "spectral_state.hpp"
 
 namespace lemma {
@@ -11,6 +12,8 @@ public:
 
     [[nodiscard]] SpectralIncrement advection_direct(
         const SpectralState& state) const;
+    [[nodiscard]] SpectralIncrement advection_direct_partition(
+        const SpectralState& state, TriadPartition partition) const;
     [[nodiscard]] SpectralIncrement advection_fft(
         const SpectralState& state) const;
     [[nodiscard]] SpectralIncrement advection_jvp_direct(
@@ -22,6 +25,10 @@ public:
     [[nodiscard]] SpectralIncrement advection_vjp_direct(
         const SpectralState& state,
         const SpectralIncrement& output_cotangent) const;
+    [[nodiscard]] SpectralIncrement advection_vjp_direct_partition(
+        const SpectralState& state,
+        const SpectralIncrement& output_cotangent,
+        TriadPartition partition) const;
     [[nodiscard]] SpectralIncrement advection_vjp_fft(
         const SpectralState& state,
         const SpectralIncrement& output_cotangent) const;

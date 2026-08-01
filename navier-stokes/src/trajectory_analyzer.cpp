@@ -1,5 +1,7 @@
 #include "trajectory_analyzer.hpp"
 
+#include "triad_partition.hpp"
+
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -91,11 +93,7 @@ TrajectoryAnalyzer::evaluate_vortex_partition(
         const SpectralReal enstrophy_transfer =
             static_cast<SpectralReal>(norm_squared(k)) *
             std::real(dot_hermitian(state.velocity[target_index], pair));
-        const SpectralInteger smallest = std::min(
-            {norm_squared(k), norm_squared(p), norm_squared(q)});
-        const SpectralInteger largest = std::max(
-            {norm_squared(k), norm_squared(p), norm_squared(q)});
-        if (largest <= 4 * smallest) {
+        if (TriadPartitioner::is_local(k, p, q)) {
             result.local += enstrophy_transfer;
             result.absolute_local_pairs += std::abs(enstrophy_transfer);
         } else {

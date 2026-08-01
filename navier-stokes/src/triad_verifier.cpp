@@ -1,5 +1,7 @@
 #include "triad_verifier.hpp"
 
+#include "triad_partition.hpp"
+
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -75,12 +77,7 @@ TriadVerifier::InteractionAnalysis TriadVerifier::analyze_interactions(
 
         const SpectralReal transfer = std::real(dot_hermitian(
             state.velocity[target_index], pair_contribution));
-        const SpectralInteger k2 = norm_squared(k);
-        const SpectralInteger p2 = norm_squared(p);
-        const SpectralInteger q2 = norm_squared(q);
-        const SpectralInteger smallest = std::min({k2, p2, q2});
-        const SpectralInteger largest = std::max({k2, p2, q2});
-        if (largest <= 4 * smallest) {
+        if (TriadPartitioner::is_local(k, p, q)) {
             result.local_energy_transfer[target_index] += transfer;
             result.local_absolute_transfer += std::abs(transfer);
         } else {

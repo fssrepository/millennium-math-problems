@@ -47,10 +47,18 @@ SpectralDynamics::SpectralDynamics(const SpectralGalerkin& configuration)
 
 SpectralIncrement SpectralDynamics::advection_direct(
     const SpectralState& state) const {
+    return advection_direct_partition(state, TriadPartition::all);
+}
+
+SpectralIncrement SpectralDynamics::advection_direct_partition(
+    const SpectralState& state, TriadPartition partition) const {
     SpectralIncrement advection_result(state.waves.size());
     const SpectralComplex imaginary_unit{0.0L, 1.0L};
     for (const InteractionIndex interaction :
          SpectralStateOps::interactions(state)) {
+        if (!TriadPartitioner::includes(state, interaction, partition)) {
+            continue;
+        }
         const auto [p_index, q_index, target_index] = interaction;
         const ComplexVector& up = state.velocity[p_index];
         const SpectralComplex coefficient =
@@ -127,6 +135,14 @@ SpectralIncrement SpectralDynamics::advection_vjp(
 SpectralIncrement SpectralDynamics::advection_vjp_direct(
     const SpectralState& state,
     const SpectralIncrement& output_cotangent) const {
+    return advection_vjp_direct_partition(
+        state, output_cotangent, TriadPartition::all);
+}
+
+SpectralIncrement SpectralDynamics::advection_vjp_direct_partition(
+    const SpectralState& state,
+    const SpectralIncrement& output_cotangent,
+    TriadPartition partition) const {
     require_matching_increment(state, output_cotangent);
     SpectralIncrement cotangent = output_cotangent;
     project_increment(cotangent, state);
@@ -134,6 +150,9 @@ SpectralIncrement SpectralDynamics::advection_vjp_direct(
     const SpectralComplex minus_imaginary_unit{0.0L, -1.0L};
     for (const InteractionIndex interaction :
          SpectralStateOps::interactions(state)) {
+        if (!TriadPartitioner::includes(state, interaction, partition)) {
+            continue;
+        }
         const auto [p_index, q_index, target_index] = interaction;
         const ComplexVector& target_cotangent = cotangent[target_index];
         const SpectralComplex first_coefficient =

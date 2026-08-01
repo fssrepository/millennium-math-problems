@@ -30,6 +30,7 @@ struct GradientIterationRecord {
     SpectralReal accepted_step = 0.0L;
     SpectralReal sobolev_value = 0.0L;
     int line_search_evaluations = 0;
+    bool used_steepest_fallback = false;
     bool accepted = false;
 };
 

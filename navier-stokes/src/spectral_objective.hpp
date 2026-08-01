@@ -20,15 +20,17 @@ public:
     explicit SpectralObjective(const SpectralDynamics& dynamics);
 
     [[nodiscard]] StaticObjective evaluate(
-        const SpectralState& state) const;
+        const SpectralState& state,
+        TriadPartition partition = TriadPartition::all) const;
     [[nodiscard]] SpectralIncrement energy_level_gradient(
         const SpectralState& state) const;
     [[nodiscard]] SpectralIncrement critical_integrand_gradient(
-        const SpectralState& state) const;
+        const SpectralState& state,
+        TriadPartition partition = TriadPartition::all) const;
 
 private:
     [[nodiscard]] SpectralIncrement signed_stretching_gradient(
-        const SpectralState& state) const;
+        const SpectralState& state, TriadPartition partition) const;
     const SpectralDynamics& dynamics_;
 };
 

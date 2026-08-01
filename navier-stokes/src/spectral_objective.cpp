@@ -8,8 +8,11 @@ namespace lemma {
 SpectralObjective::SpectralObjective(const SpectralDynamics& dynamics)
     : dynamics_(dynamics) {}
 
-StaticObjective SpectralObjective::evaluate(const SpectralState& state) const {
-    const SpectralIncrement advection = dynamics_.advection(state);
+StaticObjective SpectralObjective::evaluate(
+    const SpectralState& state, TriadPartition partition) const {
+    const SpectralIncrement advection = partition == TriadPartition::all
+        ? dynamics_.advection(state)
+        : dynamics_.advection_direct_partition(state, partition);
     StaticObjective result;
     for (std::size_t mode = 0; mode < state.waves.size(); ++mode) {
         const SpectralReal wave2 =
@@ -50,7 +53,7 @@ SpectralIncrement SpectralObjective::energy_level_gradient(
     }
 
     const SpectralIncrement stretching_gradient =
-        signed_stretching_gradient(state);
+        signed_stretching_gradient(state, TriadPartition::all);
 
     const SpectralReal stretching = objective.signed_vortex_stretching;
     const SpectralReal stretching2 = stretching * stretching;
@@ -87,8 +90,8 @@ SpectralIncrement SpectralObjective::energy_level_gradient(
 }
 
 SpectralIncrement SpectralObjective::critical_integrand_gradient(
-    const SpectralState& state) const {
-    const StaticObjective objective = evaluate(state);
+    const SpectralState& state, TriadPartition partition) const {
+    const StaticObjective objective = evaluate(state, partition);
     SpectralIncrement result(state.waves.size());
     if (!(objective.enstrophy > 0.0L) ||
         !(objective.palinstrophy > 0.0L) ||
@@ -96,7 +99,7 @@ SpectralIncrement SpectralObjective::critical_integrand_gradient(
         return result;
     }
     const SpectralIncrement stretching_gradient =
-        signed_stretching_gradient(state);
+        signed_stretching_gradient(state, partition);
     const SpectralReal stretching = objective.signed_vortex_stretching;
     const SpectralReal stretching2 = stretching * stretching;
     const SpectralReal stretching4 = stretching2 * stretching2;
@@ -130,8 +133,10 @@ SpectralIncrement SpectralObjective::critical_integrand_gradient(
 }
 
 SpectralIncrement SpectralObjective::signed_stretching_gradient(
-    const SpectralState& state) const {
-    const SpectralIncrement advection = dynamics_.advection(state);
+    const SpectralState& state, TriadPartition partition) const {
+    const SpectralIncrement advection = partition == TriadPartition::all
+        ? dynamics_.advection(state)
+        : dynamics_.advection_direct_partition(state, partition);
     SpectralIncrement weighted_velocity(state.waves.size());
     for (std::size_t mode = 0; mode < state.waves.size(); ++mode) {
         const SpectralReal wave2 =
@@ -141,8 +146,10 @@ SpectralIncrement SpectralObjective::signed_stretching_gradient(
                 wave2 * state.velocity[mode][component];
         }
     }
-    SpectralIncrement result =
-        dynamics_.advection_vjp(state, weighted_velocity);
+    SpectralIncrement result = partition == TriadPartition::all
+        ? dynamics_.advection_vjp(state, weighted_velocity)
+        : dynamics_.advection_vjp_direct_partition(
+              state, weighted_velocity, partition);
     for (std::size_t mode = 0; mode < state.waves.size(); ++mode) {
         const SpectralReal wave2 =
             static_cast<SpectralReal>(norm_squared(state.waves[mode]));

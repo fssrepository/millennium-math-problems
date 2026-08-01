@@ -23,6 +23,7 @@ add_executable(navier_stokes_lab
     src/spectral_state.cpp
     src/state_analysis.cpp
     src/trajectory_analyzer.cpp
+    src/triad_partition.cpp
     src/triad_verifier.cpp
 )
 target_include_directories(navier_stokes_lab PRIVATE src)

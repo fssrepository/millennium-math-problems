@@ -116,7 +116,7 @@ QTrajectoryGradient SpectralAdjoint::q_increase_gradient(
 
 QTrajectoryGradient SpectralAdjoint::critical_integral_gradient(
     const SpectralState& initial, SpectralReal viscosity,
-    SpectralReal time_step, int steps) const {
+    SpectralReal time_step, int steps, TriadPartition partition) const {
     const std::vector<SpectralState> checkpoints = build_checkpoints(
         dynamics_, initial, viscosity, time_step, steps);
     QTrajectoryGradient result;
@@ -142,11 +142,13 @@ QTrajectoryGradient SpectralAdjoint::critical_integral_gradient(
             (step == 0 || step == steps) ? 0.5L * time_step : time_step;
         result.objective_value +=
             weight * objective_
-                         .evaluate(checkpoints[static_cast<std::size_t>(step)])
+                         .evaluate(
+                             checkpoints[static_cast<std::size_t>(step)],
+                             partition)
                          .critical_integrand;
     }
     result.initial_gradient = objective_.critical_integrand_gradient(
-        checkpoints.back());
+        checkpoints.back(), partition);
     for (ComplexVector& value : result.initial_gradient) {
         for (SpectralComplex& component : value) {
             component *= 0.5L * time_step;
@@ -160,7 +162,7 @@ QTrajectoryGradient SpectralAdjoint::critical_integral_gradient(
             step == 0 ? 0.5L * time_step : time_step;
         const SpectralIncrement source =
             objective_.critical_integrand_gradient(
-                checkpoints[static_cast<std::size_t>(step)]);
+                checkpoints[static_cast<std::size_t>(step)], partition);
         add_scaled(result.initial_gradient, source, weight);
     }
     return result;

@@ -144,12 +144,14 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
     }
     validate_threads(options.threads);
     if (options.dynamic_objective != "critical-integral" &&
+        options.dynamic_objective != "critical-local-integral" &&
+        options.dynamic_objective != "critical-nonlocal-integral" &&
         options.dynamic_objective != "max-q" &&
         options.dynamic_objective != "terminal-q" &&
         options.dynamic_objective != "q-gain" &&
         options.dynamic_objective != "q-increase") {
         throw std::invalid_argument(
-            "--dynamic-objective must be critical-integral, max-q, terminal-q, q-gain, or q-increase");
+            "--dynamic-objective must be critical-integral, critical-local-integral, critical-nonlocal-integral, max-q, terminal-q, q-gain, or q-increase");
     }
     if (options.dynamic_optimizer != "gradient" &&
         options.dynamic_optimizer != "mutate" &&
@@ -237,7 +239,7 @@ void LemmaCli::print_adversary_help(std::ostream& out) {
         << "  --dynamic-warm-state PATH  replay a TSV as first dynamic warm start\n"
         << "  --sobolev-order M     homogeneous initial H^M constraint\n"
         << "  --sobolev-cap VALUE   cutoff-independent squared H^M cap\n"
-        << "  --dynamic-objective NAME  max-q, terminal-q, q-increase, q-gain, or critical-integral\n"
+        << "  --dynamic-objective NAME  total/local/nonlocal critical integral, max-q, terminal-q, q-increase, or q-gain\n"
         << "  --dynamic-optimizer NAME  gradient, mutate, or hybrid\n"
         << "  --gradient-method NAME  steepest or projected lbfgs\n"
         << "  --threads N           worker threads; 0 uses up to 12 CPUs\n"

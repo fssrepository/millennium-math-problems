@@ -25,6 +25,7 @@ mkdir -p build
   src/spectral_fft_operator.cpp src/spectral_galerkin.cpp \
   src/spectral_objective.cpp src/spectral_state.cpp src/state_analysis.cpp \
   src/trajectory_analyzer.cpp \
+  src/triad_partition.cpp \
   src/triad_verifier.cpp \
   -o build/navier_stokes_lab
 build/navier_stokes_lab self-test

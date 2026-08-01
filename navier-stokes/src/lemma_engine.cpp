@@ -75,6 +75,12 @@ Real dynamic_objective_value(const EvolutionResult& evolution,
     if (objective == "critical-integral") {
         return evolution.integral_critical;
     }
+    if (objective == "critical-local-integral") {
+        return evolution.integral_local_critical;
+    }
+    if (objective == "critical-nonlocal-integral") {
+        return evolution.integral_nonlocal_critical;
+    }
     if (objective == "max-q") {
         return evolution.maximum_energy_level_quantity;
     }
@@ -109,9 +115,14 @@ DynamicAdversaryResult optimize_dynamic(
                               static_cast<std::uint64_t>(SpectralStateOps::cutoff(primary_start)));
     DynamicAdversaryResult result;
     const InitialSobolevConstraint sobolev(sobolev_order, sobolev_cap);
+    const bool collect_search_partition =
+        objective == "critical-local-integral" ||
+        objective == "critical-nonlocal-integral";
     result.state = primary_start;
     result.initial_objective = active_trajectory_analyzer.evaluate_static(result.state);
-    result.evolution = active_trajectory_analyzer.evolve(result.state, viscosity, final_time, dt);
+    result.evolution = active_trajectory_analyzer.evolve(
+        result.state, viscosity, final_time, dt,
+        collect_search_partition);
     ++result.evaluations;
     bool result_admissible = sobolev.admissible(result.state);
 
@@ -124,7 +135,9 @@ DynamicAdversaryResult optimize_dynamic(
             : SpectralStateFactory::project(
                   *secondary_start, target_cutoff);
         const EvolutionResult secondary_evolution =
-            active_trajectory_analyzer.evolve(secondary, viscosity, final_time, dt);
+            active_trajectory_analyzer.evolve(
+                secondary, viscosity, final_time, dt,
+                collect_search_partition);
         ++result.evaluations;
         const bool secondary_admissible = sobolev.admissible(secondary);
         if (secondary_admissible &&
@@ -160,7 +173,9 @@ DynamicAdversaryResult optimize_dynamic(
             continue;
         }
         const EvolutionResult evolution =
-            active_trajectory_analyzer.evolve(candidate, viscosity, final_time, dt);
+            active_trajectory_analyzer.evolve(
+                candidate, viscosity, final_time, dt,
+                collect_search_partition);
         ++result.evaluations;
         if (evolution.finite &&
             dynamic_objective_value(evolution, objective) >
@@ -192,7 +207,9 @@ DynamicAdversaryResult optimize_dynamic(
         result.state = gradient.state;
         result.initial_objective = active_trajectory_analyzer.evaluate_static(result.state);
         result.evolution =
-            active_trajectory_analyzer.evolve(result.state, viscosity, final_time, dt);
+            active_trajectory_analyzer.evolve(
+                result.state, viscosity, final_time, dt,
+                collect_search_partition);
         result.evaluations += gradient.trajectory_evaluations + 1;
         result.accepted_gradient_steps = gradient.accepted_steps;
         result.gradient_trace = gradient.trace;
@@ -731,6 +748,74 @@ bool self_test(std::ostream& out) {
                          critical_integral_directional_finite_difference)));
     const bool critical_integral_gradient_ok =
         critical_integral_gradient_error < 1e-9L;
+    SpectralState partition_state =
+        SpectralStateFactory::random(2, adjoint_generator);
+    SpectralState partition_tangent_state =
+        SpectralStateFactory::random(2, adjoint_generator);
+    SpectralStateOps::normalize_energy(partition_state);
+    SpectralStateOps::normalize_energy(partition_tangent_state);
+    const SpectralIncrement& partition_tangent =
+        partition_tangent_state.velocity;
+    const SpectralState partition_plus_state =
+        active_dynamics.add_increment(
+            partition_state, partition_tangent,
+            finite_difference_step);
+    const SpectralState partition_minus_state =
+        active_dynamics.add_increment(
+            partition_state, partition_tangent,
+            -finite_difference_step);
+    auto partition_integral_gradient_error = [&](TriadPartition partition) {
+        const QTrajectoryGradient partition_gradient =
+            active_adjoint.critical_integral_gradient(
+                partition_state, adjoint_viscosity, adjoint_dt,
+                trajectory_steps, partition);
+        const Real directional_adjoint = increment_inner_product(
+            partition_gradient.initial_gradient, partition_tangent);
+        auto partition_integral = [&](SpectralState state) {
+            StaticObjective previous =
+                active_objective.evaluate(state, partition);
+            Real integral = 0.0L;
+            for (int step = 0; step < trajectory_steps; ++step) {
+                active_dynamics.rk4_step(
+                    state, adjoint_viscosity, adjoint_dt);
+                const StaticObjective current =
+                    active_objective.evaluate(state, partition);
+                integral += 0.5L * adjoint_dt *
+                            (previous.critical_integrand +
+                             current.critical_integrand);
+                previous = current;
+            }
+            return integral;
+        };
+        const Real directional_finite_difference =
+            (partition_integral(partition_plus_state) -
+             partition_integral(partition_minus_state)) /
+            (2.0L * finite_difference_step);
+        return std::abs(directional_adjoint -
+                        directional_finite_difference) /
+               std::max(
+                   1e-30L,
+                   std::max(std::abs(directional_adjoint),
+                            std::abs(directional_finite_difference)));
+    };
+    const Real local_integral_gradient_error =
+        partition_integral_gradient_error(TriadPartition::local);
+    const Real nonlocal_integral_gradient_error =
+        partition_integral_gradient_error(TriadPartition::nonlocal);
+    const bool triad_partition_ok =
+        TriadPartitioner::is_local(
+            WaveVector{1, 0, 0}, WaveVector{0, 1, 0},
+            WaveVector{1, 1, 0}) &&
+        !TriadPartitioner::is_local(
+            WaveVector{1, 0, 0}, WaveVector{2, 0, 0},
+            WaveVector{3, 0, 0}) &&
+        TriadPartitioner::includes(
+            WaveVector{1, 0, 0}, WaveVector{2, 0, 0},
+            WaveVector{3, 0, 0}, TriadPartition::nonlocal);
+    const bool partition_integral_gradients_ok =
+        triad_partition_ok &&
+        local_integral_gradient_error < 1e-9L &&
+        nonlocal_integral_gradient_error < 1e-9L;
     GradientSearchOptions gradient_options;
     gradient_options.iterations = 3;
     gradient_options.line_search_steps = 8;
@@ -835,6 +920,12 @@ bool self_test(std::ostream& out) {
         << (critical_integral_gradient_ok ? "PASS" : "FAIL")
         << " (relative error="
         << static_cast<double>(critical_integral_gradient_error) << ")\n"
+        << "partitioned L4 integral gradient test: "
+        << (partition_integral_gradients_ok ? "PASS" : "FAIL")
+        << " (classification=" << (triad_partition_ok ? "exact" : "FAILED")
+        << ", local=" << static_cast<double>(local_integral_gradient_error)
+        << ", nonlocal="
+        << static_cast<double>(nonlocal_integral_gradient_error) << ")\n"
         << "projected gradient adversary test: "
         << (gradient_search_ok ? "PASS" : "FAIL")
         << " (Q " << static_cast<double>(gradient_search.initial_objective)
@@ -858,7 +949,8 @@ bool self_test(std::ostream& out) {
            triad_ok && fft_ok && fft_adjoint_ok && adjoint_ok && q_gradient_ok &&
            trajectory_gradient_ok && q_gain_gradient_ok &&
            q_increase_gradient_ok && q_increase_constraints_ok &&
-           critical_integral_gradient_ok && gradient_search_ok &&
+           critical_integral_gradient_ok &&
+           partition_integral_gradients_ok && gradient_search_ok &&
            adversary_ok && q_derivative_ok && evolution_ok;
 }
 
@@ -1084,6 +1176,7 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
                 point.accepted_step,
                 point.sobolev_value,
                 point.line_search_evaluations,
+                point.used_steepest_fallback,
                 point.accepted});
         }
         report.rows.push_back(row);
