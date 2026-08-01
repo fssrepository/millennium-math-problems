@@ -64,6 +64,7 @@ struct DynamicAdversaryResult {
     Real time_step_relative_error = 0.0L;
     Real search_initial_objective = 0.0L;
     Real search_final_objective = 0.0L;
+    std::vector<GradientIterationRecord> gradient_trace;
     int accepted_mutations = 0;
     int accepted_gradient_steps = 0;
     int evaluations = 0;
@@ -188,6 +189,7 @@ DynamicAdversaryResult optimize_dynamic(
             active_trajectory_analyzer.evolve(result.state, viscosity, final_time, dt);
         result.evaluations += gradient.trajectory_evaluations + 1;
         result.accepted_gradient_steps = gradient.accepted_steps;
+        result.gradient_trace = gradient.trace;
     }
     result.search_final_objective =
         dynamic_objective_value(result.evolution, objective);
@@ -1063,6 +1065,18 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
             options.sobolev_order,
             static_cast<Real>(options.sobolev_cap))
                                          .value(dynamic.state);
+        row.dynamic_gradient_trace.reserve(dynamic.gradient_trace.size());
+        for (const GradientIterationRecord& point : dynamic.gradient_trace) {
+            row.dynamic_gradient_trace.push_back(AdversaryGradientTracePoint{
+                point.iteration,
+                point.objective_before,
+                point.objective_after,
+                point.projected_gradient_norm,
+                point.accepted_step,
+                point.sobolev_value,
+                point.line_search_evaluations,
+                point.accepted});
+        }
         report.rows.push_back(row);
     }
     AdversaryReporter::write_console(report, out);

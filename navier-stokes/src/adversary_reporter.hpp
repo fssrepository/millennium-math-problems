@@ -8,6 +8,17 @@
 
 namespace lemma {
 
+struct AdversaryGradientTracePoint {
+    int iteration = 0;
+    long double objective_before = 0.0L;
+    long double objective_after = 0.0L;
+    long double projected_gradient_norm = 0.0L;
+    long double accepted_step = 0.0L;
+    long double sobolev_value = 0.0L;
+    int line_search_evaluations = 0;
+    bool accepted = false;
+};
+
 struct AdversaryReportRow {
     int cutoff = 0;
     int modes = 0;
@@ -54,6 +65,7 @@ struct AdversaryReportRow {
     int dynamic_accepted_mutations = 0;
     int dynamic_accepted_gradient_steps = 0;
     long double dynamic_sobolev_value = 0.0L;
+    std::vector<AdversaryGradientTracePoint> dynamic_gradient_trace;
 };
 
 struct AdversaryReport {

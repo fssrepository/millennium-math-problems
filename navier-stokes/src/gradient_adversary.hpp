@@ -4,6 +4,7 @@
 #include "initial_sobolev_constraint.hpp"
 
 #include <string>
+#include <vector>
 
 namespace lemma {
 
@@ -19,6 +20,17 @@ struct GradientSearchOptions {
     SpectralReal sobolev_cap = 0.0L;
 };
 
+struct GradientIterationRecord {
+    int iteration = 0;
+    SpectralReal objective_before = 0.0L;
+    SpectralReal objective_after = 0.0L;
+    SpectralReal projected_gradient_norm = 0.0L;
+    SpectralReal accepted_step = 0.0L;
+    SpectralReal sobolev_value = 0.0L;
+    int line_search_evaluations = 0;
+    bool accepted = false;
+};
+
 struct GradientSearchResult {
     SpectralState state;
     SpectralReal initial_objective = 0.0L;
@@ -29,6 +41,7 @@ struct GradientSearchResult {
     int iterations = 0;
     int accepted_steps = 0;
     int trajectory_evaluations = 0;
+    std::vector<GradientIterationRecord> trace;
 };
 
 class GradientAdversary {

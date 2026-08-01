@@ -149,6 +149,9 @@ GradientSearchResult GradientAdversary::maximize_q(
         ++result.iterations;
         result.objective = trajectory.objective_value;
         result.objective_step = trajectory.objective_step;
+        GradientIterationRecord record;
+        record.iteration = iteration;
+        record.objective_before = result.objective;
         SpectralIncrement direction = trajectory.initial_gradient;
         SpectralReal gradient_norm =
             project_to_energy_sphere(direction, result.state);
@@ -174,7 +177,11 @@ GradientSearchResult GradientAdversary::maximize_q(
             }
         }
         result.final_projected_gradient_norm = gradient_norm;
+        record.projected_gradient_norm = gradient_norm;
+        record.sobolev_value = sobolev_value;
         if (!(gradient_norm > 1e-24L) || !std::isfinite(gradient_norm)) {
+            record.objective_after = result.objective;
+            result.trace.push_back(record);
             break;
         }
         for (ComplexVector& value : direction) {
@@ -187,6 +194,7 @@ GradientSearchResult GradientAdversary::maximize_q(
         SpectralReal trial_step = next_step;
         for (int line_step = 0;
              line_step < options.line_search_steps; ++line_step) {
+            ++record.line_search_evaluations;
             SpectralState candidate = dynamics_.add_increment(
                 result.state, direction, trial_step);
             dynamics_.enforce_constraints(candidate);
@@ -203,11 +211,15 @@ GradientSearchResult GradientAdversary::maximize_q(
                 ++result.accepted_steps;
                 next_step = std::min(
                     options.initial_step, 1.5L * trial_step);
+                record.accepted_step = trial_step;
+                record.accepted = true;
                 accepted = true;
                 break;
             }
             trial_step *= 0.5L;
         }
+        record.objective_after = result.objective;
+        result.trace.push_back(record);
         if (!accepted) {
             break;
         }

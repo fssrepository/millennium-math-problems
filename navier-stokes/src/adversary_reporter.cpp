@@ -72,7 +72,16 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
             << ", accepted_gradient="
             << row.dynamic_accepted_gradient_steps
             << ", initial_sobolev="
-            << static_cast<double>(row.dynamic_sobolev_value) << '\n';
+            << static_cast<double>(row.dynamic_sobolev_value);
+        if (!row.dynamic_gradient_trace.empty()) {
+            const auto& final_trace = row.dynamic_gradient_trace.back();
+            out << ", final_projected_gradient="
+                << static_cast<double>(
+                       final_trace.projected_gradient_norm)
+                << ", final_step="
+                << static_cast<double>(final_trace.accepted_step);
+        }
+        out << '\n';
     }
 }
 
@@ -170,7 +179,32 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
             << ", \"dynamic_accepted_gradient_steps\": "
             << row.dynamic_accepted_gradient_steps
             << ", \"dynamic_initial_sobolev_value\": "
-            << static_cast<double>(row.dynamic_sobolev_value) << '}'
+            << static_cast<double>(row.dynamic_sobolev_value)
+            << ", \"dynamic_gradient_trace\": [";
+        for (std::size_t trace_index = 0;
+             trace_index < row.dynamic_gradient_trace.size();
+             ++trace_index) {
+            const auto& point = row.dynamic_gradient_trace[trace_index];
+            out << "{\"iteration\": " << point.iteration
+                << ", \"objective_before\": "
+                << static_cast<double>(point.objective_before)
+                << ", \"objective_after\": "
+                << static_cast<double>(point.objective_after)
+                << ", \"projected_gradient_norm\": "
+                << static_cast<double>(point.projected_gradient_norm)
+                << ", \"accepted_step\": "
+                << static_cast<double>(point.accepted_step)
+                << ", \"sobolev_value\": "
+                << static_cast<double>(point.sobolev_value)
+                << ", \"line_search_evaluations\": "
+                << point.line_search_evaluations
+                << ", \"accepted\": "
+                << (point.accepted ? "true" : "false") << '}'
+                << (trace_index + 1 == row.dynamic_gradient_trace.size()
+                        ? ""
+                        : ", ");
+        }
+        out << "]}"
             << (index + 1 == report.rows.size() ? "\n" : ",\n");
     }
     out << "  ],\n"
