@@ -1279,6 +1279,36 @@ bool self_test(std::ostream& out) {
     const Real configurable_tail_integral_gradient_error =
         partition_integral_gradient_error(
             TriadSelection::dyadic_tail(1));
+    const QTrajectoryGradient local_increase_gradient =
+        active_adjoint.critical_increase_gradient(
+            partition_state, adjoint_viscosity, adjoint_dt,
+            trajectory_steps, TriadPartition::local);
+    const Real local_increase_directional = increment_inner_product(
+        local_increase_gradient.initial_gradient, partition_tangent);
+    auto local_critical_increase = [&](SpectralState state) {
+        const Real initial = active_objective
+            .evaluate(state, TriadPartition::local)
+            .critical_integrand;
+        for (int step = 0; step < trajectory_steps; ++step) {
+            active_dynamics.rk4_step(
+                state, adjoint_viscosity, adjoint_dt);
+        }
+        return active_objective
+                   .evaluate(state, TriadPartition::local)
+                   .critical_integrand -
+               initial;
+    };
+    const Real local_increase_finite_difference =
+        (local_critical_increase(partition_plus_state) -
+         local_critical_increase(partition_minus_state)) /
+        (2.0L * finite_difference_step);
+    const Real local_increase_gradient_error = std::abs(
+        local_increase_directional -
+        local_increase_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(std::abs(local_increase_directional),
+                     std::abs(local_increase_finite_difference)));
     const EvolutionResult configurable_tail_evolution =
         active_trajectory_analyzer.evolve(
             partition_state, adjoint_viscosity,
@@ -1356,6 +1386,7 @@ bool self_test(std::ostream& out) {
         near_nonlocal_integral_gradient_error < 1e-9L &&
         far_nonlocal_integral_gradient_error < 1e-9L &&
         configurable_tail_integral_gradient_error < 1e-9L &&
+        local_increase_gradient_error < 1e-9L &&
         configurable_tail_trajectory_error < 1e-14L &&
         far_partition_static_gradient_error < 1e-9L;
     GradientSearchOptions gradient_options;
@@ -1691,6 +1722,8 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(far_nonlocal_integral_gradient_error)
         << ", configurable_tail="
         << static_cast<double>(configurable_tail_integral_gradient_error)
+        << ", local_increase="
+        << static_cast<double>(local_increase_gradient_error)
         << ", tail_trajectory="
         << static_cast<double>(configurable_tail_trajectory_error)
         << ", far_static="
@@ -1920,6 +1953,10 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
             dynamic.search_initial_objective;
         row.dynamic_search_final_objective =
             dynamic.search_final_objective;
+        row.dynamic_initial_local_critical_density =
+            evolution.initial_local_critical_integrand;
+        row.dynamic_final_local_critical_density =
+            evolution.final_local_critical_integrand;
         row.dynamic_maximum_q = evolution.maximum_energy_level_quantity;
         row.dynamic_initial_q = evolution.initial_energy_level_quantity;
         row.dynamic_final_q = evolution.final_energy_level_quantity;

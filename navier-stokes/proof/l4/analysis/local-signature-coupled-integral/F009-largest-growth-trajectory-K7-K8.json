@@ -1,0 +1,16 @@
+{
+  "schema": "navier-stokes-local-signature-trajectory-v1",
+  "state": "proof/l4/states/local-signature-factor/F009-largest-simultaneous-critical-growth.tsv",
+  "workers": 12,
+  "kernel_threads_per_cutoff": 6,
+  "steps": 100,
+  "time_refinement": 1,
+  "viscosity": 0.100000000000000006,
+  "time_step": 5.00000000000000024e-05,
+  "last_relative_critical_integral_difference": 7.92450878353006452e-10,
+  "exact_factorization": "V^4/(Z P^3) = A_sig^4 R^2/(Z P^3)",
+  "rows": [
+    {"cutoff": 7, "initial_amplification": 2.34343333806577991, "maximum_amplification": 2.44435331942665579, "final_amplification": 2.44435331942665579, "critical_integral": 3.85553065371414213e-12, "refined_critical_integral": 3.85553065371414213e-12, "time_refinement_relative_difference": 0, "square_signature_integral": 1.17172571488856843e-13, "maximum_critical_density": 8.51240073674649214e-10, "maximum_square_signature_density": 2.38449345961302234e-11, "log_factor_correlation": 0.999930203818736985, "amplification_peak_step": 100, "square_density_at_amplification_peak": 2.38449345961302234e-11, "critical_density_at_amplification_peak": 8.51240073674649214e-10, "square_density_peak_step": 100, "amplification_at_square_density_peak": 2.44435331942665579, "critical_density_at_square_density_peak": 8.51240073674649214e-10, "critical_peak_step": 100, "amplification_at_critical_peak": 2.44435331942665579, "square_density_at_critical_peak": 2.38449345961302234e-11, "maximum_factorization_residual": 3.92499528860325065e-19},
+    {"cutoff": 8, "initial_amplification": 2.34343333806577991, "maximum_amplification": 2.44435332135161643, "final_amplification": 2.44435332135161643, "critical_integral": 3.85553065676946055e-12, "refined_critical_integral": 3.85553065676946055e-12, "time_refinement_relative_difference": 0, "square_signature_integral": 1.17172571482424357e-13, "maximum_critical_density": 8.51240076125337422e-10, "maximum_square_signature_density": 2.38449345896660848e-11, "log_factor_correlation": 0.999930203948479868, "amplification_peak_step": 100, "square_density_at_amplification_peak": 2.38449345896660848e-11, "critical_density_at_amplification_peak": 8.51240076125337422e-10, "square_density_peak_step": 100, "amplification_at_square_density_peak": 2.44435332135161643, "critical_density_at_square_density_peak": 8.51240076125337422e-10, "critical_peak_step": 100, "amplification_at_critical_peak": 2.44435332135161643, "square_density_at_critical_peak": 2.38449345896660848e-11, "maximum_factorization_residual": 3.77723673993661264e-19}
+  ]
+}

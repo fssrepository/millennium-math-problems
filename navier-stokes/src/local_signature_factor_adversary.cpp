@@ -38,6 +38,8 @@ struct FactorSample {
     SpectralReal amplification_log_derivative = 0.0L;
     SpectralReal square_density_log_derivative = 0.0L;
     SpectralReal critical_log_derivative = 0.0L;
+    SpectralReal initial_critical_density = 0.0L;
+    SpectralReal critical_density_derivative = 0.0L;
     SpectralReal derivative_product = 0.0L;
     SpectralReal simultaneous_growth_rate = 0.0L;
     std::uint64_t seed = 0;
@@ -75,13 +77,17 @@ FactorSample evaluate_sample(
         before.square_signature_density) / time_step;
     result.critical_log_derivative = std::log(
         after.critical_density / before.critical_density) / time_step;
+    result.initial_critical_density = before.critical_density;
+    result.critical_density_derivative =
+        (after.critical_density - before.critical_density) / time_step;
     result.derivative_product = result.amplification_log_derivative *
         result.square_density_log_derivative;
     result.simultaneous_growth_rate = std::min(
         result.amplification_log_derivative,
         result.square_density_log_derivative);
     result.valid = std::isfinite(result.derivative_product) &&
-        std::isfinite(result.critical_log_derivative);
+        std::isfinite(result.critical_log_derivative) &&
+        std::isfinite(result.critical_density_derivative);
     return result;
 }
 
@@ -143,6 +149,8 @@ LocalSignatureFactorAdversaryReport LocalSignatureFactorAdversary::run(
                 -std::numeric_limits<SpectralReal>::infinity();
             row.maximum_critical_growth_rate =
                 -std::numeric_limits<SpectralReal>::infinity();
+            row.maximum_critical_density_derivative =
+                -std::numeric_limits<SpectralReal>::infinity();
             const std::size_t base =
                 (static_cast<std::size_t>(cutoff - options.minimum_cutoff) *
                      profiles.size() + profile) *
@@ -162,6 +170,18 @@ LocalSignatureFactorAdversaryReport LocalSignatureFactorAdversary::run(
                 if (value.amplification_log_derivative > 0.0L &&
                     value.square_density_log_derivative > 0.0L) {
                     ++row.simultaneous_growth_samples;
+                    if (value.initial_critical_density >
+                        row.maximum_simultaneous_initial_critical_density) {
+                        row.maximum_simultaneous_initial_critical_density =
+                            value.initial_critical_density;
+                        row.simultaneous_density_seed = value.seed;
+                    }
+                    if (value.critical_density_derivative >
+                        row.maximum_simultaneous_critical_density_derivative) {
+                        row.maximum_simultaneous_critical_density_derivative =
+                            value.critical_density_derivative;
+                        row.simultaneous_density_derivative_seed = value.seed;
+                    }
                 }
                 if (value.derivative_product >
                     row.maximum_log_derivative_product) {
@@ -180,6 +200,12 @@ LocalSignatureFactorAdversaryReport LocalSignatureFactorAdversary::run(
                     row.maximum_critical_growth_rate =
                         value.critical_log_derivative;
                     row.critical_growth_seed = value.seed;
+                }
+                if (value.critical_density_derivative >
+                    row.maximum_critical_density_derivative) {
+                    row.maximum_critical_density_derivative =
+                        value.critical_density_derivative;
+                    row.critical_density_derivative_seed = value.seed;
                 }
             }
             if (row.valid_samples > 0) {
@@ -300,11 +326,26 @@ int LocalSignatureFactorAdversaryCli::run(
             << static_cast<double>(row.maximum_simultaneous_growth_rate)
             << ", \"maximum_critical_growth_rate\": "
             << static_cast<double>(row.maximum_critical_growth_rate)
+            << ", \"maximum_critical_density_derivative\": "
+            << static_cast<double>(
+                   row.maximum_critical_density_derivative)
+            << ", \"maximum_simultaneous_initial_critical_density\": "
+            << static_cast<double>(
+                   row.maximum_simultaneous_initial_critical_density)
+            << ", \"maximum_simultaneous_critical_density_derivative\": "
+            << static_cast<double>(
+                   row.maximum_simultaneous_critical_density_derivative)
             << ", \"product_seed\": \"" << row.product_seed
             << "\", \"simultaneous_growth_seed\": \""
             << row.simultaneous_growth_seed
             << "\", \"critical_growth_seed\": \""
-            << row.critical_growth_seed << "\"}"
+            << row.critical_growth_seed
+            << "\", \"critical_density_derivative_seed\": \""
+            << row.critical_density_derivative_seed
+            << "\", \"simultaneous_density_seed\": \""
+            << row.simultaneous_density_seed
+            << "\", \"simultaneous_density_derivative_seed\": \""
+            << row.simultaneous_density_derivative_seed << "\"}"
             << (index + 1 == report.rows.size() ? "\n" : ",\n");
     }
     certificate << "  ]\n}\n";
@@ -314,28 +355,31 @@ int LocalSignatureFactorAdversaryCli::run(
             report.rows.begin(), report.rows.end(),
             [](const LocalSignatureFactorAdversaryRow& left,
                const LocalSignatureFactorAdversaryRow& right) {
-                return left.maximum_simultaneous_growth_rate <
-                       right.maximum_simultaneous_growth_rate;
+                return left.maximum_simultaneous_critical_density_derivative <
+                       right.maximum_simultaneous_critical_density_derivative;
             });
         if (winner != report.rows.end()) {
             const LocalSignatureStateProfile profile =
                 LocalSignatureStateFactory::parse(winner->profile);
             const SpectralState state = LocalSignatureStateFactory::make(
                 winner->cutoff, profile,
-                winner->simultaneous_growth_seed);
+                winner->simultaneous_density_derivative_seed);
             SpectralStateWriter::write_tsv(
                 options.state_output_path, state,
                 "local-signature simultaneous-factor-growth maximizer; cutoff=" +
                     std::to_string(winner->cutoff) + " profile=" +
                     winner->profile + " seed=" +
-                    std::to_string(winner->simultaneous_growth_seed));
+                    std::to_string(
+                        winner->simultaneous_density_derivative_seed));
         }
     }
 
     out << "local signature factor adversary workers=" << report.workers
         << " samples/profile=" << options.samples
         << "\ncutoff,profile,valid,opposite,both_grow,mean_product,"
-           "max_product,max_both_growth,max_critical_growth\n";
+           "max_product,max_both_growth,max_critical_growth,"
+           "max_critical_derivative,max_both_initial_density,"
+           "max_both_critical_derivative\n";
     for (const auto& row : report.rows) {
         out << row.cutoff << ',' << row.profile << ','
             << row.valid_samples << ','
@@ -345,7 +389,14 @@ int LocalSignatureFactorAdversaryCli::run(
             << static_cast<double>(row.maximum_log_derivative_product) << ','
             << static_cast<double>(row.maximum_simultaneous_growth_rate)
             << ','
-            << static_cast<double>(row.maximum_critical_growth_rate) << '\n';
+            << static_cast<double>(row.maximum_critical_growth_rate) << ','
+            << static_cast<double>(
+                   row.maximum_critical_density_derivative) << ','
+            << static_cast<double>(
+                   row.maximum_simultaneous_initial_critical_density) << ','
+            << static_cast<double>(
+                   row.maximum_simultaneous_critical_density_derivative)
+            << '\n';
     }
     out << "universal opposite-direction claim: "
         << (report.universal_opposite_direction_rejected

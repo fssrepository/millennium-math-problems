@@ -16,6 +16,7 @@ namespace {
 
 bool collects_partition(const std::string& objective) {
     return objective == "critical-local-integral" ||
+           objective == "critical-local-increase" ||
            objective == "critical-nonlocal-integral" ||
            objective == "critical-near-nonlocal-integral" ||
            objective == "critical-far-nonlocal-integral" ||
@@ -48,6 +49,10 @@ SpectralReal DynamicAdversary::objective_value(
     }
     if (objective == "critical-local-integral") {
         return evolution.integral_local_critical;
+    }
+    if (objective == "critical-local-increase") {
+        return evolution.final_local_critical_integrand -
+               evolution.initial_local_critical_integrand;
     }
     if (objective == "critical-nonlocal-integral") {
         return evolution.integral_nonlocal_critical;

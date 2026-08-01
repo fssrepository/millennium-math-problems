@@ -36,6 +36,10 @@ public:
         const SpectralState& initial, SpectralReal viscosity,
         SpectralReal time_step, int steps,
         TriadSelection selection = {}) const;
+    [[nodiscard]] QTrajectoryGradient critical_increase_gradient(
+        const SpectralState& initial, SpectralReal viscosity,
+        SpectralReal time_step, int steps,
+        TriadSelection selection = {}) const;
 
 private:
     [[nodiscard]] QTrajectoryGradient reverse_from_step(

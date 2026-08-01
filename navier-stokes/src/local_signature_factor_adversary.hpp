@@ -31,9 +31,15 @@ struct LocalSignatureFactorAdversaryRow {
     SpectralReal maximum_log_derivative_product = 0.0L;
     SpectralReal maximum_simultaneous_growth_rate = 0.0L;
     SpectralReal maximum_critical_growth_rate = 0.0L;
+    SpectralReal maximum_critical_density_derivative = 0.0L;
+    SpectralReal maximum_simultaneous_initial_critical_density = 0.0L;
+    SpectralReal maximum_simultaneous_critical_density_derivative = 0.0L;
     std::uint64_t product_seed = 0;
     std::uint64_t simultaneous_growth_seed = 0;
     std::uint64_t critical_growth_seed = 0;
+    std::uint64_t critical_density_derivative_seed = 0;
+    std::uint64_t simultaneous_density_seed = 0;
+    std::uint64_t simultaneous_density_derivative_seed = 0;
 };
 
 struct LocalSignatureFactorAdversaryReport {

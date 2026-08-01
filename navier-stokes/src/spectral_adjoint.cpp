@@ -168,6 +168,41 @@ QTrajectoryGradient SpectralAdjoint::critical_integral_gradient(
     return result;
 }
 
+QTrajectoryGradient SpectralAdjoint::critical_increase_gradient(
+    const SpectralState& initial, SpectralReal viscosity,
+    SpectralReal time_step, int steps, TriadSelection selection) const {
+    const std::vector<SpectralState> checkpoints = build_checkpoints(
+        dynamics_, initial, viscosity, time_step, steps);
+    QTrajectoryGradient result;
+    result.objective_step = steps;
+    result.total_steps = steps;
+    result.checkpoint_count = checkpoints.size();
+    const StaticObjective initial_objective =
+        objective_.evaluate(checkpoints.front(), selection);
+    const StaticObjective terminal_objective =
+        objective_.evaluate(checkpoints.back(), selection);
+    result.objective_value = terminal_objective.critical_integrand -
+        initial_objective.critical_integrand;
+    result.initial_gradient = objective_.critical_integrand_gradient(
+        checkpoints.back(), selection);
+    for (int step = steps - 1; step >= 0; --step) {
+        result.initial_gradient = dynamics_.rk4_vjp(
+            checkpoints[static_cast<std::size_t>(step)],
+            result.initial_gradient, viscosity, time_step);
+    }
+    const SpectralIncrement initial_gradient =
+        objective_.critical_integrand_gradient(
+            checkpoints.front(), selection);
+    for (std::size_t mode = 0;
+         mode < result.initial_gradient.size(); ++mode) {
+        for (std::size_t component = 0; component < 3; ++component) {
+            result.initial_gradient[mode][component] -=
+                initial_gradient[mode][component];
+        }
+    }
+    return result;
+}
+
 QTrajectoryGradient SpectralAdjoint::reverse_from_step(
     const std::vector<SpectralState>& checkpoints,
     SpectralReal viscosity, SpectralReal time_step,
