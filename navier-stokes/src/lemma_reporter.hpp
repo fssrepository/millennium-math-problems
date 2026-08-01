@@ -2,6 +2,7 @@
 
 #include "dyadic_shell_bounds.hpp"
 #include "far_tail_closure.hpp"
+#include "helical_triad_ledger.hpp"
 #include "periodic_shell_geometry.hpp"
 #include "periodic_tail_bound.hpp"
 #include "transition_block_scaling.hpp"
@@ -48,6 +49,7 @@ struct LemmaReport {
     PeriodicTailBoundCertificate periodic_tail_bound;
     FarTailClosureCertificate far_tail_closure;
     TransitionBlockScalingReport transition_block_scaling;
+    HelicalTriadCertificate helical_triad_certificate;
     int triad_cutoff = 0;
     int triad_modes = 0;
     int triad_samples = 0;

@@ -57,6 +57,61 @@
     "maximum_three_gain_tail_ratio": 0.137493538629771456,
     "all_bounds_hold": true
   },
+  "periodic_shell_geometry": {
+    "maximum_enumerated_shell": 5,
+    "overlap_samples": 512,
+    "seed": 1596203302,
+    "lattice_count_constant": 64,
+    "l2_to_linf_bernstein_constant": 8,
+    "gradient_bernstein_constant": 16,
+    "separated_high_shell_neighbor_width": 1,
+    "one_gain_overlap_constant": 7.65685424949238058,
+    "three_gain_overlap_constant": 7.65685424949238058,
+    "ft1_one_gain_constant": 2079.05800795126834,
+    "ft1_three_gain_constant": 523.873376220609998,
+    "maximum_count_ratio": 0.458169937133789062,
+    "maximum_one_gain_overlap_ratio": 0.63301568436579092,
+    "maximum_three_gain_overlap_ratio": 0.63301568436579092,
+    "all_bounds_hold": true
+  },
+  "periodic_tail_bound": {
+    "cutoff": 3,
+    "minimum_gap": 2,
+    "samples": 4,
+    "seed": 244407760,
+    "maximum_bound_ratio": 6.28131471194500036e-07,
+    "nonzero_tail_seen": true,
+    "all_bounds_hold": true
+  },
+  "far_tail_closure": {
+    "base_gap": 2,
+    "samples": 512,
+    "seed": 32776748,
+    "viscosity": 0.100000000000000006,
+    "maximum_normalized_remainder_ratio": 0.146010768829597959,
+    "all_bounds_hold": true
+  },
+  "transition_block_scaling": {
+    "band_count_logarithm_power": "1",
+    "post_young_logarithm_power": "4",
+    "post_young_enstrophy_power": "3",
+    "energy_time_integrable_enstrophy_power": "1",
+    "required_pointwise_depletion_power": "1/2",
+    "logarithmic_band_count_changes_polynomial_power": false,
+    "energy_identity_closes_transition_block": false
+  },
+  "helical_triad_certificate": {
+    "cutoff": 2,
+    "samples": 4,
+    "seed": 97794912,
+    "maximum_velocity_reconstruction_residual": 1.79785645044440763e-19,
+    "maximum_total_reconstruction_residual": 6.11384249146032226e-15,
+    "maximum_local_reconstruction_residual": 3.82301712162337711e-17,
+    "maximum_pure_heterochiral_absolute_local": 2.55524252145640191e-19,
+    "maximum_pure_homochiral_local_stretching": 0.00635946835736285378,
+    "nonzero_pure_homochiral_local_seen": true,
+    "all_reconstruction_checks_hold": false
+  },
   "fourier_galerkin": {
     "cutoff": 3,
     "modes": 342,

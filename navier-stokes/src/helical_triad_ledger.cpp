@@ -7,6 +7,8 @@
 #include <array>
 #include <cmath>
 #include <limits>
+#include <random>
+#include <stdexcept>
 
 namespace lemma {
 namespace {
@@ -92,6 +94,20 @@ SpectralReal relative_residual(
 }
 
 }  // namespace
+
+SpectralState HelicalTriadLedger::project_helicity(
+    const SpectralState& state, int sign) {
+    if (sign != -1 && sign != 1) {
+        throw std::invalid_argument("helical sign must be -1 or +1");
+    }
+    SpectralState projected = state;
+    const std::size_t sign_index = sign < 0 ? 0U : 1U;
+    for (std::size_t mode = 0; mode < state.waves.size(); ++mode) {
+        projected.velocity[mode] = helical_components(
+            state.waves[mode], state.velocity[mode])[sign_index];
+    }
+    return projected;
+}
 
 HelicalTriadReport HelicalTriadLedger::analyze(
     const SpectralState& state) {
@@ -190,6 +206,62 @@ HelicalTriadReport HelicalTriadLedger::analyze(
         report.signed_local_stretching - ledger.signed_local,
         ledger.signed_local);
     return report;
+}
+
+HelicalTriadCertificate HelicalTriadLedger::verify_random(
+    int cutoff, int samples, std::uint64_t seed) {
+    if (cutoff < 1 || cutoff > 16 || samples < 1 || samples > 100000) {
+        throw std::invalid_argument("invalid helical certificate parameters");
+    }
+    HelicalTriadCertificate certificate;
+    certificate.cutoff = cutoff;
+    certificate.samples = samples;
+    certificate.seed = seed;
+    std::mt19937_64 generator(seed);
+    constexpr SpectralReal tolerance = 1e-15L;
+    for (int sample = 0; sample < samples; ++sample) {
+        SpectralState state = SpectralStateFactory::random(cutoff, generator);
+        SpectralStateOps::normalize_energy(state);
+        const HelicalTriadReport mixed = analyze(state);
+        certificate.maximum_velocity_reconstruction_residual = std::max(
+            certificate.maximum_velocity_reconstruction_residual,
+            mixed.relative_velocity_reconstruction_residual);
+        certificate.maximum_total_reconstruction_residual = std::max(
+            certificate.maximum_total_reconstruction_residual,
+            mixed.relative_total_reconstruction_residual);
+        certificate.maximum_local_reconstruction_residual = std::max(
+            certificate.maximum_local_reconstruction_residual,
+            mixed.relative_local_reconstruction_residual);
+        for (const int sign : {-1, 1}) {
+            SpectralState pure = project_helicity(state, sign);
+            SpectralStateOps::normalize_energy(pure);
+            const HelicalTriadReport report = analyze(pure);
+            certificate.maximum_velocity_reconstruction_residual = std::max(
+                certificate.maximum_velocity_reconstruction_residual,
+                report.relative_velocity_reconstruction_residual);
+            certificate.maximum_total_reconstruction_residual = std::max(
+                certificate.maximum_total_reconstruction_residual,
+                report.relative_total_reconstruction_residual);
+            certificate.maximum_local_reconstruction_residual = std::max(
+                certificate.maximum_local_reconstruction_residual,
+                report.relative_local_reconstruction_residual);
+            certificate.maximum_pure_heterochiral_absolute_local = std::max(
+                certificate.maximum_pure_heterochiral_absolute_local,
+                report.heterochiral_absolute_local_stretching);
+            certificate.maximum_pure_homochiral_local_stretching = std::max(
+                certificate.maximum_pure_homochiral_local_stretching,
+                std::abs(report.homochiral_local_stretching));
+            certificate.nonzero_pure_homochiral_local_seen =
+                certificate.nonzero_pure_homochiral_local_seen ||
+                std::abs(report.homochiral_local_stretching) > 1e-12L;
+        }
+    }
+    certificate.all_reconstruction_checks_hold =
+        certificate.maximum_velocity_reconstruction_residual < tolerance &&
+        certificate.maximum_total_reconstruction_residual < tolerance &&
+        certificate.maximum_local_reconstruction_residual < tolerance &&
+        certificate.maximum_pure_heterochiral_absolute_local < tolerance;
+    return certificate;
 }
 
 }  // namespace lemma

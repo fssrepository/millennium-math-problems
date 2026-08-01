@@ -124,6 +124,17 @@ void LemmaReporter::write_console(const LemmaReport& report, std::ostream& out) 
                     .energy_identity_closes_transition_block
                 ? "YES"
                 : "no")
+        << "\n  helical sector reconstruction residual: "
+        << static_cast<double>(report.helical_triad_certificate
+                                   .maximum_local_reconstruction_residual)
+        << "\n  max pure homochiral local stretching:    "
+        << static_cast<double>(report.helical_triad_certificate
+                                   .maximum_pure_homochiral_local_stretching)
+        << "\n  homochiral zero-stretching candidate:    "
+        << (report.helical_triad_certificate
+                    .nonzero_pure_homochiral_local_seen
+                ? "REJECTED"
+                : "not rejected")
         << "\n\n"
         << "Fourier-Galerkin triad checks\n"
         << "  modes / samples:                        " << report.triad_modes
@@ -335,6 +346,37 @@ void LemmaReporter::write_json(const LemmaReport& report, std::ostream& out) {
         << ",\n    \"energy_identity_closes_transition_block\": "
         << (report.transition_block_scaling
                     .energy_identity_closes_transition_block
+                ? "true"
+                : "false")
+        << "\n  },\n"
+        << "  \"helical_triad_certificate\": {\n"
+        << "    \"cutoff\": " << report.helical_triad_certificate.cutoff
+        << ",\n    \"samples\": "
+        << report.helical_triad_certificate.samples
+        << ",\n    \"seed\": " << report.helical_triad_certificate.seed
+        << ",\n    \"maximum_velocity_reconstruction_residual\": "
+        << static_cast<double>(report.helical_triad_certificate
+                                   .maximum_velocity_reconstruction_residual)
+        << ",\n    \"maximum_total_reconstruction_residual\": "
+        << static_cast<double>(report.helical_triad_certificate
+                                   .maximum_total_reconstruction_residual)
+        << ",\n    \"maximum_local_reconstruction_residual\": "
+        << static_cast<double>(report.helical_triad_certificate
+                                   .maximum_local_reconstruction_residual)
+        << ",\n    \"maximum_pure_heterochiral_absolute_local\": "
+        << static_cast<double>(report.helical_triad_certificate
+                                   .maximum_pure_heterochiral_absolute_local)
+        << ",\n    \"maximum_pure_homochiral_local_stretching\": "
+        << static_cast<double>(report.helical_triad_certificate
+                                   .maximum_pure_homochiral_local_stretching)
+        << ",\n    \"nonzero_pure_homochiral_local_seen\": "
+        << (report.helical_triad_certificate
+                    .nonzero_pure_homochiral_local_seen
+                ? "true"
+                : "false")
+        << ",\n    \"all_reconstruction_checks_hold\": "
+        << (report.helical_triad_certificate
+                    .all_reconstruction_checks_hold
                 ? "true"
                 : "false")
         << "\n  },\n"

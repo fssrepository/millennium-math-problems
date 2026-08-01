@@ -4,6 +4,7 @@
 
 #include <array>
 #include <cstddef>
+#include <cstdint>
 
 namespace lemma {
 
@@ -35,10 +36,27 @@ struct HelicalTriadReport {
     std::array<HelicalSectorRow, helical_sector_count> sectors{};
 };
 
+struct HelicalTriadCertificate {
+    int cutoff = 0;
+    int samples = 0;
+    std::uint64_t seed = 0;
+    SpectralReal maximum_velocity_reconstruction_residual = 0.0L;
+    SpectralReal maximum_total_reconstruction_residual = 0.0L;
+    SpectralReal maximum_local_reconstruction_residual = 0.0L;
+    SpectralReal maximum_pure_heterochiral_absolute_local = 0.0L;
+    SpectralReal maximum_pure_homochiral_local_stretching = 0.0L;
+    bool nonzero_pure_homochiral_local_seen = false;
+    bool all_reconstruction_checks_hold = true;
+};
+
 class HelicalTriadLedger {
 public:
+    [[nodiscard]] static SpectralState project_helicity(
+        const SpectralState& state, int sign);
     [[nodiscard]] static HelicalTriadReport analyze(
         const SpectralState& state);
+    [[nodiscard]] static HelicalTriadCertificate verify_random(
+        int cutoff, int samples, std::uint64_t seed);
 };
 
 }  // namespace lemma

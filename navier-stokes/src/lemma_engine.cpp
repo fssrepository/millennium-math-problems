@@ -393,6 +393,9 @@ int run(const Options& options, std::ostream& out) {
             periodic_shell_geometry);
     const TransitionBlockScalingReport transition_block_scaling =
         TransitionBlockScaling::analyze();
+    const HelicalTriadCertificate helical_triad_certificate =
+        HelicalTriadLedger::verify_random(
+            2, 4, options.seed ^ UINT64_C(0x4e11ca1));
     const TriadCertificate triads =
         TriadVerifier::analyze(
             options.triad_cutoff, options.triad_samples, options.seed);
@@ -451,6 +454,7 @@ int run(const Options& options, std::ostream& out) {
     report.periodic_tail_bound = periodic_tail_bound;
     report.far_tail_closure = far_tail_closure;
     report.transition_block_scaling = transition_block_scaling;
+    report.helical_triad_certificate = helical_triad_certificate;
     report.triad_cutoff = options.triad_cutoff;
     report.triad_modes = triads.modes;
     report.triad_samples = triads.samples;
@@ -496,6 +500,10 @@ int run(const Options& options, std::ostream& out) {
                         far_tail_closure.all_bounds_hold &&
                         !transition_block_scaling
                              .energy_identity_closes_transition_block &&
+                        helical_triad_certificate
+                            .all_reconstruction_checks_hold &&
+                        helical_triad_certificate
+                            .nonzero_pure_homochiral_local_seen &&
                         !scaling.closing_candidate_exists &&
                         triads.maximum_normalized_energy_residual < 1e-15L &&
                         triads.maximum_divergence_residual < 1e-15L &&
@@ -620,6 +628,16 @@ bool self_test(std::ostream& out) {
     SpectralStateOps::normalize_energy(helical_state);
     const HelicalTriadReport helical =
         HelicalTriadLedger::analyze(helical_state);
+    SpectralState positive_helical_state =
+        HelicalTriadLedger::project_helicity(helical_state, 1);
+    SpectralStateOps::normalize_energy(positive_helical_state);
+    const HelicalTriadReport positive_helical =
+        HelicalTriadLedger::analyze(positive_helical_state);
+    SpectralState negative_helical_state =
+        HelicalTriadLedger::project_helicity(helical_state, -1);
+    SpectralStateOps::normalize_energy(negative_helical_state);
+    const HelicalTriadReport negative_helical =
+        HelicalTriadLedger::analyze(negative_helical_state);
     const bool helical_ok =
         helical.relative_velocity_reconstruction_residual < 1e-15L &&
         helical.relative_total_reconstruction_residual < 1e-15L &&
@@ -627,6 +645,13 @@ bool self_test(std::ostream& out) {
         std::abs(helical.signed_local_stretching -
                  helical.homochiral_local_stretching -
                  helical.heterochiral_local_stretching) < 1e-15L;
+    const bool pure_helical_ok =
+        positive_helical.negative_helical_energy < 1e-15L &&
+        negative_helical.positive_helical_energy < 1e-15L &&
+        positive_helical.heterochiral_absolute_local_stretching < 1e-15L &&
+        negative_helical.heterochiral_absolute_local_stretching < 1e-15L &&
+        positive_helical.relative_local_reconstruction_residual < 1e-15L &&
+        negative_helical.relative_local_reconstruction_residual < 1e-15L;
     std::mt19937_64 fft_generator(19);
     SpectralState fft_state = SpectralStateFactory::random(2, fft_generator);
     SpectralStateOps::normalize_energy(fft_state);
@@ -1269,6 +1294,15 @@ bool self_test(std::ostream& out) {
         << ", local="
         << static_cast<double>(helical.relative_local_reconstruction_residual)
         << ")\n"
+        << "pure helical local test: "
+        << (pure_helical_ok ? "PASS" : "FAIL")
+        << " (plus local="
+        << static_cast<double>(
+               positive_helical.homochiral_local_stretching)
+        << ", minus local="
+        << static_cast<double>(
+               negative_helical.homochiral_local_stretching)
+        << ")\n"
         << "dealiased FFT/direct test: " << (fft_ok ? "PASS" : "FAIL")
         << " (relative error=" << static_cast<double>(fft_relative_error) << ")\n"
         << "FFT adjoint/direct oracle test: "
@@ -1363,8 +1397,8 @@ bool self_test(std::ostream& out) {
            far_tail_closure_ok &&
            transition_block_scaling_ok &&
            moving_gap_controller_ok &&
-           triad_ok && helical_ok && fft_ok && fft_adjoint_ok && adjoint_ok &&
-           q_gradient_ok &&
+           triad_ok && helical_ok && pure_helical_ok && fft_ok &&
+           fft_adjoint_ok && adjoint_ok && q_gradient_ok &&
            trajectory_gradient_ok && q_gain_gradient_ok &&
            q_increase_gradient_ok && q_increase_constraints_ok &&
            critical_integral_gradient_ok &&
