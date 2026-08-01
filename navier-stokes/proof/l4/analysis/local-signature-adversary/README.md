@@ -52,8 +52,10 @@ A_sig = |sum_sigma V_sigma| / (sum_sigma |V_sigma|^2)^(1/2).
 Unlike `sqrt(N_eff)`, it preserves cancellation between signatures. At K6 the
 largest sampled `A_sig` values are only `2.33549` (flat) and `2.73471`
 (outer-half-flat). Their K2--K6 fitted slopes are `0.48310` and `0.25607`.
-Both lie below the closure threshold `1/2`; this survives the finite search
-but remains an open analytical candidate.
+Both lie below the closure threshold `1/2` in the random sample. The later
+exact-gradient search rejects this conclusion: it reaches `A_sig=49.3891` at
+K6 with fitted exponent `2.16843`. See
+[`../local-signature-gradient/README.md`](../local-signature-gradient/README.md).
 
 The machine-readable result is
 [`../local-signature-adversary-K1-K6.json`](../local-signature-adversary-K1-K6.json).

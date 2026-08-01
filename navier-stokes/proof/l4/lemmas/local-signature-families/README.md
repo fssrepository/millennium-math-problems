@@ -162,8 +162,14 @@ trajectory value near one remains a strong dynamic pattern, but it cannot be
 promoted to an unrestricted algebraic lemma. See
 [`../../analysis/local-signature-adversary/README.md`](../../analysis/local-signature-adversary/README.md).
 
-The sharper LSF-4 candidate survives the same finite search: its K6 maxima are
-`2.33549` on flat states and `2.73471` on outer-half-flat states, with fitted
-exponents `0.48310` and `0.25607`. The next proof target is a
-cutoff-independent `A_sig=O(K^alpha)` estimate with `alpha<1/2`, or its
-time-integrated analogue.
+The random sampler initially left LSF-4 viable, but the exact-gradient
+adversary rejects its pointwise form: it reaches `A_sig=49.3891` at K6 and a
+K2--K6 fitted exponent `2.16843`. Large `A_sig` is coupled to a small
+signature-transfer square sum, so neither factor should be bounded separately.
+The remaining target is the exact trajectory product
+
+```text
+V^4/(Z P^3) = A_sig^4 (sum_sigma |V_sigma|^2)^2/(Z P^3).
+```
+
+See [`../../analysis/local-signature-gradient/README.md`](../../analysis/local-signature-gradient/README.md).

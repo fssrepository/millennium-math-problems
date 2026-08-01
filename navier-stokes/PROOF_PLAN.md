@@ -485,7 +485,20 @@ A_sig=|sum V_sigma|/(sum |V_sigma|^2)^(1/2),
 
 the square-summed lemma closes whenever `A_sig=O(K^alpha)`, `alpha<1/2`.
 The same K1--K6 search gives K6 maxima `2.33549` (flat) and `2.73471`
-(outer-half-flat), with fitted slopes `0.48310` and `0.25607`. This passes the
-finite screen but is not proved. The analytical restart point is LSF-4 or a
-trajectory-integrated version tied to a fixed smooth initial datum. See
+(outer-half-flat), but this random screen is not adversarial enough. The exact
+analytic-gradient search raises the flat values to `4.59, 10.09, 19.65,
+32.01, 49.39` on K2--K6, with exponent `2.168`, and rejects pointwise LSF-4.
+
+The remaining identity preserves the coupled magnitude:
+
+```text
+V^4/(Z P^3) = A_sig^4 (sum_sigma |V_sigma|^2)^2/(Z P^3).
+```
+
+On the broad same-state K3--K6 trajectory, its factorization residual is below
+`3.1e-19`, its critical integral is `4.39122e-6`, and the last cutoff
+difference is `1.51e-15`; halving the RK4 step changes it by only `4.44e-7`
+relatively. The analytical restart point is a
+trajectory-integrated bound for this product tied to a fixed smooth initial
+datum; neither factor has a sufficient pointwise bound by itself. See
 `proof/l4/lemmas/local-signature-families/README.md`.

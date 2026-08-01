@@ -1,6 +1,7 @@
 {
   "schema": "navier-stokes-local-signature-gradient-v1",
   "profile": "flat",
+  "objective": "amplification",
   "workers": 12,
   "restarts": 12,
   "iterations": 10,

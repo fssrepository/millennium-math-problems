@@ -110,6 +110,11 @@ source file:
 - `LocalSignatureGeometry` extends the degree bound to every fixed
   squared-length triple, square-sums the signature transfers, and certifies
   that an effective-signature exponent below one is viscosity-subcritical;
+- `LocalSignatureObjective` supplies central-difference-certified analytic
+  gradients for signed amplification and absolute local transfer;
+- `LocalSignatureGradientAdversary` runs 12-worker targeted counterexample
+  searches, while `LocalSignatureTrajectoryAnalyzer` verifies the exact
+  dynamic signature factorization across Galerkin cutoffs;
 - `HelicalSectorObjective`, `HelicalSectorAdjoint`, and the two helical
   adversaries provide exact static and checkpointed trajectory gradients for
   sector-selective local searches;
@@ -142,12 +147,11 @@ source file:
 `lemma_engine.cpp` now coordinates proof runs and keeps the integrated
 self-test; state construction, trajectory diagnostics, triad verification,
 forward dynamics, the discrete adjoint, constrained optimization, CLI, and
-report generation are separate compilation units. The next mathematical task
-is a sign-preserving local-signature amplification bound
-`A_sig=O(K^alpha)` with `alpha<1/2`, or its time-integrated version. A
-pointwise sublinear raw participation bound for arbitrary fixed-energy states
-has been adversarially rejected, while the signed candidate survives through
-K6. The far dyadic tail and every fixed local signature family already have
+report generation are separate compilation units. Pointwise bounds for both
+raw signature participation and signed amplification have been adversarially
+rejected. The next mathematical task is a trajectory-integrated estimate for
+the exact coupled density `A_sig^4 R^2/(Z P^3)` for each fixed smooth initial
+datum. The far dyadic tail and every fixed local signature family already have
 cutoff-independent closures. This keeps rebuilds dependency-free and makes
 each layer independently replaceable.
 

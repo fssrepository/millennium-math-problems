@@ -79,5 +79,7 @@ signature count is `O(K^mu)` for any `mu<1`; the replayed K3 broad endpoint has
 `N_eff=1.1902068038`. The unrestricted pointwise hypothesis is rejected by
 `l4/analysis/local-signature-adversary/`, whose flat-spectrum search reaches
 `N_eff=1748.62` at K6. The sign-preserving amplification `A_sig` remains only
-`2.33549` on that profile; proving growth strictly below `K^(1/2)` is the
-sharper surviving target.
+`2.33549` under random sampling, but the exact-gradient adversary in
+`l4/analysis/local-signature-gradient/` raises it to `49.3891` and rejects the
+pointwise hypothesis. The surviving target is the time integral of the exact
+coupled factorization `A_sig^4 R^2/(Z P^3)`.

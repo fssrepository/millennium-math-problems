@@ -119,7 +119,8 @@ LocalSignatureTrajectoryReport LocalSignatureTrajectoryAnalyzer::analyze(
     if (options.state_path.empty() || options.minimum_cutoff < 1 ||
         options.maximum_cutoff < options.minimum_cutoff ||
         options.maximum_cutoff > 12 || options.steps < 1 ||
-        options.workers < 1 || !(options.viscosity > 0.0L) ||
+        options.time_refinement < 1 || options.workers < 1 ||
+        !(options.viscosity > 0.0L) ||
         !(options.time_step > 0.0L)) {
         throw std::invalid_argument(
             "invalid local signature trajectory options");
@@ -144,6 +145,7 @@ LocalSignatureTrajectoryReport LocalSignatureTrajectoryAnalyzer::analyze(
     LocalSignatureTrajectoryReport report;
     report.state_path = options.state_path;
     report.steps = options.steps;
+    report.time_refinement = options.time_refinement;
     report.viscosity = options.viscosity;
     report.time_step = options.time_step;
     report.rows.resize(cutoff_count);
@@ -155,6 +157,28 @@ LocalSignatureTrajectoryReport LocalSignatureTrajectoryAnalyzer::analyze(
         const int cutoff = options.minimum_cutoff +
             static_cast<int>(index);
         report.rows[index] = analyze_cutoff(input, cutoff, options);
+        if (options.time_refinement > 1) {
+            LocalSignatureTrajectoryOptions refined_options = options;
+            refined_options.steps *= options.time_refinement;
+            refined_options.time_step /= static_cast<SpectralReal>(
+                options.time_refinement);
+            const LocalSignatureTrajectoryRow refined = analyze_cutoff(
+                input, cutoff, refined_options);
+            report.rows[index].refined_critical_integral =
+                refined.critical_integral;
+            report.rows[index].time_refinement_relative_difference =
+                std::abs(refined.critical_integral -
+                         report.rows[index].critical_integral) /
+                std::max({std::numeric_limits<SpectralReal>::min(),
+                          std::abs(refined.critical_integral),
+                          std::abs(report.rows[index].critical_integral)});
+            report.rows[index].maximum_factorization_residual = std::max(
+                report.rows[index].maximum_factorization_residual,
+                refined.maximum_factorization_residual);
+        } else {
+            report.rows[index].refined_critical_integral =
+                report.rows[index].critical_integral;
+        }
     });
     if (report.rows.size() >= 2) {
         const SpectralReal previous =
@@ -189,6 +213,8 @@ LocalSignatureTrajectoryOptions LocalSignatureTrajectoryCli::parse(
             options.maximum_cutoff = std::stoi(next(index, name));
         } else if (name == "--steps") {
             options.steps = std::stoi(next(index, name));
+        } else if (name == "--time-refinement") {
+            options.time_refinement = std::stoi(next(index, name));
         } else if (name == "--workers") {
             options.workers = std::stoi(next(index, name));
         } else if (name == "--nu") {
@@ -209,6 +235,7 @@ void LocalSignatureTrajectoryCli::print_help(std::ostream& out) {
         << "  --min-cutoff K        first Galerkin cutoff\n"
         << "  --max-cutoff K        last Galerkin cutoff\n"
         << "  --steps N             RK4 trajectory steps\n"
+        << "  --time-refinement N   rerun with dt/N at fixed horizon\n"
         << "  --workers N           parallel cutoff workers\n"
         << "  --nu X                viscosity\n"
         << "  --dt X                RK4 time step\n"
@@ -240,6 +267,7 @@ int LocalSignatureTrajectoryCli::run(
         << ",\n  \"kernel_threads_per_cutoff\": "
         << report.kernel_threads
         << ",\n  \"steps\": " << report.steps
+        << ",\n  \"time_refinement\": " << report.time_refinement
         << ",\n  \"viscosity\": "
         << static_cast<double>(report.viscosity)
         << ",\n  \"time_step\": "
@@ -261,6 +289,11 @@ int LocalSignatureTrajectoryCli::run(
             << static_cast<double>(row.final_amplification)
             << ", \"critical_integral\": "
             << static_cast<double>(row.critical_integral)
+            << ", \"refined_critical_integral\": "
+            << static_cast<double>(row.refined_critical_integral)
+            << ", \"time_refinement_relative_difference\": "
+            << static_cast<double>(
+                   row.time_refinement_relative_difference)
             << ", \"square_signature_integral\": "
             << static_cast<double>(row.square_signature_integral)
             << ", \"maximum_critical_density\": "
@@ -276,6 +309,7 @@ int LocalSignatureTrajectoryCli::run(
         << " kernel_threads/cutoff=" << report.kernel_threads
         << " steps=" << report.steps
         << "\ncutoff,initial_A,max_A,final_A,critical_integral,"
+           "refined_critical_integral,time_refinement_difference,"
            "square_signature_integral,factorization_residual\n";
     for (const auto& row : report.rows) {
         out << row.cutoff << ','
@@ -283,6 +317,9 @@ int LocalSignatureTrajectoryCli::run(
             << static_cast<double>(row.maximum_amplification) << ','
             << static_cast<double>(row.final_amplification) << ','
             << static_cast<double>(row.critical_integral) << ','
+            << static_cast<double>(row.refined_critical_integral) << ','
+            << static_cast<double>(
+                   row.time_refinement_relative_difference) << ','
             << static_cast<double>(row.square_signature_integral) << ','
             << static_cast<double>(row.maximum_factorization_residual)
             << '\n';

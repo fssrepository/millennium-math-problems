@@ -14,6 +14,7 @@ struct LocalSignatureTrajectoryOptions {
     int minimum_cutoff = 3;
     int maximum_cutoff = 6;
     int steps = 10;
+    int time_refinement = 2;
     int workers = 12;
     SpectralReal viscosity = 0.1L;
     SpectralReal time_step = 0.001L;
@@ -25,6 +26,8 @@ struct LocalSignatureTrajectoryRow {
     SpectralReal maximum_amplification = 0.0L;
     SpectralReal final_amplification = 0.0L;
     SpectralReal critical_integral = 0.0L;
+    SpectralReal refined_critical_integral = 0.0L;
+    SpectralReal time_refinement_relative_difference = 0.0L;
     SpectralReal square_signature_integral = 0.0L;
     SpectralReal maximum_critical_density = 0.0L;
     SpectralReal maximum_factorization_residual = 0.0L;
@@ -35,6 +38,7 @@ struct LocalSignatureTrajectoryReport {
     int workers = 0;
     int kernel_threads = 1;
     int steps = 0;
+    int time_refinement = 1;
     SpectralReal viscosity = 0.0L;
     SpectralReal time_step = 0.0L;
     SpectralReal last_relative_critical_integral_difference = 0.0L;
