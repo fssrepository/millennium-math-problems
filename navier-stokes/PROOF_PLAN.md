@@ -375,8 +375,25 @@ nonzero homochiral local stretching, so F006 rejects universal homochiral
 cancellation. The next computational target is a sector-selective local
 objective; its exact static and checkpointed trajectory gradients now pass at
 `6.71e-12` and `3.56e-13`. Twelve parallel restarts reach static critical
-density `1.33682e-4` and short-time critical integral `5.07257e-8`. The next
-computational step is cutoff continuation of this branch; the next analytical
-target is a quantitative heterochiral depletion statement strong enough to
-supply the missing `Z^(-1/2)` factor.
+density `1.33682e-4` and short-time critical integral `5.07257e-8`.
+
+The same-state cutoff continuation is now complete through K6. At
+`nu=0.1`, `dt=0.001`, and `T=0.01`, its heterochiral local critical integral is
+
+```text
+K:       3                  4                  5                  6
+J: 4.39045255695e-6   4.39045682754e-6   4.39045682741e-6   4.39045682741e-6
+```
+
+The K5-to-K6 relative difference is `2.67e-15`. Twelve large-perturbation
+static multistarts through K5 also select the smooth original continuation,
+with critical density saturating near `4.40316e-4`. Thus the current branch is
+cutoff-stable and does not falsify the dynamic lemma. This finite convergence
+does not provide the uniform analytical estimate.
+
+The next analytical target is a quantitative heterochiral depletion statement
+strong enough to supply the missing `Z^(-1/2)` factor. The next computational
+task is no longer another lift of this same branch: it is to encode and
+falsify candidate dynamic mechanisms (sector cancellation, relative-helicity
+coercivity, or time-integrated shell transfer) that could produce that factor.
 See `proof/l4/lemmas/local-helicity/README.md`.

@@ -5,6 +5,7 @@
 #include "far_tail_closure.hpp"
 #include "gradient_adversary.hpp"
 #include "helical_triad_ledger.hpp"
+#include "helical_gap_ledger.hpp"
 #include "helical_sector_objective.hpp"
 #include "helical_sector_adversary.hpp"
 #include "helical_sector_adjoint.hpp"
@@ -15,6 +16,7 @@
 #include "periodic_tail_bound.hpp"
 #include "lemma_adversary.hpp"
 #include "lemma_reporter.hpp"
+#include "local_triad_symmetrizer.hpp"
 #include "moving_gap_controller.hpp"
 #include "projective_family.hpp"
 #include "spectral_adjoint.hpp"
@@ -721,6 +723,10 @@ bool self_test(std::ostream& out) {
     SpectralStateOps::normalize_energy(helical_state);
     const HelicalTriadReport helical =
         HelicalTriadLedger::analyze(helical_state);
+    const HelicalGapLedgerReport helical_gaps =
+        HelicalGapLedger::analyze(helical_state);
+    const LocalTriadSymmetryReport local_symmetry =
+        LocalTriadSymmetrizer::analyze(helical_state);
     SpectralState positive_helical_state =
         HelicalTriadLedger::project_helicity(helical_state, 1);
     SpectralStateOps::normalize_energy(positive_helical_state);
@@ -738,6 +744,20 @@ bool self_test(std::ostream& out) {
         std::abs(helical.signed_local_stretching -
                  helical.homochiral_local_stretching -
                  helical.heterochiral_local_stretching) < 1e-15L;
+    const bool helical_gap_ok =
+        helical_gaps.maximum_gap_reconstruction_residual < 1e-15L &&
+        helical_gaps.total_reconstruction_residual < 1e-15L &&
+        !helical_gaps.gaps.empty() &&
+        std::abs(helical_gaps.gaps.front().homochiral_signed -
+                 helical.homochiral_local_stretching) < 1e-15L &&
+        std::abs(helical_gaps.gaps.front().heterochiral_signed -
+                 helical.heterochiral_local_stretching) < 1e-15L;
+    const bool local_symmetry_ok =
+        local_symmetry.maximum_energy_cancellation_residual < 1e-15L &&
+        local_symmetry.local_reconstruction_residual < 1e-15L &&
+        local_symmetry.maximum_frequency_spread_bound_ratio <=
+            1.0L + 1e-15L &&
+        local_symmetry.local_triads > 0;
     const bool pure_helical_ok =
         positive_helical.negative_helical_energy < 1e-15L &&
         negative_helical.positive_helical_energy < 1e-15L &&
@@ -1523,6 +1543,25 @@ bool self_test(std::ostream& out) {
         << ", local="
         << static_cast<double>(helical.relative_local_reconstruction_residual)
         << ")\n"
+        << "helical gap ledger test: "
+        << (helical_gap_ok ? "PASS" : "FAIL")
+        << " (gap="
+        << static_cast<double>(
+               helical_gaps.maximum_gap_reconstruction_residual)
+        << ", total="
+        << static_cast<double>(helical_gaps.total_reconstruction_residual)
+        << ")\n"
+        << "local triad symmetrizer test: "
+        << (local_symmetry_ok ? "PASS" : "FAIL")
+        << " (energy="
+        << static_cast<double>(
+               local_symmetry.maximum_energy_cancellation_residual)
+        << ", reconstruction="
+        << static_cast<double>(local_symmetry.local_reconstruction_residual)
+        << ", spread="
+        << static_cast<double>(
+               local_symmetry.maximum_frequency_spread_bound_ratio)
+        << ")\n"
         << "pure helical local test: "
         << (pure_helical_ok ? "PASS" : "FAIL")
         << " (plus local="
@@ -1656,7 +1695,8 @@ bool self_test(std::ostream& out) {
            far_tail_closure_ok &&
            transition_block_scaling_ok &&
            moving_gap_controller_ok &&
-           triad_ok && helical_ok && pure_helical_ok && fft_ok &&
+           triad_ok && helical_ok && helical_gap_ok && local_symmetry_ok &&
+           pure_helical_ok && fft_ok &&
            helical_sector_objective_ok && helical_adversary_ok &&
            helical_trajectory_adjoint_ok &&
            helical_trajectory_adversary_ok && fft_adjoint_ok && adjoint_ok &&

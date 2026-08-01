@@ -62,3 +62,42 @@ These searches show that the heterochiral target is numerically active rather
 than automatically depleted. The next cutoff continuation must determine
 whether it approaches a smooth projective branch or grows with resolution.
 The finite endpoint pattern is routing evidence, not a regularity proof.
+
+## Cutoff continuation result
+
+`HelicalAdversaryCli` now supports parallel multistarts and evaluation-only
+runs. Starting from the converged K3 local state, eight trajectory-gradient
+steps on each of twelve starts raised the original branch from
+`4.38986521607e-6` to `4.39045255695e-6`; all perturbed starts were lower.
+Lifting that exact state without further optimization and evaluating the same
+`nu=0.1`, `dt=0.001`, `T=0.01` trajectory gives
+
+```text
+K:                       3                  4                  5                  6
+J_heterochiral: 4.39045255695e-6   4.39045682754e-6   4.39045682741e-6   4.39045682741e-6
+adjacent relative:       -          9.72697956e-7      2.98371299e-11     2.66978206e-15
+```
+
+The aggregate machine certificate is
+`../../adversary/helical-heterochiral-cutoff-scan-K3-K6.json`. It shows that
+this finite branch is a smooth low-mode branch, not a cutoff-concentration
+branch.
+
+A separate static search directly targets the fourth power of the required
+depletion coefficient,
+
+```text
+|V_local,heterochiral|^4 / (Z P^3).
+```
+
+Sixteen accepted steps with twelve large (`0.5`) spectral perturbations at
+each cutoff give `4.4026806e-4`, `4.4031124e-4`, and `4.4031558e-4` at K3, K4,
+and K5. The unperturbed continuation won every multistart. This is useful
+evidence that the current extremizer is numerically stable, but it is not a
+global optimization certificate and cannot establish the required dynamic
+bound.
+
+The remaining analytical target is unchanged: prove a trajectory-restricted,
+cutoff-independent bound for the heterochiral coefficient using only the
+initial smooth datum, viscosity, and finite time. A universal static bound is
+not a substitute for that dynamic statement.

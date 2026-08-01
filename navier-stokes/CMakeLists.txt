@@ -14,6 +14,7 @@ add_executable(navier_stokes_lab
     src/helical_triad_ledger.cpp
     src/helical_adversary_cli.cpp
     src/helical_cutoff_scan.cpp
+    src/helical_gap_ledger.cpp
     src/helical_sector_objective.cpp
     src/helical_sector_adversary.cpp
     src/helical_sector_adjoint.cpp
@@ -23,6 +24,7 @@ add_executable(navier_stokes_lab
     src/lemma_cli.cpp
     src/lemma_engine.cpp
     src/lemma_reporter.cpp
+    src/local_triad_symmetrizer.cpp
     src/moving_gap_controller.cpp
     src/periodic_shell_geometry.cpp
     src/periodic_tail_bound.cpp

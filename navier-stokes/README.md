@@ -101,9 +101,16 @@ source file:
   frequency/amplitude bounds and reconstructs the separated signed ledger;
 - `HelicalTriadLedger` reconstructs local and total stretching from all eight
   curl-eigenmode sign sectors and produces pure-helicity counterexamples;
+- `HelicalGapLedger` resolves those sectors by dyadic gap, while
+  `LocalTriadSymmetrizer` groups complete signed Fourier triads and certifies
+  the exact frequency-spread bound coming from triadwise energy cancellation;
 - `HelicalSectorObjective`, `HelicalSectorAdjoint`, and the two helical
   adversaries provide exact static and checkpointed trajectory gradients for
   sector-selective local searches;
+- `HelicalAdversaryCli` runs replayable fixed-energy sector searches with
+  parallel multistarts, while `HelicalCutoffScan` evaluates one identical
+  initial state on several Galerkin cutoffs and emits an aggregate convergence
+  certificate;
 - `MovingGapController` implements the logarithmic gap choice that turns the
   post-Young far-tail remainder from `Z^3` into a linear `Z` term;
 - `DyadicShellBounds` isolates the cutoff-independent scalar shell sums,
@@ -133,6 +140,27 @@ report generation are separate compilation units. The next mathematical task
 is a cutoff-independent paraproduct estimate for the measured dyadic tail.
 This keeps rebuilds dependency-free and makes each layer independently
 replaceable.
+
+The helical local target has its own replayable optimizer and same-state
+cutoff scan:
+
+```bash
+./build/navier_stokes_lab helical-adversary \
+  --state proof/l4/states/helical-heterochiral-local-integral/dynamic/K3.tsv \
+  --state-output /tmp/helical-K3.tsv --certificate /tmp/helical-K3.json \
+  --selection heterochiral --mode trajectory \
+  --cutoff 3 --iterations 8 --trajectory-steps 10 \
+  --restarts 12 --workers 12 --restart-mutation 0.03 \
+  --nu 0.1 --dt 0.001
+
+./build/navier_stokes_lab helical-cutoff-scan \
+  --state /tmp/helical-K3.tsv --certificate /tmp/helical-scan.json \
+  --selection heterochiral --min-cutoff 3 --max-cutoff 6 \
+  --trajectory-steps 10 --workers 12 --nu 0.1 --dt 0.001
+```
+
+Setting `--iterations 0` evaluates an adversary state without optimizing it,
+which separates cutoff effects from optimizer progress.
 
 These are ordinary non-virtual C++ classes. The numerical kernels do not use
 RTTI, `std::function`, `shared_ptr`, or exceptions for control flow. Class

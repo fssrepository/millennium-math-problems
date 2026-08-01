@@ -22,23 +22,34 @@ SpectralReal HelicalSectorAdjoint::critical_integral(
     const SpectralState& initial, SpectralReal viscosity,
     SpectralReal time_step, int steps,
     HelicalSectorSelection selection) const {
+    return critical_trajectory(
+        initial, viscosity, time_step, steps, selection).objective_value;
+}
+
+HelicalSectorTrajectoryValue HelicalSectorAdjoint::critical_trajectory(
+    const SpectralState& initial, SpectralReal viscosity,
+    SpectralReal time_step, int steps,
+    HelicalSectorSelection selection) const {
     if (!(viscosity > 0.0L) || !(time_step > 0.0L) || steps < 1 ||
         selection.sector_mask == 0U) {
-        throw std::invalid_argument("invalid helical integral parameters");
+        throw std::invalid_argument("invalid helical trajectory parameters");
     }
-    SpectralState state = initial;
-    SpectralReal integral = 0.5L * time_step *
-        HelicalSectorObjective::evaluate(state, selection).critical_integrand;
+    HelicalSectorTrajectoryValue result;
+    result.final_state = initial;
+    result.total_steps = steps;
+    result.objective_value = 0.5L * time_step *
+        HelicalSectorObjective::evaluate(
+            result.final_state, selection).critical_integrand;
     for (int step = 0; step < steps; ++step) {
-        dynamics_.rk4_step(state, viscosity, time_step);
+        dynamics_.rk4_step(result.final_state, viscosity, time_step);
         const SpectralReal weight = step + 1 == steps
             ? 0.5L * time_step
             : time_step;
-        integral += weight *
-            HelicalSectorObjective::evaluate(state, selection)
+        result.objective_value += weight *
+            HelicalSectorObjective::evaluate(result.final_state, selection)
                 .critical_integrand;
     }
-    return integral;
+    return result;
 }
 
 HelicalSectorTrajectoryGradient

@@ -46,6 +46,13 @@ SpectralReal relative_difference(SpectralReal left, SpectralReal right) {
     return std::abs(left - right) / scale;
 }
 
+SpectralReal cancellation_ratio(
+    SpectralReal signed_value, SpectralReal absolute_sum) {
+    return absolute_sum > 0.0L
+        ? std::abs(signed_value) / absolute_sum
+        : 0.0L;
+}
+
 }  // namespace
 
 HelicalCutoffScanOptions HelicalCutoffScan::parse(
@@ -145,15 +152,22 @@ int HelicalCutoffScan::run(
     }
 
     std::vector<SpectralReal> objectives(count, 0.0L);
+    std::vector<HelicalTriadReport> initial_helicity(count);
+    std::vector<HelicalTriadReport> final_helicity(count);
     const LemmaAdversary executor(options.workers);
     executor.run_restarts(count, [&](std::size_t index) {
         SpectralGalerkin galerkin;
         galerkin.configure("direct", 1);
         const SpectralDynamics dynamics(galerkin);
         const HelicalSectorAdjoint adjoint(dynamics);
-        objectives[index] = adjoint.critical_integral(
-            states[index], options.viscosity, options.time_step,
-            options.trajectory_steps, selection);
+        initial_helicity[index] = HelicalTriadLedger::analyze(states[index]);
+        const HelicalSectorTrajectoryValue trajectory =
+            adjoint.critical_trajectory(
+                states[index], options.viscosity, options.time_step,
+                options.trajectory_steps, selection);
+        objectives[index] = trajectory.objective_value;
+        final_helicity[index] = HelicalTriadLedger::analyze(
+            trajectory.final_state);
     });
 
     std::vector<SpectralReal> adjacent_relative(count, 0.0L);
@@ -195,13 +209,41 @@ int HelicalCutoffScan::run(
         << (converged ? "true" : "false") << ",\n"
         << "  \"samples\": [\n";
     for (std::size_t index = 0; index < count; ++index) {
+        const HelicalTriadReport& initial = initial_helicity[index];
+        const HelicalTriadReport& final = final_helicity[index];
         certificate << "    {\"cutoff\": "
             << options.minimum_cutoff + static_cast<int>(index)
             << ", \"objective\": " << static_cast<double>(objectives[index])
             << ", \"mean_density\": "
             << static_cast<double>(objectives[index] / horizon)
             << ", \"previous_relative_difference\": "
-            << static_cast<double>(adjacent_relative[index]) << "}"
+            << static_cast<double>(adjacent_relative[index])
+            << ", \"initial_positive_helical_energy\": "
+            << static_cast<double>(initial.positive_helical_energy)
+            << ", \"initial_negative_helical_energy\": "
+            << static_cast<double>(initial.negative_helical_energy)
+            << ", \"initial_heterochiral_signed_local\": "
+            << static_cast<double>(initial.heterochiral_local_stretching)
+            << ", \"initial_heterochiral_absolute_local\": "
+            << static_cast<double>(
+                   initial.heterochiral_absolute_local_stretching)
+            << ", \"initial_heterochiral_cancellation_ratio\": "
+            << static_cast<double>(cancellation_ratio(
+                   initial.heterochiral_local_stretching,
+                   initial.heterochiral_absolute_local_stretching))
+            << ", \"final_positive_helical_energy\": "
+            << static_cast<double>(final.positive_helical_energy)
+            << ", \"final_negative_helical_energy\": "
+            << static_cast<double>(final.negative_helical_energy)
+            << ", \"final_heterochiral_signed_local\": "
+            << static_cast<double>(final.heterochiral_local_stretching)
+            << ", \"final_heterochiral_absolute_local\": "
+            << static_cast<double>(
+                   final.heterochiral_absolute_local_stretching)
+            << ", \"final_heterochiral_cancellation_ratio\": "
+            << static_cast<double>(cancellation_ratio(
+                   final.heterochiral_local_stretching,
+                   final.heterochiral_absolute_local_stretching)) << "}"
             << (index + 1 == count ? "\n" : ",\n");
     }
     certificate << "  ]\n}\n";

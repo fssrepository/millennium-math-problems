@@ -2,7 +2,9 @@
 
 #include "spectral_objective.hpp"
 #include "helical_triad_ledger.hpp"
+#include "helical_gap_ledger.hpp"
 #include "moving_gap_controller.hpp"
+#include "local_triad_symmetrizer.hpp"
 #include "triad_commutator.hpp"
 #include "triad_ledger.hpp"
 #include "triad_tail_envelope.hpp"
@@ -61,6 +63,8 @@ struct StateAnalysisReport {
     TriadCommutatorReport triad_commutator;
     TriadTailEnvelopeReport triad_tail_envelope;
     HelicalTriadReport helical_triad_ledger;
+    HelicalGapLedgerReport helical_gap_ledger;
+    LocalTriadSymmetryReport local_triad_symmetry;
     MovingGapDecision moving_gap;
     std::vector<StateShellAnalysis> shells;
     std::vector<StateModeAnalysis> top_modes;

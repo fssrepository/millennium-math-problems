@@ -58,4 +58,11 @@ enstrophy inequality.
 
 `l4/lemmas/local-helicity/` records the exact eight-sector helical triad
 decomposition, the heterochiral dominance of current local extremizers, and
-the pure-helicity counterexample to exact homochiral cancellation.
+the pure-helicity counterexample to exact homochiral cancellation. The
+replayable K3--K6 same-state continuation is summarized there and certified by
+`l4/adversary/helical-heterochiral-cutoff-scan-K3-K6.json`.
+
+`l4/lemmas/local-triad-symmetry/` proves the exact complete-triad
+frequency-spread estimate `LS-1`. It eliminates equal-frequency enstrophy
+transfer but records why broad-spread local triads still leave the key L4
+depletion open.

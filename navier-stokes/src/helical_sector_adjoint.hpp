@@ -14,6 +14,12 @@ struct HelicalSectorTrajectoryGradient {
     std::size_t checkpoint_count = 0;
 };
 
+struct HelicalSectorTrajectoryValue {
+    SpectralState final_state;
+    SpectralReal objective_value = 0.0L;
+    int total_steps = 0;
+};
+
 class HelicalSectorAdjoint {
 public:
     explicit HelicalSectorAdjoint(const SpectralDynamics& dynamics)
@@ -24,6 +30,10 @@ public:
         SpectralReal time_step, int steps,
         HelicalSectorSelection selection) const;
     [[nodiscard]] SpectralReal critical_integral(
+        const SpectralState& initial, SpectralReal viscosity,
+        SpectralReal time_step, int steps,
+        HelicalSectorSelection selection) const;
+    [[nodiscard]] HelicalSectorTrajectoryValue critical_trajectory(
         const SpectralState& initial, SpectralReal viscosity,
         SpectralReal time_step, int steps,
         HelicalSectorSelection selection) const;
