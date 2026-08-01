@@ -426,3 +426,35 @@ last relative difference `2.66e-15`. This removes cutoff and optimizer
 artifacts from the current branch and isolates the analytical gap still
 further: prove a trajectory-integrated estimate specifically for broad-spread,
 gap-zero heterochiral triads.
+
+Signature aggregation makes that target concrete. The squared-length family
+`(1,1,2)` carries `91.27%` of the broad K3 endpoint's signed local transfer,
+and `(1,1,2)` plus `(2,2,6)` carry `99.74%`. The first family is the geometry
+of equal-length orthogonal input waves. The next lemma attempt must therefore
+bound the time-integrated coherent multiplicity of scaled orthogonal local
+triads; an estimate for one isolated triad would miss the lattice-count growth.
+
+That exact signature family is now controlled analytically. For fixed `p`, the
+integer constraints `|p|=|q|` and `p dot q=0` admit at most `2(2K+1)` partners
+in a cutoff-K cube; the same bound holds for a fixed target. The resulting
+hypergraph Cauchy bound is
+
+```text
+|V_(r,r,2r),R| <= C R^(7/2) E_R^(3/2)
+                 <= C R^(-1/2) E(0)^(1/2) P_R.
+```
+
+Hence viscosity absorbs this family on all sufficiently high shells, and only
+finitely many low shells remain. This is a proved partial local lemma, not a
+finite numerical inference. It covers the signature carrying `91.27%` of the
+current K3 endpoint, but that experimental fraction cannot remove the other
+signatures. The restart point is the degree/multiplicity classification of
+nearby broad-spread squared-length triples. See
+`proof/l4/lemmas/local-orthogonal-triads/README.md`.
+
+The exact multiplicity threshold is now encoded. If the coherent partner
+degree is `D(R)=O(R^d)`, the transfer has frequency power `3+d/2`.
+Unrestricted local interactions have `d=3` and power `9/2`; viscosity has
+power `4`; the critical degree is `d=2`; the controlled orthogonal family has
+`d=1` and power `7/2`. A closing extension must therefore produce effective
+degree `d<2` on the unresolved broad class.

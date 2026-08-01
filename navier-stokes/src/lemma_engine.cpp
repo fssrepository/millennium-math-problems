@@ -14,6 +14,7 @@
 #include "parallel_executor.hpp"
 #include "periodic_shell_geometry.hpp"
 #include "periodic_tail_bound.hpp"
+#include "orthogonal_triad_geometry.hpp"
 #include "lemma_adversary.hpp"
 #include "lemma_reporter.hpp"
 #include "local_triad_symmetrizer.hpp"
@@ -727,6 +728,10 @@ bool self_test(std::ostream& out) {
         HelicalGapLedger::analyze(helical_state);
     const LocalTriadSymmetryReport local_symmetry =
         LocalTriadSymmetrizer::analyze(helical_state);
+    const OrthogonalTriadGeometryCertificate orthogonal_geometry =
+        OrthogonalTriadGeometry::certify(5);
+    const OrthogonalTriadClosure orthogonal_closure =
+        OrthogonalTriadGeometry::analyze_closure();
     SpectralState positive_helical_state =
         HelicalTriadLedger::project_helicity(helical_state, 1);
     SpectralStateOps::normalize_energy(positive_helical_state);
@@ -758,6 +763,19 @@ bool self_test(std::ostream& out) {
         local_symmetry.maximum_frequency_spread_bound_ratio <=
             1.0L + 1e-15L &&
         local_symmetry.local_triads > 0;
+    const bool orthogonal_geometry_ok =
+        orthogonal_geometry.all_degree_bounds_hold &&
+        orthogonal_geometry.maximum_input_degree_ratio <= 1.0L &&
+        orthogonal_geometry.maximum_target_degree_ratio <= 1.0L &&
+        orthogonal_closure.transfer_frequency_power == Rational(7, 2) &&
+        orthogonal_closure.generic_local_transfer_frequency_power ==
+            Rational(9, 2) &&
+        orthogonal_closure.critical_transfer_frequency_power == Rational(4) &&
+        orthogonal_closure.transfer_to_viscosity_frequency_power ==
+            Rational(-1, 2) &&
+        orthogonal_closure.high_frequency_absorbable_from_energy &&
+        orthogonal_closure.orthogonal_degree_is_subcritical &&
+        orthogonal_closure.generic_local_degree_is_supercritical;
     const bool pure_helical_ok =
         positive_helical.negative_helical_energy < 1e-15L &&
         negative_helical.positive_helical_energy < 1e-15L &&
@@ -1604,6 +1622,17 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(
                local_symmetry.maximum_frequency_spread_bound_ratio)
         << ")\n"
+        << "orthogonal triad closure test: "
+        << (orthogonal_geometry_ok ? "PASS" : "FAIL")
+        << " (input degree="
+        << static_cast<double>(
+               orthogonal_geometry.maximum_input_degree_ratio)
+        << ", target degree="
+        << static_cast<double>(
+               orthogonal_geometry.maximum_target_degree_ratio)
+        << ", high-frequency power="
+        << orthogonal_closure.transfer_to_viscosity_frequency_power.str()
+        << ")\n"
         << "pure helical local test: "
         << (pure_helical_ok ? "PASS" : "FAIL")
         << " (plus local="
@@ -1742,7 +1771,7 @@ bool self_test(std::ostream& out) {
            transition_block_scaling_ok &&
            moving_gap_controller_ok &&
            triad_ok && helical_ok && helical_gap_ok && local_symmetry_ok &&
-           pure_helical_ok && fft_ok &&
+           orthogonal_geometry_ok && pure_helical_ok && fft_ok &&
            helical_sector_objective_ok && helical_adversary_ok &&
            helical_trajectory_adjoint_ok &&
            helical_trajectory_adversary_ok && fft_adjoint_ok && adjoint_ok &&

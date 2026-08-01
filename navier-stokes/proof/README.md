@@ -66,3 +66,8 @@ replayable K3--K6 same-state continuation is summarized there and certified by
 frequency-spread estimate `LS-1`. It eliminates equal-frequency enstrophy
 transfer but records why broad-spread local triads still leave the key L4
 depletion open.
+
+`l4/lemmas/local-orthogonal-triads/` controls the infinite signature family
+`(|p|^2,|q|^2,|p+q|^2)=(r,r,2r)`. Its bounded lattice degree improves the
+local transfer from critical frequency power `9/2` to `7/2`, making the family
+viscosity-absorbable at high frequency.

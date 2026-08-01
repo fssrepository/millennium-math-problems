@@ -101,6 +101,22 @@ with final adjacent relative difference `2.66e-15`. See
 `../../adversary/helical-heterochiral-broad-spread-cutoff-K3-K6.json` and
 `../../analysis/helical-heterochiral-broad-spread/K3.json`.
 
+The same analysis aggregates complete triads by their sorted squared-length
+signature. On the broad K3 endpoint,
+
+```text
+(|a|^2,|b|^2,|c|^2)    signed V       fraction of signed local V
+(1,1,2)                -2.06868979e-1             91.2699%
+(2,2,6)                -1.92087649e-2              8.4748%
+first two combined                                99.7447%
+```
+
+The leading signature consists of equal-length orthogonal input waves. This
+rules out a diffuse-cutoff interpretation of the current extremum and gives a
+precise next target: control the coherent multiplicity of scaled orthogonal
+local triads over time. Controlling one isolated triad is insufficient because
+the number of lattice triads grows with the active frequency.
+
 ## What remains open
 
 `LS-1` removes every equal-frequency local triad, but it does not yet close

@@ -26,6 +26,7 @@ add_executable(navier_stokes_lab
     src/lemma_reporter.cpp
     src/local_triad_symmetrizer.cpp
     src/moving_gap_controller.cpp
+    src/orthogonal_triad_geometry.cpp
     src/periodic_shell_geometry.cpp
     src/periodic_tail_bound.cpp
     src/adversary_reporter.cpp

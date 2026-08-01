@@ -104,6 +104,9 @@ source file:
 - `HelicalGapLedger` resolves those sectors by dyadic gap, while
   `LocalTriadSymmetrizer` groups complete signed Fourier triads and certifies
   the exact frequency-spread bound coming from triadwise energy cancellation;
+- `OrthogonalTriadGeometry` proves and enumerates the bounded-degree lattice
+  graph for equal-length orthogonal waves and certifies its subcritical
+  `K^(-1/2)` transfer-to-viscosity scaling;
 - `HelicalSectorObjective`, `HelicalSectorAdjoint`, and the two helical
   adversaries provide exact static and checkpointed trajectory gradients for
   sector-selective local searches;

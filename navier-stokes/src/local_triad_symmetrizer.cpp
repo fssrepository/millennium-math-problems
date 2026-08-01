@@ -106,13 +106,13 @@ LocalTriadSymmetryReport LocalTriadSymmetrizer::analyze(
     std::map<std::array<SpectralInteger, 3>,
              LocalTriadSymmetryReport::SignatureRow> signatures;
     for (const auto& [key, group] : groups) {
-        const std::array<SpectralInteger, 3> wave2{
+        const std::array<SpectralInteger, 3> target_wave2{
             norm_squared(key[0]), norm_squared(key[1]),
             norm_squared(key[2])};
-        const SpectralInteger minimum_wave2 = *std::min_element(
-            wave2.begin(), wave2.end());
-        const SpectralInteger maximum_wave2 = *std::max_element(
-            wave2.begin(), wave2.end());
+        std::array<SpectralInteger, 3> signature_wave2 = target_wave2;
+        std::sort(signature_wave2.begin(), signature_wave2.end());
+        const SpectralInteger minimum_wave2 = signature_wave2.front();
+        const SpectralInteger maximum_wave2 = signature_wave2.back();
         SpectralReal energy_sum = 0.0L;
         SpectralReal energy_absolute = 0.0L;
         SpectralReal weighted = 0.0L;
@@ -120,10 +120,10 @@ LocalTriadSymmetryReport LocalTriadSymmetrizer::analyze(
         for (std::size_t target = 0; target < 3; ++target) {
             energy_sum += group.target_energy_transfer[target];
             energy_absolute += group.target_absolute_transfer[target];
-            weighted += static_cast<SpectralReal>(wave2[target]) *
+            weighted += static_cast<SpectralReal>(target_wave2[target]) *
                 group.target_energy_transfer[target];
             raw_weighted_absolute +=
-                static_cast<SpectralReal>(wave2[target]) *
+                static_cast<SpectralReal>(target_wave2[target]) *
                 group.target_absolute_transfer[target];
         }
         if (energy_absolute >
@@ -154,8 +154,8 @@ LocalTriadSymmetryReport LocalTriadSymmetrizer::analyze(
         ++report.local_triads;
         report.signed_local_enstrophy_transfer += weighted;
         reconstruction_scale += raw_weighted_absolute;
-        auto& signature = signatures[wave2];
-        signature.squared_lengths = wave2;
+        auto& signature = signatures[signature_wave2];
+        signature.squared_lengths = signature_wave2;
         ++signature.triads;
         signature.signed_enstrophy_transfer += weighted;
         signature.absolute_group_enstrophy_transfer += std::abs(weighted);
