@@ -1,6 +1,7 @@
 #include "lemma_engine.hpp"
 #include "adversary_reporter.hpp"
 #include "dyadic_shell_bounds.hpp"
+#include "dynamic_adversary.hpp"
 #include "family_reporter.hpp"
 #include "far_tail_closure.hpp"
 #include "gradient_adversary.hpp"
@@ -74,196 +75,6 @@ struct AdversaryResult {
     int accepted_mutations = 0;
     int evaluations = 0;
 };
-
-struct DynamicAdversaryResult {
-    SpectralState state;
-    StaticObjective initial_objective;
-    EvolutionResult evolution;
-    EvolutionResult refined_evolution;
-    Real time_step_relative_error = 0.0L;
-    Real search_initial_objective = 0.0L;
-    Real search_final_objective = 0.0L;
-    std::vector<GradientIterationRecord> gradient_trace;
-    int accepted_mutations = 0;
-    int accepted_gradient_steps = 0;
-    int evaluations = 0;
-};
-
-Real dynamic_objective_value(const EvolutionResult& evolution,
-                             const std::string& objective) {
-    if (objective == "critical-integral") {
-        return evolution.integral_critical;
-    }
-    if (objective == "critical-local-integral") {
-        return evolution.integral_local_critical;
-    }
-    if (objective == "critical-nonlocal-integral") {
-        return evolution.integral_nonlocal_critical;
-    }
-    if (objective == "critical-near-nonlocal-integral") {
-        return evolution.integral_near_nonlocal_critical;
-    }
-    if (objective == "critical-far-nonlocal-integral") {
-        return evolution.integral_far_nonlocal_critical;
-    }
-    if (objective == "critical-gap-tail-integral") {
-        return evolution.integral_selected_gap_tail_critical;
-    }
-    if (objective == "max-q") {
-        return evolution.maximum_energy_level_quantity;
-    }
-    if (objective == "terminal-q") {
-        return evolution.final_energy_level_quantity;
-    }
-    if (objective == "q-gain") {
-        if (!(evolution.initial_energy_level_quantity > 1e-30L) ||
-            !(evolution.final_energy_level_quantity > 1e-30L)) {
-            return -std::numeric_limits<Real>::infinity();
-        }
-        return std::log(evolution.final_energy_level_quantity /
-                        evolution.initial_energy_level_quantity);
-    }
-    if (objective == "q-increase") {
-        return evolution.final_energy_level_quantity -
-               evolution.initial_energy_level_quantity;
-    }
-    throw std::invalid_argument("unknown dynamic objective: " + objective);
-}
-
-DynamicAdversaryResult optimize_dynamic(
-    const SpectralState& primary_start, const SpectralState* secondary_start,
-    int generations, Real mutation, Real viscosity, Real final_time, Real dt,
-    std::uint64_t seed, const std::string& objective,
-    const std::string& optimizer, const std::string& gradient_method,
-    int sobolev_order, Real sobolev_cap, int minimum_dyadic_gap) {
-    if (generations < 0) {
-        throw std::invalid_argument("--dynamic-generations cannot be negative");
-    }
-    std::mt19937_64 generator(seed ^ 0xd1b54a32d192ed03ULL ^
-                              static_cast<std::uint64_t>(SpectralStateOps::cutoff(primary_start)));
-    DynamicAdversaryResult result;
-    const InitialSobolevConstraint sobolev(sobolev_order, sobolev_cap);
-    const bool collect_search_partition =
-        objective == "critical-local-integral" ||
-        objective == "critical-nonlocal-integral" ||
-        objective == "critical-near-nonlocal-integral" ||
-        objective == "critical-far-nonlocal-integral" ||
-        objective == "critical-gap-tail-integral";
-    result.state = primary_start;
-    result.initial_objective = active_trajectory_analyzer.evaluate_static(result.state);
-    result.evolution = active_trajectory_analyzer.evolve(
-        result.state, viscosity, final_time, dt,
-        collect_search_partition, minimum_dyadic_gap);
-    ++result.evaluations;
-    bool result_admissible = sobolev.admissible(result.state);
-
-    if (secondary_start != nullptr) {
-        const int target_cutoff = SpectralStateOps::cutoff(primary_start);
-        const int source_cutoff = SpectralStateOps::cutoff(*secondary_start);
-        SpectralState secondary = source_cutoff <= target_cutoff
-            ? SpectralStateFactory::lift(
-                  *secondary_start, target_cutoff, generator)
-            : SpectralStateFactory::project(
-                  *secondary_start, target_cutoff);
-        const EvolutionResult secondary_evolution =
-            active_trajectory_analyzer.evolve(
-                secondary, viscosity, final_time, dt,
-                collect_search_partition, minimum_dyadic_gap);
-        ++result.evaluations;
-        const bool secondary_admissible = sobolev.admissible(secondary);
-        if (secondary_admissible &&
-            (!result_admissible ||
-             dynamic_objective_value(secondary_evolution, objective) >
-                 dynamic_objective_value(result.evolution, objective))) {
-            result.state = std::move(secondary);
-            result.initial_objective = active_trajectory_analyzer.evaluate_static(result.state);
-            result.evolution = secondary_evolution;
-            result_admissible = true;
-        }
-    }
-    if (!result_admissible) {
-        throw std::invalid_argument(
-            "no dynamic start satisfies the configured Sobolev cap");
-    }
-    result.search_initial_objective =
-        dynamic_objective_value(result.evolution, objective);
-
-    const bool use_mutations = optimizer == "mutate" || optimizer == "hybrid";
-    const bool use_gradient = optimizer == "gradient" || optimizer == "hybrid";
-    for (int generation = 0; use_mutations && generation < generations;
-         ++generation) {
-        const Real progress = generations > 1
-                                  ? static_cast<Real>(generation) /
-                                        static_cast<Real>(generations - 1)
-                                  : 0.0L;
-        const Real radius = mutation * (0.5L - 0.4L * progress);
-        SpectralState candidate =
-            SpectralStateFactory::mutate(
-                result.state, radius, generator, generation % 4 != 0);
-        if (!sobolev.admissible(candidate)) {
-            continue;
-        }
-        const EvolutionResult evolution =
-            active_trajectory_analyzer.evolve(
-                candidate, viscosity, final_time, dt,
-                collect_search_partition, minimum_dyadic_gap);
-        ++result.evaluations;
-        if (evolution.finite &&
-            dynamic_objective_value(evolution, objective) >
-                dynamic_objective_value(result.evolution, objective)) {
-            result.state = std::move(candidate);
-            result.initial_objective = active_trajectory_analyzer.evaluate_static(result.state);
-            result.evolution = evolution;
-            ++result.accepted_mutations;
-        }
-    }
-    if (use_gradient && generations > 0) {
-        const int trajectory_steps = std::max(
-            1, static_cast<int>(std::ceil(final_time / dt)));
-        GradientSearchOptions gradient_options;
-        gradient_options.iterations = generations;
-        gradient_options.line_search_steps = 16;
-        gradient_options.trajectory_steps = trajectory_steps;
-        gradient_options.viscosity = viscosity;
-        gradient_options.time_step =
-            final_time / static_cast<Real>(trajectory_steps);
-        gradient_options.initial_step = mutation;
-        gradient_options.objective = objective;
-        gradient_options.method = gradient_method;
-        gradient_options.sobolev_order = sobolev_order;
-        gradient_options.sobolev_cap = sobolev_cap;
-        gradient_options.minimum_dyadic_gap = minimum_dyadic_gap;
-        const GradientSearchResult gradient =
-            active_gradient_adversary.maximize_q(
-                result.state, gradient_options);
-        result.state = gradient.state;
-        result.initial_objective = active_trajectory_analyzer.evaluate_static(result.state);
-        result.evolution =
-            active_trajectory_analyzer.evolve(
-                result.state, viscosity, final_time, dt,
-                collect_search_partition, minimum_dyadic_gap);
-        result.evaluations += gradient.trajectory_evaluations + 1;
-        result.accepted_gradient_steps = gradient.accepted_steps;
-        result.gradient_trace = gradient.trace;
-    }
-    result.search_final_objective =
-        dynamic_objective_value(result.evolution, objective);
-    result.refined_evolution = active_trajectory_analyzer.evolve(
-        result.state, viscosity, final_time, 0.5L * dt, true,
-        minimum_dyadic_gap);
-    const Real refined_objective =
-        dynamic_objective_value(result.refined_evolution, objective);
-    const Real coarse_objective =
-        dynamic_objective_value(result.evolution, objective);
-    const Real objective_difference =
-        std::abs(refined_objective - coarse_objective);
-    result.time_step_relative_error = refined_objective != 0.0L
-        ? objective_difference / std::abs(refined_objective)
-        : (objective_difference == 0.0L
-               ? 0.0L
-               : std::numeric_limits<Real>::infinity());
-    return result;
-}
 
 AdversaryResult optimize_static_depletion(int cutoff, int restarts, int generations,
                                           Real mutation, std::uint64_t seed,
@@ -1925,6 +1736,21 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
             SpectralStateReader::read_tsv(options.dynamic_warm_state);
     }
     const LemmaAdversary adversary(options.threads);
+    const DynamicAdversaryEnsemble dynamic_adversary(
+        options.backend, adversary.threads());
+    DynamicAdversaryOptions dynamic_options;
+    dynamic_options.generations = options.dynamic_generations;
+    dynamic_options.mutation = static_cast<Real>(options.mutation);
+    dynamic_options.viscosity = static_cast<Real>(options.viscosity);
+    dynamic_options.final_time = static_cast<Real>(options.evolution_time);
+    dynamic_options.time_step = static_cast<Real>(options.time_step);
+    dynamic_options.seed = options.seed;
+    dynamic_options.objective = options.dynamic_objective;
+    dynamic_options.optimizer = options.dynamic_optimizer;
+    dynamic_options.gradient_method = options.gradient_method;
+    dynamic_options.sobolev_order = options.sobolev_order;
+    dynamic_options.sobolev_cap = static_cast<Real>(options.sobolev_cap);
+    dynamic_options.minimum_dyadic_gap = options.minimum_dyadic_gap;
     for (const int cutoff : options.cutoffs) {
         SpectralState warm_start;
         const SpectralState* warm_start_pointer = nullptr;
@@ -1954,19 +1780,9 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
         } else if (!replayed_dynamic_warm_state.waves.empty()) {
             dynamic_warm_start = &replayed_dynamic_warm_state;
         }
-        active_galerkin.set_compute_threads(adversary.threads());
-        DynamicAdversaryResult dynamic = optimize_dynamic(
-            result.state, dynamic_warm_start, options.dynamic_generations,
-            static_cast<Real>(options.mutation),
-            static_cast<Real>(options.viscosity),
-            static_cast<Real>(options.evolution_time),
-            static_cast<Real>(options.time_step), options.seed,
-            options.dynamic_objective, options.dynamic_optimizer,
-            options.gradient_method,
-            options.sobolev_order,
-            static_cast<Real>(options.sobolev_cap),
-            options.minimum_dyadic_gap);
-        active_galerkin.set_compute_threads(1);
+        DynamicAdversaryResult dynamic = dynamic_adversary.optimize(
+            result.state, dynamic_warm_start, dynamic_options,
+            options.dynamic_restarts);
         if (!options.state_prefix.empty()) {
             AdversaryResult dynamic_state;
             dynamic_state.cutoff = cutoff;
@@ -2027,6 +1843,7 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
     report.sobolev_order = options.sobolev_order;
     report.sobolev_cap = static_cast<Real>(options.sobolev_cap);
     report.restarts = options.restarts;
+    report.dynamic_restarts = options.dynamic_restarts;
     report.generations = options.generations;
     report.dynamic_generations = options.dynamic_generations;
     report.mutation = static_cast<Real>(options.mutation);
@@ -2128,6 +1945,10 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
             evolution.integral_absolute_total_vortex;
         row.dynamic_geometry_samples = evolution.geometry_samples;
         row.dynamic_evaluations = dynamic.evaluations;
+        row.dynamic_winning_restart = dynamic.winning_restart;
+        row.dynamic_restart_objectives.assign(
+            dynamic.restart_objectives.begin(),
+            dynamic.restart_objectives.end());
         row.dynamic_accepted_mutations = dynamic.accepted_mutations;
         row.dynamic_accepted_gradient_steps =
             dynamic.accepted_gradient_steps;

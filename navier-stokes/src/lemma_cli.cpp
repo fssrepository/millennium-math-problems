@@ -83,6 +83,9 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
                 parse_cutoffs(next_value(argc, argv, index, name), "adversary");
         } else if (name == "--restarts") {
             options.restarts = std::stoi(next_value(argc, argv, index, name));
+        } else if (name == "--dynamic-restarts") {
+            options.dynamic_restarts =
+                std::stoi(next_value(argc, argv, index, name));
         } else if (name == "--generations") {
             options.generations = std::stoi(next_value(argc, argv, index, name));
         } else if (name == "--dynamic-generations") {
@@ -131,6 +134,7 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
         }
     }
     if (options.restarts < 1 || options.restarts > 10000 ||
+        options.dynamic_restarts < 1 || options.dynamic_restarts > 10000 ||
         options.generations < 1 || options.generations > 1000000 ||
         options.dynamic_generations < 0 ||
         options.dynamic_generations > 1000000 ||
@@ -234,6 +238,7 @@ void LemmaCli::print_adversary_help(std::ostream& out) {
     out << "L4 static adversary options:\n"
         << "  --cutoffs A,B,C       Fourier cutoffs (default 1,2,3)\n"
         << "  --restarts N          independent hill climbs (default 4)\n"
+        << "  --dynamic-restarts N  independent dynamic adjoint starts (default 1)\n"
         << "  --generations N       mutations per restart (default 80)\n"
         << "  --dynamic-generations N  dynamic optimizer iterations (default 24)\n"
         << "  --mutation VALUE      initial mutation radius (default 0.20)\n"

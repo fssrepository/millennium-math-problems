@@ -35,7 +35,8 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
         << ", gradient_method=" << report.gradient_method
         << ", minimum_dyadic_gap=" << report.minimum_dyadic_gap
         << ", H" << report.sobolev_order << "_cap="
-        << static_cast<double>(report.sobolev_cap) << ")\n"
+        << static_cast<double>(report.sobolev_cap)
+        << ", dynamic_restarts=" << report.dynamic_restarts << ")\n"
         << "cutoff,steps,int_D4Z2_refined,int_local_D4Z2,int_nonlocal_D4Z2,"
            "int_near_nonlocal_D4Z2,int_far_nonlocal_D4Z2,"
            "int_selected_gap_tail_D4Z2,"
@@ -76,6 +77,7 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
             << static_cast<double>(row.dynamic_final_energy) << ','
             << static_cast<double>(row.dynamic_energy_balance_residual)
             << "  # dynamic_evals=" << row.dynamic_evaluations
+            << ", winning_restart=" << row.dynamic_winning_restart
             << ", accepted_mutations=" << row.dynamic_accepted_mutations
             << ", accepted_gradient="
             << row.dynamic_accepted_gradient_steps
@@ -100,6 +102,7 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
         << "  \"schema\": \"navier-stokes-l4-adversary-v2\",\n"
         << "  \"candidate\": \"cutoff-uniform trajectory bound on Q=D^4 Z\",\n"
         << "  \"optimizer\": {\"restarts\": " << report.restarts
+        << ", \"dynamic_restarts\": " << report.dynamic_restarts
         << ", \"generations\": " << report.generations
         << ", \"dynamic_generations\": " << report.dynamic_generations
         << ", \"dynamic_objective\": \"" << report.dynamic_objective << "\""
@@ -196,12 +199,24 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
             << ", \"dynamic_energy_balance_residual\": "
             << static_cast<double>(row.dynamic_energy_balance_residual)
             << ", \"dynamic_evaluations\": " << row.dynamic_evaluations
+            << ", \"dynamic_winning_restart\": "
+            << row.dynamic_winning_restart
             << ", \"dynamic_accepted_mutations\": "
             << row.dynamic_accepted_mutations
             << ", \"dynamic_accepted_gradient_steps\": "
             << row.dynamic_accepted_gradient_steps
             << ", \"dynamic_final_sobolev_value\": "
             << static_cast<double>(row.dynamic_sobolev_value)
+            << ", \"dynamic_restart_objectives\": [";
+        for (std::size_t restart = 0;
+             restart < row.dynamic_restart_objectives.size(); ++restart) {
+            out << static_cast<double>(
+                       row.dynamic_restart_objectives[restart])
+                << (restart + 1 == row.dynamic_restart_objectives.size()
+                        ? ""
+                        : ", ");
+        }
+        out << "]"
             << ", \"dynamic_gradient_trace\": [";
         for (std::size_t trace_index = 0;
              trace_index < row.dynamic_gradient_trace.size();

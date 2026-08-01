@@ -69,9 +69,11 @@ struct AdversaryReportRow {
     long double dynamic_integral_absolute_total_vortex = 0.0L;
     int dynamic_geometry_samples = 0;
     int dynamic_evaluations = 0;
+    int dynamic_winning_restart = 0;
     int dynamic_accepted_mutations = 0;
     int dynamic_accepted_gradient_steps = 0;
     long double dynamic_sobolev_value = 0.0L;
+    std::vector<long double> dynamic_restart_objectives;
     std::vector<AdversaryGradientTracePoint> dynamic_gradient_trace;
 };
 
@@ -85,6 +87,7 @@ struct AdversaryReport {
     int sobolev_order = 0;
     long double sobolev_cap = 0.0L;
     int restarts = 0;
+    int dynamic_restarts = 1;
     int generations = 0;
     int dynamic_generations = 0;
     long double mutation = 0.0L;

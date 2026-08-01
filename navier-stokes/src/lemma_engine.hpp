@@ -18,6 +18,7 @@ struct Options {
 struct AdversaryOptions {
     std::vector<int> cutoffs{1, 2, 3};
     int restarts = 4;
+    int dynamic_restarts = 1;
     int generations = 80;
     int dynamic_generations = 24;
     double mutation = 0.20;

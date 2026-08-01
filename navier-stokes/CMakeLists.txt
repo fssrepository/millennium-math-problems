@@ -8,6 +8,7 @@ find_package(Threads REQUIRED)
 find_package(OpenMP)
 
 add_executable(navier_stokes_lab
+    src/dynamic_adversary.cpp
     src/dyadic_shell_bounds.cpp
     src/far_tail_closure.cpp
     src/gradient_adversary.cpp
