@@ -1,0 +1,22 @@
+{
+  "schema": "navier-stokes-helical-adversary-v1",
+  "input_state": "proof/l4/states/helical-heterochiral-local-integral/dynamic/K4.tsv",
+  "output_state": "proof/l4/states/helical-heterochiral-local-integral/dynamic/K4-T001.tsv",
+  "mode": "trajectory",
+  "selection": "heterochiral",
+  "cutoff": 4,
+  "iterations": 4,
+  "restarts": 1,
+  "workers": 1,
+  "winner_restart": 0,
+  "restart_mutation": 0,
+  "accepted_steps": 4,
+  "evaluations": 41,
+  "total_evaluations": 41,
+  "trajectory_steps": 10,
+  "viscosity": 0.100000000000000006,
+  "time_step": 0.00100000000000000002,
+  "initial_objective": 4.39098532691752165e-06,
+  "final_objective": 4.39106631701859648e-06,
+  "energy_error": 1.08420217248550443e-19
+}

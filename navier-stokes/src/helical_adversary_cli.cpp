@@ -3,6 +3,7 @@
 #include "helical_sector_adjoint.hpp"
 #include "helical_sector_adversary.hpp"
 #include "helical_trajectory_adversary.hpp"
+#include "lemma_adversary.hpp"
 #include "spectral_dynamics.hpp"
 #include "spectral_galerkin.hpp"
 #include "state_analysis.hpp"
@@ -15,6 +16,7 @@
 #include <random>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 namespace lemma {
 namespace {
@@ -95,8 +97,14 @@ HelicalAdversaryCliOptions HelicalAdversaryCli::parse(
             options.line_search_steps = std::stoi(next_value(index, name));
         } else if (name == "--trajectory-steps") {
             options.trajectory_steps = std::stoi(next_value(index, name));
+        } else if (name == "--restarts") {
+            options.restarts = std::stoi(next_value(index, name));
+        } else if (name == "--workers") {
+            options.workers = std::stoi(next_value(index, name));
         } else if (name == "--step") {
             options.initial_step = std::stold(next_value(index, name));
+        } else if (name == "--restart-mutation") {
+            options.restart_mutation = std::stold(next_value(index, name));
         } else if (name == "--nu") {
             options.viscosity = std::stold(next_value(index, name));
         } else if (name == "--dt") {
@@ -122,7 +130,10 @@ void HelicalAdversaryCli::print_help(std::ostream& out) {
         << "  --iterations N        exact-gradient iterations\n"
         << "  --line-search N       line-search trials per iteration\n"
         << "  --trajectory-steps N  RK4 steps for trajectory mode\n"
+        << "  --restarts N          independent starts (first is input)\n"
+        << "  --workers N           parallel restart workers\n"
         << "  --step X              initial Riemannian step\n"
+        << "  --restart-mutation X  perturbation size for extra starts\n"
         << "  --nu X                viscosity\n"
         << "  --dt X                RK4 time step\n"
         << "  --seed N              deterministic lift seed\n";
@@ -137,6 +148,11 @@ int run_helical_adversary(
     }
     if (options.mode != "static" && options.mode != "trajectory") {
         throw std::invalid_argument("--mode must be static or trajectory");
+    }
+    if (options.restarts < 1 || options.workers < 1 ||
+        options.restart_mutation < 0.0L) {
+        throw std::invalid_argument(
+            "restarts and workers must be positive; mutation must be nonnegative");
     }
     const HelicalSectorSelection selection =
         parse_selection(options.selection);
@@ -154,10 +170,29 @@ int run_helical_adversary(
     }
     SpectralStateOps::normalize_energy(state, energy);
 
-    SpectralGalerkin galerkin;
-    galerkin.configure("direct", 1);
-    SpectralDynamics dynamics(galerkin);
-    const HelicalSectorAdjoint adjoint(dynamics);
+    std::vector<SpectralState> starts;
+    starts.reserve(static_cast<std::size_t>(options.restarts));
+    starts.push_back(state);
+    for (int restart = 1; restart < options.restarts; ++restart) {
+        std::mt19937_64 restart_generator(
+            options.seed + static_cast<std::uint64_t>(restart) *
+                UINT64_C(0x9e3779b97f4a7c15));
+        starts.push_back(SpectralStateFactory::mutate(
+            state, options.restart_mutation, restart_generator, false));
+        SpectralStateOps::normalize_energy(starts.back(), energy);
+    }
+    static_cast<void>(SpectralStateOps::interactions(starts.front()));
+
+    struct SearchResult {
+        SpectralState state;
+        SpectralReal initial_objective = 0.0L;
+        SpectralReal objective = 0.0L;
+        int accepted_steps = 0;
+        int evaluations = 0;
+    };
+    std::vector<SearchResult> results(
+        static_cast<std::size_t>(options.restarts));
+    const LemmaAdversary executor(options.workers);
     SpectralState optimized;
     SpectralReal initial_objective = 0.0L;
     SpectralReal final_objective = 0.0L;
@@ -169,13 +204,13 @@ int run_helical_adversary(
         search.iterations = options.iterations;
         search.line_search_steps = options.line_search_steps;
         search.initial_step = options.initial_step;
-        const HelicalSectorAdversaryResult result =
-            HelicalSectorAdversary::maximize(state, search);
-        optimized = result.state;
-        initial_objective = result.initial_objective;
-        final_objective = result.objective;
-        accepted_steps = result.accepted_steps;
-        evaluations = result.evaluations;
+        executor.run_restarts(results.size(), [&](std::size_t restart) {
+            const HelicalSectorAdversaryResult result =
+                HelicalSectorAdversary::maximize(starts[restart], search);
+            results[restart] = {result.state, result.initial_objective,
+                                result.objective, result.accepted_steps,
+                                result.evaluations};
+        });
     } else {
         HelicalTrajectoryAdversaryOptions search;
         search.selection = selection;
@@ -185,14 +220,32 @@ int run_helical_adversary(
         search.initial_step = options.initial_step;
         search.viscosity = options.viscosity;
         search.time_step = options.time_step;
-        const HelicalTrajectoryAdversaryResult result =
-            HelicalTrajectoryAdversary::maximize(state, search, adjoint);
-        optimized = result.state;
-        initial_objective = result.initial_objective;
-        final_objective = result.objective;
-        accepted_steps = result.accepted_steps;
-        evaluations = result.evaluations;
+        executor.run_restarts(results.size(), [&](std::size_t restart) {
+            SpectralGalerkin local_galerkin;
+            local_galerkin.configure("direct", 1);
+            const SpectralDynamics local_dynamics(local_galerkin);
+            const HelicalSectorAdjoint local_adjoint(local_dynamics);
+            const HelicalTrajectoryAdversaryResult result =
+                HelicalTrajectoryAdversary::maximize(
+                    starts[restart], search, local_adjoint);
+            results[restart] = {result.state, result.initial_objective,
+                                result.objective, result.accepted_steps,
+                                result.evaluations};
+        });
     }
+    std::size_t winner = 0;
+    int total_evaluations = 0;
+    for (std::size_t restart = 0; restart < results.size(); ++restart) {
+        total_evaluations += results[restart].evaluations;
+        if (results[restart].objective > results[winner].objective) {
+            winner = restart;
+        }
+    }
+    optimized = std::move(results[winner].state);
+    initial_objective = results[winner].initial_objective;
+    final_objective = results[winner].objective;
+    accepted_steps = results[winner].accepted_steps;
+    evaluations = results[winner].evaluations;
 
     write_state(optimized, options.state_output_path, options.mode,
                 options.selection, final_objective);
@@ -211,8 +264,14 @@ int run_helical_adversary(
         << "  \"selection\": \"" << options.selection << "\",\n"
         << "  \"cutoff\": " << target_cutoff << ",\n"
         << "  \"iterations\": " << options.iterations << ",\n"
+        << "  \"restarts\": " << options.restarts << ",\n"
+        << "  \"workers\": " << executor.threads() << ",\n"
+        << "  \"winner_restart\": " << winner << ",\n"
+        << "  \"restart_mutation\": "
+        << static_cast<double>(options.restart_mutation) << ",\n"
         << "  \"accepted_steps\": " << accepted_steps << ",\n"
         << "  \"evaluations\": " << evaluations << ",\n"
+        << "  \"total_evaluations\": " << total_evaluations << ",\n"
         << "  \"trajectory_steps\": "
         << (options.mode == "trajectory" ? options.trajectory_steps : 0)
         << ",\n  \"viscosity\": " << static_cast<double>(options.viscosity)
@@ -231,7 +290,11 @@ int run_helical_adversary(
         << " objective=" << static_cast<double>(initial_objective)
         << " -> " << static_cast<double>(final_objective)
         << " accepted=" << accepted_steps
-        << " evaluations=" << evaluations << '\n'
+        << " evaluations=" << evaluations
+        << " restarts=" << options.restarts
+        << " workers=" << executor.threads()
+        << " winner=" << winner
+        << " total_evaluations=" << total_evaluations << '\n'
         << "State written to " << options.state_output_path << '\n'
         << "Certificate written to " << options.certificate_path << '\n';
     return final_objective > initial_objective ? 0 : 2;

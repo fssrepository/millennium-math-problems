@@ -18,7 +18,10 @@ struct HelicalAdversaryCliOptions {
     int iterations = 8;
     int line_search_steps = 16;
     int trajectory_steps = 10;
+    int restarts = 1;
+    int workers = 12;
     SpectralReal initial_step = 0.1L;
+    SpectralReal restart_mutation = 0.03L;
     SpectralReal viscosity = 0.1L;
     SpectralReal time_step = 0.001L;
     std::uint64_t seed = 20260801;

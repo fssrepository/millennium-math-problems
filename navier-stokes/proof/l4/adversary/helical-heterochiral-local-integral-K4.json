@@ -1,0 +1,22 @@
+{
+  "schema": "navier-stokes-helical-adversary-v1",
+  "input_state": "/tmp/helical-K4-smoke.tsv",
+  "output_state": "proof/l4/states/helical-heterochiral-local-integral/dynamic/K4.tsv",
+  "mode": "trajectory",
+  "selection": "heterochiral",
+  "cutoff": 4,
+  "iterations": 8,
+  "restarts": 12,
+  "workers": 12,
+  "winner_restart": 0,
+  "restart_mutation": 0.0100000000000000002,
+  "accepted_steps": 8,
+  "evaluations": 77,
+  "total_evaluations": 480,
+  "trajectory_steps": 4,
+  "viscosity": 0.100000000000000006,
+  "time_step": 0.00100000000000000002,
+  "initial_objective": 1.75912962891116894e-06,
+  "final_objective": 1.75927021692946195e-06,
+  "energy_error": 0
+}
