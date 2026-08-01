@@ -90,10 +90,12 @@ source file:
 - `LemmaCli` owns proof-runner argument parsing and help text.
 
 The remaining objective and geometric diagnostic kernels still live in
-`lemma_engine.cpp`. State construction and forward dynamics are now isolated so
-the next module can implement and gradient-check a hand-written discrete
-adjoint without coupling it to CLI or report generation. This keeps rebuilds
-dependency-free and makes each layer independently replaceable.
+`lemma_engine.cpp`. State construction, forward dynamics, the discrete adjoint,
+and constrained optimization are isolated from CLI and report generation. The
+next architectural split will move trajectory diagnostics out of the engine;
+the next mathematical task is cutoff/time/viscosity continuation of the
+adjoint-generated extremizers. This keeps rebuilds dependency-free and makes
+each layer independently replaceable.
 
 ## Proof-oriented lemma checks
 
@@ -145,7 +147,7 @@ strong quarter-depletion quantity `Q = D^4 Z` at fixed unit energy:
   --dynamic-optimizer gradient \
   --nu 0.1 --evolve-time 0.1 --dt 0.002 \
   --certificate proof/l4/adversary/l4s-maxq-adversary.json \
-  --state-prefix proof/l4/states/l4s-maxq-state
+  --state-dir proof/l4/states/l4s-maxq-adversary
 ```
 
 Winning states are saved as Fourier coefficients, so a suspected obstruction
@@ -156,6 +158,22 @@ gradient onto the fixed-energy sphere, and applies monotone backtracking.
 `hybrid` runs both. The command then directly integrates `D^4 Z^2`. Cutoff
 growth attacks the strong pointwise lemma; growth of the dynamic integral
 attacks the weaker time-integrated L4-A candidate.
+
+Long searches can resume from a saved state without repeating lower cutoffs:
+
+```bash
+./build/navier_stokes_lab adversary --cutoffs 6 \
+  --dynamic-warm-state proof/l4/states/gradient-continuation/dynamic/K6.tsv \
+  --dynamic-generations 32 --dynamic-optimizer gradient \
+  --state-dir proof/l4/states/gradient-continuation-refined
+```
+
+The self-test validates each derivative layer independently. Current relative
+errors on the deterministic test state are approximately `2.6e-19` for FFT
+JVP versus direct JVP, `1.9e-19` for FFT VJP versus direct VJP, `5.6e-19` for
+RK4 adjoint duality, and `2.0e-13` for a three-step trajectory gradient versus
+central differences. A short `K=5` smoke certificate with 1,330 modes is stored
+in `proof/l4/adversary/l4s-fft-gradient-K5-smoke.json`.
 
 ## Fixed smooth projective family
 
@@ -239,5 +257,6 @@ regularity lemma for smooth 3D Navier–Stokes solutions.
 ```
 
 The tests cover the Helmholtz projection, divergence reduction, time stepping,
-and the discrete energy inequality. The lemma engine adds scaling and spectral
-triad checks.
+the discrete energy inequality, exact rational scaling, spectral triads,
+direct/FFT agreement, JVP/VJP duality, central-difference gradient checks,
+checkpointed reverse RK4, and fixed-energy projected gradient ascent.

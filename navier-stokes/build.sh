@@ -22,6 +22,6 @@ mkdir -p build
   src/family_reporter.cpp \
   src/proof_scaling.cpp src/spectral_adjoint.cpp src/spectral_dynamics.cpp \
   src/spectral_fft_operator.cpp src/spectral_galerkin.cpp \
-  src/spectral_objective.cpp src/spectral_state.cpp \
+  src/spectral_objective.cpp src/spectral_state.cpp src/state_analysis.cpp \
   -o build/navier_stokes_lab
 build/navier_stokes_lab self-test

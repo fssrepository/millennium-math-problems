@@ -27,6 +27,8 @@ struct AdversaryOptions {
     std::uint64_t seed = 20260801;
     std::string certificate_path;
     std::string state_prefix;
+    std::string state_directory;
+    std::string dynamic_warm_state;
     std::string dynamic_objective = "max-q";
     std::string dynamic_optimizer = "gradient";
     int threads = 0;

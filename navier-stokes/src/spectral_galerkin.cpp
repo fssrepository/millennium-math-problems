@@ -27,7 +27,7 @@ void SpectralGalerkin::set_compute_threads(int compute_threads) {
 
 bool SpectralGalerkin::uses_fft(int cutoff) const {
     return backend_ == Backend::fft ||
-           (backend_ == Backend::automatic && cutoff >= 5);
+           (backend_ == Backend::automatic && cutoff >= 3);
 }
 
 int SpectralGalerkin::compute_threads() const {

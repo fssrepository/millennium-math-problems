@@ -107,6 +107,21 @@ integral_0^T D_N^4 Z_N^2 dt <= (sup Q_N) E_N(0)/(2 nu).
 The engine now certifies this reduction and directly optimizes/measures the
 trajectory maximum of `Q_N` on nested analytic projective families.
 
+The dynamic adversary no longer relies on random mutation as its primary
+search direction. A hand-written discrete adjoint differentiates the exact RK4
+map and the dealiased pseudospectral nonlinearity. The implementation includes
+direct JVP/VJP oracles, FFT JVP/VJP kernels, checkpointed reverse propagation,
+the exact gradient of `Q=D^4 Z`, and Riemannian projection onto the fixed-energy
+sphere. Central-difference and adjoint-duality tests currently agree at roughly
+`10^-13` and `10^-19`, respectively.
+
+This stronger search changes the computational evidence, not the logical
+status of L4-S. On a short equal-parameter `K=1,2` comparison, three gradient
+steps found trajectory maxima about 130 and 275 times larger than three random
+mutation attempts. The first FFT-path `K=5` certificate contains 1,330 modes
+and completed two accepted gradient steps. These are finite extremizers to
+analyze, not a cutoff-independent rejection or proof.
+
 `L3` experiments now split `V_N = V_N^local + V_N^nonlocal`, where a triad is
 local when its largest and smallest wave-number magnitudes differ by at most a
 factor of two. The next sublemmas are:
@@ -119,3 +134,9 @@ L4.2  uniformly control integral |V_local|^4 / (Z P^3) dt.
 The scalar inequality `|a+b|^4 <= 8(|a|^4+|b|^4)` then recovers L4-A. Current
 adversarial paths indicate that L4.2 is the dominant term; this observation is
 only routing information, not a proof.
+
+The immediate computational action is continuation of adjoint extremizers in
+`K`, time horizon, and viscosity with deterministic multistart. The immediate
+analytical action is to extract a reproducible Fourier concentration pattern
+from those branches and test whether it yields either a genuine projective
+counterfamily to L4-S or a cutoff-uniform structural bound for L4.1/L4.2.

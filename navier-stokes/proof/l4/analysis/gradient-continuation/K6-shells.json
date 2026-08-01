@@ -1,0 +1,16 @@
+{
+  "schema": "navier-stokes-state-analysis-v1",
+  "state": "proof/l4/states/gradient-continuation/dynamic/K6.tsv",
+  "cutoff": 6, "modes": 2196, "active_modes": 2196, "highest_active_shell": 6,
+  "E": 1, "Z": 1.21489380409273262, "P": 1.74866538418708295, "Q": 0.000478520275213877369,
+  "divergence_residual": 7.27405985218686274e-17, "reality_residual": 5.84519293960449827e-13, "projected_q_gradient_norm": 0.000466382080215395735, "retraction_directional_derivative": 0.000466382077522501813, "retraction_gradient_relative_error": 5.77400820857684329e-09,
+  "shells": [
+    {"shell": 0, "modes": 0, "active_modes": 0, "energy": 0, "enstrophy": 0, "palinstrophy": 0, "q_gradient_norm": 0},
+    {"shell": 1, "modes": 26, "active_modes": 26, "energy": 0.993123773983298208, "enstrophy": 1.17851667764138246, "palinstrophy": 1.5520962182834861, "q_gradient_norm": 0.000997168901850056756},
+    {"shell": 2, "modes": 98, "active_modes": 98, "energy": 0.00682034579698914765, "enstrophy": 0.0357665259458464363, "palinstrophy": 0.189775454657448578, "q_gradient_norm": 0.000136555522334494948},
+    {"shell": 3, "modes": 218, "active_modes": 218, "energy": 5.56815641574710419e-05, "enstrophy": 0.00060669743840368771, "palinstrophy": 0.00671308403644057302, "q_gradient_norm": 1.59082769165837399e-05},
+    {"shell": 4, "modes": 386, "active_modes": 386, "energy": 1.97644358079200593e-07, "enstrophy": 3.84541026494937192e-06, "palinstrophy": 7.61042572492525685e-05, "q_gradient_norm": 1.27294950966019616e-06},
+    {"shell": 5, "modes": 602, "active_modes": 602, "energy": 6.46147842226427426e-10, "enstrophy": 2.00622923240751249e-08, "palinstrophy": 6.32433636514472155e-07, "q_gradient_norm": 4.86993075503459412e-06},
+    {"shell": 6, "modes": 866, "active_modes": 866, "energy": 3.65049194746861358e-10, "enstrophy": 3.75945427790540333e-08, "palinstrophy": 3.89051882194100516e-06, "q_gradient_norm": 0.000346651439506223582}
+  ]
+}

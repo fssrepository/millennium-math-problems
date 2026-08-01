@@ -2,15 +2,18 @@
 
 #include "spectral_adjoint.hpp"
 
+#include <string>
+
 namespace lemma {
 
 struct GradientSearchOptions {
     int iterations = 8;
-    int line_search_steps = 8;
+    int line_search_steps = 16;
     int trajectory_steps = 1;
     SpectralReal viscosity = 0.1L;
     SpectralReal time_step = 0.001L;
     SpectralReal initial_step = 0.2L;
+    std::string objective = "max-q";
 };
 
 struct GradientSearchResult {
@@ -35,7 +38,7 @@ public:
         const GradientSearchOptions& options) const;
 
 private:
-    [[nodiscard]] SpectralReal maximum_q(
+    [[nodiscard]] SpectralReal objective_value(
         const SpectralState& initial,
         const GradientSearchOptions& options) const;
 

@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "lemma_engine.hpp"
+#include "state_analysis.hpp"
 
 namespace ns {
 
@@ -887,6 +888,8 @@ void print_help(std::ostream& out) {
     lemma::LemmaCli::print_adversary_help(out);
     out << '\n';
     lemma::LemmaCli::print_family_help(out);
+    out << '\n';
+    lemma::StateAnalysisCli::print_help(out);
 }
 
 }  // namespace ns
@@ -913,6 +916,10 @@ int main(int argc, char** argv) {
         if (command == "family") {
             return lemma::run_family(
                 lemma::LemmaCli::parse_family_options(argc, argv, 2), std::cout);
+        }
+        if (command == "state-analysis") {
+            return lemma::run_state_analysis(
+                lemma::StateAnalysisCli::parse(argc, argv, 2), std::cout);
         }
         const ns::ParsedOptions options = ns::parse_options(argc, argv, 2);
         if (command == "simulate") {

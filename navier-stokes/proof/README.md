@@ -12,3 +12,8 @@ stage:
 JSON and TSV files are computational evidence or exact finite algebra checks.
 Their presence does not replace the infinite-dimensional estimates required by
 `PROOF_PLAN.md`.
+
+`l4/adversary/l4s-fft-gradient-K5-smoke.json` is the first certificate produced
+through the complete FFT forward/adjoint path. It records a fixed-energy
+`max-q` search at cutoff `K=5` with 1,330 Fourier modes and is intended as a
+fast regression artifact, not as evidence of asymptotic cutoff behavior.

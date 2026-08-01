@@ -103,6 +103,10 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
             options.certificate_path = next_value(argc, argv, index, name);
         } else if (name == "--state-prefix") {
             options.state_prefix = next_value(argc, argv, index, name);
+        } else if (name == "--state-dir") {
+            options.state_directory = next_value(argc, argv, index, name);
+        } else if (name == "--dynamic-warm-state") {
+            options.dynamic_warm_state = next_value(argc, argv, index, name);
         } else if (name == "--dynamic-objective") {
             options.dynamic_objective = next_value(argc, argv, index, name);
         } else if (name == "--dynamic-optimizer") {
@@ -215,6 +219,8 @@ void LemmaCli::print_adversary_help(std::ostream& out) {
         << "  --seed N              reproducible optimizer seed\n"
         << "  --certificate PATH    write JSON result\n"
         << "  --state-prefix PATH   dump each winning Fourier state as TSV\n"
+        << "  --state-dir PATH      write states under PATH/{static,dynamic}\n"
+        << "  --dynamic-warm-state PATH  replay a TSV as first dynamic warm start\n"
         << "  --dynamic-objective NAME  critical-integral or max-q\n"
         << "  --dynamic-optimizer NAME  gradient, mutate, or hybrid\n"
         << "  --threads N           worker threads; 0 uses up to 12 CPUs\n"

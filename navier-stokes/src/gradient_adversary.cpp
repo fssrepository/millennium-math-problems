@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <stdexcept>
 #include <utility>
 
@@ -45,18 +46,34 @@ GradientAdversary::GradientAdversary(const SpectralDynamics& dynamics,
                                      const SpectralAdjoint& adjoint)
     : dynamics_(dynamics), objective_(objective), adjoint_(adjoint) {}
 
-SpectralReal GradientAdversary::maximum_q(
+SpectralReal GradientAdversary::objective_value(
     const SpectralState& initial,
     const GradientSearchOptions& options) const {
     SpectralState state = initial;
-    SpectralReal result =
+    const SpectralReal initial_q =
         objective_.evaluate(state).energy_level_quantity;
+    SpectralReal maximum_q = initial_q;
     for (int step = 0; step < options.trajectory_steps; ++step) {
         dynamics_.rk4_step(state, options.viscosity, options.time_step);
-        result = std::max(
-            result, objective_.evaluate(state).energy_level_quantity);
+        maximum_q = std::max(
+            maximum_q, objective_.evaluate(state).energy_level_quantity);
     }
-    return result;
+    const SpectralReal terminal_q =
+        objective_.evaluate(state).energy_level_quantity;
+    if (options.objective == "max-q") {
+        return maximum_q;
+    }
+    if (options.objective == "terminal-q") {
+        return terminal_q;
+    }
+    if (options.objective == "q-gain") {
+        if (!(initial_q > 1e-30L) || !(terminal_q > 1e-30L)) {
+            return -std::numeric_limits<SpectralReal>::infinity();
+        }
+        return std::log(terminal_q / initial_q);
+    }
+    throw std::invalid_argument("unknown gradient objective: " +
+                                options.objective);
 }
 
 GradientSearchResult GradientAdversary::maximize_q(
@@ -72,15 +89,29 @@ GradientSearchResult GradientAdversary::maximize_q(
     GradientSearchResult result;
     result.state = initial;
     const SpectralReal target_energy = SpectralStateOps::energy(initial);
-    result.objective = maximum_q(result.state, options);
+    result.objective = objective_value(result.state, options);
     result.initial_objective = result.objective;
     ++result.trajectory_evaluations;
     SpectralReal next_step = options.initial_step;
 
     for (int iteration = 0; iteration < options.iterations; ++iteration) {
-        const QTrajectoryGradient trajectory = adjoint_.maximum_q_gradient(
-            result.state, options.viscosity, options.time_step,
-            options.trajectory_steps);
+        QTrajectoryGradient trajectory;
+        if (options.objective == "max-q") {
+            trajectory = adjoint_.maximum_q_gradient(
+                result.state, options.viscosity, options.time_step,
+                options.trajectory_steps);
+        } else if (options.objective == "terminal-q") {
+            trajectory = adjoint_.terminal_q_gradient(
+                result.state, options.viscosity, options.time_step,
+                options.trajectory_steps);
+        } else if (options.objective == "q-gain") {
+            trajectory = adjoint_.q_gain_gradient(
+                result.state, options.viscosity, options.time_step,
+                options.trajectory_steps);
+        } else {
+            throw std::invalid_argument("unknown gradient objective: " +
+                                        options.objective);
+        }
         ++result.trajectory_evaluations;
         ++result.iterations;
         result.objective = trajectory.objective_value;
@@ -105,7 +136,8 @@ GradientSearchResult GradientAdversary::maximize_q(
             SpectralState candidate = dynamics_.add_increment(
                 result.state, direction, trial_step);
             SpectralStateOps::normalize_energy(candidate, target_energy);
-            const SpectralReal candidate_objective = maximum_q(candidate, options);
+            const SpectralReal candidate_objective =
+                objective_value(candidate, options);
             ++result.trajectory_evaluations;
             const SpectralReal improvement_floor =
                 1e-13L * std::max(1e-30L, std::abs(result.objective));

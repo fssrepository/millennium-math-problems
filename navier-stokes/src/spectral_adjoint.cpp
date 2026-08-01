@@ -1,6 +1,7 @@
 #include "spectral_adjoint.hpp"
 
 #include <stdexcept>
+#include <cmath>
 #include <utility>
 #include <vector>
 
@@ -62,6 +63,33 @@ QTrajectoryGradient SpectralAdjoint::maximum_q_gradient(
         }
     }
     return reverse_from_step(checkpoints, viscosity, time_step, maximum_step);
+}
+
+QTrajectoryGradient SpectralAdjoint::q_gain_gradient(
+    const SpectralState& initial, SpectralReal viscosity,
+    SpectralReal time_step, int steps) const {
+    const std::vector<SpectralState> checkpoints = build_checkpoints(
+        dynamics_, initial, viscosity, time_step, steps);
+    QTrajectoryGradient result = reverse_from_step(
+        checkpoints, viscosity, time_step, steps);
+    const SpectralReal initial_q =
+        objective_.evaluate(initial).energy_level_quantity;
+    const SpectralReal terminal_q = result.objective_value;
+    if (!(initial_q > 1e-30L) || !(terminal_q > 1e-30L)) {
+        throw std::runtime_error(
+            "q-gain gradient requires positive endpoint Q values");
+    }
+    const SpectralIncrement initial_q_gradient =
+        objective_.energy_level_gradient(initial);
+    for (std::size_t mode = 0; mode < result.initial_gradient.size(); ++mode) {
+        for (std::size_t component = 0; component < 3; ++component) {
+            result.initial_gradient[mode][component] =
+                result.initial_gradient[mode][component] / terminal_q -
+                initial_q_gradient[mode][component] / initial_q;
+        }
+    }
+    result.objective_value = std::log(terminal_q / initial_q);
+    return result;
 }
 
 QTrajectoryGradient SpectralAdjoint::reverse_from_step(

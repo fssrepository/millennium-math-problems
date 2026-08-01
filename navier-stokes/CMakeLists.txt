@@ -20,6 +20,7 @@ add_executable(navier_stokes_lab
     src/spectral_galerkin.cpp
     src/spectral_objective.cpp
     src/spectral_state.cpp
+    src/state_analysis.cpp
 )
 target_include_directories(navier_stokes_lab PRIVATE src)
 target_link_libraries(navier_stokes_lab PRIVATE Threads::Threads)

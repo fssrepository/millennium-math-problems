@@ -12,6 +12,7 @@
 #include "spectral_galerkin.hpp"
 #include "spectral_objective.hpp"
 #include "spectral_state.hpp"
+#include "state_analysis.hpp"
 
 #include <algorithm>
 #include <array>
@@ -21,6 +22,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <fstream>
+#include <filesystem>
 #include <iomanip>
 #include <iostream>
 #include <limits>
@@ -339,6 +341,8 @@ struct EvolutionResult {
     Real final_energy = 0.0L;
     Real initial_enstrophy = 0.0L;
     Real final_enstrophy = 0.0L;
+    Real initial_energy_level_quantity = 0.0L;
+    Real final_energy_level_quantity = 0.0L;
     Real integral_critical = 0.0L;
     Real integral_enstrophy = 0.0L;
     Real maximum_energy_level_quantity = 0.0L;
@@ -373,6 +377,7 @@ EvolutionResult evolve_galerkin(SpectralState state, Real viscosity,
     StaticObjective before = evaluate_static_objective(state);
     result.initial_energy = before.energy;
     result.initial_enstrophy = before.enstrophy;
+    result.initial_energy_level_quantity = before.energy_level_quantity;
     result.maximum_energy_level_quantity = before.energy_level_quantity;
     result.maximum_critical_integrand = before.critical_integrand;
     result.maximum_enstrophy = before.enstrophy;
@@ -505,6 +510,7 @@ EvolutionResult evolve_galerkin(SpectralState state, Real viscosity,
     result.time = time;
     result.final_energy = before.energy;
     result.final_enstrophy = before.enstrophy;
+    result.final_energy_level_quantity = before.energy_level_quantity;
     result.energy_balance_residual = result.final_energy - result.initial_energy +
                                      2.0L * viscosity * result.integral_enstrophy;
     return result;
@@ -537,6 +543,17 @@ Real dynamic_objective_value(const EvolutionResult& evolution,
     }
     if (objective == "max-q") {
         return evolution.maximum_energy_level_quantity;
+    }
+    if (objective == "terminal-q") {
+        return evolution.final_energy_level_quantity;
+    }
+    if (objective == "q-gain") {
+        if (!(evolution.initial_energy_level_quantity > 1e-30L) ||
+            !(evolution.final_energy_level_quantity > 1e-30L)) {
+            return -std::numeric_limits<Real>::infinity();
+        }
+        return std::log(evolution.final_energy_level_quantity /
+                        evolution.initial_energy_level_quantity);
     }
     throw std::invalid_argument("unknown dynamic objective: " + objective);
 }
@@ -601,12 +618,13 @@ DynamicAdversaryResult optimize_dynamic(
             1, static_cast<int>(std::ceil(final_time / dt)));
         GradientSearchOptions gradient_options;
         gradient_options.iterations = generations;
-        gradient_options.line_search_steps = 8;
+        gradient_options.line_search_steps = 16;
         gradient_options.trajectory_steps = trajectory_steps;
         gradient_options.viscosity = viscosity;
         gradient_options.time_step =
             final_time / static_cast<Real>(trajectory_steps);
         gradient_options.initial_step = mutation;
+        gradient_options.objective = objective;
         const GradientSearchResult gradient =
             active_gradient_adversary.maximize_q(
                 result.state, gradient_options);
@@ -1392,8 +1410,19 @@ bool self_test(std::ostream& out) {
 
 int run_adversary(const AdversaryOptions& options, std::ostream& out) {
     active_galerkin.configure(options.backend, 1);  // restart-level parallelism first
+    if (!options.state_directory.empty()) {
+        std::filesystem::create_directories(
+            std::filesystem::path(options.state_directory) / "static");
+        std::filesystem::create_directories(
+            std::filesystem::path(options.state_directory) / "dynamic");
+    }
     std::vector<AdversaryResult> results;
     std::vector<DynamicAdversaryResult> dynamic_results;
+    SpectralState replayed_dynamic_warm_state;
+    if (!options.dynamic_warm_state.empty()) {
+        replayed_dynamic_warm_state =
+            SpectralStateReader::read_tsv(options.dynamic_warm_state);
+    }
     const LemmaAdversary adversary(options.threads);
     for (const int cutoff : options.cutoffs) {
         SpectralState warm_start;
@@ -1411,8 +1440,19 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
                                      std::to_string(cutoff) + ".tsv",
                                  result);
         }
-        const SpectralState* dynamic_warm_start =
-            dynamic_results.empty() ? nullptr : &dynamic_results.back().state;
+        if (!options.state_directory.empty()) {
+            write_spectral_state(
+                (std::filesystem::path(options.state_directory) / "static" /
+                 ("K" + std::to_string(cutoff) + ".tsv"))
+                    .string(),
+                result);
+        }
+        const SpectralState* dynamic_warm_start = nullptr;
+        if (!dynamic_results.empty()) {
+            dynamic_warm_start = &dynamic_results.back().state;
+        } else if (!replayed_dynamic_warm_state.waves.empty()) {
+            dynamic_warm_start = &replayed_dynamic_warm_state;
+        }
         active_galerkin.set_compute_threads(adversary.threads());
         DynamicAdversaryResult dynamic = optimize_dynamic(
             result.state, dynamic_warm_start, options.dynamic_generations,
@@ -1430,7 +1470,20 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
             dynamic_state.objective = dynamic.initial_objective;
             write_spectral_state(options.state_prefix + "-dynamic-K" +
                                      std::to_string(cutoff) + ".tsv",
-                                 dynamic_state);
+                                     dynamic_state);
+        }
+        if (!options.state_directory.empty()) {
+            AdversaryResult dynamic_state;
+            dynamic_state.cutoff = cutoff;
+            dynamic_state.modes =
+                static_cast<int>(dynamic.state.waves.size());
+            dynamic_state.state = dynamic.state;
+            dynamic_state.objective = dynamic.initial_objective;
+            write_spectral_state(
+                (std::filesystem::path(options.state_directory) / "dynamic" /
+                 ("K" + std::to_string(cutoff) + ".tsv"))
+                    .string(),
+                dynamic_state);
         }
         dynamic_results.push_back(std::move(dynamic));
         results.push_back(std::move(result));
