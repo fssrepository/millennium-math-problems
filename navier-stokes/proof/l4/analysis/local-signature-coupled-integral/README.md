@@ -50,7 +50,7 @@ analytical estimate and not a proof of global regularity.
 
 Artifacts:
 
-- [`../../adversary/local-signature-coupled-integral-h4-cap100-K3-K6-multistart12-lbfgs8.json`](../../adversary/local-signature-coupled-integral-h4-cap100-K3-K6-multistart12-lbfgs8.json)
+- [`../../adversary/local-signature/local-signature-coupled-integral-h4-cap100-K3-K6-multistart12-lbfgs8.json`](../../adversary/local-signature/local-signature-coupled-integral-h4-cap100-K3-K6-multistart12-lbfgs8.json)
 - [`multistart-family.json`](multistart-family.json)
 
 Reproduce with
@@ -91,7 +91,7 @@ dt relative error               = 4.5068e-7
 The critical integral therefore accumulates slightly slower than linearly on
 this finite branch. Restart zero wins again; the strongest independent start
 is `8.09e-4` below it relatively. The artifact is
-[`../../adversary/local-signature-coupled-integral-h4-cap100-K6-T002-multistart12-lbfgs6.json`](../../adversary/local-signature-coupled-integral-h4-cap100-K6-T002-multistart12-lbfgs6.json).
+[`../../adversary/local-signature/local-signature-coupled-integral-h4-cap100-K6-T002-multistart12-lbfgs6.json`](../../adversary/local-signature/local-signature-coupled-integral-h4-cap100-K6-T002-multistart12-lbfgs6.json).
 
 ## Viscosity continuation
 
@@ -108,7 +108,7 @@ The critical integral rises by only `0.39%` on this branch when dissipation is
 reduced fivefold, although Q grows more rapidly. The strongest independent
 start is `2.43e-5` below the continued winner. This remains a short-time,
 finite-cutoff observation. The artifact is
-[`../../adversary/local-signature-coupled-integral-h4-cap100-K6-T002-nu002-multistart12-lbfgs4.json`](../../adversary/local-signature-coupled-integral-h4-cap100-K6-T002-nu002-multistart12-lbfgs4.json).
+[`../../adversary/local-signature/local-signature-coupled-integral-h4-cap100-K6-T002-nu002-multistart12-lbfgs4.json`](../../adversary/local-signature/local-signature-coupled-integral-h4-cap100-K6-T002-nu002-multistart12-lbfgs4.json).
 
 ## Factor-correlation mechanism
 
@@ -198,6 +198,6 @@ cutoff-concentrating mechanism.
 
 Artifacts:
 
-- [`../../adversary/local-critical-increase-h4-cap100-K3-K6-multistart12-lbfgs8.json`](../../adversary/local-critical-increase-h4-cap100-K3-K6-multistart12-lbfgs8.json)
+- [`../../adversary/shifted-local-density/local-critical-increase-h4-cap100-K3-K6-multistart12-lbfgs8.json`](../../adversary/shifted-local-density/local-critical-increase-h4-cap100-K3-K6-multistart12-lbfgs8.json)
 - [`critical-increase-family.json`](critical-increase-family.json)
 - [`../local-critical-increase/K6-T002-factor-trajectory.json`](../local-critical-increase/K6-T002-factor-trajectory.json)

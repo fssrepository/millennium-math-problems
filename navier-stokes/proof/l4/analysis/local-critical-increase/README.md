@@ -151,12 +151,12 @@ candidate and conditional closure are stated in
 
 Artifacts:
 
-- [`../../adversary/local-critical-increase-h4-cap100-K3-K6-multistart12-lbfgs8.json`](../../adversary/local-critical-increase-h4-cap100-K3-K6-multistart12-lbfgs8.json)
-- [`../../adversary/local-critical-increase-h4-cap100-K6-multistart12-lbfgs24.json`](../../adversary/local-critical-increase-h4-cap100-K6-multistart12-lbfgs24.json)
-- [`../../adversary/local-critical-increase-h4-cap100-K6-T002-multistart12-lbfgs8.json`](../../adversary/local-critical-increase-h4-cap100-K6-T002-multistart12-lbfgs8.json)
-- [`../../adversary/local-critical-increase-h4-cap100-K6-T002-nu002-multistart12-lbfgs8.json`](../../adversary/local-critical-increase-h4-cap100-K6-T002-nu002-multistart12-lbfgs8.json)
-- [`../../adversary/local-critical-log-gain-h4-cap100-K3-K6-multistart12-lbfgs8.json`](../../adversary/local-critical-log-gain-h4-cap100-K3-K6-multistart12-lbfgs8.json)
-- [`../../adversary/local-critical-shifted-log-gain1e-4-h4-cap100-K3-K6-multistart12-lbfgs8.json`](../../adversary/local-critical-shifted-log-gain1e-4-h4-cap100-K3-K6-multistart12-lbfgs8.json)
+- [`../../adversary/shifted-local-density/local-critical-increase-h4-cap100-K3-K6-multistart12-lbfgs8.json`](../../adversary/shifted-local-density/local-critical-increase-h4-cap100-K3-K6-multistart12-lbfgs8.json)
+- [`../../adversary/shifted-local-density/local-critical-increase-h4-cap100-K6-multistart12-lbfgs24.json`](../../adversary/shifted-local-density/local-critical-increase-h4-cap100-K6-multistart12-lbfgs24.json)
+- [`../../adversary/shifted-local-density/local-critical-increase-h4-cap100-K6-T002-multistart12-lbfgs8.json`](../../adversary/shifted-local-density/local-critical-increase-h4-cap100-K6-T002-multistart12-lbfgs8.json)
+- [`../../adversary/shifted-local-density/local-critical-increase-h4-cap100-K6-T002-nu002-multistart12-lbfgs8.json`](../../adversary/shifted-local-density/local-critical-increase-h4-cap100-K6-T002-nu002-multistart12-lbfgs8.json)
+- [`../../adversary/shifted-local-density/local-critical-log-gain-h4-cap100-K3-K6-multistart12-lbfgs8.json`](../../adversary/shifted-local-density/local-critical-log-gain-h4-cap100-K3-K6-multistart12-lbfgs8.json)
+- [`../../adversary/shifted-local-density/local-critical-shifted-log-gain1e-4-h4-cap100-K3-K6-multistart12-lbfgs8.json`](../../adversary/shifted-local-density/local-critical-shifted-log-gain1e-4-h4-cap100-K3-K6-multistart12-lbfgs8.json)
 - [`../local-signature-coupled-integral/critical-increase-family.json`](../local-signature-coupled-integral/critical-increase-family.json)
 - [`log-gain-family.json`](log-gain-family.json)
 - [`shifted-log-gain1e-4-family.json`](shifted-log-gain1e-4-family.json)

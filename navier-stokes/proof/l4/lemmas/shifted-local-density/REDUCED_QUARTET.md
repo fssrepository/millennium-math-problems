@@ -50,3 +50,6 @@ polynomial relative residual        3.20e-19
 This is the current minimal local proof obligation. Applying a triangle
 inequality to the original five entries is strictly weaker than estimating
 `K+G` and is no longer the planned route.
+
+[CLOSURE_TARGET.md](CLOSURE_TARGET.md) derives the exact sufficient estimate
+for `K+G` and verifies its weighted Young reduction.

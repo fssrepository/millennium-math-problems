@@ -750,3 +750,18 @@ The exact local polynomial numerator is `4S^3ZP(K+G)`. At K6 it equals
 `proof/l4/lemmas/shifted-local-density/REDUCED_QUARTET.md`: prove a
 cutoff-independent upper bound for this signed two-entry expression. This is
 the next restart point after any failed computational or analytical attempt.
+
+The exact Young reduction now identifies the required estimate rather than
+leaving it qualitative:
+
+```text
+|K+G| <= C k0 B0^(1/4) Z^(5/4)P^(3/4).               (LQC-3)
+```
+
+Multiplication by `4|S|^3ZP` and weighted AM--GM imply SLD-1P-L with
+`A_local=3C`. Compared with the elementary quartic scale
+`Z^(1/2)P^(3/2)`, LQC-3 requires a `(Z/P)^(3/4)` depletion supplied by the
+signed two-entry structure. The K6 finite-state ratio is `0.127982322632` and
+the algebraic identity error is `8.00e-20`; neither number proves uniformity.
+`proof/l4/lemmas/shifted-local-density/CLOSURE_TARGET.md` is the exact current
+restart point.

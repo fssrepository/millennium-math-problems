@@ -82,8 +82,8 @@ concentrating branch.
 
 Source certificates and states:
 
-- `proof/l4/adversary/l4-local-integral-h4-cap100-K3-lbfgs16.json`;
-- `proof/l4/adversary/l4-nonlocal-integral-h4-cap*-K3-*.json`;
+- `proof/l4/adversary/partitioned-integral/l4-local-integral-h4-cap100-K3-lbfgs16.json`;
+- `proof/l4/adversary/partitioned-integral/l4-nonlocal-integral-h4-cap*-K3-*.json`;
 - `proof/l4/states/local-integral-h4-cap100-K3-lbfgs16/`;
 - `proof/l4/states/nonlocal-integral-h4-cap-sweep/`;
 - `local-K3.json` and `nonlocal-K3.json` in this directory.

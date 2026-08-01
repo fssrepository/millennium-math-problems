@@ -37,6 +37,7 @@ add_executable(navier_stokes_lab
     src/local_critical_derivative_ledger.cpp
     src/local_quartic_identity_ledger.cpp
     src/local_quartic_commutator.cpp
+    src/local_quartic_closure_target.cpp
     src/local_quartic_projected_residual.cpp
     src/local_quartic_reduced_ledger.cpp
     src/local_quartic_shell_ledger.cpp

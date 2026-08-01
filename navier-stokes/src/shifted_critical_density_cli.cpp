@@ -93,6 +93,9 @@ int ShiftedCriticalDensityCli::run(
         report.quartic_commutator,
         report.quartic_projected_residual,
         report.derivative_ledger);
+    report.quartic_closure_target = LocalQuarticClosureTarget::evaluate(
+        report.diagnostic, report.derivative_ledger,
+        report.quartic_reduced_ledger);
     report.quartic_shell_ledger = LocalQuarticShellLedger::evaluate(
         dynamics, state, report.diagnostic,
         report.derivative_ledger);
@@ -118,6 +121,7 @@ int ShiftedCriticalDensityCli::run(
             report.quartic_commutator.finite &&
             report.quartic_projected_residual.finite &&
             report.quartic_reduced_ledger.finite &&
+            report.quartic_closure_target.finite &&
             report.quartic_shell_ledger.finite &&
             report.quartic_shell_envelope.all_bounds_hold &&
             report.derivative_budget.finite

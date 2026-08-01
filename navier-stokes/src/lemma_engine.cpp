@@ -24,6 +24,7 @@
 #include "local_critical_derivative_ledger.hpp"
 #include "local_quartic_identity_ledger.hpp"
 #include "local_quartic_commutator.hpp"
+#include "local_quartic_closure_target.hpp"
 #include "local_quartic_projected_residual.hpp"
 #include "local_quartic_reduced_ledger.hpp"
 #include "local_quartic_shell_ledger.hpp"
@@ -1203,6 +1204,10 @@ bool self_test(std::ostream& out) {
         LocalQuarticReducedLedger::evaluate(
             local_quartic_commutator, local_quartic_projected,
             critical_derivative_ledger);
+    const LocalQuarticClosureTargetReport local_quartic_closure =
+        LocalQuarticClosureTarget::evaluate(
+            shifted_density_diagnostic, critical_derivative_ledger,
+            local_quartic_reduced);
     const LocalQuarticShellReport local_quartic_shells =
         LocalQuarticShellLedger::evaluate(
             active_dynamics, partition_state,
@@ -1502,6 +1507,7 @@ bool self_test(std::ostream& out) {
         local_quartic_commutator.finite &&
         local_quartic_projected.finite &&
         local_quartic_reduced.finite &&
+        local_quartic_closure.finite &&
         local_quartic_envelope.all_bounds_hold &&
         shifted_density_budget.finite &&
         local_integral_gradient_error < 1e-9L &&
@@ -1901,6 +1907,9 @@ bool self_test(std::ostream& out) {
         << ", polynomial reduced error="
         << static_cast<double>(local_quartic_reduced
                                    .polynomial_reconstruction_error)
+        << ", closure C="
+        << static_cast<double>(local_quartic_closure
+                                   .required_constant_ratio)
         << ")\n"
         << "projected gradient adversary test: "
         << (gradient_search_ok ? "PASS" : "FAIL")

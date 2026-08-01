@@ -254,5 +254,28 @@
     "cancellation_fraction": 0.151396965589282478,
     "finite": true
   },
+  "local_quartic_closure_target": {
+    "signed_two_entry_bracket": -0.179749427014854829,
+    "absolute_two_entry_bracket": 0.179749427014854829,
+    "candidate_scale": 1.40448636435373642,
+    "required_constant_ratio": 0.12798232263192183,
+    "SLD_first_denominator_term": 0.000551543707661502464,
+    "SLD_shift_denominator_term": 3.72411276140682235,
+    "weighted_geometric_mean": 0.00499966212961749316,
+    "local_absolute_polynomial_numerator": 0.00264627230687536266,
+    "reconstructed_scaled_geometric_mean": 0.00264627230687536266,
+    "geometric_identity_error": 8.00213327492410283e-20,
+    "young_upper_bound": 0.493003067862566036,
+    "young_ratio": 0.00536765890392605291,
+    "certified_local_constant": 0.38394696789576549,
+    "initial_frequency_power": 1,
+    "initial_shift_power": 0.25,
+    "enstrophy_power": 1.25,
+    "palinstrophy_power": 0.75,
+    "required_depletion_power": 0.75,
+    "candidate_proved": false,
+    "algebra_certified": true,
+    "finite": true
+  },
   "finite": true
 }

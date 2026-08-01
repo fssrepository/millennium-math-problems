@@ -145,12 +145,12 @@ Reproduce with
 
 Artifacts:
 
-- [`../../adversary/local-critical-shifted-log-gain1e-5-h4-cap100-K6-multistart6-lbfgs8.json`](../../adversary/local-critical-shifted-log-gain1e-5-h4-cap100-K6-multistart6-lbfgs8.json)
-- [`../../adversary/local-critical-shifted-log-gain1e-4-h4-cap100-K3-K6-multistart12-lbfgs8.json`](../../adversary/local-critical-shifted-log-gain1e-4-h4-cap100-K3-K6-multistart12-lbfgs8.json)
-- [`../../adversary/local-critical-shifted-log-gain1e-3-h4-cap100-K6-multistart6-lbfgs8.json`](../../adversary/local-critical-shifted-log-gain1e-3-h4-cap100-K6-multistart6-lbfgs8.json)
-- [`../../adversary/local-critical-ep-log-gain-h4-cap100-K3-K6-multistart12-lbfgs8.json`](../../adversary/local-critical-ep-log-gain-h4-cap100-K3-K6-multistart12-lbfgs8.json)
-- [`../../adversary/local-critical-ep-log-gain-K6-projections-K3-K6.json`](../../adversary/local-critical-ep-log-gain-K6-projections-K3-K6.json)
-- [`../../adversary/local-critical-ep-log-gain-K6-lifts-K6-K8.json`](../../adversary/local-critical-ep-log-gain-K6-lifts-K6-K8.json)
+- [`../../adversary/shifted-local-density/local-critical-shifted-log-gain1e-5-h4-cap100-K6-multistart6-lbfgs8.json`](../../adversary/shifted-local-density/local-critical-shifted-log-gain1e-5-h4-cap100-K6-multistart6-lbfgs8.json)
+- [`../../adversary/shifted-local-density/local-critical-shifted-log-gain1e-4-h4-cap100-K3-K6-multistart12-lbfgs8.json`](../../adversary/shifted-local-density/local-critical-shifted-log-gain1e-4-h4-cap100-K3-K6-multistart12-lbfgs8.json)
+- [`../../adversary/shifted-local-density/local-critical-shifted-log-gain1e-3-h4-cap100-K6-multistart6-lbfgs8.json`](../../adversary/shifted-local-density/local-critical-shifted-log-gain1e-3-h4-cap100-K6-multistart6-lbfgs8.json)
+- [`../../adversary/shifted-local-density/local-critical-ep-log-gain-h4-cap100-K3-K6-multistart12-lbfgs8.json`](../../adversary/shifted-local-density/local-critical-ep-log-gain-h4-cap100-K3-K6-multistart12-lbfgs8.json)
+- [`../../adversary/shifted-local-density/local-critical-ep-log-gain-K6-projections-K3-K6.json`](../../adversary/shifted-local-density/local-critical-ep-log-gain-K6-projections-K3-K6.json)
+- [`../../adversary/shifted-local-density/local-critical-ep-log-gain-K6-lifts-K6-K8.json`](../../adversary/shifted-local-density/local-critical-ep-log-gain-K6-lifts-K6-K8.json)
 - [`../../analysis/local-critical-increase/K6-instantaneous-E0P0-shifted-density.json`](../../analysis/local-critical-increase/K6-instantaneous-E0P0-shifted-density.json)
 
 ## Exact derivative ledger
@@ -341,6 +341,18 @@ five-entry and denominator-free calculations. At K6, `K` and `G` contribute
 numerator is `0.00264627230688`, with `3.20e-19` relative reconstruction
 error. [REDUCED_QUARTET.md](REDUCED_QUARTET.md) states the resulting two-entry
 local lemma `SLD-1P-L`.
+
+The two-entry formula yields a concrete sufficient target:
+
+```text
+|K+G| <= C k0 B0^(1/4) Z^(5/4)P^(3/4).               (LQC-3)
+```
+
+Weighted AM--GM then gives the local SLD-1P bound with `A_local=3C` exactly.
+The required improvement over the elementary quartic scale is a
+`(Z/P)^(3/4)` depletion. `LocalQuarticClosureTarget` certifies the algebra and
+reports `C_state=0.127982322632` at K6; this finite ratio is not a proof of a
+uniform constant. See [CLOSURE_TARGET.md](CLOSURE_TARGET.md).
 
 ## Reduced proof obligation
 

@@ -3,6 +3,7 @@
 #include "local_critical_derivative_ledger.hpp"
 #include "local_quartic_identity_ledger.hpp"
 #include "local_quartic_commutator.hpp"
+#include "local_quartic_closure_target.hpp"
 #include "local_quartic_projected_residual.hpp"
 #include "local_quartic_reduced_ledger.hpp"
 #include "local_quartic_shell_ledger.hpp"
@@ -34,6 +35,7 @@ struct ShiftedCriticalDensityReport {
     LocalQuarticCommutatorReport quartic_commutator;
     LocalQuarticProjectedResidualReport quartic_projected_residual;
     LocalQuarticReducedReport quartic_reduced_ledger;
+    LocalQuarticClosureTargetReport quartic_closure_target;
     LocalQuarticShellReport quartic_shell_ledger;
     LocalQuarticShellEnvelopeReport quartic_shell_envelope;
     ShiftedCriticalDensityBudget derivative_budget;

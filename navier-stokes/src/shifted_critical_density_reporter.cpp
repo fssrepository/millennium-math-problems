@@ -96,7 +96,10 @@ void ShiftedCriticalDensityReporter::write_console(
                .normalized_reconstruction_error)
         << " quartic_reduced_error="
         << static_cast<double>(report.quartic_reduced_ledger
-               .normalized_reconstruction_error) << '\n';
+               .normalized_reconstruction_error)
+        << " closure_required_C="
+        << static_cast<double>(report.quartic_closure_target
+               .required_constant_ratio) << '\n';
 }
 
 void ShiftedCriticalDensityReporter::write_json(
@@ -782,6 +785,72 @@ void ShiftedCriticalDensityReporter::write_json(
                .cancellation_fraction) << ",\n"
         << "    \"finite\": "
         << (report.quartic_reduced_ledger.finite ? "true" : "false")
+        << "\n  },\n"
+        << "  \"local_quartic_closure_target\": {\n"
+        << "    \"signed_two_entry_bracket\": "
+        << static_cast<double>(report.quartic_closure_target
+               .signed_two_entry_bracket) << ",\n"
+        << "    \"absolute_two_entry_bracket\": "
+        << static_cast<double>(report.quartic_closure_target
+               .absolute_two_entry_bracket) << ",\n"
+        << "    \"candidate_scale\": "
+        << static_cast<double>(report.quartic_closure_target
+               .candidate_scale) << ",\n"
+        << "    \"required_constant_ratio\": "
+        << static_cast<double>(report.quartic_closure_target
+               .required_constant_ratio) << ",\n"
+        << "    \"SLD_first_denominator_term\": "
+        << static_cast<double>(report.quartic_closure_target
+               .sld_first_denominator_term) << ",\n"
+        << "    \"SLD_shift_denominator_term\": "
+        << static_cast<double>(report.quartic_closure_target
+               .sld_shift_denominator_term) << ",\n"
+        << "    \"weighted_geometric_mean\": "
+        << static_cast<double>(report.quartic_closure_target
+               .weighted_geometric_mean) << ",\n"
+        << "    \"local_absolute_polynomial_numerator\": "
+        << static_cast<double>(report.quartic_closure_target
+               .local_absolute_polynomial_numerator) << ",\n"
+        << "    \"reconstructed_scaled_geometric_mean\": "
+        << static_cast<double>(report.quartic_closure_target
+               .reconstructed_scaled_geometric_mean) << ",\n"
+        << "    \"geometric_identity_error\": "
+        << static_cast<double>(report.quartic_closure_target
+               .geometric_identity_error) << ",\n"
+        << "    \"young_upper_bound\": "
+        << static_cast<double>(report.quartic_closure_target
+               .young_upper_bound) << ",\n"
+        << "    \"young_ratio\": "
+        << static_cast<double>(report.quartic_closure_target
+               .young_ratio) << ",\n"
+        << "    \"certified_local_constant\": "
+        << static_cast<double>(report.quartic_closure_target
+               .certified_local_constant) << ",\n"
+        << "    \"initial_frequency_power\": "
+        << static_cast<double>(report.quartic_closure_target
+               .initial_frequency_power) << ",\n"
+        << "    \"initial_shift_power\": "
+        << static_cast<double>(report.quartic_closure_target
+               .initial_shift_power) << ",\n"
+        << "    \"enstrophy_power\": "
+        << static_cast<double>(report.quartic_closure_target
+               .enstrophy_power) << ",\n"
+        << "    \"palinstrophy_power\": "
+        << static_cast<double>(report.quartic_closure_target
+               .palinstrophy_power) << ",\n"
+        << "    \"required_depletion_power\": "
+        << static_cast<double>(report.quartic_closure_target
+               .required_depletion_power) << ",\n"
+        << "    \"candidate_proved\": "
+        << (report.quartic_closure_target.candidate_proved
+                ? "true"
+                : "false")
+        << ",\n    \"algebra_certified\": "
+        << (report.quartic_closure_target.algebra_certified
+                ? "true"
+                : "false")
+        << ",\n    \"finite\": "
+        << (report.quartic_closure_target.finite ? "true" : "false")
         << "\n  },\n"
         << "  \"finite\": " << (value.finite ? "true" : "false")
         << "\n}\n";

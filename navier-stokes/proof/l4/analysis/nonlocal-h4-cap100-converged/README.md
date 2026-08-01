@@ -14,6 +14,6 @@ optimization certificate and does not prove a cutoff-independent bound.
 `K3.json`, `K4.json`, and `K5.json` contain shell and Sobolev diagnostics. The
 source optimizer certificates are:
 
-- `proof/l4/adversary/l4-nonlocal-integral-h4-cap100-K3-convergence128.json`;
-- `proof/l4/adversary/l4-nonlocal-integral-h4-cap100-K3-to-K4-test.json`;
-- `proof/l4/adversary/l4-nonlocal-integral-h4-cap100-K4-to-K5-test.json`.
+- `proof/l4/adversary/partitioned-integral/l4-nonlocal-integral-h4-cap100-K3-convergence128.json`;
+- `proof/l4/adversary/partitioned-integral/l4-nonlocal-integral-h4-cap100-K3-to-K4-test.json`;
+- `proof/l4/adversary/partitioned-integral/l4-nonlocal-integral-h4-cap100-K4-to-K5-test.json`.

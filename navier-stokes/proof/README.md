@@ -4,23 +4,29 @@ Machine-generated certificates and replayable states are grouped by proof
 stage:
 
 - `l2/`: exact scaling and Fourier-triad obstruction certificates;
-- `l4/adversary/`: static and trajectory adversary certificates;
+- `l4/adversary/<family>/`: static and trajectory adversary certificates;
 - `l4/family/`: fixed smooth projective-family certificates;
 - `l4/states/<experiment>/static/`: replayable static-search winners;
 - `l4/states/<experiment>/dynamic/`: replayable trajectory-search winners;
 - `l4/analysis/`: shell, Sobolev, active-mode, and projectivity certificates;
 - `failed_lemmas.tsv`: the global rejection ledger.
 
+The adversary root contains no loose artifacts. Its families are `baseline`,
+`critical-integral`, `far-nonlocal`, `gap-tail`, `gradient`, `helical`,
+`local-signature`, `partitioned-integral`, `q-search`, and
+`shifted-local-density`. Likewise, analysis JSON files live inside their
+named experiment directories rather than directly under `l4/analysis/`.
+
 JSON and TSV files are computational evidence or exact finite algebra checks.
 Their presence does not replace the infinite-dimensional estimates required by
 `PROOF_PLAN.md`.
 
-`l4/adversary/l4s-fft-gradient-K5-smoke.json` is the first certificate produced
+`l4/adversary/gradient/l4s-fft-gradient-K5-smoke.json` is the first certificate produced
 through the complete FFT forward/adjoint path. It records a fixed-energy
 `max-q` search at cutoff `K=5` with 1,330 Fourier modes and is intended as a
 fast regression artifact, not as evidence of asymptotic cutoff behavior.
 
-`l4/adversary/l4-critical-integral-h4-cap100-K1-K8.json` is the first cutoff
+`l4/adversary/critical-integral/l4-critical-integral-h4-cap100-K1-K8.json` is the first cutoff
 continuation that directly maximizes the L4-A time integral with the exact
 discrete adjoint. Its states are under
 `l4/states/critical-integral-h4-cap100/`; the warm-start refinement is under
@@ -28,7 +34,7 @@ discrete adjoint. Its states are under
 and state-family certificate are in
 `l4/analysis/critical-integral-h4-cap100/README.md`.
 
-`l4/adversary/l4-critical-integral-h4-cap100-projective-lbfgs-K3-K8.json`
+`l4/adversary/critical-integral/l4-critical-integral-h4-cap100-projective-lbfgs-K3-K8.json`
 records the improved low-mode-to-high-mode projected L-BFGS continuation. Its
 iteration traces distinguish optimizer progress from genuine cutoff gain. The
 matching state-family analysis is under
@@ -60,7 +66,7 @@ enstrophy inequality.
 decomposition, the heterochiral dominance of current local extremizers, and
 the pure-helicity counterexample to exact homochiral cancellation. The
 replayable K3--K6 same-state continuation is summarized there and certified by
-`l4/adversary/helical-heterochiral-cutoff-scan-K3-K6.json`.
+`l4/adversary/helical/helical-heterochiral-cutoff-scan-K3-K6.json`.
 
 `l4/lemmas/local-triad-symmetry/` proves the exact complete-triad
 frequency-spread estimate `LS-1`. It eliminates equal-frequency enstrophy
@@ -104,4 +110,5 @@ a global cutoff-independent bound for the isolated outer-slot norm, while
 `COMMUTATOR.md` combines the outer and advected slots before estimation and
 `PROJECTED_RESIDUAL.md` combines both normalization derivatives with the
 outer slot. `REDUCED_QUARTET.md` merges those identities into the current
-two-entry local polynomial obligation.
+two-entry local polynomial obligation, and `CLOSURE_TARGET.md` isolates its
+exact missing three-quarter-power frequency depletion.

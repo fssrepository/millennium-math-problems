@@ -144,6 +144,8 @@ source file:
 - `LocalQuarticReducedLedger` merges both exact reductions and emits the
   two-entry, denominator-free local SLD-1P numerator with an independent
   polynomial reconstruction check;
+- `LocalQuarticClosureTarget` certifies the exact weighted-Young implication
+  from the explicit `K+G` depletion target to the local SLD-1P inequality;
 - `LocalSignatureGradientAdversary` runs 12-worker targeted counterexample
   searches, while `LocalSignatureTrajectoryAnalyzer` verifies the exact
   dynamic signature factorization across Galerkin cutoffs;
@@ -266,7 +268,7 @@ strong quarter-depletion quantity `Q = D^4 Z` at fixed unit energy:
   --dynamic-generations 24 --dynamic-objective max-q \
   --dynamic-optimizer gradient \
   --nu 0.1 --evolve-time 0.1 --dt 0.002 \
-  --certificate proof/l4/adversary/l4s-maxq-adversary.json \
+  --certificate proof/l4/adversary/gradient/l4s-maxq-adversary.json \
   --state-dir proof/l4/states/l4s-maxq-adversary
 ```
 
@@ -299,7 +301,8 @@ The two terms of the local/nonlocal proof split can be attacked directly:
   --dynamic-optimizer gradient --gradient-method lbfgs \
   --sobolev-order 4 --sobolev-cap 100 \
   --nu 0.1 --evolve-time 0.01 --dt 0.002 \
-  --threads 12 --certificate proof/l4/adversary/nonlocal.json
+  --threads 12 \
+  --certificate proof/l4/adversary/partitioned-integral/nonlocal.json
 ```
 
 `critical-local-integral` selects the complementary objective. These masked
@@ -351,7 +354,7 @@ JVP versus direct JVP, `1.9e-19` for FFT VJP versus direct VJP, `5.6e-19` for
 RK4 adjoint duality, `2.0e-13` for a three-step `Q` trajectory gradient, and
 `1.1e-12` for the critical trapezoidal time-integral gradient versus central
 differences. A short `K=5` smoke certificate with 1,330 modes is stored in
-`proof/l4/adversary/l4s-fft-gradient-K5-smoke.json`.
+`proof/l4/adversary/gradient/l4s-fft-gradient-K5-smoke.json`.
 
 The first direct L4-A adjoint continuation is replayable with:
 

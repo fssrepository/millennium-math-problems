@@ -79,7 +79,7 @@ adjacent relative:       -          9.72697956e-7      2.98371299e-11     2.6697
 ```
 
 The aggregate machine certificate is
-`../../adversary/helical-heterochiral-cutoff-scan-K3-K6.json`. It shows that
+`../../adversary/helical/helical-heterochiral-cutoff-scan-K3-K6.json`. It shows that
 this finite branch is a smooth low-mode branch, not a cutoff-concentration
 branch.
 
