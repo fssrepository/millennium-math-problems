@@ -1,5 +1,6 @@
 #include "local_signature_adversary.hpp"
 
+#include "local_signature_state_factory.hpp"
 #include "local_triad_symmetrizer.hpp"
 #include "parallel_executor.hpp"
 
@@ -19,40 +20,16 @@
 namespace lemma {
 namespace {
 
-constexpr std::array<const char*, 3> profiles{
-    "decaying", "flat", "outer-half-flat"};
+constexpr std::array<LocalSignatureStateProfile, 3> profiles{
+    LocalSignatureStateProfile::decaying,
+    LocalSignatureStateProfile::flat,
+    LocalSignatureStateProfile::outer_half_flat};
 
 std::uint64_t splitmix64(std::uint64_t value) {
     value += UINT64_C(0x9e3779b97f4a7c15);
     value = (value ^ (value >> 30U)) * UINT64_C(0xbf58476d1ce4e5b9);
     value = (value ^ (value >> 27U)) * UINT64_C(0x94d049bb133111eb);
     return value ^ (value >> 31U);
-}
-
-SpectralState make_state(int cutoff, std::size_t profile,
-                         std::uint64_t seed) {
-    std::mt19937_64 generator(seed);
-    SpectralState state = SpectralStateFactory::random(cutoff, generator);
-    if (profile == 0) {
-        SpectralStateOps::normalize_energy(state);
-        return state;
-    }
-    for (std::size_t index = 0; index < state.waves.size(); ++index) {
-        const WaveVector wave = state.waves[index];
-        if (profile == 2 &&
-            2 * std::max({std::abs(wave.x), std::abs(wave.y),
-                          std::abs(wave.z)}) <= cutoff) {
-            state.velocity[index] = {};
-            continue;
-        }
-        const SpectralReal undo_decay = std::pow(
-            1.0L + static_cast<SpectralReal>(norm_squared(wave)), 1.25L);
-        for (SpectralComplex& component : state.velocity[index]) {
-            component *= undo_decay;
-        }
-    }
-    SpectralStateOps::normalize_energy(state);
-    return state;
 }
 
 SpectralReal fitted_log_slope(
@@ -101,7 +78,8 @@ LocalSignatureAdversaryReport LocalSignatureAdversary::run(
 
     for (int cutoff = options.minimum_cutoff;
          cutoff <= options.maximum_cutoff; ++cutoff) {
-        const SpectralState warm = make_state(cutoff, 0, options.seed);
+        const SpectralState warm = LocalSignatureStateFactory::make(
+            cutoff, LocalSignatureStateProfile::decaying, options.seed);
         static_cast<void>(SpectralStateOps::interactions(warm));
     }
 
@@ -132,7 +110,8 @@ LocalSignatureAdversaryReport LocalSignatureAdversary::run(
             splitmix64(static_cast<std::uint64_t>(sample + 1)));
         const LocalTriadSymmetryReport report =
             LocalTriadSymmetrizer::analyze(
-                make_state(cutoff, profile, seed));
+                LocalSignatureStateFactory::make(
+                    cutoff, profiles[profile], seed));
         samples[task] = {report.effective_coherent_signature_count,
                          report.dominant_coherent_signature_fraction,
                          report.coherent_signature_count,
@@ -146,7 +125,8 @@ LocalSignatureAdversaryReport LocalSignatureAdversary::run(
         for (std::size_t profile = 0; profile < profiles.size(); ++profile) {
             LocalSignatureAdversaryRow row;
             row.cutoff = cutoff;
-            row.profile = profiles[profile];
+            row.profile = LocalSignatureStateFactory::name(
+                profiles[profile]);
             row.samples = options.samples;
             const std::size_t base =
                 (static_cast<std::size_t>(cutoff - options.minimum_cutoff) *

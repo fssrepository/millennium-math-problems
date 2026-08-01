@@ -23,6 +23,7 @@
 #include "orthogonal_triad_geometry.hpp"
 #include "local_signature_geometry.hpp"
 #include "local_signature_adversary.hpp"
+#include "local_signature_gradient_adversary.hpp"
 
 namespace ns {
 
@@ -874,6 +875,7 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab orthogonal-triad-certificate [options]\n"
         << "  navier_stokes_lab local-signature-certificate [options]\n"
         << "  navier_stokes_lab local-signature-adversary [options]\n"
+        << "  navier_stokes_lab local-signature-gradient [options]\n"
         << "  navier_stokes_lab self-test\n\n"
         << "Simulation options:\n"
         << "  --n N                 grid N^3 (default 16)\n"
@@ -908,6 +910,8 @@ void print_help(std::ostream& out) {
     lemma::LocalSignatureCli::print_help(out);
     out << '\n';
     lemma::LocalSignatureAdversaryCli::print_help(out);
+    out << '\n';
+    lemma::LocalSignatureGradientCli::print_help(out);
     out << '\n';
     lemma::StateAnalysisCli::print_help(out);
     out << '\n';
@@ -962,6 +966,11 @@ int main(int argc, char** argv) {
         if (command == "local-signature-adversary") {
             return lemma::LocalSignatureAdversaryCli::run(
                 lemma::LocalSignatureAdversaryCli::parse(argc, argv, 2),
+                std::cout);
+        }
+        if (command == "local-signature-gradient") {
+            return lemma::LocalSignatureGradientCli::run(
+                lemma::LocalSignatureGradientCli::parse(argc, argv, 2),
                 std::cout);
         }
         if (command == "state-analysis") {

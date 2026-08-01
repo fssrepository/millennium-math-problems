@@ -1,0 +1,18 @@
+{
+  "schema": "navier-stokes-local-signature-gradient-v1",
+  "profile": "flat",
+  "objective": "transfer",
+  "workers": 12,
+  "restarts": 12,
+  "iterations": 10,
+  "fitted_log_slope": 2.48533043134016651,
+  "critical_log_slope": 4,
+  "finite_search_is_not_a_proof": true,
+  "rows": [
+    {"cutoff": 2, "best_initial_objective": 0.163490159762981618, "best_objective": 2.61813970386038264, "improvement_factor": 16.0140506783772629, "absolute_signed_transfer": 2.61813970386038264, "signature_transfer_l2": 1.24722834049801756, "normalized_lsf2_l2": 0.110240452156774069, "normalized_viscous_transfer": 0.163633731491273915, "best_seed": "18068043884042677219", "accepted_steps": 10, "evaluations": 11},
+    {"cutoff": 3, "best_initial_objective": 0.128675749420279428, "best_objective": 5.80019968059093038, "improvement_factor": 45.0760901469194266, "absolute_signed_transfer": 5.80019968059093038, "signature_transfer_l2": 1.49221472848964165, "normalized_lsf2_l2": 0.031908539821563664, "normalized_viscous_transfer": 0.0716074034640855617, "best_seed": "9271153529017891735", "accepted_steps": 10, "evaluations": 11},
+    {"cutoff": 4, "best_initial_objective": 0.158855222770911825, "best_objective": 12.4432820262189718, "improvement_factor": 78.3309595313946261, "absolute_signed_transfer": 12.4432820262189718, "signature_transfer_l2": 1.3893844989790205, "normalized_lsf2_l2": 0.0108545663982735976, "normalized_viscous_transfer": 0.0486065704149178587, "best_seed": "5851740504855114598", "accepted_steps": 10, "evaluations": 11},
+    {"cutoff": 5, "best_initial_objective": 0.337624828366406615, "best_objective": 23.8404787692505487, "improvement_factor": 70.6123388039984974, "absolute_signed_transfer": 23.8404787692505487, "signature_transfer_l2": 1.4096168557372617, "normalized_lsf2_l2": 0.00504319857865285093, "normalized_viscous_transfer": 0.0381447660308008793, "best_seed": "8609280341507887650", "accepted_steps": 10, "evaluations": 11},
+    {"cutoff": 6, "best_initial_objective": 0.398026079338819172, "best_objective": 38.9556163246837173, "improvement_factor": 97.8720198168793729, "absolute_signed_transfer": 38.9556163246837173, "signature_transfer_l2": 1.7317911348245274, "normalized_lsf2_l2": 0.00327315171403975286, "normalized_viscous_transfer": 0.0300583459295399036, "best_seed": "16083790700188655066", "accepted_steps": 10, "evaluations": 11}
+  ]
+}

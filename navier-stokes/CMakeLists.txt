@@ -26,7 +26,10 @@ add_executable(navier_stokes_lab
     src/lemma_reporter.cpp
     src/local_triad_symmetrizer.cpp
     src/local_signature_adversary.cpp
+    src/local_signature_gradient_adversary.cpp
     src/local_signature_geometry.cpp
+    src/local_signature_objective.cpp
+    src/local_signature_state_factory.cpp
     src/moving_gap_controller.cpp
     src/orthogonal_triad_geometry.cpp
     src/periodic_shell_geometry.cpp

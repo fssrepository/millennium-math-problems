@@ -18,6 +18,7 @@
 #include "lemma_adversary.hpp"
 #include "lemma_reporter.hpp"
 #include "local_signature_geometry.hpp"
+#include "local_signature_objective.hpp"
 #include "local_triad_symmetrizer.hpp"
 #include "moving_gap_controller.hpp"
 #include "projective_family.hpp"
@@ -886,6 +887,53 @@ bool self_test(std::ostream& out) {
     const SpectralState helical_minus = active_dynamics.add_increment(
         helical_state, helical_direction_state.velocity,
         -helical_gradient_step);
+    const LocalSignatureObjectiveValue local_signature_objective =
+        LocalSignatureObjective::evaluate(helical_state);
+    const SpectralIncrement local_signature_gradient =
+        LocalSignatureObjective::signed_amplification_gradient(
+            helical_state);
+    const Real local_signature_directional = increment_inner_product(
+        local_signature_gradient, helical_direction_state.velocity);
+    const Real local_signature_finite_difference =
+        (LocalSignatureObjective::evaluate(helical_plus)
+             .signed_amplification -
+         LocalSignatureObjective::evaluate(helical_minus)
+             .signed_amplification) /
+        (2.0L * helical_gradient_step);
+    const Real local_signature_gradient_error = std::abs(
+        local_signature_directional -
+        local_signature_finite_difference) /
+        std::max(1e-30L, std::max(
+            std::abs(local_signature_directional),
+            std::abs(local_signature_finite_difference)));
+    const Real local_signature_objective_error = std::abs(
+        local_signature_objective.signed_amplification -
+        local_symmetry.signed_signature_amplification) /
+        std::max(1e-30L,
+                 local_symmetry.signed_signature_amplification);
+    const SpectralIncrement local_signature_transfer_gradient =
+        LocalSignatureObjective::absolute_signed_transfer_gradient(
+            helical_state);
+    const Real local_signature_transfer_directional =
+        increment_inner_product(
+            local_signature_transfer_gradient,
+            helical_direction_state.velocity);
+    const Real local_signature_transfer_finite_difference =
+        (std::abs(LocalSignatureObjective::evaluate(helical_plus)
+                      .signed_local_transfer) -
+         std::abs(LocalSignatureObjective::evaluate(helical_minus)
+                      .signed_local_transfer)) /
+        (2.0L * helical_gradient_step);
+    const Real local_signature_transfer_gradient_error = std::abs(
+        local_signature_transfer_directional -
+        local_signature_transfer_finite_difference) /
+        std::max(1e-30L, std::max(
+            std::abs(local_signature_transfer_directional),
+            std::abs(local_signature_transfer_finite_difference)));
+    const bool local_signature_objective_ok =
+        local_signature_objective_error < 1e-15L &&
+        local_signature_gradient_error < 1e-9L &&
+        local_signature_transfer_gradient_error < 1e-9L;
     const HelicalSectorSelection homochiral_selection =
         HelicalSectorSelection::homochiral();
     const HelicalSectorSelection heterochiral_selection =
@@ -1698,6 +1746,18 @@ bool self_test(std::ostream& out) {
         << signature_family_closure.dense_signature_family
                .transfer_frequency_power.str()
         << ")\n"
+        << "local signature objective gradient test: "
+        << (local_signature_objective_ok ? "PASS" : "FAIL")
+        << " (ledger="
+        << static_cast<double>(local_signature_objective_error)
+        << ", gradient="
+        << static_cast<double>(local_signature_gradient_error)
+        << ", transfer gradient="
+        << static_cast<double>(local_signature_transfer_gradient_error)
+        << ", A_sig="
+        << static_cast<double>(
+               local_signature_objective.signed_amplification)
+        << ")\n"
         << "pure helical local test: "
         << (pure_helical_ok ? "PASS" : "FAIL")
         << " (plus local="
@@ -1837,7 +1897,7 @@ bool self_test(std::ostream& out) {
            moving_gap_controller_ok &&
            triad_ok && helical_ok && helical_gap_ok && local_symmetry_ok &&
            orthogonal_geometry_ok && local_signature_geometry_ok &&
-           pure_helical_ok && fft_ok &&
+           local_signature_objective_ok && pure_helical_ok && fft_ok &&
            helical_sector_objective_ok && helical_adversary_ok &&
            helical_trajectory_adjoint_ok &&
            helical_trajectory_adversary_ok && fft_adjoint_ok && adjoint_ok &&
