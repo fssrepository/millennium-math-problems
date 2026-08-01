@@ -127,7 +127,7 @@ void HelicalAdversaryCli::print_help(std::ostream& out) {
         << "  --selection NAME      heterochiral or homochiral\n"
         << "  --mode NAME           trajectory or static\n"
         << "  --cutoff K            project/lift input to cutoff K\n"
-        << "  --iterations N        exact-gradient iterations\n"
+        << "  --iterations N        exact-gradient iterations (0 evaluates only)\n"
         << "  --line-search N       line-search trials per iteration\n"
         << "  --trajectory-steps N  RK4 steps for trajectory mode\n"
         << "  --restarts N          independent starts (first is input)\n"
@@ -149,10 +149,10 @@ int run_helical_adversary(
     if (options.mode != "static" && options.mode != "trajectory") {
         throw std::invalid_argument("--mode must be static or trajectory");
     }
-    if (options.restarts < 1 || options.workers < 1 ||
+    if (options.iterations < 0 || options.restarts < 1 || options.workers < 1 ||
         options.restart_mutation < 0.0L) {
         throw std::invalid_argument(
-            "restarts and workers must be positive; mutation must be nonnegative");
+            "iterations/mutation must be nonnegative; restarts/workers positive");
     }
     const HelicalSectorSelection selection =
         parse_selection(options.selection);
@@ -198,7 +198,24 @@ int run_helical_adversary(
     SpectralReal final_objective = 0.0L;
     int accepted_steps = 0;
     int evaluations = 0;
-    if (options.mode == "static") {
+    if (options.iterations == 0) {
+        executor.run_restarts(results.size(), [&](std::size_t restart) {
+            SpectralReal value = 0.0L;
+            if (options.mode == "static") {
+                value = HelicalSectorObjective::evaluate(
+                    starts[restart], selection).critical_integrand;
+            } else {
+                SpectralGalerkin local_galerkin;
+                local_galerkin.configure("direct", 1);
+                const SpectralDynamics local_dynamics(local_galerkin);
+                const HelicalSectorAdjoint local_adjoint(local_dynamics);
+                value = local_adjoint.critical_integral(
+                    starts[restart], options.viscosity, options.time_step,
+                    options.trajectory_steps, selection);
+            }
+            results[restart] = {starts[restart], value, value, 0, 1};
+        });
+    } else if (options.mode == "static") {
         HelicalSectorAdversaryOptions search;
         search.selection = selection;
         search.iterations = options.iterations;
@@ -297,7 +314,9 @@ int run_helical_adversary(
         << " total_evaluations=" << total_evaluations << '\n'
         << "State written to " << options.state_output_path << '\n'
         << "Certificate written to " << options.certificate_path << '\n';
-    return final_objective > initial_objective ? 0 : 2;
+    return options.iterations == 0 || final_objective > initial_objective
+        ? 0
+        : 2;
 }
 
 }  // namespace lemma

@@ -13,6 +13,7 @@ add_executable(navier_stokes_lab
     src/gradient_adversary.cpp
     src/helical_triad_ledger.cpp
     src/helical_adversary_cli.cpp
+    src/helical_cutoff_scan.cpp
     src/helical_sector_objective.cpp
     src/helical_sector_adversary.cpp
     src/helical_sector_adjoint.cpp

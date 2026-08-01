@@ -18,6 +18,7 @@
 
 #include "lemma_engine.hpp"
 #include "helical_adversary_cli.hpp"
+#include "helical_cutoff_scan.hpp"
 #include "state_analysis.hpp"
 
 namespace ns {
@@ -866,6 +867,7 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab adversary [options]\n"
         << "  navier_stokes_lab family [options]\n"
         << "  navier_stokes_lab helical-adversary [options]\n"
+        << "  navier_stokes_lab helical-cutoff-scan [options]\n"
         << "  navier_stokes_lab self-test\n\n"
         << "Simulation options:\n"
         << "  --n N                 grid N^3 (default 16)\n"
@@ -892,6 +894,8 @@ void print_help(std::ostream& out) {
     lemma::LemmaCli::print_family_help(out);
     out << '\n';
     lemma::HelicalAdversaryCli::print_help(out);
+    out << '\n';
+    lemma::HelicalCutoffScan::print_help(out);
     out << '\n';
     lemma::StateAnalysisCli::print_help(out);
     out << '\n';
@@ -926,6 +930,11 @@ int main(int argc, char** argv) {
         if (command == "helical-adversary") {
             return lemma::run_helical_adversary(
                 lemma::HelicalAdversaryCli::parse(argc, argv, 2),
+                std::cout);
+        }
+        if (command == "helical-cutoff-scan") {
+            return lemma::HelicalCutoffScan::run(
+                lemma::HelicalCutoffScan::parse(argc, argv, 2),
                 std::cout);
         }
         if (command == "state-analysis") {

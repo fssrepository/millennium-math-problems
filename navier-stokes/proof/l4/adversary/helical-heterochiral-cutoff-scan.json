@@ -1,0 +1,20 @@
+{
+  "schema": "navier-stokes-helical-cutoff-scan-v1",
+  "input_state": "proof/l4/states/helical-heterochiral-local-integral/dynamic/K3-ms12.tsv",
+  "selection": "heterochiral",
+  "minimum_cutoff": 3,
+  "maximum_cutoff": 5,
+  "workers": 12,
+  "trajectory_steps": 10,
+  "viscosity": 0.100000000000000006,
+  "time_step": 0.00100000000000000002,
+  "time_horizon": 0.0100000000000000002,
+  "convergence_tolerance": 9.99999999999999955e-07,
+  "last_adjacent_relative_difference": 2.983712990611685e-11,
+  "numerically_converged": true,
+  "samples": [
+    {"cutoff": 3, "objective": 4.39045255694896065e-06, "mean_density": 0.000439045255694896078, "previous_relative_difference": 0},
+    {"cutoff": 4, "objective": 4.39045682753734407e-06, "mean_density": 0.000439045682753734458, "previous_relative_difference": 9.726979563778053e-07},
+    {"cutoff": 5, "objective": 4.39045682740634534e-06, "mean_density": 0.000439045682740634585, "previous_relative_difference": 2.983712990611685e-11}
+  ]
+}
