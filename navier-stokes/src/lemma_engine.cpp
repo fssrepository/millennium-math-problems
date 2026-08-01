@@ -100,7 +100,8 @@ DynamicAdversaryResult optimize_dynamic(
     const SpectralState& primary_start, const SpectralState* secondary_start,
     int generations, Real mutation, Real viscosity, Real final_time, Real dt,
     std::uint64_t seed, const std::string& objective,
-    const std::string& optimizer, int sobolev_order, Real sobolev_cap) {
+    const std::string& optimizer, const std::string& gradient_method,
+    int sobolev_order, Real sobolev_cap) {
     if (generations < 0) {
         throw std::invalid_argument("--dynamic-generations cannot be negative");
     }
@@ -115,9 +116,13 @@ DynamicAdversaryResult optimize_dynamic(
     bool result_admissible = sobolev.admissible(result.state);
 
     if (secondary_start != nullptr) {
-        SpectralState secondary =
-            SpectralStateFactory::lift(
-                *secondary_start, SpectralStateOps::cutoff(primary_start), generator);
+        const int target_cutoff = SpectralStateOps::cutoff(primary_start);
+        const int source_cutoff = SpectralStateOps::cutoff(*secondary_start);
+        SpectralState secondary = source_cutoff <= target_cutoff
+            ? SpectralStateFactory::lift(
+                  *secondary_start, target_cutoff, generator)
+            : SpectralStateFactory::project(
+                  *secondary_start, target_cutoff);
         const EvolutionResult secondary_evolution =
             active_trajectory_analyzer.evolve(secondary, viscosity, final_time, dt);
         ++result.evaluations;
@@ -178,6 +183,7 @@ DynamicAdversaryResult optimize_dynamic(
             final_time / static_cast<Real>(trajectory_steps);
         gradient_options.initial_step = mutation;
         gradient_options.objective = objective;
+        gradient_options.method = gradient_method;
         gradient_options.sobolev_order = sobolev_order;
         gradient_options.sobolev_cap = sobolev_cap;
         const GradientSearchResult gradient =
@@ -732,6 +738,7 @@ bool self_test(std::ostream& out) {
     gradient_options.viscosity = adjoint_viscosity;
     gradient_options.time_step = adjoint_dt;
     gradient_options.initial_step = 0.2L;
+    gradient_options.method = "lbfgs";
     const GradientSearchResult gradient_search =
         active_gradient_adversary.maximize_q(
             adjoint_state, gradient_options);
@@ -908,6 +915,7 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
             static_cast<Real>(options.evolution_time),
             static_cast<Real>(options.time_step), options.seed,
             options.dynamic_objective, options.dynamic_optimizer,
+            options.gradient_method,
             options.sobolev_order,
             static_cast<Real>(options.sobolev_cap));
         active_galerkin.set_compute_threads(1);
@@ -966,6 +974,7 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
     report.backend = options.backend;
     report.dynamic_objective = options.dynamic_objective;
     report.dynamic_optimizer = options.dynamic_optimizer;
+    report.gradient_method = options.gradient_method;
     report.sobolev_order = options.sobolev_order;
     report.sobolev_cap = static_cast<Real>(options.sobolev_cap);
     report.restarts = options.restarts;

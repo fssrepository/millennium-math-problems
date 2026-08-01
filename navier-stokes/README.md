@@ -169,7 +169,11 @@ Winning states are saved as Fourier coefficients, so a suspected obstruction
 can be replayed or converted into an analytical family. The default dynamic
 objective is the L4-A integral `integral D^4 Z^2 dt`; the exact trapezoidal
 discrete adjoint projects its gradient onto the fixed-energy sphere and applies
-monotone backtracking. `max-q` remains available for the stronger L4-S route.
+monotone backtracking. `--gradient-method steepest|lbfgs` switches between the
+normalized projected gradient and an eight-pair projected limited-memory
+quasi-Newton direction. Every JSON certificate records the objective,
+projected gradient norm, accepted step, Sobolev value, and line-search cost for
+each iteration. `max-q` remains available for the stronger L4-S route.
 `--dynamic-optimizer mutate` retains the old random search as a control, while
 `hybrid` runs both. The command then directly integrates `D^4 Z^2`. Cutoff
 growth attacks the strong pointwise lemma; growth of the dynamic integral
@@ -220,6 +224,14 @@ active at relative energy `1e-8`, and the cutoff-shell energy is `1.49e-11`.
 This is finite evidence for a smooth cutoff limit, not a uniform-in-time bound.
 The certificate and interpretation are under
 `proof/l4/analysis/critical-integral-h4-cap100/`.
+
+A later same-state control found that 16 projected L-BFGS iterations improved
+the integral about `34.5x` more than 16 steepest-gradient iterations. Projecting
+the resulting `K=8` state to `K=3`, reoptimizing, and lifting it through
+`K=3,...,8` gives refined integrals from `6.11840e-6` to `6.11975e-6`.
+The increments after `K=4` are at most `2.0e-11`, while the top-shell energy
+falls to `1.4e-13` at `K=8`. This is a reproducible smooth finite-cutoff branch,
+not an analytical uniform bound.
 
 ## Fixed smooth projective family
 

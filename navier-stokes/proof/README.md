@@ -27,3 +27,9 @@ discrete adjoint. Its states are under
 `l4/states/critical-integral-h4-cap100-refined/`. The numerical interpretation
 and state-family certificate are in
 `l4/analysis/critical-integral-h4-cap100/README.md`.
+
+`l4/adversary/l4-critical-integral-h4-cap100-projective-lbfgs-K3-K8.json`
+records the improved low-mode-to-high-mode projected L-BFGS continuation. Its
+iteration traces distinguish optimizer progress from genuine cutoff gain. The
+matching state-family analysis is under
+`l4/analysis/critical-integral-h4-cap100-projective-lbfgs-K3-K8/`.

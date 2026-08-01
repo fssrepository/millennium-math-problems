@@ -187,6 +187,14 @@ GradientSearchResult GradientAdversary::maximize_q(
     if (!(options.initial_step > 0.0L)) {
         throw std::invalid_argument("gradient-search step must be positive");
     }
+    if (options.method != "steepest" && options.method != "lbfgs") {
+        throw std::invalid_argument(
+            "gradient-search method must be steepest or lbfgs");
+    }
+    if (options.lbfgs_history < 1 || options.lbfgs_history > 64) {
+        throw std::invalid_argument(
+            "L-BFGS history must be between 1 and 64");
+    }
     GradientSearchResult result;
     const InitialSobolevConstraint sobolev(
         options.sobolev_order, options.sobolev_cap);
@@ -202,6 +210,10 @@ GradientSearchResult GradientAdversary::maximize_q(
     result.initial_objective = result.objective;
     ++result.trajectory_evaluations;
     SpectralReal next_step = options.initial_step;
+    std::vector<LbfgsPair> lbfgs_history;
+    SpectralState previous_state;
+    SpectralIncrement previous_gradient;
+    bool has_previous_point = false;
 
     for (int iteration = 0; iteration < options.iterations; ++iteration) {
         QTrajectoryGradient trajectory;
@@ -236,30 +248,10 @@ GradientSearchResult GradientAdversary::maximize_q(
         GradientIterationRecord record;
         record.iteration = iteration;
         record.objective_before = result.objective;
-        SpectralIncrement direction = trajectory.initial_gradient;
-        SpectralReal gradient_norm =
-            project_to_energy_sphere(direction, result.state);
+        SpectralIncrement projected_gradient = trajectory.initial_gradient;
+        const SpectralReal gradient_norm = project_to_search_tangent(
+            projected_gradient, result.state, sobolev);
         const SpectralReal sobolev_value = sobolev.value(result.state);
-        if (sobolev.enabled() &&
-            sobolev_value >= 0.99L * sobolev.cap()) {
-            const SpectralIncrement normal =
-                sobolev.energy_tangent_normal(result.state);
-            const SpectralReal normal_norm2 =
-                increment_inner_product(normal, normal);
-            const SpectralReal outward =
-                increment_inner_product(direction, normal);
-            if (outward > 0.0L && normal_norm2 > 1e-30L) {
-                const SpectralReal coefficient = outward / normal_norm2;
-                for (std::size_t mode = 0; mode < direction.size(); ++mode) {
-                    for (std::size_t component = 0; component < 3;
-                         ++component) {
-                        direction[mode][component] -=
-                            coefficient * normal[mode][component];
-                    }
-                }
-                gradient_norm = increment_norm(direction);
-            }
-        }
         result.final_projected_gradient_norm = gradient_norm;
         record.projected_gradient_norm = gradient_norm;
         record.sobolev_value = sobolev_value;
@@ -268,9 +260,54 @@ GradientSearchResult GradientAdversary::maximize_q(
             result.trace.push_back(record);
             break;
         }
+
+        if (options.method == "lbfgs" && has_previous_point) {
+            SpectralIncrement state_delta = increment_difference(
+                result.state.velocity, previous_state.velocity);
+            project_to_search_tangent(state_delta, result.state, sobolev);
+            SpectralIncrement transported_previous_gradient =
+                previous_gradient;
+            project_to_search_tangent(
+                transported_previous_gradient, result.state, sobolev);
+            SpectralIncrement gradient_delta = increment_difference(
+                transported_previous_gradient, projected_gradient);
+            project_to_search_tangent(
+                gradient_delta, result.state, sobolev);
+            const SpectralReal state_delta_norm = increment_norm(state_delta);
+            const SpectralReal gradient_delta_norm =
+                increment_norm(gradient_delta);
+            const SpectralReal curvature = increment_inner_product(
+                state_delta, gradient_delta);
+            if (state_delta_norm > 0.0L && gradient_delta_norm > 0.0L &&
+                curvature > 1e-12L * state_delta_norm *
+                                gradient_delta_norm) {
+                if (static_cast<int>(lbfgs_history.size()) ==
+                    options.lbfgs_history) {
+                    lbfgs_history.erase(lbfgs_history.begin());
+                }
+                lbfgs_history.push_back(LbfgsPair{
+                    std::move(state_delta), std::move(gradient_delta),
+                    1.0L / curvature});
+            }
+        }
+
+        SpectralIncrement direction = options.method == "lbfgs"
+            ? lbfgs_ascent_direction(projected_gradient, lbfgs_history)
+            : projected_gradient;
+        SpectralReal direction_norm = project_to_search_tangent(
+            direction, result.state, sobolev);
+        const SpectralReal directional_derivative =
+            increment_inner_product(projected_gradient, direction);
+        if (!(direction_norm > 1e-24L) ||
+            !(directional_derivative >
+              1e-12L * gradient_norm * direction_norm)) {
+            direction = projected_gradient;
+            direction_norm = gradient_norm;
+            lbfgs_history.clear();
+        }
         for (ComplexVector& value : direction) {
             for (SpectralComplex& component : value) {
-                component /= gradient_norm;
+                component /= direction_norm;
             }
         }
 
@@ -290,6 +327,9 @@ GradientSearchResult GradientAdversary::maximize_q(
                 1e-13L * std::max(1e-30L, std::abs(result.objective));
             if (std::isfinite(candidate_objective) &&
                 candidate_objective > result.objective + improvement_floor) {
+                previous_state = result.state;
+                previous_gradient = projected_gradient;
+                has_previous_point = true;
                 result.state = std::move(candidate);
                 result.objective = candidate_objective;
                 ++result.accepted_steps;

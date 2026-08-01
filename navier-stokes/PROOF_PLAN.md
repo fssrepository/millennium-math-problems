@@ -178,3 +178,26 @@ the `T=0.01` value, while `Q(T)/Q(0)=0.9852`. Reducing viscosity from `0.1` to
 `0.02` at the same horizon produced `J_8=1.21020e-5` and
 `Q(T)/Q(0)=0.9879`. Thus neither check exposed accelerating `Q` growth; longer
 horizons and independent branches remain necessary.
+
+The optimizer now emits a complete per-iteration trace and supports projected
+L-BFGS. On the same `K=8` warm state, 16 L-BFGS iterations produced about
+`34.5` times the objective gain of 16 normalized steepest-gradient iterations.
+This exposed an optimizer artifact in the earlier branch: projecting the best
+`K=8` state to `K=3` and reoptimizing produced a better low-mode state than the
+direct high-cutoff search.
+
+Lifting that state successively through `K=3,...,8` gives
+
+```text
+K:       3          4          5          6          7          8
+J_K: 6.118399e-6 6.119727e-6 6.119747e-6 6.119751e-6 6.119751e-6 6.119752e-6
+```
+
+The corresponding squared initial `H4` norms remain between `13.76` and
+`13.88`. Top-shell energy decreases from `8.12e-5` at `K=3` to `1.44e-13` at
+`K=8`; the maximum adjacent projection residual is `2.22e-4`. Thus this branch
+is consistent with a smooth projective limit, and its cutoff gain is already
+below `2e-11` after `K=4`. The evidence rejects neither L4-A nor global
+regularity. It instead routes the analytical work toward the local-frequency
+term: the measured nonlocal fourth-power integral is roughly three orders of
+magnitude below the local term on this branch.

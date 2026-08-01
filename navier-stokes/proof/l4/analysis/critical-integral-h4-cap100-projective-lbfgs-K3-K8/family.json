@@ -1,0 +1,14 @@
+{
+  "schema": "navier-stokes-state-family-analysis-v1",
+  "state_directory": "proof/l4/states/critical-integral-h4-cap100-projective-lbfgs-K3-K8/dynamic",
+  "top_shell_energy_fitted_exponent": -23.0066232270349964,
+  "maximum_projection_residual": 0.000221292422679335402,
+  "rows": [
+    {"cutoff": 3, "modes": 342, "E": 1, "Z": 1.25717270910418488, "P": 1.91524137686662499, "homogeneous_H3_squared": 4.07500744833770678, "homogeneous_H4_squared": 13.7629099887310797, "Q": 0.000487883262380763591, "top_shell_energy": 8.11674974754187056e-05, "projection_residual": 0},
+    {"cutoff": 4, "modes": 728, "E": 1, "Z": 1.25723370065558848, "P": 1.91589755116728822, "homogeneous_H3_squared": 4.08264436555500776, "homogeneous_H4_squared": 13.8714856776392192, "Q": 0.00048796405092329674, "top_shell_energy": 3.42635837598203774e-07, "projection_residual": 0.000221292422679335402},
+    {"cutoff": 5, "modes": 1330, "E": 1, "Z": 1.25726966205076929, "P": 1.91609199917663675, "homogeneous_H3_squared": 4.08352169420078326, "homogeneous_H4_squared": 13.8757614322568301, "Q": 0.000487951093674103987, "top_shell_energy": 1.43770129380372043e-09, "projection_residual": 0.00015910520035245773},
+    {"cutoff": 6, "modes": 2196, "E": 0.999999999999999889, "Z": 1.2572751204499879, "P": 1.91613478781234248, "homogeneous_H3_squared": 4.08398564089938265, "homogeneous_H4_squared": 13.8808797405040778, "Q": 0.000487949714482968828, "top_shell_energy": 2.48572789854486748e-12, "projection_residual": 6.00454452838343464e-05},
+    {"cutoff": 7, "modes": 3374, "E": 1, "Z": 1.25727620759504255, "P": 1.91613512635490979, "homogeneous_H3_squared": 4.08395550905526328, "homogeneous_H4_squared": 13.8808078734342182, "Q": 0.000487949343648901653, "top_shell_energy": 5.0328389991920226e-14, "projection_residual": 1.57125792456884134e-05},
+    {"cutoff": 8, "modes": 4912, "E": 1.00000000000000022, "Z": 1.25727944584859852, "P": 1.91614059305917461, "homogeneous_H3_squared": 4.08389365121675674, "homogeneous_H4_squared": 13.8793974722039426, "Q": 0.000487948195889832171, "top_shell_energy": 1.43639312793228119e-13, "projection_residual": 3.78692824752315798e-05}
+  ]
+}

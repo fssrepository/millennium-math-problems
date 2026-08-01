@@ -284,4 +284,31 @@ SpectralState SpectralStateFactory::lift(const SpectralState& source,
     return lifted;
 }
 
+SpectralState SpectralStateFactory::project(const SpectralState& source,
+                                            int target_cutoff) {
+    if (target_cutoff < 1 ||
+        target_cutoff >= SpectralStateOps::cutoff(source)) {
+        throw std::invalid_argument(
+            "spectral projection requires a smaller positive cutoff");
+    }
+    std::mt19937_64 layout_generator(0);
+    SpectralState projected = random(target_cutoff, layout_generator);
+    for (ComplexVector& value : projected.velocity) {
+        value = {};
+    }
+    for (std::size_t index = 0; index < projected.waves.size(); ++index) {
+        const auto source_index = source.index.find(projected.waves[index]);
+        if (source_index != source.index.end()) {
+            projected.velocity[index] =
+                source.velocity[source_index->second];
+        }
+    }
+    if (!(SpectralStateOps::energy(projected) > 0.0L)) {
+        throw std::runtime_error(
+            "spectral projection removed every nonzero mode");
+    }
+    SpectralStateOps::normalize_energy(projected);
+    return projected;
+}
+
 }  // namespace lemma

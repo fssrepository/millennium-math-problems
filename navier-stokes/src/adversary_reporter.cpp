@@ -32,6 +32,7 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
         << ", T=" << static_cast<double>(report.time)
         << ", objective=" << report.dynamic_objective
         << ", optimizer=" << report.dynamic_optimizer
+        << ", gradient_method=" << report.gradient_method
         << ", H" << report.sobolev_order << "_cap="
         << static_cast<double>(report.sobolev_cap) << ")\n"
         << "cutoff,steps,int_D4Z2_refined,int_local_D4Z2,int_nonlocal_D4Z2,"
@@ -96,6 +97,7 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
         << ", \"dynamic_generations\": " << report.dynamic_generations
         << ", \"dynamic_objective\": \"" << report.dynamic_objective << "\""
         << ", \"dynamic_optimizer\": \"" << report.dynamic_optimizer << "\""
+        << ", \"gradient_method\": \"" << report.gradient_method << "\""
         << ", \"sobolev_order\": " << report.sobolev_order
         << ", \"sobolev_cap\": "
         << static_cast<double>(report.sobolev_cap)

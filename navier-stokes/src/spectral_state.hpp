@@ -66,6 +66,8 @@ public:
                                 std::mt19937_64& generator, bool sparse);
     static SpectralState lift(const SpectralState& source, int target_cutoff,
                               std::mt19937_64& generator);
+    static SpectralState project(const SpectralState& source,
+                                 int target_cutoff);
 };
 
 }  // namespace lemma
