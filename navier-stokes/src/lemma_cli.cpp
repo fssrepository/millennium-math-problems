@@ -117,6 +117,8 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
             options.dynamic_objective = next_value(argc, argv, index, name);
         } else if (name == "--dynamic-optimizer") {
             options.dynamic_optimizer = next_value(argc, argv, index, name);
+        } else if (name == "--gradient-method") {
+            options.gradient_method = next_value(argc, argv, index, name);
         } else if (name == "--threads") {
             options.threads = std::stoi(next_value(argc, argv, index, name));
         } else if (name == "--backend") {
@@ -154,6 +156,11 @@ AdversaryOptions LemmaCli::parse_adversary_options(int argc, char** argv,
         options.dynamic_optimizer != "hybrid") {
         throw std::invalid_argument(
             "--dynamic-optimizer must be gradient, mutate, or hybrid");
+    }
+    if (options.gradient_method != "steepest" &&
+        options.gradient_method != "lbfgs") {
+        throw std::invalid_argument(
+            "--gradient-method must be steepest or lbfgs");
     }
     return options;
 }
@@ -232,6 +239,7 @@ void LemmaCli::print_adversary_help(std::ostream& out) {
         << "  --sobolev-cap VALUE   cutoff-independent squared H^M cap\n"
         << "  --dynamic-objective NAME  max-q, terminal-q, q-increase, q-gain, or critical-integral\n"
         << "  --dynamic-optimizer NAME  gradient, mutate, or hybrid\n"
+        << "  --gradient-method NAME  steepest or projected lbfgs\n"
         << "  --threads N           worker threads; 0 uses up to 12 CPUs\n"
         << "  --backend NAME        auto, direct, or dealiased fft\n";
 }

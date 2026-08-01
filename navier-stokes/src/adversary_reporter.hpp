@@ -73,6 +73,7 @@ struct AdversaryReport {
     std::string backend;
     std::string dynamic_objective;
     std::string dynamic_optimizer;
+    std::string gradient_method;
     int sobolev_order = 0;
     long double sobolev_cap = 0.0L;
     int restarts = 0;

@@ -33,6 +33,7 @@ struct AdversaryOptions {
     double sobolev_cap = 0.0;
     std::string dynamic_objective = "critical-integral";
     std::string dynamic_optimizer = "gradient";
+    std::string gradient_method = "steepest";
     int threads = 0;
     std::string backend = "auto";
 };

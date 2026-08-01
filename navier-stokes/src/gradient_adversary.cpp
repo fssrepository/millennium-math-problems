@@ -44,6 +44,90 @@ SpectralReal increment_norm(const SpectralIncrement& increment) {
         0.0L, increment_inner_product(increment, increment)));
 }
 
+void add_scaled_increment(SpectralIncrement& target,
+                          const SpectralIncrement& source,
+                          SpectralReal scale) {
+    if (target.size() != source.size()) {
+        throw std::invalid_argument("L-BFGS increment layout mismatch");
+    }
+    for (std::size_t mode = 0; mode < target.size(); ++mode) {
+        for (std::size_t component = 0; component < 3; ++component) {
+            target[mode][component] += scale * source[mode][component];
+        }
+    }
+}
+
+SpectralIncrement increment_difference(const SpectralIncrement& left,
+                                       const SpectralIncrement& right) {
+    SpectralIncrement result = left;
+    add_scaled_increment(result, right, -1.0L);
+    return result;
+}
+
+SpectralReal project_to_search_tangent(
+    SpectralIncrement& increment, const SpectralState& state,
+    const InitialSobolevConstraint& sobolev) {
+    project_to_energy_sphere(increment, state);
+    const SpectralReal sobolev_value = sobolev.value(state);
+    if (sobolev.enabled() && sobolev_value >= 0.99L * sobolev.cap()) {
+        const SpectralIncrement normal =
+            sobolev.energy_tangent_normal(state);
+        const SpectralReal normal_norm2 =
+            increment_inner_product(normal, normal);
+        const SpectralReal outward =
+            increment_inner_product(increment, normal);
+        if (outward > 0.0L && normal_norm2 > 1e-30L) {
+            add_scaled_increment(
+                increment, normal, -outward / normal_norm2);
+        }
+    }
+    return increment_norm(increment);
+}
+
+struct LbfgsPair {
+    SpectralIncrement state_delta;
+    SpectralIncrement gradient_delta;
+    SpectralReal inverse_curvature = 0.0L;
+};
+
+SpectralIncrement lbfgs_ascent_direction(
+    const SpectralIncrement& gradient,
+    const std::vector<LbfgsPair>& history) {
+    if (history.empty()) {
+        return gradient;
+    }
+    SpectralIncrement direction = gradient;
+    std::vector<SpectralReal> alpha(history.size(), 0.0L);
+    for (std::size_t reverse = history.size(); reverse > 0; --reverse) {
+        const std::size_t index = reverse - 1;
+        const LbfgsPair& pair = history[index];
+        alpha[index] = pair.inverse_curvature *
+                       increment_inner_product(pair.state_delta, direction);
+        add_scaled_increment(
+            direction, pair.gradient_delta, -alpha[index]);
+    }
+    const LbfgsPair& newest = history.back();
+    const SpectralReal yy = increment_inner_product(
+        newest.gradient_delta, newest.gradient_delta);
+    const SpectralReal sy = 1.0L / newest.inverse_curvature;
+    const SpectralReal scale = yy > 1e-30L
+        ? std::clamp(sy / yy, 1e-8L, 1e8L)
+        : 1.0L;
+    for (ComplexVector& value : direction) {
+        for (SpectralComplex& component : value) {
+            component *= scale;
+        }
+    }
+    for (std::size_t index = 0; index < history.size(); ++index) {
+        const LbfgsPair& pair = history[index];
+        const SpectralReal beta = pair.inverse_curvature *
+            increment_inner_product(pair.gradient_delta, direction);
+        add_scaled_increment(
+            direction, pair.state_delta, alpha[index] - beta);
+    }
+    return direction;
+}
+
 }  // namespace
 
 GradientAdversary::GradientAdversary(const SpectralDynamics& dynamics,

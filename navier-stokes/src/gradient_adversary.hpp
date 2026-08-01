@@ -16,6 +16,8 @@ struct GradientSearchOptions {
     SpectralReal time_step = 0.001L;
     SpectralReal initial_step = 0.2L;
     std::string objective = "max-q";
+    std::string method = "steepest";
+    int lbfgs_history = 8;
     int sobolev_order = 0;
     SpectralReal sobolev_cap = 0.0L;
 };
