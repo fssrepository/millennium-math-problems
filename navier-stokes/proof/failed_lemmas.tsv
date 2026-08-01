@@ -1,0 +1,4 @@
+id	date	candidate	status	first_obstruction	certificate
+F000	2026-08-01	Numerical boundedness at finitely many resolutions implies regularity	rejected	No uniform-in-cutoff analytic bound	PROOF_PLAN.md#acceptance-conditions-for-l4
+F001	2026-08-01	A scale-invariant monomial E^a Z^b P^c closes the enstrophy inequality	rejected	Amplitude/scaling plus Young absorption forces the remaining Z power to be at least 3	proof/l2/l2-certificate.json
+F002	2026-08-01	At fixed energy Q=D^4 Z has a cutoff-independent pointwise bound	rejected	Localized concentration and energy normalization give the exact growth exponent Q_lambda=lambda^2 Q	proof/l2/l2-certificate.json

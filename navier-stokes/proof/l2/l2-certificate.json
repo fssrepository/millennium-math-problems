@@ -1,0 +1,51 @@
+{
+  "schema": "navier-stokes-lemma-certificate-v2",
+  "target": "L2 and strong-L4 reduction",
+  "claim_scope": "nonnegative monomial E^a Z^b P^c bounds with NS scaling",
+  "scaling": {
+    "amplitude_equation": "2(a+b+c)=3",
+    "space_equation": "-a+b+3c=3",
+    "minimum_post_young_Z_power": "3",
+    "minimizer": {"a": "0", "b": "3/4", "c": "3/4", "young_multiplier_power": "4", "pointwise_linear_depletion_power": "1/2", "energy_integrable_depletion_power": "1/4"},
+    "all_absorbable_candidates_require_energy_depletion_power": "1/4",
+    "quarter_depletion_identity_verified": true,
+    "globally_closing_candidate_found": false
+  },
+  "concentration_scaling": {
+    "map": "u_lambda(x,t)=lambda*u(lambda*x,lambda^2*t)",
+    "fixed_energy_Q_exponent": "2",
+    "pointwise_Q_candidate_scale_compatible": false,
+    "D4Z2_density_exponent": "2",
+    "dt_exponent": "-2",
+    "integrated_L4_exponent": "0",
+    "integrated_L4_scale_critical": true
+  },
+  "strong_L4_reduction": {
+    "Q": "D^4 Z",
+    "critical_density_factorization": "D^4 Z^2 = Q Z",
+    "exact_factorization_verified": true,
+    "energy_identity": "2 nu integral Z dt = E(0)-E(T)",
+    "conditional_bound": "integral D^4 Z^2 dt <= (sup Q) E(0)/(2 nu)",
+    "uniform_Q_closes_L4": true
+  },
+  "fourier_galerkin": {
+    "cutoff": 3,
+    "modes": 342,
+    "samples": 64,
+    "seed": 20260801,
+    "max_normalized_energy_cancellation_residual": 2.5620286388340082e-20,
+    "max_divergence_residual": 8.13151629364128326e-20,
+    "max_reality_residual": 0,
+    "max_classical_vortex_stretching_ratio": 0.00573652372899607216,
+    "max_detailed_triad_cancellation_residual": 7.49406625071974838e-22,
+    "max_relative_detailed_triad_residual": 6.95067315353573183e-18,
+    "locality_ratio": 2,
+    "max_nonlocal_absolute_transfer_fraction": 0.464408692819917257,
+    "max_net_flux_to_absolute_interaction_ratio": 0.0246217600133022303,
+    "max_local_cumulative_flux": 1.45308054319895086,
+    "max_nonlocal_cumulative_flux": 1.49654493109424669,
+    "max_flux_partition_residual": 1.08420217248550443e-19,
+    "nonzero_vortex_stretching_seen": true
+  },
+  "conclusion": "E-Z-P monomial estimates alone cannot close the global enstrophy inequality; L4 needs an additional dynamic or geometric quantity"
+}

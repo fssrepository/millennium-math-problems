@@ -1,0 +1,93 @@
+#include "spectral_adjoint.hpp"
+
+#include <stdexcept>
+#include <utility>
+#include <vector>
+
+namespace lemma {
+namespace {
+
+std::vector<SpectralState> build_checkpoints(
+    const SpectralDynamics& dynamics, const SpectralState& initial,
+    SpectralReal viscosity, SpectralReal time_step, int steps) {
+    if (!(viscosity > 0.0L)) {
+        throw std::invalid_argument("adjoint viscosity must be positive");
+    }
+    if (!(time_step > 0.0L)) {
+        throw std::invalid_argument("adjoint time step must be positive");
+    }
+    if (steps < 0) {
+        throw std::invalid_argument("adjoint step count cannot be negative");
+    }
+    std::vector<SpectralState> checkpoints;
+    checkpoints.reserve(static_cast<std::size_t>(steps) + 1);
+    checkpoints.push_back(initial);
+    for (int step = 0; step < steps; ++step) {
+        SpectralState next = checkpoints.back();
+        dynamics.rk4_step(next, viscosity, time_step);
+        checkpoints.push_back(std::move(next));
+    }
+    return checkpoints;
+}
+
+}  // namespace
+
+SpectralAdjoint::SpectralAdjoint(const SpectralDynamics& dynamics,
+                                 const SpectralObjective& objective)
+    : dynamics_(dynamics), objective_(objective) {}
+
+QTrajectoryGradient SpectralAdjoint::terminal_q_gradient(
+    const SpectralState& initial, SpectralReal viscosity,
+    SpectralReal time_step, int steps) const {
+    const std::vector<SpectralState> checkpoints = build_checkpoints(
+        dynamics_, initial, viscosity, time_step, steps);
+    return reverse_from_step(checkpoints, viscosity, time_step, steps);
+}
+
+QTrajectoryGradient SpectralAdjoint::maximum_q_gradient(
+    const SpectralState& initial, SpectralReal viscosity,
+    SpectralReal time_step, int steps) const {
+    const std::vector<SpectralState> checkpoints = build_checkpoints(
+        dynamics_, initial, viscosity, time_step, steps);
+    int maximum_step = 0;
+    SpectralReal maximum_q =
+        objective_.evaluate(checkpoints.front()).energy_level_quantity;
+    for (int step = 1; step <= steps; ++step) {
+        const SpectralReal q = objective_
+            .evaluate(checkpoints[static_cast<std::size_t>(step)])
+            .energy_level_quantity;
+        if (q > maximum_q) {
+            maximum_q = q;
+            maximum_step = step;
+        }
+    }
+    return reverse_from_step(checkpoints, viscosity, time_step, maximum_step);
+}
+
+QTrajectoryGradient SpectralAdjoint::reverse_from_step(
+    const std::vector<SpectralState>& checkpoints,
+    SpectralReal viscosity, SpectralReal time_step,
+    int objective_step) const {
+    if (objective_step < 0 ||
+        static_cast<std::size_t>(objective_step) >= checkpoints.size()) {
+        throw std::out_of_range("adjoint objective checkpoint is out of range");
+    }
+    QTrajectoryGradient result;
+    result.objective_step = objective_step;
+    result.total_steps = static_cast<int>(checkpoints.size()) - 1;
+    result.checkpoint_count = checkpoints.size();
+    const SpectralState& objective_state =
+        checkpoints[static_cast<std::size_t>(objective_step)];
+    result.objective_value =
+        objective_.evaluate(objective_state).energy_level_quantity;
+    result.initial_gradient =
+        objective_.energy_level_gradient(objective_state);
+    for (int step = objective_step - 1; step >= 0; --step) {
+        result.initial_gradient = dynamics_.rk4_vjp(
+            checkpoints[static_cast<std::size_t>(step)],
+            result.initial_gradient, viscosity, time_step);
+    }
+    return result;
+}
+
+}  // namespace lemma

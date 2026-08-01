@@ -1,0 +1,121 @@
+# Proof roadmap and restart point
+
+Last updated: 2026-08-01
+
+## Exact target
+
+Prove statement **(B)** in Charles Fefferman's official Clay problem
+description: for every smooth, periodic, divergence-free initial velocity on
+`R³/Z³`, viscosity `ν > 0`, and zero external force, there are periodic
+`C∞` velocity and pressure fields solving Navier–Stokes on all of
+`R³ × [0,∞)`.
+
+Proving (B) alone is a solution of the Millennium problem. Transferring the
+result to `R³` is not required by the official disjunction. The code uses a
+`2π` period because it makes Fourier wave numbers integral; this is converted
+to unit period by a fixed rescaling.
+
+Numerics are only fast lemma falsifiers and algebra checks. They are not an
+accepted terminal step.
+
+## Proof chain
+
+| ID | Statement | Status | Machine task |
+|---|---|---|---|
+| L0 | Galerkin solutions and the cutoff-uniform energy inequality | known | regression check |
+| L1 | Fourier-triad energy cancellation and vortex-stretching identity | known; encoded | detailed triad identity check |
+| L2 | Standard monomial `E-Z-P` estimates cannot close the proof | certified in its stated scope | exact scaling/homogeneity certificate |
+| L3 | Decompose nonlinear transfer into local and nonlocal frequency flux | encoded; analytical bounds open | exact triad classification and flux ledger |
+| L4 | **Key lemma:** a dynamic/geometric flux bound, uniform in Galerkin cutoff and time-integrable in a critical class | open | generate candidates and immediately falsify invalid ones |
+| L5 | L4 plus energy inequality implies a cutoff-uniform critical regularity bound | open | symbolic exponent and constant check |
+| L6 | Compactness limit, global smoothness, pressure reconstruction | standard after L4/L5, details open | assumption and limit certificate |
+
+## Acceptance conditions for L4
+
+A candidate advances only if all conditions hold:
+
+1. correct amplitude homogeneity and high-frequency Navier–Stokes scaling;
+2. no counterexample among exact finite Fourier triads;
+3. constant independent of the Galerkin frequency cutoff;
+4. right-hand side is time-integrable from previously proved bounds;
+5. no hidden assumption of the regularity being proved;
+6. a reproducible machine-readable certificate is emitted;
+7. after computational screening, every infinite-dimensional estimate has a
+   conventional human-checkable proof.
+
+## Work cycle
+
+1. State one lemma candidate as an explicit formula.
+2. Run homogeneity and scaling checks.
+3. Run detailed Fourier-triad counterexample search.
+4. If it survives, derive a proof decomposition and record every dependency.
+5. If it fails, append its first concrete obstruction to
+   `proof/failed_lemmas.tsv`.
+6. Always resume at the lowest-numbered open lemma.
+
+## Current result and next action
+
+`L2` considers
+
+```text
+E = ||u||₂²,  Z = ||∇u||₂²,  P = ||Δu||₂²,
+|V(u)| <= C E^a Z^b P^c.
+```
+
+Exact rational constraints from cubic amplitude homogeneity and 3D scaling
+force the best absorbable estimate to leave at least a `Z³` term. This does not
+exclude finite-time growth of enstrophy. See
+`proof/l2/l2-certificate.json`.
+
+The current restart point is **L3 → L4**: use the encoded local/nonlocal flux
+partition to formulate a depletion quantity that controls vortex stretching,
+then reject it unless its bound is cutoff-independent and closes L5.
+
+The first explicit L4 candidate is now
+
+```text
+D_N(t) = |V_N(t)| / (Z_N(t)^(3/4) P_N(t)^(3/4)),
+sup_N integral_0^T D_N(t)^4 Z_N(t)^2 dt < infinity  for every finite T.
+```
+
+This is sufficient because Young's inequality gives a Gronwall coefficient
+`D_N^4 Z_N^2`. A stronger route using only the energy-level time integral of
+`Z_N` would require a quarter-power depletion. The scaling engine verifies the
+`1/4` exponent exactly for every absorbable `E^a Z^b P^c` candidate. This is a
+requirement, not yet a proof of the candidate bound.
+
+The stronger pointwise proposal `sup_N D_N^4 Z_N < infinity` is rejected. Exact
+localized scaling followed by fixed-energy normalization gives
+`Q_lambda = lambda^2 Q`. The time-integrated L4-A quantity is different:
+`D^4 Z^2` has scaling exponent `+2` and `dt` has exponent `-2`, so its integral
+is exactly critical and survives this obstruction.
+
+This rejection concerns a universal bound over all fixed-energy Fourier
+states. For one fixed smooth initial datum, the trajectory-restricted target
+
+```text
+L4-S: sup_N sup_0<=t<=T Q_N(t) < infinity,  Q_N=D_N^4 Z_N,
+```
+
+is a stronger sufficient sublemma that remains open. The exact factorization
+`D_N^4 Z_N^2=Q_N Z_N` and the Galerkin energy identity give
+
+```text
+integral_0^T D_N^4 Z_N^2 dt <= (sup Q_N) E_N(0)/(2 nu).
+```
+
+The engine now certifies this reduction and directly optimizes/measures the
+trajectory maximum of `Q_N` on nested analytic projective families.
+
+`L3` experiments now split `V_N = V_N^local + V_N^nonlocal`, where a triad is
+local when its largest and smallest wave-number magnitudes differ by at most a
+factor of two. The next sublemmas are:
+
+```text
+L4.1  uniformly control integral |V_nonlocal|^4 / (Z P^3) dt;
+L4.2  uniformly control integral |V_local|^4 / (Z P^3) dt.
+```
+
+The scalar inequality `|a+b|^4 <= 8(|a|^4+|b|^4)` then recovers L4-A. Current
+adversarial paths indicate that L4.2 is the dominant term; this observation is
+only routing information, not a proof.

@@ -1,0 +1,14 @@
+{
+  "schema": "navier-stokes-projective-family-v1",
+  "initial_family": "deterministic divergence-free analytic Fourier field",
+  "seed": 20260801,
+  "spectral_decay": 0.800000000000000044,
+  "viscosity": 0.100000000000000006,
+  "time": 0.0500000000000000028,
+  "runs": [
+    {"cutoff": 4, "modes": 728, "E0": 0.99178644152797435, "Z0": 5.25455947602698803, "integral_D4Z2": 2.45761811103423146e-10, "dt_relative_error": 7.3018773728895811e-05, "max_Z": 5.25455947602698803, "max_omega_inf": 5.42358270253882058, "max_holder_half": 1.32314185665211581, "local_integral": 3.52902586754308593e-12, "nonlocal_integral": 4.58659988140990443e-11, "projection_residual": 0},
+    {"cutoff": 5, "modes": 1330, "E0": 1, "Z0": 5.51680192378226852, "integral_D4Z2": 2.15869263223763466e-10, "dt_relative_error": 0.000114963555691955142, "max_Z": 5.51680192378226852, "max_omega_inf": 5.84036723445264627, "max_holder_half": 1.43839799236283472, "local_integral": 5.8418726576615984e-12, "nonlocal_integral": 2.69918782360250312e-11, "projection_residual": 0}
+  ],
+  "last_cutoff_relative_increment": 0.138475239287188134,
+  "logical_status": "finite projective convergence evidence; not an infinite-cutoff proof"
+}
