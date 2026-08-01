@@ -57,6 +57,18 @@ geometric identity error           8.00e-20
 Young left/right ratio             0.005367658904
 ```
 
+The independently optimized cutoff winners give
+
+```text
+K             3          4          5          6
+C_state    0.145045   0.130869   0.129389   0.127982
+```
+
+Zero-padding the identical K6 state to K7 and K8 changes the ratio from
+`0.127982322632` to `0.127982322669` and `0.127982322689`. This branch is
+cutoff stable, but the table remains a falsification result rather than the
+uniform estimate required by LQC-3.
+
 Cutoff stability of `C_state` is a falsification check only. The proof task is
 to derive LQC-3, or a weaker signed version sufficient for LQC-4, uniformly
 along every Galerkin trajectory issued from one fixed smooth datum.

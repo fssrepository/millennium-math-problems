@@ -352,7 +352,9 @@ Weighted AM--GM then gives the local SLD-1P bound with `A_local=3C` exactly.
 The required improvement over the elementary quartic scale is a
 `(Z/P)^(3/4)` depletion. `LocalQuarticClosureTarget` certifies the algebra and
 reports `C_state=0.127982322632` at K6; this finite ratio is not a proof of a
-uniform constant. See [CLOSURE_TARGET.md](CLOSURE_TARGET.md).
+uniform constant. The K3--K6 optimized values decrease from `0.145045` to
+`0.127982`, and the identical K6 state changes by only `5.7e-11` after lifting
+to K8. See [CLOSURE_TARGET.md](CLOSURE_TARGET.md).
 
 ## Reduced proof obligation
 
