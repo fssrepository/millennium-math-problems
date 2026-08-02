@@ -98,11 +98,11 @@ Reproduce the two optimizations with
   --min-cutoff 2 --max-cutoff 6 --profile flat \
   --objective amplification --restarts 12 --workers 12 \
   --iterations 10 --line-search 16 --step 0.1 \
-  --certificate proof/l4/analysis/local-signature-gradient-flat-K2-K6.json
+  --certificate proof/l4/analysis/local-signature-gradient/local-signature-gradient-flat-K2-K6.json
 
 ./build/navier_stokes_lab local-signature-gradient \
   --min-cutoff 2 --max-cutoff 6 --profile flat \
   --objective transfer --restarts 12 --workers 12 \
   --iterations 40 --line-search 18 --step 0.1 \
-  --certificate proof/l4/analysis/local-signature-gradient-transfer-flat-K2-K6.json
+  --certificate proof/l4/analysis/local-signature-gradient/local-signature-gradient-transfer-flat-K2-K6.json
 ```

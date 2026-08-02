@@ -336,6 +336,7 @@ EvolutionResult TrajectoryAnalyzer::evolve(
     StaticObjective before = evaluate_static(state);
     result.initial_energy = before.energy;
     result.initial_enstrophy = before.enstrophy;
+    result.initial_palinstrophy = before.palinstrophy;
     result.initial_energy_level_quantity = before.energy_level_quantity;
     result.initial_critical_integrand = before.critical_integrand;
     result.final_critical_integrand = before.critical_integrand;

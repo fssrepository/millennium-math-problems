@@ -30,6 +30,7 @@ struct AdversaryOptions {
     std::string state_prefix;
     std::string state_directory;
     std::string dynamic_warm_state;
+    bool dynamic_replay_each_cutoff = false;
     int sobolev_order = 0;
     double sobolev_cap = 0.0;
     double critical_density_shift = 0.0;

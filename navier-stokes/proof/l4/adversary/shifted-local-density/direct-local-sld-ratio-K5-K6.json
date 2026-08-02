@@ -1,0 +1,25 @@
+{
+  "schema": "navier-stokes-local-quartic-closure-adversary-v1",
+  "search_objective": "sld-ratio",
+  "closure_objective": "maximize |K+G| / (k0 B0^(1/4) Z^(5/4) P^(3/4))",
+  "direct_sld_objective": "maximize 4 S^3 Z P (K+G) / (k0 (S^4 Z^2 P + B0 Z^3 P^4))",
+  "implemented_static_scale": "Z^(7/4) P / E^(1/4)",
+  "optimizer": "lbfgs",
+  "warm_state_path": "proof/l4/states/local-sld-ratio/K1-K4/K4.tsv",
+  "gradient": "exact discrete reverse mode through local Galerkin triads",
+  "workers": 12,
+  "restarts_per_cutoff": 12,
+  "iterations_per_restart": 18,
+  "sobolev_order": 0,
+  "sobolev_cap": 0,
+  "fitted_cutoff_slope": 1.70102732248138836e-07,
+  "maximum_constant_ratio": 0.148344771264437875,
+  "maximum_objective": 0.0007953649534336298,
+  "candidate_lemma_proved": false,
+  "finite_search_is_not_a_proof": true,
+  "remaining_requirement": "derive a cutoff-independent analytic bound for the two-entry bracket",
+  "rows": [
+    {"cutoff": 5, "initial_objective": 0.000795364854373324377, "optimized_objective": 0.000795364928766662655, "objective_gain": 7.43933383598317242e-11, "initial_constant_ratio": 0.0282022136431402184, "optimized_constant_ratio": 0.148344674152694117, "improvement_factor": 5.26003653577657371, "signed_two_entry_bracket": -0.193256124392464035, "candidate_scale": 1.30275067504979436, "signed_stretching": -0.131915722016240355, "local_polynomial_numerator": 0.0022153656625290832, "local_polynomial_denominator": 2.78534491829348418, "signed_local_sld_ratio": 0.000795364928766662655, "energy": 1, "enstrophy": 1.05843719718110618, "palinstrophy": 1.17949849818716035, "warm_lift_constant_ratio": 0.148344559788833125, "warm_lift_objective": 0.000795364854373324377, "projection_residual": 5.47391069936526586e-05, "projected_gradient_norm": 5.18897526239136654e-06, "sobolev_value": 0, "winning_restart": 0, "winning_seed": "15998772732365433901", "warm_continuation_won": true, "accepted_steps": 18, "evaluations": 63, "state_path": "proof/l4/states/local-sld-ratio/K5-K6/K5.tsv", "restart_constant_ratios": [0.148344674152694117, 0.00675923069545536839, 0.00685024405559592642, 0.0841933239649575171, 0.00673904800930917244, 0.00829605919341794805, 0.133430473729524768, 0.00489897092159648391, 0.00648002990367937959, 0.0348308056126895096, 0.00469854476451107405, 0.00432929859002201788], "restart_objectives": [0.000795364928766662655, 4.04427929290559599e-07, 3.48004885387240572e-07, 0.000235542928110785778, 4.25115600473937921e-07, 6.92327884000714532e-07, 0.000783924351837907087, 1.99467729748255902e-07, 3.84890029870635097e-07, 1.09955454617169309e-05, 1.69749676790188683e-07, 1.64413900942587092e-07]},
+    {"cutoff": 6, "initial_objective": 0.000795364928766662655, "optimized_objective": 0.0007953649534336298, "objective_gain": 2.4666967063823593e-11, "initial_constant_ratio": 0.0282022149620674775, "optimized_constant_ratio": 0.148344771264437875, "improvement_factor": 5.2600397331899087, "signed_two_entry_bracket": -0.193256115861244943, "candidate_scale": 1.30274976471363835, "signed_stretching": -0.131915622621654849, "local_polynomial_numerator": 0.00221535917877369818, "local_polynomial_denominator": 2.785336679985563, "signed_local_sld_ratio": 0.0007953649534336298, "energy": 1, "enstrophy": 1.05843708906196698, "palinstrophy": 1.1794978848267168, "warm_lift_constant_ratio": 0.148344674152694117, "warm_lift_objective": 0.000795364928766662655, "projection_residual": 2.56106096656320762e-05, "projected_gradient_norm": 5.1045493718865509e-06, "sobolev_value": 0, "winning_restart": 0, "winning_seed": "11516590003758206146", "warm_continuation_won": true, "accepted_steps": 18, "evaluations": 61, "state_path": "proof/l4/states/local-sld-ratio/K5-K6/K6.tsv", "restart_constant_ratios": [0.148344771264437875, 0.00560505301041836716, 0.00536297505390565758, 0.0162004459728825045, 0.00615702863092432943, 0.00454175142635459324, 0.141134468818943704, 0.00416083121513870745, 0.00461545341765893027, 0.0197438287090190359, 0.00286946111670271977, 0.00598267694897720945], "restart_objectives": [0.0007953649534336298, 2.34409897403590146e-07, 1.70714276771511805e-07, 7.19818699558238799e-07, 4.15549888782184743e-07, 1.1785327539593202e-07, 0.000791322384938233751, 9.92917884708126479e-08, 1.7043543591825875e-07, 1.14251919500878832e-06, 5.4310119796895581e-08, 1.94438963419480715e-07]}
+  ]
+}

@@ -119,6 +119,59 @@ source file:
 - `LocalSignatureDensity` owns the exact coupled critical factorization, while
   `LocalSignatureFactorAdversary` falsifies pointwise factor-correlation
   mechanisms with parallel one-step RK4 probes;
+- `ShiftedCriticalDensityLemma` certifies the exact homogeneity and
+  conditional Gronwall closure of the scale-compatible `E(0)P(0)` shift;
+  `ShiftedCriticalDensityAnalyzer` evaluates its exact instantaneous
+  Navier--Stokes derivative without an RK4 horizon;
+- `LocalCriticalDerivativeLedger`, `StretchingDerivativeLedger`, and
+  `ShiftedCriticalDensityBudgetAnalyzer` split that derivative by `S/Z/P`
+  chain-rule source, Euler/viscous dynamics, local/nonlocal RHS, and all three
+  Frechet slots of `<A u,B_local(u,u)>`, with independent reconstruction and
+  PDE-identity residuals;
+- `LocalQuarticIdentityLedger` preserves the exact negative-square outer-slot
+  identity and the local/nonlocal enstrophy-transfer identities before any
+  inequality discards their signs;
+- `LocalQuarticShellLedger` resolves the complete normalized local quartet by
+  target mode, exact Laplace eigenshell, hard shell, and dyadic annulus;
+- `LocalQuarticShellEnvelope` proves and certifies the cutoff-independent
+  bound `||A^(1/2)B_local||_2^2 <= 7264120.5 sqrt(Z) P^(3/2)` using only
+  elementary lattice counting, shell overlap, and `H^(3/2)` interpolation;
+- `LocalQuarticCommutator` combines the outer and advected Frechet slots into
+  the exact multiplier `|k|^2-|q|^2` and checks its duality and symbol bounds;
+- `LocalQuarticProjectedResidual` combines the outer, enstrophy, and
+  palinstrophy chain-rule entries and verifies their exact completed-square
+  representation before the remaining transport slots are estimated;
+- `LocalQuarticReducedLedger` merges both exact reductions and emits the
+  two-entry, denominator-free local SLD-1P numerator with an independent
+  polynomial reconstruction check;
+- `LocalQuarticClosureTarget` certifies the exact weighted-Young implication
+  from the explicit `K+G` depletion target to the local SLD-1P inequality;
+- `LocalQuarticClosureObjective` reverse-differentiates both the sufficient
+  absolute closure ratio and the actual signed local SLD-1P quotient;
+- `LocalQuarticClosureAdversary`, its CLI, and its reporter run 12-worker
+  projected L-BFGS cutoff continuations and save English JSON plus replayable
+  Fourier states without placing artifacts at an analysis/adversary root;
+- `LocalSldCyclicBasis` owns the reusable cyclic axis-shear and quadratic
+  response basis, while `LocalSldCyclicAnsatz` optimizes its static mixture;
+- `LocalSldCyclicTrajectoryAnsatz` searches the frozen-data trajectory
+  maximum in that one-angle family, refines the time step, and uses the exact
+  adjoint to measure both the restricted and full projected gradients;
+- `LocalSldCyclicKrylovAnsatz` adds the orthogonalized advection-JVP response
+  and optimizes its three coefficients on the fixed-energy sphere;
+- `LocalSldResponseHierarchy` constructs the full quadratic response
+  recursion, while `LocalSldCyclicOrbitBasis` supplies the missing transverse
+  `(2,1,1)` polarization and both oriented `(3,1,0)` cyclic orbits;
+- `LocalSldTrajectoryEvaluator` evaluates and dt-refines any saved state with
+  either the direct RK4 oracle or the FFT forward/VJP backend;
+- `LocalSldSignatureBlock` splits `K+G` exactly into a selected squared-length
+  signature family, its local complement, and their independently evaluated
+  mixed terms;
+- `LocalSldBlockObjective` gives those three terms exact gradients under the
+  common full-SLD normalization, so their real contributions can be searched
+  without replacing the full stretching by a block stretching;
+- `LocalSldTrajectoryAdjoint` freezes `k0,B0` from the initial datum, evolves
+  the Galerkin state, and reverse-differentiates the terminal local quotient
+  through RK4 and through both frozen parameters;
 - `LocalSignatureGradientAdversary` runs 12-worker targeted counterexample
   searches, while `LocalSignatureTrajectoryAnalyzer` verifies the exact
   dynamic signature factorization across Galerkin cutoffs;
@@ -161,6 +214,103 @@ the exact coupled density `A_sig^4 R^2/(Z P^3)` for each fixed smooth initial
 datum. The far dyadic tail and every fixed local signature family already have
 cutoff-independent closures. This keeps rebuilds dependency-free and makes
 each layer independently replaceable.
+
+The current direct local-lemma search is reproducible with:
+
+```bash
+./build/navier_stokes_lab local-closure-adversary \
+  --objective sld-ratio --min-cutoff 1 --max-cutoff 4 \
+  --restarts 12 --workers 12 --iterations 20 --method lbfgs \
+  --certificate proof/l4/adversary/shifted-local-density/direct-local-sld-ratio-K1-K4.json \
+  --state-dir proof/l4/states/local-sld-ratio/K1-K4
+
+./build/navier_stokes_lab local-sld-ansatz \
+  --samples 8192 --refinements 112 \
+  --certificate proof/l4/analysis/shifted-local-density/cyclic-two-basis-ansatz.json \
+  --state proof/l4/states/local-sld-ratio/cyclic-ansatz/K2.tsv
+
+./build/navier_stokes_lab local-sld-trajectory-ansatz \
+  --cutoff 2 --samples 256 --refinements 64 --threads 12 \
+  --trajectory-steps 500 --nu 0.1 --dt 0.001 --backend auto \
+  --certificate proof/l4/analysis/shifted-local-density/cyclic-trajectory-T050-K2.json \
+  --state proof/l4/states/local-sld-trajectory/cyclic-ansatz-T050-K2/K2.tsv
+
+./build/navier_stokes_lab local-sld-response-hierarchy \
+  --state proof/l4/states/local-sld-trajectory/maximum-T050-K3-from-K2/K3.tsv \
+  --depth 16 --threads 12 --include-211-transverse --include-310-orbits \
+  --projected-state proof/l4/states/local-sld-trajectory/response-hierarchy-projection-K3/depth16-plus-orbits.tsv \
+  --residual-state proof/l4/states/local-sld-trajectory/response-hierarchy-residual-K3/depth16-plus-orbits.tsv \
+  --certificate proof/l4/analysis/shifted-local-density/cyclic-response-hierarchy-K3-depth16-plus-orbits.json
+
+./build/navier_stokes_lab local-sld-trajectory-evaluate \
+  --state proof/l4/states/local-sld-trajectory/response-hierarchy-projection-K3/depth16-plus-orbits.tsv \
+  --trajectory-steps 320 --threads 12 --nu 0.1 --dt 0.001 --backend auto \
+  --certificate proof/l4/analysis/shifted-local-density/cyclic-response-hierarchy-K3-depth16-plus-orbits-trajectory.json
+
+./build/navier_stokes_lab local-sld-block \
+  --state proof/l4/states/local-sld-ratio/K8/K8.tsv \
+  --doubling-family --threads 12 \
+  --certificate proof/l4/analysis/shifted-local-density/direct-local-sld-K8-doubling-family.json
+
+./build/navier_stokes_lab local-closure-adversary \
+  --objective block-ratio --selection doubling-family \
+  --min-cutoff 1 --max-cutoff 6 --restarts 12 --workers 12 \
+  --iterations 30 --method lbfgs \
+  --certificate proof/l4/adversary/shifted-local-density/common-sld-doubling-block-K1-K6.json \
+  --state-dir proof/l4/states/local-sld-block/doubling-family-K1-K6
+
+./build/navier_stokes_lab local-closure-adversary \
+  --objective terminal-sld-ratio --selection local \
+  --min-cutoff 1 --max-cutoff 3 --restarts 12 --workers 12 \
+  --iterations 20 --trajectory-steps 10 --nu 0.1 --dt 0.001 \
+  --certificate proof/l4/adversary/shifted-local-density/frozen-terminal-sld-T001-K1-K3.json \
+  --state-dir proof/l4/states/local-sld-trajectory/frozen-T001-K1-K3
+
+./build/navier_stokes_lab local-closure-adversary \
+  --objective maximum-sld-ratio --selection local \
+  --min-cutoff 3 --max-cutoff 3 --restarts 12 --workers 12 \
+  --iterations 8 --trajectory-steps 500 --nu 0.1 --dt 0.001 \
+  --backend auto \
+  --warm-state proof/l4/states/local-sld-trajectory/maximum-T050-K2/K2.tsv \
+  --certificate proof/l4/adversary/shifted-local-density/frozen-maximum-sld-T050-K3-from-K2.json \
+  --state-dir proof/l4/states/local-sld-trajectory/maximum-T050-K3-from-K2
+```
+
+Trajectory searches accept `--backend direct`, `--backend fft`, or
+`--backend auto`. `direct` remains the reference oracle; `auto` switches the
+forward RK4 and its exact discrete VJP to the validated FFT path from K3 while
+the selected local closure objective retains exact triad sums.
+
+The first command maximizes the signed polynomial quotient itself. The
+`closure-ratio` objective remains available as a stronger sufficient screen,
+but it is not used as a substitute for the direct target.
+The common-normalization scans stabilize near `7.72930e-4` for the doubling
+family, `2.20683e-4` for its complement, and `1.34936e-4` for the mixed term.
+A separate signed-bracket search rejects the shortcut `K+G<=0` with the
+positive value `0.0740187069851`; that counterexample has nearly zero
+stretching, which is why the code keeps the full joint SLD factor.
+The canonical cyclic axis shear exactly attains the static absolute value
+`|c|=1/3`, and padded 12-start searches find no larger value through K8.
+This is a sharp conjecture, not a proof. With `k0,B0` frozen, K3 terminal
+optimization increases from `7.98918e-4` at `T=0.01` to `8.46863e-4` at
+`T=0.20`; this is now the active trajectory-level target.
+The maximum-on-trajectory version removes endpoint bias. Warm continuation
+from the K2 winner corrects an earlier secondary branch and gives the refined
+K3 lower bound `8.53498799310e-4` at `t=0.298` inside `[0,0.5]`; dt halving
+changes it by `8.16e-16` relatively. At that checkpoint, the exact frozen
+block split is `8.24077287430e-4 + 1.51420260355e-5 + 1.42794858448e-5`,
+with `6.20e-20` reconstruction error. The doubling family supplies `96.55%`
+of the absolute three-block sum. The winning state retains `99.969%` of its
+energy in the first hard shell, but its projected gradient is still
+`4.04e-4`; this remains a lower bound, not a converged global maximum.
+
+The explicit response hierarchy makes that pattern quantitative. Orders
+`0..15`, the transverse `(2,1,1)` polarization, and both oriented `(3,1,0)`
+orbits capture `99.9998628%` of the K3 winner's energy. Evolving only its
+19-vector projection gives `8.53172846573e-4` at the same `t=0.298`, which is
+`99.96181%` of the unrestricted lower bound. Direct and FFT trajectory
+evaluation agree to all reported digits. This identifies a compact candidate
+extremal structure; it is not a cutoff-uniform theorem.
 
 The helical local target has its own replayable optimizer and same-state
 cutoff scan:
@@ -241,7 +391,7 @@ strong quarter-depletion quantity `Q = D^4 Z` at fixed unit energy:
   --dynamic-generations 24 --dynamic-objective max-q \
   --dynamic-optimizer gradient \
   --nu 0.1 --evolve-time 0.1 --dt 0.002 \
-  --certificate proof/l4/adversary/l4s-maxq-adversary.json \
+  --certificate proof/l4/adversary/gradient/l4s-maxq-adversary.json \
   --state-dir proof/l4/states/l4s-maxq-adversary
 ```
 
@@ -274,7 +424,8 @@ The two terms of the local/nonlocal proof split can be attacked directly:
   --dynamic-optimizer gradient --gradient-method lbfgs \
   --sobolev-order 4 --sobolev-cap 100 \
   --nu 0.1 --evolve-time 0.01 --dt 0.002 \
-  --threads 12 --certificate proof/l4/adversary/nonlocal.json
+  --threads 12 \
+  --certificate proof/l4/adversary/partitioned-integral/nonlocal.json
 ```
 
 `critical-local-integral` selects the complementary objective. These masked
@@ -326,7 +477,7 @@ JVP versus direct JVP, `1.9e-19` for FFT VJP versus direct VJP, `5.6e-19` for
 RK4 adjoint duality, `2.0e-13` for a three-step `Q` trajectory gradient, and
 `1.1e-12` for the critical trapezoidal time-integral gradient versus central
 differences. A short `K=5` smoke certificate with 1,330 modes is stored in
-`proof/l4/adversary/l4s-fft-gradient-K5-smoke.json`.
+`proof/l4/adversary/gradient/l4s-fft-gradient-K5-smoke.json`.
 
 The first direct L4-A adjoint continuation is replayable with:
 

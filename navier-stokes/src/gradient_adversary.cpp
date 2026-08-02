@@ -1,5 +1,9 @@
 #include "gradient_adversary.hpp"
 
+#include "local_quartic_closure_objective.hpp"
+#include "local_sld_block_objective.hpp"
+#include "local_sld_trajectory_adjoint.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -132,7 +136,8 @@ TriadSelection objective_selection(
     const std::string& objective, int minimum_dyadic_gap) {
     if (objective == "critical-local-integral" ||
         objective == "critical-local-increase" ||
-        objective == "critical-local-log-gain") {
+        objective == "critical-local-log-gain" ||
+        objective == "critical-local-ep-log-gain") {
         return TriadPartition::local;
     }
     if (objective == "critical-nonlocal-integral") {
@@ -160,14 +165,60 @@ GradientAdversary::GradientAdversary(const SpectralDynamics& dynamics,
 SpectralReal GradientAdversary::objective_value(
     const SpectralState& initial,
     const GradientSearchOptions& options) const {
+    if (options.objective == "local-closure-ratio") {
+        return LocalQuarticClosureObjective(
+            dynamics_, options.closure_selection)
+            .evaluate(initial).squared_constant_ratio;
+    }
+    if (options.objective == "local-sld-ratio") {
+        return LocalQuarticClosureObjective(
+            dynamics_, options.closure_selection)
+            .evaluate(initial).signed_local_sld_ratio;
+    }
+    if (options.objective == "local-signed-closure-ratio") {
+        return LocalQuarticClosureObjective(
+            dynamics_, options.closure_selection)
+            .evaluate(initial).signed_constant_ratio;
+    }
+    if (options.objective == "local-sld-block-ratio") {
+        return LocalSldBlockObjective(
+            dynamics_, options.closure_selection,
+            LocalSldBlock::selected_closed)
+            .evaluate(initial).block_sld_ratio;
+    }
+    if (options.objective == "local-sld-mixed-ratio") {
+        return LocalSldBlockObjective(
+            dynamics_, options.closure_selection,
+            LocalSldBlock::mixed)
+            .evaluate(initial).block_sld_ratio;
+    }
+    if (options.objective == "local-frozen-terminal-sld-ratio") {
+        return LocalSldTrajectoryAdjoint(
+            dynamics_, options.closure_selection)
+            .terminal_value(
+                initial, options.viscosity, options.time_step,
+                options.trajectory_steps)
+            .terminal_ratio;
+    }
+    if (options.objective == "local-frozen-maximum-sld-ratio") {
+        return LocalSldTrajectoryAdjoint(
+            dynamics_, options.closure_selection)
+            .maximum_value(
+                initial, options.viscosity, options.time_step,
+                options.trajectory_steps)
+            .terminal_ratio;
+    }
     SpectralState state = initial;
     const TriadSelection selection = objective_selection(
         options.objective, options.minimum_dyadic_gap);
     const SpectralReal initial_q =
         objective_.evaluate(state).energy_level_quantity;
-    SpectralReal previous_integrand =
-        objective_.evaluate(state, selection).critical_integrand;
+    const StaticObjective initial_static =
+        objective_.evaluate(state, selection);
+    SpectralReal previous_integrand = initial_static.critical_integrand;
     const SpectralReal initial_integrand = previous_integrand;
+    const SpectralReal initial_ep_shift =
+        initial_static.energy * initial_static.palinstrophy;
     SpectralReal critical_integral = 0.0L;
     SpectralReal maximum_q = initial_q;
     for (int step = 0; step < options.trajectory_steps; ++step) {
@@ -207,7 +258,20 @@ SpectralReal GradientAdversary::objective_value(
             !(shifted_terminal > 1e-30L)) {
             return -std::numeric_limits<SpectralReal>::infinity();
         }
-        return std::log(shifted_terminal / shifted_initial);
+        return std::log1p(
+            (previous_integrand - initial_integrand) / shifted_initial);
+    }
+    if (options.objective == "critical-local-ep-log-gain") {
+        const SpectralReal shifted_initial =
+            initial_integrand + initial_ep_shift;
+        const SpectralReal shifted_terminal =
+            previous_integrand + initial_ep_shift;
+        if (!(shifted_initial > 1e-30L) ||
+            !(shifted_terminal > 1e-30L)) {
+            return -std::numeric_limits<SpectralReal>::infinity();
+        }
+        return std::log1p(
+            (previous_integrand - initial_integrand) / shifted_initial);
     }
     if (options.objective == "critical-integral" ||
         options.objective == "critical-local-integral" ||
@@ -266,7 +330,64 @@ GradientSearchResult GradientAdversary::maximize_q(
 
     for (int iteration = 0; iteration < options.iterations; ++iteration) {
         QTrajectoryGradient trajectory;
-        if (options.objective == "max-q") {
+        if (options.objective == "local-closure-ratio") {
+            const LocalQuarticClosureObjective closure(
+                dynamics_, options.closure_selection);
+            trajectory.objective_value =
+                closure.evaluate(result.state).squared_constant_ratio;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient =
+                closure.squared_constant_ratio_gradient(result.state);
+        } else if (options.objective == "local-sld-ratio") {
+            const LocalQuarticClosureObjective closure(
+                dynamics_, options.closure_selection);
+            trajectory.objective_value =
+                closure.evaluate(result.state).signed_local_sld_ratio;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient =
+                closure.signed_local_sld_ratio_gradient(result.state);
+        } else if (options.objective ==
+                   "local-signed-closure-ratio") {
+            const LocalQuarticClosureObjective closure(
+                dynamics_, options.closure_selection);
+            trajectory.objective_value =
+                closure.evaluate(result.state).signed_constant_ratio;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient =
+                closure.signed_constant_ratio_gradient(result.state);
+        } else if (options.objective ==
+                   "local-sld-block-ratio") {
+            const LocalSldBlockObjective block(
+                dynamics_, options.closure_selection,
+                LocalSldBlock::selected_closed);
+            trajectory.objective_value =
+                block.evaluate(result.state).block_sld_ratio;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = block.gradient(result.state);
+        } else if (options.objective ==
+                   "local-sld-mixed-ratio") {
+            const LocalSldBlockObjective block(
+                dynamics_, options.closure_selection,
+                LocalSldBlock::mixed);
+            trajectory.objective_value =
+                block.evaluate(result.state).block_sld_ratio;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = block.gradient(result.state);
+        } else if (options.objective ==
+                   "local-frozen-terminal-sld-ratio") {
+            trajectory = LocalSldTrajectoryAdjoint(
+                dynamics_, options.closure_selection)
+                .terminal_gradient(
+                    result.state, options.viscosity,
+                    options.time_step, options.trajectory_steps);
+        } else if (options.objective ==
+                   "local-frozen-maximum-sld-ratio") {
+            trajectory = LocalSldTrajectoryAdjoint(
+                dynamics_, options.closure_selection)
+                .maximum_gradient(
+                    result.state, options.viscosity,
+                    options.time_step, options.trajectory_steps);
+        } else if (options.objective == "max-q") {
             trajectory = adjoint_.maximum_q_gradient(
                 result.state, options.viscosity, options.time_step,
                 options.trajectory_steps);
@@ -291,6 +412,10 @@ GradientSearchResult GradientAdversary::maximize_q(
                 result.state, options.viscosity, options.time_step,
                 options.trajectory_steps, TriadPartition::local,
                 options.critical_density_shift);
+        } else if (options.objective == "critical-local-ep-log-gain") {
+            trajectory = adjoint_.critical_ep_log_gain_gradient(
+                result.state, options.viscosity, options.time_step,
+                options.trajectory_steps, TriadPartition::local);
         } else if (options.objective == "critical-integral" ||
                    options.objective == "critical-local-integral" ||
                    options.objective == "critical-nonlocal-integral" ||

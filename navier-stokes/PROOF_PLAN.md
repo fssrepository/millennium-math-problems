@@ -67,11 +67,32 @@ force the best absorbable estimate to leave at least a `Z³` term. This does not
 exclude finite-time growth of enstrophy. See
 `proof/l2/l2-certificate.json`.
 
-The current restart point is **L3 → L4**: use the encoded local/nonlocal flux
-partition to formulate a depletion quantity that controls vortex stretching,
-then reject it unless its bound is cutoff-independent and closes L5.
+The current restart point is the **frozen-data local L4 trajectory lemma**.
+For one initial datum set `k0=sqrt(Z(0)/E(0))`, `B0=E(0)P(0)`, and prove a
+cutoff- and time-uniform upper bound for
 
-The first explicit L4 candidate is now
+```text
+R_local(t)=4S(t)^3 Z(t)P(t)(K(t)+G(t))
+ / [k0(S(t)^4 Z(t)^2P(t)+B0 Z(t)^3P(t)^4)].
+```
+
+The exact maximum-on-trajectory adjoint is implemented and validated. Warm
+continuation from K2 gives the current K3 lower bound `8.53498799310e-4` on
+`[0,0.5]`, attained at `t=0.298`; dt halving changes it by `8.16e-16`
+relatively. This corrects an earlier secondary branch but is still a pattern
+and falsification result, not the required analytic bound. Resume from the
+cyclic response hierarchy and the `(m,m,2m)`/remainder/mixed decomposition in
+`proof/l4/lemmas/shifted-local-density/SIGNATURE_BLOCK.md`.
+
+The current K3 winner is not an unstructured high-dimensional state. Sixteen
+quadratic response orders plus the explicit transverse `(2,1,1)` and two
+oriented `(3,1,0)` orbit directions capture `99.9998628%` of its energy. The
+projected state retains `99.96181%` of the trajectory objective and the same
+peak time. The next proof step is to replace this finite projection fact by a
+cutoff-uniform summability estimate for the response coefficients and orbit
+remainders; finite-dimensional agreement alone is not the lemma.
+
+The first explicit L4 candidate in the reduction was
 
 ```text
 D_N(t) = |V_N(t)| / (Z_N(t)^(3/4) P_N(t)^(3/4)),
@@ -589,6 +610,265 @@ Consequently a purely multiplicative estimate is not a stable analytical
 restart point near vanishing local transfer. The exact adjoint and CLI now
 support an additive density shift `B` and optimize
 `log((C_local(T)+B)/(C_local(0)+B))`; the shifted gradient passes centered
-differences at `2.79e-10`. The next finite test uses `B=1e-4`, comparable to
-the high-density branch, before any shifted inequality is considered as a
-lemma candidate.
+differences at `2.79e-10`. With `B=1e-4`, twelve-start K3--K6 searches give
+normalized shifted gains `3.889, 4.068, 4.119, 4.135`. Top-shell energy has
+fitted exponent `-7.48`, and the K5-to-K6 projection residual is `4.14e-3`.
+This is a smooth finite candidate constant, not a uniform estimate. The active
+diagnostic is its dependence on `B`; only a shift tied to already controlled
+initial data and correct Navier--Stokes scaling could enter a proof.
+
+The first such explicit candidate is now encoded. Set
+`B0=E(0)P(0)` and `k0=sqrt(Z(0)/E(0))`. Exact rational checks show that
+`C_local` and `B0` both have amplitude degree four and Navier--Stokes scaling
+exponent two, while both sides of
+
+```text
+d/dt log(C_local+B0) <= A(u0,nu,T) k0 Z(t)                 (SLD-1)
+```
+
+have scaling exponent two. If SLD-1 holds uniformly in cutoff, the energy
+identity gives a uniform pointwise bound for `C_local`, hence its finite-time
+integral. SLD-1 is not proved; the exact scaling and conditional Gronwall
+closure only establish that it is a logically viable target. The restart
+point is now an analytic differentiation of `C_local` and a triadwise bound
+for its derivative with no future high-Sobolev input. See
+`proof/l4/lemmas/shifted-local-density/README.md`.
+
+The state-dependent `E(0)P(0)` adjoint passes centered differences at
+`2.06e-10`. Twelve-start K3--K6 searches give normalized SLD rates
+`7.240e-4, 7.533e-4, 7.751e-4, 7.810e-4`. A same-state K6--K8 zero-padding
+audit changes the objective by `-7.43e-6` and then `-2.14e-9` relatively.
+Thus the first exact finite adversary does not falsify SLD-1 and has converged
+in cutoff on its winning branch. Further lifts of this branch are no longer
+the active task; the restart point is the symbolic/local-triad expansion of
+`dC_local/dt` needed to prove or reject SLD-1 analytically.
+
+The new `shifted-density` oracle computes that instantaneous derivative as
+`<gradient C_local,RHS>` in about `0.22 s` at K6; the later complete role
+ledger takes `0.48 s` on twelve threads. Direct and FFT RHS backends agree in
+the main serialized values and within `1.1e-19` in the expanded budgets. Its
+normalized rates on the four optimized
+K3--K6 winners are `7.2396e-4, 7.5341e-4, 7.7546e-4, 7.8151e-4`; the K6 value
+is only `6.10e-4` above the short-horizon average relatively. This removes the
+need to use RK4 for first-pass SLD falsification. The unresolved work is still
+analytical: split this exact derivative into local signature/triad terms and
+prove a cutoff-independent upper bound, or produce a scalable counterfamily.
+
+That first derivative split is now exact and implemented. With signed local
+stretching `S`, the engine reconstructs
+
+```text
+C'_local = 4 S^3 S'/(Z P^3)
+           - S^4 Z'/(Z^2 P^3)
+           - 3 S^4 P'/(Z P^4)
+```
+
+from independently differentiated `S`, `Z`, and `P`; its K6 relative residual
+against `gradient C dot RHS` is `1.18e-18`. It also certifies the exact PDE
+identities `Z'_NL=-2S_global`, `Z'_nu=-2nu P`, and `P'_nu=-2nu H3`. The
+stretching derivative is split into the outer, advecting, and advected
+Frechet slots. On the K6 extremizer they are `-0.609617`, `+0.016053`, and
+`+0.328901` for the nonlinear direction, so a large cancellation would be
+lost by separate absolute-value estimates.
+The pure local part of the outer slot is exactly
+`-||A^(1/2)B_local||_2^2=-0.603413126167`; the new quartic identity ledger
+certifies this with zero serialized residual rather than treating its sign as
+numerical evidence.
+
+After normalization by `(C_local+B0) k0 Z`, the K6 budget is `6.87169e-4`
+from the local nonlinear RHS, `6.48121e-5` from the nonlocal nonlinear RHS,
+and `2.95310e-5` from viscosity. The local block therefore supplies `91.38%`
+of the nonlinear source on the current extremizer. A same-state K6--K8 audit
+changes only the nonlinear stretching channel and converges from
+`7.8151205976e-4` to `7.8151208069e-4`.
+
+The active restart point is no longer differentiation. It is the complete-
+quartet symmetrization of the local-local contributions to `S'` together with
+the nonlinear `P'` term in the denominator-free form
+
+```text
+4 S^3 S' Z P - S^4 Z' P - 3 S^4 Z P'
+ <= A k0 (S^4 Z^2 P + B0 Z^3 P^4).                 (SLD-1P)
+```
+
+The proof must preserve the cross-slot cancellation recorded by the ledger;
+a separate norm bound for every slot is not yet a closure because it discards
+the signed quartet structure.
+On the K6 oracle, the outer negative-square source is `2.30680e-3` after SLD
+normalization, while the advecting, advected, enstrophy, and palinstrophy terms
+reduce it to `6.87169e-4`, a `70.21%` cancellation. The denominator-free
+SLD-1P evaluation agrees with the shifted-log route to `4.74e-19` relatively,
+so future quartet algebra can be regression-tested without differentiating a
+quotient.
+
+The local quartet is now resolved by target mode, exact eigenshell, hard
+shell, and dyadic annulus. On the optimized K6 state, `70.66%` of component
+cancellation occurs within one dyadic annulus and essentially none occurs
+between annuli. Control states show the opposite placement, so this is routing
+information rather than a universal cancellation lemma.
+
+One infinite-dimensional estimate has nevertheless been completed. If
+`B_L=B_local(u,u)`, elementary local-shell geometry and lattice counting give
+
+```text
+||(A^(1/2)B_L)_j||_2^2 <= 46656 R_j^7 (E_j^near)^2.
+```
+
+Three-shell overlap and interpolation
+`sum R_j^3 E_j <= sqrt(ZP)` then give the cutoff-independent global lemma
+
+```text
+||A^(1/2)B_L||_2^2 <= 7264120.5 sqrt(Z) P^(3/2).       (LQE-2)
+```
+
+This removes the former high-Sobolev concern for the isolated outer slot.
+The code certifies every geometry and summation stage; the conventional proof
+is in `proof/l4/lemmas/shifted-local-density/SHELL_ENVELOPE.md`.
+
+The outer and advected slots are also no longer independent. Transport
+skew-symmetry gives
+
+```text
+-<A B_L,B_L>-<A u,B_L(u,B_L)>
+ =-<B_L,A B_L-B_L(u,A u)>,
+```
+
+whose Fourier multiplier satisfies
+`abs(|k|^2-|q|^2)<=|p|(|k|+|q|)`. The K6 identity residual is below `2e-19`.
+The active restart point is therefore narrower: bound the remaining
+advecting-slot and nonlinear-palinstrophy combination together with this
+commutator in SLD-1P. The completed outer estimate must be reused rather than
+rederived with a higher solution norm.
+
+An alternative exact grouping has now absorbed both denominator derivatives.
+For `h=-B_L`, their combination with the outer slot is
+
+```text
+<A h,B_L-Su/(2Z)-3S A u/(2P)>
+ =-||A^(1/2)(B_L-3S A u/(4P))||_2^2
+   +S^2/(2Z)+9S^2H3/(16P^2).
+```
+
+After the common scalar coefficient is restored, this projected pairing plus
+the advecting and advected slots reconstructs the entire local quartet. The
+K6 normalized residual is `3.85e-18`. This is the current minimal algebraic
+target. Because the common coefficient contains signed `S^3`, neither the
+negative square nor its positive remainders may be discarded uniformly. The
+next lemma must be a sign-aware estimate for this three-entry combination,
+not another five-way triangle inequality.
+
+Merging that grouping with the outer--advected commutator leaves only two
+entries. Define
+
+```text
+K=-<B_L,A B_L-B_L(u,A u)>+S^2/(2Z)+3S<A B_L,A u>/(2P),
+G=<A u,B_L(-B_L,u)>.
+```
+
+The exact local polynomial numerator is `4S^3ZP(K+G)`. At K6 it equals
+`0.00264627230688`; the independent five-entry calculation agrees to
+`3.20e-19` relatively. The active local lemma is now SLD-1P-L in
+`proof/l4/lemmas/shifted-local-density/REDUCED_QUARTET.md`: prove a
+cutoff-independent upper bound for this signed two-entry expression. This is
+the next restart point after any failed computational or analytical attempt.
+
+The exact Young reduction now identifies the required estimate rather than
+leaving it qualitative:
+
+```text
+|K+G| <= C k0 B0^(1/4) Z^(5/4)P^(3/4).               (LQC-3)
+```
+
+Multiplication by `4|S|^3ZP` and weighted AM--GM imply SLD-1P-L with
+`A_local=3C`. Compared with the elementary quartic scale
+`Z^(1/2)P^(3/2)`, LQC-3 requires a `(Z/P)^(3/4)` depletion supplied by the
+signed two-entry structure. The K6 finite-state ratio is `0.127982322632` and
+the algebraic identity error is `8.00e-20`; neither number proves uniformity.
+`proof/l4/lemmas/shifted-local-density/CLOSURE_TARGET.md` is the exact current
+restart point.
+
+The absolute closure ratio was subsequently reverse-differentiated and
+optimized directly. A K1 branch reaches `C_state=1/3`, but its stretching is
+only `1.23e-11`; the `S^3` factor makes it irrelevant to the actual local
+polynomial source. The engine therefore now optimizes the signed quotient
+
+```text
+R_local=4S^3ZP(K+G)/[k0(S^4Z^2P+B0Z^3P^4)]          (LQC-5)
+```
+
+instead of treating LQC-3 as the only search objective. Its analytic gradient
+agrees with central differences to `6.77e-12`. Twelve-start L-BFGS continuation
+gives `R_local=7.60409e-4` at K1 and `7.95364960e-4` at K8; gains after K3 are
+below `4e-10`, and the final adjacent projection residual is `1.99e-6`.
+
+The K8 extremizer is a low-shell, predominantly heterochiral state. Six axis
+modes and twelve face-diagonal modes dominate, while the `(1,1,2)` local
+signature supplies `98.8%` of its signed transfer. The explicit two-basis
+cyclic-shear/quadratic-response ansatz reaches `7.75010870e-4`, or `97.44%` of
+the full value. The active restart point is to prove a signed bound for this
+dominant block plus a cutoff-uniform estimate of the orthogonal shell
+remainder. The present direct quotient uses the evaluated state as the datum,
+so a trajectory proof must additionally freeze `k0,B0` at time zero. These
+finite optimizations do not complete L4 or the Clay problem.
+
+The dominant block is now an exact operator decomposition rather than a table
+classification. `L_d` selects every local squared-frequency signature
+`(m,m,2m)` and `L_r=L_local-L_d`. Independent evaluation of all mixed
+bilinear terms certifies
+
+```text
+K+G = F_d + F_r + F_cross
+```
+
+to `2.20e-18` relatively on the K8 winner. Their direct SLD contributions are
+`7.70182e-4`, `1.21606e-5`, and `1.30224e-5`. The next proof attempt must
+derive a scale-uniform signed estimate for `F_d` and a summable joint estimate
+for `F_r+F_cross`; separate triangle inequalities are not accepted because
+they restore the known frequency loss.
+
+The tempting global sign shortcut has now been eliminated. Exact-gradient
+search gives a positive normalized bracket `c=0.0740187069851` for the full
+local operator, and positive examples also exist for both sides of the
+doubling-family split. Those states have nearly zero stretching, so the
+correct restart point is the joint factorization `R_j=c_j phi(x)`, not the
+sign of `c_j` alone. The common-normalization block gradients pass central
+differences at `1.29e-11` or better. Separate cutoff scans stabilize near
+`7.72930e-4` (doubling family, K6), `2.20683e-4` (remainder, K6), and
+`1.34936e-4` (mixed, K6). The remainder and mixed blocks therefore need a
+real joint estimate even though they are small on the original K8 branch.
+
+The static absolute search has also isolated a sharp candidate rather than
+only a decimal plateau. The normalized six-mode cyclic axis shear satisfies
+`E=Z=P=1`, `S=0`, and `K+G=-1/3` with `1.08e-19` identity error. Its padded
+branch stays at `|c|=1/3` from K1 through K8 under 12-start searches. The
+candidate inequality
+
+```text
+|K+G| E^(1/4) <= (1/3) Z^(7/4)P
+```
+
+is therefore sharp if true, but remains unproved.
+
+More importantly, the engine now removes the `t=0` shortcut. A separate
+trajectory adjoint freezes `k0=sqrt(Z(0)/E(0))` and `B0=E(0)P(0)`, evolves
+with RK4, and includes the direct initial-data derivatives of both constants
+in the reverse pass. Its gradient error is `5.62e-12`, and the zero-step
+limit matches the static gradient to `1.52e-19`. At K3 and `nu=0.1`, optimized
+terminal ratios rise from `7.98918e-4` at `T=0.01` to `8.46863e-4` at
+`T=0.20`, with dt-halving errors below `4.3e-16`. Thus the current restart
+point is a uniform-in-time bound for the frozen-data joint quotient, not the
+static `1/3` conjecture alone.
+
+The maximum-on-trajectory adjoint removes endpoint bias. On the current K3
+search over `0<=t<=0.5`, it selects `t=0.2175` and returns the refined lower
+bound `8.48675785e-4`; coarse/refined checkpoint maxima differ by `3.10e-6`
+relatively. The optimized initial state remains low-shell: `99.9723%` of its
+energy lies in the first hard shell and the `(1,1,2)` signature supplies
+`99.42%` of the coherent signed transfer. The nonzero projected gradient
+`3.55e-4` prevents treating this number as a converged maximum.
+Evolving that initial state to the refined peak and retaining its initial
+`k0,B0` splits the quotient into `8.18560410e-4` (doubling family),
+`1.52599847e-5` (closed remainder), and `1.48553902e-5` (mixed), with
+`9.98e-19` reconstruction error. The family therefore remains the primary
+trajectory lemma, while the latter two terms require one joint summable
+estimate.

@@ -38,13 +38,16 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
         << static_cast<double>(report.sobolev_cap)
         << ", critical_density_shift="
         << static_cast<double>(report.critical_density_shift)
-        << ", dynamic_restarts=" << report.dynamic_restarts << ")\n"
+        << ", dynamic_restarts=" << report.dynamic_restarts
+        << ", replay_each_cutoff="
+        << (report.dynamic_replay_each_cutoff ? "yes" : "no") << ")\n"
         << "cutoff,steps,int_D4Z2_refined,int_local_D4Z2,int_nonlocal_D4Z2,"
            "int_near_nonlocal_D4Z2,int_far_nonlocal_D4Z2,"
            "int_selected_gap_tail_D4Z2,"
            "dt_relative_error,search_obj_initial,search_obj_final,"
-           "initial_local_density,final_local_density,initial_Z,"
+           "initial_local_density,final_local_density,initial_Z,initial_P,E0P0,"
            "local_log_gain,local_log_gain_over_Tk0Z,"
+           "EP_shifted_log_gain,EP_shifted_log_gain_over_Tk0Z,"
            "initial_D4Z,final_D4Z,log_Q_gain,max_D4Z,max_local_D4Z,max_nonlocal_D4Z,"
            "max_positive_dlogQ_over_k0Z,q_derivative_error,strong_L4_envelope,"
            "envelope_use,max_Z,max_omega_inf,max_holder_half,"
@@ -67,10 +70,16 @@ void AdversaryReporter::write_console(const AdversaryReport& report,
             << static_cast<double>(
                    row.dynamic_final_local_critical_density) << ','
             << static_cast<double>(row.dynamic_initial_enstrophy) << ','
+            << static_cast<double>(row.dynamic_initial_palinstrophy) << ','
+            << static_cast<double>(row.dynamic_initial_ep_shift) << ','
             << static_cast<double>(
                    row.dynamic_local_critical_log_gain) << ','
             << static_cast<double>(
                    row.dynamic_local_log_gain_rate_ratio) << ','
+            << static_cast<double>(
+                   row.dynamic_ep_shifted_local_log_gain) << ','
+            << static_cast<double>(
+                   row.dynamic_ep_shifted_log_gain_rate_ratio) << ','
             << static_cast<double>(row.dynamic_initial_q) << ','
             << static_cast<double>(row.dynamic_final_q) << ','
             << static_cast<double>(row.dynamic_log_q_gain) << ','
@@ -116,6 +125,8 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
         << "  \"candidate\": \"cutoff-uniform trajectory bound on Q=D^4 Z\",\n"
         << "  \"optimizer\": {\"restarts\": " << report.restarts
         << ", \"dynamic_restarts\": " << report.dynamic_restarts
+        << ", \"dynamic_replay_each_cutoff\": "
+        << (report.dynamic_replay_each_cutoff ? "true" : "false")
         << ", \"generations\": " << report.generations
         << ", \"dynamic_generations\": " << report.dynamic_generations
         << ", \"dynamic_objective\": \"" << report.dynamic_objective << "\""
@@ -168,10 +179,19 @@ void AdversaryReporter::write_json(const AdversaryReport& report,
                    row.dynamic_final_local_critical_density)
             << ", \"dynamic_initial_Z\": "
             << static_cast<double>(row.dynamic_initial_enstrophy)
+            << ", \"dynamic_initial_P\": "
+            << static_cast<double>(row.dynamic_initial_palinstrophy)
+            << ", \"dynamic_initial_E0P0_shift\": "
+            << static_cast<double>(row.dynamic_initial_ep_shift)
             << ", \"dynamic_local_critical_log_gain\": "
             << static_cast<double>(row.dynamic_local_critical_log_gain)
             << ", \"dynamic_local_log_gain_over_Tk0Z\": "
             << static_cast<double>(row.dynamic_local_log_gain_rate_ratio)
+            << ", \"dynamic_E0P0_shifted_local_log_gain\": "
+            << static_cast<double>(row.dynamic_ep_shifted_local_log_gain)
+            << ", \"dynamic_E0P0_shifted_log_gain_over_Tk0Z\": "
+            << static_cast<double>(
+                   row.dynamic_ep_shifted_log_gain_rate_ratio)
             << ", \"dynamic_max_D4Z\": "
             << static_cast<double>(row.dynamic_maximum_q)
             << ", \"dynamic_initial_D4Z\": "

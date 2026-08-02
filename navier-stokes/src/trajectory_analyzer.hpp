@@ -18,6 +18,7 @@ struct EvolutionResult {
     SpectralReal final_energy = 0.0L;
     SpectralReal initial_enstrophy = 0.0L;
     SpectralReal final_enstrophy = 0.0L;
+    SpectralReal initial_palinstrophy = 0.0L;
     SpectralReal initial_energy_level_quantity = 0.0L;
     SpectralReal final_energy_level_quantity = 0.0L;
     SpectralReal initial_critical_integrand = 0.0L;

@@ -98,7 +98,7 @@ J: 4.39098016662e-6   4.39098438285e-6   4.39098438272e-6   4.39098438272e-6
 ```
 
 with final adjacent relative difference `2.66e-15`. See
-`../../adversary/helical-heterochiral-broad-spread-cutoff-K3-K6.json` and
+`../../adversary/helical/helical-heterochiral-broad-spread-cutoff-K3-K6.json` and
 `../../analysis/helical-heterochiral-broad-spread/K3.json`.
 
 The same analysis aggregates complete triads by their sorted squared-length

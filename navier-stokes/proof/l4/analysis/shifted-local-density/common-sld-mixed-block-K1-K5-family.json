@@ -1,0 +1,13 @@
+{
+  "schema": "navier-stokes-state-family-analysis-v1",
+  "state_directory": "proof/l4/states/local-sld-block/mixed-K1-K5",
+  "top_shell_energy_fitted_exponent": -13.4946333617339622,
+  "maximum_projection_residual": 0.059241205626364736,
+  "rows": [
+    {"cutoff": 1, "modes": 26, "E": 1, "Z": 1.22408752098769535, "P": 1.7283773062095058, "homogeneous_H3_squared": 2.9053011063923857, "homogeneous_H4_squared": 5.76418139597592294, "Q": 0.000192573710392084785, "top_shell_energy": 1, "projection_residual": 0},
+    {"cutoff": 2, "modes": 124, "E": 1, "Z": 1.24676093490601314, "P": 1.81616745774267252, "homogeneous_H3_squared": 3.23915209537261539, "homogeneous_H4_squared": 7.28260479548951256, "Q": 0.000211398271275597374, "top_shell_energy": 0.0012164082289978723, "projection_residual": 0.059241205626364736},
+    {"cutoff": 3, "modes": 342, "E": 0.999999999999999889, "Z": 1.24786951683626302, "P": 1.82046092975134433, "homogeneous_H3_squared": 3.25538257613440596, "homogeneous_H4_squared": 7.36164145240998025, "Q": 0.000211077880500171281, "top_shell_energy": 2.23291486481904694e-06, "projection_residual": 0.0108298187964249535},
+    {"cutoff": 4, "modes": 728, "E": 1, "Z": 1.24730633421981318, "P": 1.81853987725094979, "homogeneous_H3_squared": 3.25011243358047297, "homogeneous_H4_squared": 7.34975299295378459, "Q": 0.00021105180341314864, "top_shell_energy": 2.74058164979899942e-08, "projection_residual": 0.00344675770181279099},
+    {"cutoff": 5, "modes": 1330, "E": 1, "Z": 1.2474321049789916, "P": 1.81894784259886744, "homogeneous_H3_squared": 3.25107674749138242, "homogeneous_H4_squared": 7.35445007137046236, "Q": 0.000210958578884903251, "top_shell_energy": 3.10837060494427532e-10, "projection_residual": 0.00200065409977184458}
+  ]
+}

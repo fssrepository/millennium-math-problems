@@ -1,0 +1,25 @@
+{
+  "schema": "navier-stokes-local-sld-response-hierarchy-v1",
+  "construction": "Gram-Schmidt orthogonalized coefficients of the quadratic response recursion sum_{i+j=n-1} B(b_i,b_j)",
+  "state_path": "proof/l4/states/local-sld-trajectory/maximum-T050-K3-from-K2/K3.tsv",
+  "cutoff": 3,
+  "requested_depth": 8,
+  "constructed_depth": 8,
+  "threads": 12,
+  "reference_energy": 0.999999999999999889,
+  "maximum_gram_error": 8.13151629364128326e-19,
+  "final_projection_energy": 0.999938317534508458,
+  "final_projection_residual": 0.00785381852932596006,
+  "rows": [
+    {"order": 0, "coefficient": -0.996073492602957744, "coefficient_energy": 0.992162402666254661, "cumulative_projection_energy": 0.992162402666254661, "projection_residual": 0.0885302057703772072, "highest_active_shell": 1},
+    {"order": 1, "coefficient": -0.0867821399720564851, "coefficient_energy": 0.00753113981812960579, "cumulative_projection_energy": 0.999693542484384245, "projection_residual": 0.0175059280135537038, "highest_active_shell": 1},
+    {"order": 2, "coefficient": 0.011917827400154582, "coefficient_energy": 0.000142034609939875356, "cumulative_projection_energy": 0.999835577094324135, "projection_residual": 0.0128227495365014852, "highest_active_shell": 2},
+    {"order": 3, "coefficient": -0.00965807840008305052, "coefficient_energy": 9.32784783821507841e-05, "cumulative_projection_energy": 0.999928855572706277, "projection_residual": 0.00843471560241946042, "highest_active_shell": 3},
+    {"order": 4, "coefficient": 0.00250997220210134745, "coefficient_energy": 6.29996045532148886e-06, "cumulative_projection_energy": 0.99993515553316159, "projection_residual": 0.00805260621403883214, "highest_active_shell": 3},
+    {"order": 5, "coefficient": 0.00100875279417418401, "coefficient_energy": 1.01758219975422388e-06, "cumulative_projection_energy": 0.999936173115361426, "projection_residual": 0.00798917296336877115, "highest_active_shell": 3},
+    {"order": 6, "coefficient": -0.000153716433759408739, "coefficient_energy": 2.3628742007710693e-08, "cumulative_projection_energy": 0.999936196744103389, "projection_residual": 0.00798769402873037229, "highest_active_shell": 3},
+    {"order": 7, "coefficient": 0.00145629337876371765, "coefficient_energy": 2.12079040503104494e-06, "cumulative_projection_energy": 0.999938317534508458, "projection_residual": 0.00785381852932596006, "highest_active_shell": 3}
+  ],
+  "candidate_lemma_proved": false,
+  "finite_projection_is_not_a_proof": true
+}

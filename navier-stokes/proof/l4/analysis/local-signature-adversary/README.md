@@ -64,5 +64,5 @@ Reproduce it with
 ```bash
 ./build/navier_stokes_lab local-signature-adversary \
   --min-cutoff 1 --max-cutoff 6 --samples 24 --workers 12 \
-  --certificate proof/l4/analysis/local-signature-adversary-K1-K6.json
+  --certificate proof/l4/analysis/local-signature-adversary/local-signature-adversary-K1-K6.json
 ```

@@ -1,0 +1,22 @@
+{
+  "schema": "navier-stokes-local-quartic-closure-adversary-v1",
+  "objective": "maximize |K+G| / (k0 B0^(1/4) Z^(5/4) P^(3/4))",
+  "implemented_static_scale": "Z^(7/4) P / E^(1/4)",
+  "optimizer": "lbfgs",
+  "gradient": "exact discrete reverse mode through local Galerkin triads",
+  "workers": 12,
+  "restarts_per_cutoff": 12,
+  "iterations_per_restart": 6,
+  "sobolev_order": 0,
+  "sobolev_cap": 0,
+  "fitted_cutoff_slope": 0.798864865927606416,
+  "maximum_constant_ratio": 0.113534776703222415,
+  "candidate_lemma_proved": false,
+  "finite_search_is_not_a_proof": true,
+  "remaining_requirement": "derive a cutoff-independent analytic bound for the two-entry bracket",
+  "rows": [
+    {"cutoff": 2, "initial_constant_ratio": 0.00313844402876915568, "optimized_constant_ratio": 0.0651007091203838067, "improvement_factor": 20.742988730602022, "signed_two_entry_bracket": -0.412233597665488283, "candidate_scale": 6.33224435241079497, "energy": 1, "enstrophy": 1.55091519022869861, "palinstrophy": 2.93784296843096415, "warm_lift_constant_ratio": 0, "projection_residual": 0, "projected_gradient_norm": 0.0149384219012210443, "sobolev_value": 0, "winning_restart": 1, "winning_seed": "16284043624936429165", "warm_continuation_won": false, "accepted_steps": 6, "evaluations": 13, "state_path": "proof/l4/states/local-closure-ratio/unconstrained/K2.tsv", "restart_constant_ratios": [0.0157716878926416511, 0.0651007091203838067, 0.0202326635690827789, 0.0347385676529398113, 0.041603525284727827, 0.0539232056466806484, 0.0189883458826628979, 0.0464871305241463806, 0.035046705169077777, 0.0407061678936374016, 0.0160850694363624536, 0.0523118080513737885]},
+    {"cutoff": 3, "initial_constant_ratio": 0.0656058794369876325, "optimized_constant_ratio": 0.0881909952693448324, "improvement_factor": 1.3442544483234844, "signed_two_entry_bracket": -0.415700781081051352, "candidate_scale": 4.71364201993022292, "energy": 1, "enstrophy": 1.43059444122441226, "palinstrophy": 2.51885207641465092, "warm_lift_constant_ratio": 0.0656058794369876325, "projection_residual": 0.288841331982876925, "projected_gradient_norm": 0.0715422290192389704, "sobolev_value": 0, "winning_restart": 0, "winning_seed": "3634578984776442634", "warm_continuation_won": true, "accepted_steps": 6, "evaluations": 16, "state_path": "proof/l4/states/local-closure-ratio/unconstrained/K3.tsv", "restart_constant_ratios": [0.0881909952693448324, 0.0201804276373540974, 0.0160767825121419308, 0.0639001426401383243, 0.0192433345647637886, 0.0267171228809689361, 0.07299121997995274, 0.0226761880564205522, 0.0207269456159833929, 0.0585396526755687999, 0.0103030900812244221, 0.0205436841887015817]},
+    {"cutoff": 4, "initial_constant_ratio": 0.0881961375484759946, "optimized_constant_ratio": 0.113534776703222415, "improvement_factor": 1.28729873959411578, "signed_two_entry_bracket": -0.357083916537716095, "candidate_scale": 3.14515011969527292, "energy": 1, "enstrophy": 1.28533487540138003, "palinstrophy": 2.02704256880252309, "warm_lift_constant_ratio": 0.0881961375484759946, "projection_residual": 0.245804040241417082, "projected_gradient_norm": 0.121577638303064853, "sobolev_value": 0, "winning_restart": 0, "winning_seed": "7552690967718565467", "warm_continuation_won": true, "accepted_steps": 6, "evaluations": 16, "state_path": "proof/l4/states/local-closure-ratio/unconstrained/K4.tsv", "restart_constant_ratios": [0.113534776703222415, 0.0113527224192211985, 0.00948133747475126722, 0.0590129117911704151, 0.0109943074539536161, 0.0133146056430611687, 0.0919004774377896461, 0.0116455224174416196, 0.0139262178959567821, 0.0438200786280185522, 0.00944404142253768737, 0.011772267995416405]}
+  ]
+}

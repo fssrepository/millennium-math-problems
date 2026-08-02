@@ -35,10 +35,36 @@ int TriadPartitioner::dyadic_gap(
 bool TriadPartitioner::includes(
     WaveVector first, WaveVector second, WaveVector third,
     TriadSelection selection) {
-    if (selection.is_all()) {
+    if (!selection.includes_gap(dyadic_gap(first, second, third))) {
+        return false;
+    }
+    if (selection.signature_mode() ==
+        TriadSelection::SignatureMode::none) {
         return true;
     }
-    return selection.includes_gap(dyadic_gap(first, second, third));
+    std::array<SpectralInteger, 3> signature{
+        norm_squared(first), norm_squared(second), norm_squared(third)};
+    std::sort(signature.begin(), signature.end());
+    bool matches = false;
+    if (selection.signature_mode() ==
+            TriadSelection::SignatureMode::include_equal_low_doubling ||
+        selection.signature_mode() ==
+            TriadSelection::SignatureMode::exclude_equal_low_doubling) {
+        matches = signature[0] == signature[1] &&
+            signature[2] == 2 * signature[0];
+        return selection.signature_mode() ==
+                TriadSelection::SignatureMode::include_equal_low_doubling
+            ? matches
+            : !matches;
+    }
+    std::array<SpectralInteger, 3> requested =
+        selection.squared_length_signature();
+    std::sort(requested.begin(), requested.end());
+    matches = signature == requested;
+    return selection.signature_mode() ==
+            TriadSelection::SignatureMode::include
+        ? matches
+        : !matches;
 }
 
 bool TriadPartitioner::includes(

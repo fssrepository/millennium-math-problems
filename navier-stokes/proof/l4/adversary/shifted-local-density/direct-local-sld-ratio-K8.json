@@ -1,0 +1,24 @@
+{
+  "schema": "navier-stokes-local-quartic-closure-adversary-v1",
+  "search_objective": "sld-ratio",
+  "closure_objective": "maximize |K+G| / (k0 B0^(1/4) Z^(5/4) P^(3/4))",
+  "direct_sld_objective": "maximize 4 S^3 Z P (K+G) / (k0 (S^4 Z^2 P + B0 Z^3 P^4))",
+  "implemented_static_scale": "Z^(7/4) P / E^(1/4)",
+  "optimizer": "lbfgs",
+  "warm_state_path": "proof/l4/states/local-sld-ratio/K7/K7.tsv",
+  "gradient": "exact discrete reverse mode through local Galerkin triads",
+  "workers": 12,
+  "restarts_per_cutoff": 12,
+  "iterations_per_restart": 6,
+  "sobolev_order": 0,
+  "sobolev_cap": 0,
+  "fitted_cutoff_slope": 0,
+  "maximum_constant_ratio": 0.148344783867901731,
+  "maximum_objective": 0.000795364960091881116,
+  "candidate_lemma_proved": false,
+  "finite_search_is_not_a_proof": true,
+  "remaining_requirement": "derive a cutoff-independent analytic bound for the two-entry bracket",
+  "rows": [
+    {"cutoff": 8, "initial_objective": 0.000795364958096856202, "optimized_objective": 0.000795364960091881116, "objective_gain": 1.99502489661179078e-12, "initial_constant_ratio": 0.0282022154820655221, "optimized_constant_ratio": 0.148344783867901731, "improvement_factor": 5.26004008310048565, "signed_two_entry_bracket": -0.193256156415462427, "candidate_scale": 1.30274992740933482, "signed_stretching": -0.131915633193874726, "local_polynomial_numerator": 0.00221536043169452386, "local_polynomial_denominator": 2.78533823194650632, "signed_local_sld_ratio": 0.000795364960091881116, "energy": 1, "enstrophy": 1.05843710261544266, "palinstrophy": 1.17949800569848851, "warm_lift_constant_ratio": 0.148344778542184752, "warm_lift_objective": 0.000795364958096856202, "projection_residual": 1.98838435189284555e-06, "projected_gradient_norm": 1.80149835355824838e-06, "sobolev_value": 0, "winning_restart": 0, "winning_seed": "13163774914517787079", "warm_continuation_won": true, "accepted_steps": 6, "evaluations": 32, "state_path": "proof/l4/states/local-sld-ratio/K8/K8.tsv", "restart_constant_ratios": [0.148344783867901731, 0.00067437440479204162, 0.00117913158090459129, 8.09231310854519525e-05, 0.00252572430816160737, 0.000992142541370765385, 0.0109000954414661504, 0.000576023576203037483, 0.00154032025444141756, 5.14742360991035674e-05, 0.000484984277274099016, 0.000560809241160053736], "restart_objectives": [0.000795364960091881116, 3.18914534650544084e-10, 2.36548623224392327e-09, 7.02663420968166916e-13, 1.68470530007659483e-08, 5.55509999314656024e-10, 2.74247929197087337e-08, 2.21590839143655223e-10, 3.96316455587186069e-09, 3.42907910425173849e-13, 2.78583838895029419e-10, 1.26003769733874331e-10]}
+  ]
+}

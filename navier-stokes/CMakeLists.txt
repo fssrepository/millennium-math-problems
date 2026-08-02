@@ -34,6 +34,29 @@ add_executable(navier_stokes_lab
     src/local_signature_objective.cpp
     src/local_signature_state_factory.cpp
     src/local_signature_trajectory.cpp
+    src/local_critical_derivative_ledger.cpp
+    src/local_quartic_identity_ledger.cpp
+    src/local_quartic_commutator.cpp
+    src/local_quartic_closure_target.cpp
+    src/local_quartic_closure_objective.cpp
+    src/local_quartic_closure_adversary.cpp
+    src/local_quartic_closure_cli.cpp
+    src/local_quartic_closure_reporter.cpp
+    src/local_quartic_projected_residual.cpp
+    src/local_quartic_reduced_ledger.cpp
+    src/local_quartic_shell_ledger.cpp
+    src/local_quartic_shell_envelope.cpp
+    src/local_sld_cyclic_basis.cpp
+    src/local_sld_cyclic_ansatz.cpp
+    src/local_sld_cyclic_krylov_ansatz.cpp
+    src/local_sld_cyclic_orbit_basis.cpp
+    src/local_sld_cyclic_trajectory_ansatz.cpp
+    src/local_sld_response_hierarchy.cpp
+    src/local_sld_response_family.cpp
+    src/local_sld_block_objective.cpp
+    src/local_sld_signature_block.cpp
+    src/local_sld_trajectory_adjoint.cpp
+    src/local_sld_trajectory_evaluator.cpp
     src/moving_gap_controller.cpp
     src/orthogonal_triad_geometry.cpp
     src/periodic_shell_geometry.cpp
@@ -47,7 +70,12 @@ add_executable(navier_stokes_lab
     src/spectral_galerkin.cpp
     src/spectral_objective.cpp
     src/spectral_state.cpp
+    src/shifted_critical_density.cpp
+    src/shifted_critical_density_budget.cpp
+    src/shifted_critical_density_cli.cpp
+    src/shifted_critical_density_reporter.cpp
     src/state_analysis.cpp
+    src/stretching_derivative_ledger.cpp
     src/trajectory_analyzer.cpp
     src/transition_block_scaling.cpp
     src/triad_commutator.cpp

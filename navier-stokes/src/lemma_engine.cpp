@@ -21,6 +21,23 @@
 #include "local_signature_geometry.hpp"
 #include "local_signature_density.hpp"
 #include "local_signature_objective.hpp"
+#include "local_critical_derivative_ledger.hpp"
+#include "local_quartic_identity_ledger.hpp"
+#include "local_quartic_commutator.hpp"
+#include "local_quartic_closure_target.hpp"
+#include "local_quartic_closure_objective.hpp"
+#include "local_quartic_projected_residual.hpp"
+#include "local_quartic_reduced_ledger.hpp"
+#include "local_quartic_shell_ledger.hpp"
+#include "local_quartic_shell_envelope.hpp"
+#include "local_sld_cyclic_ansatz.hpp"
+#include "local_sld_cyclic_krylov_ansatz.hpp"
+#include "local_sld_cyclic_trajectory_ansatz.hpp"
+#include "local_sld_response_hierarchy.hpp"
+#include "local_sld_block_objective.hpp"
+#include "local_sld_signature_block.hpp"
+#include "local_sld_trajectory_adjoint.hpp"
+#include "local_sld_trajectory_evaluator.hpp"
 #include "local_triad_symmetrizer.hpp"
 #include "moving_gap_controller.hpp"
 #include "projective_family.hpp"
@@ -29,6 +46,8 @@
 #include "spectral_galerkin.hpp"
 #include "spectral_objective.hpp"
 #include "spectral_state.hpp"
+#include "shifted_critical_density.hpp"
+#include "shifted_critical_density_budget.hpp"
 #include "state_analysis.hpp"
 #include "trajectory_analyzer.hpp"
 #include "transition_block_scaling.hpp"
@@ -420,6 +439,8 @@ bool self_test(std::ostream& out) {
         ScalingAnalyzer::analyze_concentration();
     const StrongL4Reduction strong_l4 =
         ScalingAnalyzer::analyze_strong_l4_reduction();
+    const ShiftedCriticalDensityCertificate shifted_density =
+        ShiftedCriticalDensityLemma::analyze();
     const DyadicTailScaling dyadic_tail =
         ScalingAnalyzer::analyze_dyadic_tail();
     const DyadicShellRandomCertificate dyadic_shell_bounds =
@@ -447,6 +468,11 @@ bool self_test(std::ostream& out) {
         concentration.integrated_candidate_scale_critical;
     const bool strong_l4_ok = strong_l4.exact_density_factorization &&
                               strong_l4.closes_integrated_l4_from_uniform_q;
+    const bool shifted_density_ok = shifted_density.shift_matches_density &&
+        shifted_density.gronwall_coefficient_is_critical &&
+        shifted_density.energy_identity_closes_conditionally &&
+        shifted_density.density_amplitude_degree == Rational(4) &&
+        shifted_density.density_scaling_exponent == Rational(2);
     const bool dyadic_tail_scaling_ok =
         dyadic_tail.low_advecting_gap_decay == Rational(1, 2) &&
         dyadic_tail.low_advected_gap_decay == Rational(1, 2) &&
@@ -1163,6 +1189,57 @@ bool self_test(std::ostream& out) {
         SpectralStateFactory::random(2, adjoint_generator);
     SpectralStateOps::normalize_energy(partition_state);
     SpectralStateOps::normalize_energy(partition_tangent_state);
+    const LocalCriticalDerivativeLedgerReport critical_derivative_ledger =
+        LocalCriticalDerivativeLedger::evaluate(
+            active_dynamics, active_objective, partition_state,
+            adjoint_viscosity);
+    const ShiftedCriticalDensityDiagnostic shifted_density_diagnostic =
+        ShiftedCriticalDensityAnalyzer::evaluate(
+            active_dynamics, active_objective, partition_state,
+            adjoint_viscosity);
+    const LocalQuarticIdentityReport local_quartic_identity =
+        LocalQuarticIdentityLedger::evaluate(
+            active_dynamics, partition_state,
+            critical_derivative_ledger);
+    const LocalQuarticCommutatorReport local_quartic_commutator =
+        LocalQuarticCommutator::evaluate(
+            active_dynamics, partition_state,
+            critical_derivative_ledger);
+    const LocalQuarticProjectedResidualReport local_quartic_projected =
+        LocalQuarticProjectedResidual::evaluate(
+            active_dynamics, partition_state,
+            shifted_density_diagnostic, critical_derivative_ledger);
+    const LocalQuarticReducedReport local_quartic_reduced =
+        LocalQuarticReducedLedger::evaluate(
+            local_quartic_commutator, local_quartic_projected,
+            critical_derivative_ledger);
+    const LocalQuarticClosureTargetReport local_quartic_closure =
+        LocalQuarticClosureTarget::evaluate(
+            shifted_density_diagnostic, critical_derivative_ledger,
+            local_quartic_reduced);
+    const LocalQuarticClosureObjective local_closure_objective(
+        active_dynamics);
+    const LocalQuarticClosureObjectiveValue local_closure_value =
+        local_closure_objective.evaluate(partition_state);
+    const Real local_closure_value_error = std::abs(
+        local_closure_value.constant_ratio -
+        local_quartic_closure.required_constant_ratio) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(local_closure_value.constant_ratio),
+                std::abs(local_quartic_closure
+                             .required_constant_ratio)));
+    const LocalQuarticShellReport local_quartic_shells =
+        LocalQuarticShellLedger::evaluate(
+            active_dynamics, partition_state,
+            shifted_density_diagnostic, critical_derivative_ledger);
+    const LocalQuarticShellEnvelopeReport local_quartic_envelope =
+        LocalQuarticShellEnvelope::analyze(
+            partition_state, local_quartic_shells);
+    const ShiftedCriticalDensityBudget shifted_density_budget =
+        ShiftedCriticalDensityBudgetAnalyzer::evaluate(
+            shifted_density_diagnostic, critical_derivative_ledger);
     const SpectralIncrement& partition_tangent =
         partition_tangent_state.velocity;
     active_galerkin.set_compute_threads(1);
@@ -1234,6 +1311,203 @@ bool self_test(std::ostream& out) {
         active_dynamics.add_increment(
             partition_state, partition_tangent,
             -finite_difference_step);
+    const SpectralIncrement local_closure_gradient =
+        local_closure_objective.squared_constant_ratio_gradient(
+            partition_state);
+    const Real local_closure_directional_adjoint =
+        increment_inner_product(
+            local_closure_gradient, partition_tangent);
+    const Real local_closure_directional_finite_difference =
+        (local_closure_objective.evaluate(partition_plus_state)
+             .squared_constant_ratio -
+         local_closure_objective.evaluate(partition_minus_state)
+             .squared_constant_ratio) /
+        (2.0L * finite_difference_step);
+    const Real local_closure_gradient_error = std::abs(
+        local_closure_directional_adjoint -
+        local_closure_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(local_closure_directional_adjoint),
+                std::abs(
+                    local_closure_directional_finite_difference)));
+    const SpectralIncrement signed_closure_gradient =
+        local_closure_objective.signed_constant_ratio_gradient(
+            partition_state);
+    const Real signed_closure_directional_adjoint =
+        increment_inner_product(
+            signed_closure_gradient, partition_tangent);
+    const Real signed_closure_directional_finite_difference =
+        (local_closure_objective.evaluate(partition_plus_state)
+             .signed_constant_ratio -
+         local_closure_objective.evaluate(partition_minus_state)
+             .signed_constant_ratio) /
+        (2.0L * finite_difference_step);
+    const Real signed_closure_gradient_error = std::abs(
+        signed_closure_directional_adjoint -
+        signed_closure_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(signed_closure_directional_adjoint),
+                std::abs(
+                    signed_closure_directional_finite_difference)));
+    const SpectralIncrement local_sld_gradient =
+        local_closure_objective.signed_local_sld_ratio_gradient(
+            partition_state);
+    const Real local_sld_directional_adjoint =
+        increment_inner_product(local_sld_gradient, partition_tangent);
+    const Real local_sld_directional_finite_difference =
+        (local_closure_objective.evaluate(partition_plus_state)
+             .signed_local_sld_ratio -
+         local_closure_objective.evaluate(partition_minus_state)
+             .signed_local_sld_ratio) /
+        (2.0L * finite_difference_step);
+    const Real local_sld_gradient_error = std::abs(
+        local_sld_directional_adjoint -
+        local_sld_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(local_sld_directional_adjoint),
+                std::abs(local_sld_directional_finite_difference)));
+    const TriadSelection doubling_selection =
+        TriadSelection::local_equal_low_doubling();
+    const LocalSldBlockObjective selected_block_objective(
+        active_dynamics, doubling_selection,
+        LocalSldBlock::selected_closed);
+    const LocalSldBlockObjective complement_block_objective(
+        active_dynamics, doubling_selection,
+        LocalSldBlock::complement_closed);
+    const LocalSldBlockObjective mixed_block_objective(
+        active_dynamics, doubling_selection,
+        LocalSldBlock::mixed);
+    const LocalSldBlockObjective full_block_objective(
+        active_dynamics, doubling_selection,
+        LocalSldBlock::full);
+    auto block_gradient_error = [&](const LocalSldBlockObjective& objective) {
+        const SpectralIncrement gradient = objective.gradient(
+            partition_state);
+        const Real directional_adjoint = increment_inner_product(
+            gradient, partition_tangent);
+        const Real directional_finite_difference =
+            (objective.evaluate(partition_plus_state).block_sld_ratio -
+             objective.evaluate(partition_minus_state).block_sld_ratio) /
+            (2.0L * finite_difference_step);
+        return std::abs(
+            directional_adjoint - directional_finite_difference) /
+            std::max(
+                1e-30L,
+                std::max(
+                    std::abs(directional_adjoint),
+                    std::abs(directional_finite_difference)));
+    };
+    const Real selected_block_gradient_error = block_gradient_error(
+        selected_block_objective);
+    const Real complement_block_gradient_error = block_gradient_error(
+        complement_block_objective);
+    const Real mixed_block_gradient_error = block_gradient_error(
+        mixed_block_objective);
+    const Real full_block_gradient_error = block_gradient_error(
+        full_block_objective);
+    const LocalSldBlockObjectiveValue selected_block_value =
+        selected_block_objective.evaluate(partition_state);
+    const LocalSldBlockObjectiveValue complement_block_value =
+        complement_block_objective.evaluate(partition_state);
+    const LocalSldBlockObjectiveValue mixed_block_value =
+        mixed_block_objective.evaluate(partition_state);
+    const Real block_ratio_reconstruction_error = std::abs(
+        local_closure_value.signed_local_sld_ratio -
+        selected_block_value.block_sld_ratio -
+        complement_block_value.block_sld_ratio -
+        mixed_block_value.block_sld_ratio) /
+        std::max(
+            std::abs(local_closure_value.signed_local_sld_ratio),
+            1e-30L);
+    const LocalSldTrajectoryAdjoint frozen_sld_adjoint(
+        active_dynamics, TriadPartition::local);
+    const SpectralIncrement frozen_static_gradient =
+        local_closure_objective.frozen_signed_local_sld_ratio_gradient(
+            partition_state, local_closure_value.initial_frequency,
+            local_closure_value.initial_ep_shift);
+    const Real frozen_static_directional_adjoint = increment_inner_product(
+        frozen_static_gradient, partition_tangent);
+    const Real frozen_static_directional_finite_difference =
+        (local_closure_objective.frozen_signed_local_sld_ratio(
+             partition_plus_state,
+             local_closure_value.initial_frequency,
+             local_closure_value.initial_ep_shift) -
+         local_closure_objective.frozen_signed_local_sld_ratio(
+             partition_minus_state,
+             local_closure_value.initial_frequency,
+             local_closure_value.initial_ep_shift)) /
+        (2.0L * finite_difference_step);
+    const Real frozen_static_gradient_error = std::abs(
+        frozen_static_directional_adjoint -
+        frozen_static_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(frozen_static_directional_adjoint),
+                std::abs(frozen_static_directional_finite_difference)));
+    constexpr int frozen_sld_steps = 2;
+    constexpr Real frozen_sld_dt = 5e-4L;
+    const QTrajectoryGradient frozen_sld_gradient =
+        frozen_sld_adjoint.terminal_gradient(
+            partition_state, adjoint_viscosity,
+            frozen_sld_dt, frozen_sld_steps);
+    const Real frozen_sld_directional_adjoint = increment_inner_product(
+        frozen_sld_gradient.initial_gradient, partition_tangent);
+    const Real frozen_sld_directional_finite_difference =
+        (frozen_sld_adjoint.terminal_value(
+             partition_plus_state, adjoint_viscosity,
+             frozen_sld_dt, frozen_sld_steps).terminal_ratio -
+         frozen_sld_adjoint.terminal_value(
+             partition_minus_state, adjoint_viscosity,
+             frozen_sld_dt, frozen_sld_steps).terminal_ratio) /
+        (2.0L * finite_difference_step);
+    const Real frozen_sld_gradient_error = std::abs(
+        frozen_sld_directional_adjoint -
+        frozen_sld_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(frozen_sld_directional_adjoint),
+                std::abs(frozen_sld_directional_finite_difference)));
+    const QTrajectoryGradient frozen_sld_maximum_gradient =
+        frozen_sld_adjoint.maximum_gradient(
+            partition_state, adjoint_viscosity,
+            frozen_sld_dt, frozen_sld_steps);
+    const Real frozen_sld_maximum_directional_adjoint =
+        increment_inner_product(
+            frozen_sld_maximum_gradient.initial_gradient,
+            partition_tangent);
+    const Real frozen_sld_maximum_directional_finite_difference =
+        (frozen_sld_adjoint.maximum_value(
+             partition_plus_state, adjoint_viscosity,
+             frozen_sld_dt, frozen_sld_steps).terminal_ratio -
+         frozen_sld_adjoint.maximum_value(
+             partition_minus_state, adjoint_viscosity,
+             frozen_sld_dt, frozen_sld_steps).terminal_ratio) /
+        (2.0L * finite_difference_step);
+    const Real frozen_sld_maximum_gradient_error = std::abs(
+        frozen_sld_maximum_directional_adjoint -
+        frozen_sld_maximum_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(frozen_sld_maximum_directional_adjoint),
+                std::abs(
+                    frozen_sld_maximum_directional_finite_difference)));
+    const QTrajectoryGradient frozen_sld_zero_step =
+        frozen_sld_adjoint.terminal_gradient(
+            partition_state, adjoint_viscosity,
+            frozen_sld_dt, 0);
+    const Real frozen_sld_zero_step_gradient_error =
+        increment_relative_error(
+            frozen_sld_zero_step.initial_gradient,
+            local_sld_gradient);
     auto partition_integral_gradient_error = [&](TriadSelection selection) {
         const QTrajectoryGradient partition_gradient =
             active_adjoint.critical_integral_gradient(
@@ -1343,6 +1617,38 @@ bool self_test(std::ostream& out) {
             1e-30L,
             std::max(std::abs(local_log_gain_directional),
                      std::abs(local_log_gain_finite_difference)));
+    const QTrajectoryGradient local_ep_log_gain_gradient =
+        active_adjoint.critical_ep_log_gain_gradient(
+            partition_state, adjoint_viscosity, adjoint_dt,
+            trajectory_steps, TriadPartition::local);
+    const Real local_ep_log_gain_directional = increment_inner_product(
+        local_ep_log_gain_gradient.initial_gradient, partition_tangent);
+    auto local_critical_ep_log_gain = [&](SpectralState state) {
+        const StaticObjective initial = active_objective.evaluate(
+            state, TriadPartition::local);
+        const Real shift = initial.energy * initial.palinstrophy;
+        for (int step = 0; step < trajectory_steps; ++step) {
+            active_dynamics.rk4_step(
+                state, adjoint_viscosity, adjoint_dt);
+        }
+        const Real terminal = active_objective
+            .evaluate(state, TriadPartition::local)
+            .critical_integrand;
+        return std::log1p(
+            (terminal - initial.critical_integrand) /
+            (initial.critical_integrand + shift));
+    };
+    const Real local_ep_log_gain_finite_difference =
+        (local_critical_ep_log_gain(partition_plus_state) -
+         local_critical_ep_log_gain(partition_minus_state)) /
+        (2.0L * finite_difference_step);
+    const Real local_ep_log_gain_gradient_error = std::abs(
+        local_ep_log_gain_directional -
+        local_ep_log_gain_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(std::abs(local_ep_log_gain_directional),
+                     std::abs(local_ep_log_gain_finite_difference)));
     const EvolutionResult configurable_tail_evolution =
         active_trajectory_analyzer.evolve(
             partition_state, adjoint_viscosity,
@@ -1415,6 +1721,29 @@ bool self_test(std::ostream& out) {
             WaveVector{8, 0, 0}, TriadSelection::dyadic_tail(3));
     const bool partition_integral_gradients_ok =
         triad_partition_ok && partition_parallel_ok &&
+        critical_derivative_ledger.finite &&
+        local_quartic_identity.finite && local_quartic_shells.finite &&
+        local_quartic_commutator.finite &&
+        local_quartic_projected.finite &&
+        local_quartic_reduced.finite &&
+        local_quartic_closure.finite &&
+        local_closure_value.finite &&
+        local_closure_value.factorization_relative_error < 1e-12L &&
+        local_closure_value_error < 1e-12L &&
+        local_closure_gradient_error < 1e-9L &&
+        signed_closure_gradient_error < 1e-9L &&
+        local_sld_gradient_error < 1e-9L &&
+        selected_block_gradient_error < 1e-9L &&
+        complement_block_gradient_error < 1e-9L &&
+        mixed_block_gradient_error < 1e-9L &&
+        full_block_gradient_error < 1e-9L &&
+        block_ratio_reconstruction_error < 1e-12L &&
+        frozen_sld_gradient_error < 1e-9L &&
+        frozen_sld_maximum_gradient_error < 1e-9L &&
+        frozen_static_gradient_error < 1e-9L &&
+        frozen_sld_zero_step_gradient_error < 1e-12L &&
+        local_quartic_envelope.all_bounds_hold &&
+        shifted_density_budget.finite &&
         local_integral_gradient_error < 1e-9L &&
         nonlocal_integral_gradient_error < 1e-9L &&
         near_nonlocal_integral_gradient_error < 1e-9L &&
@@ -1422,6 +1751,7 @@ bool self_test(std::ostream& out) {
         configurable_tail_integral_gradient_error < 1e-9L &&
         local_increase_gradient_error < 1e-9L &&
         local_log_gain_gradient_error < 1e-9L &&
+        local_ep_log_gain_gradient_error < 1e-9L &&
         configurable_tail_trajectory_error < 1e-14L &&
         far_partition_static_gradient_error < 1e-9L;
     GradientSearchOptions gradient_options;
@@ -1462,6 +1792,125 @@ bool self_test(std::ostream& out) {
         gradient_search.accepted_steps > 0 &&
         gradient_energy_error < 1e-14L &&
         gradient_constraint_error < 1e-15L;
+    GradientSearchOptions closure_gradient_options;
+    closure_gradient_options.iterations = 3;
+    closure_gradient_options.line_search_steps = 12;
+    closure_gradient_options.trajectory_steps = 0;
+    closure_gradient_options.initial_step = 0.05L;
+    closure_gradient_options.objective = "local-closure-ratio";
+    closure_gradient_options.method = "lbfgs";
+    const GradientSearchResult closure_gradient_search =
+        active_gradient_adversary.maximize_q(
+            partition_state, closure_gradient_options);
+    const bool closure_gradient_search_ok =
+        closure_gradient_search.objective >=
+            closure_gradient_search.initial_objective &&
+        closure_gradient_search.accepted_steps > 0 &&
+        std::isfinite(closure_gradient_search.objective);
+    closure_gradient_options.objective =
+        "local-signed-closure-ratio";
+    const GradientSearchResult signed_closure_gradient_search =
+        active_gradient_adversary.maximize_q(
+            partition_state, closure_gradient_options);
+    const bool signed_closure_gradient_search_ok =
+        signed_closure_gradient_search.objective >=
+            signed_closure_gradient_search.initial_objective &&
+        signed_closure_gradient_search.accepted_steps > 0 &&
+        std::isfinite(signed_closure_gradient_search.objective);
+    closure_gradient_options.objective = "local-sld-ratio";
+    const GradientSearchResult local_sld_gradient_search =
+        active_gradient_adversary.maximize_q(
+            partition_state, closure_gradient_options);
+    const bool local_sld_gradient_search_ok =
+        local_sld_gradient_search.objective >=
+            local_sld_gradient_search.initial_objective &&
+        local_sld_gradient_search.accepted_steps > 0 &&
+        std::isfinite(local_sld_gradient_search.objective);
+    LocalSldCyclicAnsatzOptions cyclic_options;
+    cyclic_options.coarse_samples = 512;
+    cyclic_options.refinement_iterations = 48;
+    const LocalSldCyclicAnsatzReport cyclic_ansatz =
+        LocalSldCyclicAnsatz::optimize(cyclic_options);
+    const bool cyclic_ansatz_ok = cyclic_ansatz.value.finite &&
+        cyclic_ansatz.value.signed_local_sld_ratio > 7.7e-4L &&
+        std::abs(cyclic_ansatz.basis_inner_product) < 1e-14L &&
+        cyclic_ansatz.pure_axis_identity_error < 1e-14L;
+    LocalSldCyclicTrajectoryOptions cyclic_trajectory_options;
+    cyclic_trajectory_options.coarse_samples = 32;
+    cyclic_trajectory_options.refinement_iterations = 2;
+    cyclic_trajectory_options.trajectory_steps = 2;
+    cyclic_trajectory_options.threads = 2;
+    const LocalSldCyclicTrajectoryReport cyclic_trajectory_ansatz =
+        LocalSldCyclicTrajectoryAnsatz::optimize(
+            cyclic_trajectory_options);
+    const bool cyclic_trajectory_ansatz_ok =
+        cyclic_trajectory_ansatz.value.finite &&
+        cyclic_trajectory_ansatz.refined_value.finite &&
+        cyclic_trajectory_ansatz.value.steps >= 0 &&
+        cyclic_trajectory_ansatz.value.steps <= 2 &&
+        std::isfinite(cyclic_trajectory_ansatz.restricted_gradient) &&
+        std::isfinite(
+            cyclic_trajectory_ansatz.projected_full_gradient_norm) &&
+        cyclic_trajectory_ansatz.time_step_relative_error < 1e-4L;
+    LocalSldCyclicKrylovOptions cyclic_krylov_options;
+    cyclic_krylov_options.cutoff = 2;
+    cyclic_krylov_options.warm_angle_samples = 16;
+    cyclic_krylov_options.iterations = 1;
+    cyclic_krylov_options.line_search_steps = 2;
+    cyclic_krylov_options.trajectory_steps = 2;
+    cyclic_krylov_options.threads = 2;
+    cyclic_krylov_options.backend = "direct";
+    const LocalSldCyclicKrylovReport cyclic_krylov_ansatz =
+        LocalSldCyclicKrylovAnsatz::optimize(cyclic_krylov_options);
+    const bool cyclic_krylov_ansatz_ok =
+        cyclic_krylov_ansatz.value.finite &&
+        cyclic_krylov_ansatz.refined_value.finite &&
+        cyclic_krylov_ansatz.maximum_gram_error < 1e-14L &&
+        std::isfinite(cyclic_krylov_ansatz.restricted_gradient_norm) &&
+        std::isfinite(
+            cyclic_krylov_ansatz.projected_full_gradient_norm) &&
+        cyclic_krylov_ansatz.time_step_relative_error < 1e-4L;
+    const LocalSldResponseHierarchyReport response_hierarchy =
+        LocalSldResponseHierarchy::analyze(
+            active_dynamics, cyclic_ansatz.state, 4);
+    const bool response_hierarchy_ok =
+        response_hierarchy.constructed_depth == 4 &&
+        response_hierarchy.maximum_gram_error < 1e-14L &&
+        response_hierarchy.final_projection_energy > 0.999999L &&
+        response_hierarchy.final_projection_energy < 1.000001L;
+    const LocalSldTrajectoryEvaluatorReport trajectory_evaluation =
+        LocalSldTrajectoryEvaluator::evaluate(
+            active_dynamics, cyclic_ansatz.state,
+            0.1L, 0.001L, 2);
+    const bool trajectory_evaluation_ok =
+        trajectory_evaluation.finite &&
+        trajectory_evaluation.maximum.terminal_ratio >=
+            trajectory_evaluation.initial.terminal_ratio &&
+        trajectory_evaluation.maximum.terminal_ratio >=
+            trajectory_evaluation.terminal.terminal_ratio &&
+        trajectory_evaluation.time_step_relative_error < 1e-4L;
+    const LocalSldSignatureBlockReport signature_block =
+        LocalSldSignatureBlock::analyze(
+            active_dynamics, cyclic_ansatz.state, {1, 1, 2});
+    const bool signature_block_ok = signature_block.finite &&
+        signature_block.dominant_interactions > 0 &&
+        signature_block.quotient_reconstruction_error < 1e-14L &&
+        TriadPartitioner::includes(
+            WaveVector{1, 0, 0}, WaveVector{0, 1, 0},
+            WaveVector{1, 1, 0},
+            TriadSelection::local_signature(1, 1, 2)) &&
+        !TriadPartitioner::includes(
+            WaveVector{1, 0, 0}, WaveVector{0, 1, 0},
+            WaveVector{1, 1, 0},
+            TriadSelection::local_without_signature(1, 1, 2)) &&
+        TriadPartitioner::includes(
+            WaveVector{1, 0, 0}, WaveVector{0, 1, 0},
+            WaveVector{1, 1, 0},
+            TriadSelection::local_equal_low_doubling()) &&
+        !TriadPartitioner::includes(
+            WaveVector{1, 0, 0}, WaveVector{0, 1, 0},
+            WaveVector{1, 1, 0},
+            TriadSelection::local_without_equal_low_doubling());
     const AdversaryResult adversary =
         optimize_static_depletion(1, 1, 2, 0.1L, 11);
     const bool adversary_ok = adversary.modes == 26 &&
@@ -1504,6 +1953,12 @@ bool self_test(std::ostream& out) {
         << ")\n"
         << "strong L4 reduction test: " << (strong_l4_ok ? "PASS" : "FAIL")
         << " (integral D4Z2 <= sup(Q)*E0/(2nu))\n"
+        << "shifted local density scaling test: "
+        << (shifted_density_ok ? "PASS" : "FAIL")
+        << " (C and E0P0 amplitude="
+        << shifted_density.density_amplitude_degree.str()
+        << ", scaling=" << shifted_density.density_scaling_exponent.str()
+        << ", conditional energy closure)\n"
         << "dyadic tail scaling test: "
         << (dyadic_tail_scaling_ok ? "PASS" : "FAIL")
         << " (gap decay=" << dyadic_tail.low_advecting_gap_decay.str()
@@ -1761,10 +2216,79 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(local_increase_gradient_error)
         << ", local_log_gain="
         << static_cast<double>(local_log_gain_gradient_error)
+        << ", local_E0P0_log_gain="
+        << static_cast<double>(local_ep_log_gain_gradient_error)
         << ", tail_trajectory="
         << static_cast<double>(configurable_tail_trajectory_error)
         << ", far_static="
         << static_cast<double>(far_partition_static_gradient_error)
+        << ")\n"
+        << "local critical derivative ledger test: "
+        << (critical_derivative_ledger.finite ? "PASS" : "FAIL")
+        << " (relative reconstruction error="
+        << static_cast<double>(critical_derivative_ledger
+                                   .relative_reconstruction_error)
+        << ", nonlinear="
+        << static_cast<double>(critical_derivative_ledger
+                 .reconstructed_density_derivative.nonlinear)
+        << ", viscous="
+        << static_cast<double>(critical_derivative_ledger
+                 .reconstructed_density_derivative.viscous)
+        << ", normalized budget="
+        << static_cast<double>(
+               shifted_density_budget.reconstructed_normalized_rate)
+        << ", quartic square error="
+        << static_cast<double>(local_quartic_identity
+                                   .local_outer_negative_square_error)
+        << ", shell error="
+        << static_cast<double>(local_quartic_shells
+                                   .normalized_reconstruction_error)
+        << ", envelope ratio="
+        << static_cast<double>(
+               local_quartic_envelope.maximum_bound_ratio)
+        << ", global ZP ratio="
+        << static_cast<double>(local_quartic_envelope.global_zp_ratio)
+        << ", commutator error="
+        << static_cast<double>(local_quartic_commutator
+                                   .identity_relative_error)
+        << ", projected residual error="
+        << static_cast<double>(local_quartic_projected
+                                   .normalized_reconstruction_error)
+        << ", reduced error="
+        << static_cast<double>(local_quartic_reduced
+                                   .normalized_reconstruction_error)
+        << ", polynomial reduced error="
+        << static_cast<double>(local_quartic_reduced
+                                   .polynomial_reconstruction_error)
+        << ", closure C="
+        << static_cast<double>(local_quartic_closure
+                                   .required_constant_ratio)
+        << ", closure value error="
+        << static_cast<double>(local_closure_value_error)
+        << ", closure gradient error="
+        << static_cast<double>(local_closure_gradient_error)
+        << ", signed closure gradient error="
+        << static_cast<double>(signed_closure_gradient_error)
+        << ", direct SLD gradient error="
+        << static_cast<double>(local_sld_gradient_error)
+        << ", block gradients="
+        << static_cast<double>(selected_block_gradient_error) << '/'
+        << static_cast<double>(complement_block_gradient_error) << '/'
+        << static_cast<double>(mixed_block_gradient_error) << '/'
+        << static_cast<double>(full_block_gradient_error)
+        << ", block reconstruction="
+        << static_cast<double>(block_ratio_reconstruction_error)
+        << ", frozen trajectory gradient="
+        << static_cast<double>(frozen_sld_gradient_error)
+        << ", frozen maximum="
+        << static_cast<double>(frozen_sld_maximum_gradient_error)
+        << ", frozen static="
+        << static_cast<double>(frozen_static_gradient_error)
+        << ", frozen zero-step="
+        << static_cast<double>(frozen_sld_zero_step_gradient_error)
+        << ", SLD factorization error="
+        << static_cast<double>(
+               local_closure_value.factorization_relative_error)
         << ")\n"
         << "projected gradient adversary test: "
         << (gradient_search_ok ? "PASS" : "FAIL")
@@ -1774,6 +2298,97 @@ bool self_test(std::ostream& out) {
         << ", energy error=" << static_cast<double>(gradient_energy_error)
         << ", constraint error="
         << static_cast<double>(gradient_constraint_error)
+        << ")\n"
+        << "local closure gradient adversary test: "
+        << (closure_gradient_search_ok ? "PASS" : "FAIL")
+        << " (C "
+        << std::sqrt(static_cast<double>(
+               closure_gradient_search.initial_objective))
+        << " -> "
+        << std::sqrt(static_cast<double>(closure_gradient_search.objective))
+        << ", accepted=" << closure_gradient_search.accepted_steps
+        << ")\n"
+        << "signed closure gradient adversary test: "
+        << (signed_closure_gradient_search_ok ? "PASS" : "FAIL")
+        << " (c "
+        << static_cast<double>(
+               signed_closure_gradient_search.initial_objective)
+        << " -> "
+        << static_cast<double>(signed_closure_gradient_search.objective)
+        << ", accepted="
+        << signed_closure_gradient_search.accepted_steps
+        << ")\n"
+        << "direct local SLD gradient adversary test: "
+        << (local_sld_gradient_search_ok ? "PASS" : "FAIL")
+        << " (ratio "
+        << static_cast<double>(
+               local_sld_gradient_search.initial_objective)
+        << " -> "
+        << static_cast<double>(local_sld_gradient_search.objective)
+        << ", accepted=" << local_sld_gradient_search.accepted_steps
+        << ")\n"
+        << "local SLD cyclic ansatz test: "
+        << (cyclic_ansatz_ok ? "PASS" : "FAIL")
+        << " (ratio="
+        << static_cast<double>(
+               cyclic_ansatz.value.signed_local_sld_ratio)
+        << ", basis inner product="
+        << static_cast<double>(cyclic_ansatz.basis_inner_product)
+        << ", pure axis c="
+        << static_cast<double>(
+               cyclic_ansatz.pure_axis_value.signed_constant_ratio)
+        << ", pure axis error="
+        << static_cast<double>(cyclic_ansatz.pure_axis_identity_error)
+        << ")\n"
+        << "local SLD cyclic trajectory ansatz test: "
+        << (cyclic_trajectory_ansatz_ok ? "PASS" : "FAIL")
+        << " (ratio="
+        << static_cast<double>(
+               cyclic_trajectory_ansatz.value.terminal_ratio)
+        << ", peak step=" << cyclic_trajectory_ansatz.value.steps
+        << ", time refinement="
+        << static_cast<double>(
+               cyclic_trajectory_ansatz.time_step_relative_error)
+        << ")\n"
+        << "local SLD cyclic Krylov ansatz test: "
+        << (cyclic_krylov_ansatz_ok ? "PASS" : "FAIL")
+        << " (ratio="
+        << static_cast<double>(
+               cyclic_krylov_ansatz.value.terminal_ratio)
+        << ", Gram error="
+        << static_cast<double>(
+               cyclic_krylov_ansatz.maximum_gram_error)
+        << ", accepted=" << cyclic_krylov_ansatz.accepted_steps
+        << ")\n"
+        << "local SLD response hierarchy test: "
+        << (response_hierarchy_ok ? "PASS" : "FAIL")
+        << " (depth=" << response_hierarchy.constructed_depth
+        << ", projection="
+        << static_cast<double>(
+               response_hierarchy.final_projection_energy)
+        << ", Gram error="
+        << static_cast<double>(response_hierarchy.maximum_gram_error)
+        << ")\n"
+        << "local SLD trajectory evaluator test: "
+        << (trajectory_evaluation_ok ? "PASS" : "FAIL")
+        << " (maximum="
+        << static_cast<double>(
+               trajectory_evaluation.maximum.terminal_ratio)
+        << ", peak step=" << trajectory_evaluation.maximum.steps
+        << ", time refinement="
+        << static_cast<double>(
+               trajectory_evaluation.time_step_relative_error)
+        << ")\n"
+        << "local SLD signature block test: "
+        << (signature_block_ok ? "PASS" : "FAIL")
+        << " (dominant="
+        << static_cast<double>(
+               signature_block.dominant_closed_sld_ratio)
+        << ", cross="
+        << static_cast<double>(signature_block.cross_sld_ratio)
+        << ", reconstruction error="
+        << static_cast<double>(
+               signature_block.quotient_reconstruction_error)
         << ")\n"
         << "static adversary test: " << (adversary_ok ? "PASS" : "FAIL")
         << " (Q=" << static_cast<double>(adversary.objective.energy_level_quantity)
@@ -1790,6 +2405,7 @@ bool self_test(std::ostream& out) {
         << " (energy residual="
         << static_cast<double>(evolution.energy_balance_residual) << ")\n";
     return rational_ok && scaling_ok && concentration_ok && strong_l4_ok &&
+           shifted_density_ok &&
            dyadic_tail_scaling_ok && dyadic_shell_bounds_ok &&
            periodic_shell_geometry_ok && periodic_tail_bound_ok &&
            far_tail_closure_ok &&
@@ -1806,6 +2422,13 @@ bool self_test(std::ostream& out) {
            q_increase_gradient_ok && q_increase_constraints_ok &&
            critical_integral_gradient_ok &&
            partition_integral_gradients_ok && gradient_search_ok &&
+           closure_gradient_search_ok &&
+           signed_closure_gradient_search_ok &&
+           local_sld_gradient_search_ok &&
+           cyclic_ansatz_ok && cyclic_trajectory_ansatz_ok &&
+           cyclic_krylov_ansatz_ok && signature_block_ok &&
+           response_hierarchy_ok &&
+           trajectory_evaluation_ok &&
            adversary_ok && dynamic_class_ok && q_derivative_ok && evolution_ok;
 }
 
@@ -1866,7 +2489,10 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
                 result);
         }
         const SpectralState* dynamic_warm_start = nullptr;
-        if (!dynamic_results.empty()) {
+        if (options.dynamic_replay_each_cutoff &&
+            !replayed_dynamic_warm_state.waves.empty()) {
+            dynamic_warm_start = &replayed_dynamic_warm_state;
+        } else if (!dynamic_results.empty()) {
             dynamic_warm_start = &dynamic_results.back().state;
         } else if (!replayed_dynamic_warm_state.waves.empty()) {
             dynamic_warm_start = &replayed_dynamic_warm_state;
@@ -1937,6 +2563,8 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
         static_cast<Real>(options.critical_density_shift);
     report.restarts = options.restarts;
     report.dynamic_restarts = options.dynamic_restarts;
+    report.dynamic_replay_each_cutoff =
+        options.dynamic_replay_each_cutoff;
     report.generations = options.generations;
     report.dynamic_generations = options.dynamic_generations;
     report.mutation = static_cast<Real>(options.mutation);
@@ -1999,19 +2627,41 @@ int run_adversary(const AdversaryOptions& options, std::ostream& out) {
         row.dynamic_final_local_critical_density =
             evolution.final_local_critical_integrand;
         row.dynamic_initial_enstrophy = evolution.initial_enstrophy;
+        row.dynamic_initial_palinstrophy = evolution.initial_palinstrophy;
+        row.dynamic_initial_ep_shift =
+            evolution.initial_energy * evolution.initial_palinstrophy;
+        const Real initial_frequency = std::sqrt(
+            evolution.initial_enstrophy /
+            std::max(1e-30L, evolution.initial_energy));
+        const Real local_growth_normalization = options.evolution_time *
+            initial_frequency * evolution.initial_enstrophy;
         if (evolution.initial_local_critical_integrand > 1e-30L &&
             evolution.final_local_critical_integrand > 1e-30L) {
             row.dynamic_local_critical_log_gain = std::log(
                 evolution.final_local_critical_integrand /
                 evolution.initial_local_critical_integrand);
-            const Real initial_frequency = std::sqrt(
-                evolution.initial_enstrophy /
-                std::max(1e-30L, evolution.initial_energy));
-            const Real normalization = options.evolution_time *
-                initial_frequency * evolution.initial_enstrophy;
-            if (normalization > 1e-30L) {
+            if (local_growth_normalization > 1e-30L) {
                 row.dynamic_local_log_gain_rate_ratio =
-                    row.dynamic_local_critical_log_gain / normalization;
+                    row.dynamic_local_critical_log_gain /
+                    local_growth_normalization;
+            }
+        }
+        const Real ep_shifted_initial =
+            evolution.initial_local_critical_integrand +
+            row.dynamic_initial_ep_shift;
+        const Real ep_shifted_final =
+            evolution.final_local_critical_integrand +
+            row.dynamic_initial_ep_shift;
+        if (ep_shifted_initial > 1e-30L && ep_shifted_final > 1e-30L) {
+            row.dynamic_ep_shifted_local_log_gain =
+                std::log1p(
+                    (evolution.final_local_critical_integrand -
+                     evolution.initial_local_critical_integrand) /
+                    ep_shifted_initial);
+            if (local_growth_normalization > 1e-30L) {
+                row.dynamic_ep_shifted_log_gain_rate_ratio =
+                    row.dynamic_ep_shifted_local_log_gain /
+                    local_growth_normalization;
             }
         }
         row.dynamic_maximum_q = evolution.maximum_energy_level_quantity;

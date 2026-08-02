@@ -1,0 +1,14 @@
+{
+  "schema": "navier-stokes-state-family-analysis-v1",
+  "state_directory": "proof/l4/states/local-sld-block/doubling-family-K1-K6",
+  "top_shell_energy_fitted_exponent": -18.9815506118070871,
+  "maximum_projection_residual": 0.00130537822136797825,
+  "rows": [
+    {"cutoff": 1, "modes": 26, "E": 1, "Z": 1.05497724993240616, "P": 1.16493176629647177, "homogeneous_H3_squared": 1.38484084852236267, "homogeneous_H4_squared": 1.82465916146742457, "Q": 0.000152231476379894665, "top_shell_energy": 1, "projection_residual": 0},
+    {"cutoff": 2, "modes": 124, "E": 1, "Z": 1.05599555224036101, "P": 1.16983885407610888, "homogeneous_H3_squared": 1.40864076691889117, "homogeneous_H4_squared": 1.95295344813380889, "Q": 0.000157517089065937219, "top_shell_energy": 9.25820400224245315e-05, "projection_residual": 0.00130537822136797825},
+    {"cutoff": 3, "modes": 342, "E": 0.999999999999999889, "Z": 1.05599566880671536, "P": 1.16983925023500102, "homogeneous_H3_squared": 1.40864213297151308, "homogeneous_H4_squared": 1.95296134764362006, "Q": 0.000157517452973461206, "top_shell_energy": 1.57562388182791308e-10, "projection_residual": 2.60133475683886825e-06},
+    {"cutoff": 4, "modes": 728, "E": 1, "Z": 1.05599566577860582, "P": 1.16983925703919134, "homogeneous_H3_squared": 1.40864233817526796, "homogeneous_H4_squared": 1.95296468991774286, "Q": 0.000157517444026738151, "top_shell_energy": 1.75065102758578078e-11, "projection_residual": 4.11464700234151521e-07},
+    {"cutoff": 5, "modes": 1330, "E": 1, "Z": 1.05599566577860582, "P": 1.16983925703919134, "homogeneous_H3_squared": 1.40864233817526796, "homogeneous_H4_squared": 1.95296468991774286, "Q": 0.000157517444026738151, "top_shell_energy": 0, "projection_residual": 5.36636976986460487e-51},
+    {"cutoff": 6, "modes": 2196, "E": 1, "Z": 1.05599566577860582, "P": 1.16983925703919134, "homogeneous_H3_squared": 1.40864233817526796, "homogeneous_H4_squared": 1.95296468991774286, "Q": 0.000157517444026738151, "top_shell_energy": 0, "projection_residual": 0}
+  ]
+}
