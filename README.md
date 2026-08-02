@@ -7,6 +7,13 @@
 > certificates, counterexamples, and restart states allow another AI or
 > researcher to continue from the recorded proof frontier.
 
+> **Ask the repository instead of reading it front to back.** Clone it, open
+> the repository root in VS Code with the Codex plugin, and let Codex inspect
+> the workspace. For example, ask: *"What does this project do? Explain the
+> current proof route and PNT-12, and distinguish proved statements, finite
+> numerical evidence, falsified routes, and open claims. Link every answer to
+> the relevant source, certificate, state, or reproduction command."*
+
 Public computational research laboratories organized by Millennium Prize
 Problem. The active Navier–Stokes project uses deterministic C++ tests to reject
 weak lemma routes early, shorten the research loop, and preserve useful
