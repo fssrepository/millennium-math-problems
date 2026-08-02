@@ -25,8 +25,7 @@ The definitions and solved/unsolved classification below link to the
 |---|---|---|---|
 | [Birch and Swinnerton–Dyer conjecture](https://www.claymath.org/millennium/birch-and-swinnerton-dyer-conjecture/) | Relate the rank of an elliptic curve to its L-function. | Unsolved | Planned. |
 | [Hodge conjecture](https://www.claymath.org/millennium/hodge-conjecture/) | Characterize which topological classes arise from algebraic cycles. | Unsolved | Planned. |
-| [Navier–Stokes existence and smoothness](https://www.claymath.org/millennium/navier-stokes-equation/) | Decide whether every smooth, physically reasonable 3D flow stays smooth, or exhibit finite-time breakdown. | **Unsolved · active here** | Built a spectral exact-gradient adversarial engine, proved a partial far-tail lemma, falsified standalone PNT-13 decorrelation, and is stress-testing PNT-12.
-[`navier-stokes/`](navier-stokes/) |
+| [Navier–Stokes existence and smoothness](https://www.claymath.org/millennium/navier-stokes-equation/) | Decide whether every smooth, physically reasonable 3D flow stays smooth, or exhibit finite-time breakdown. | **Unsolved · active here** | Built a spectral exact-gradient adversarial engine, proved a partial far-tail lemma, falsified standalone PNT-13 decorrelation, and is stress-testing PNT-12. <br> [`navier-stokes/`](navier-stokes/) |
 | [P versus NP](https://www.claymath.org/millennium/p-vs-np/) | Decide whether every efficiently verifiable problem is efficiently solvable. | Unsolved | Planned. |
 | [Poincaré conjecture](https://www.claymath.org/millennium/poincare-conjecture/) | Characterize the three-sphere among closed simply connected three-manifolds. | Solved | No active laboratory planned. |
 | [Riemann hypothesis](https://www.claymath.org/millennium/riemann-hypothesis/) | Locate every nontrivial zero of the zeta function on the critical line. | Unsolved | Planned. |
