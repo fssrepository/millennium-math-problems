@@ -13,6 +13,7 @@
 #include "local_sld_projective_height_stretching_objective.hpp"
 #include "local_sld_projective_height_power_objective.hpp"
 #include "local_sld_projective_height_outer_power_objective.hpp"
+#include "local_sld_projective_height_envelope_objective.hpp"
 #include "parallel_executor.hpp"
 #include "spectral_adjoint.hpp"
 #include "spectral_galerkin.hpp"
@@ -103,20 +104,27 @@ SpectralState make_start(
     int cutoff, int restart, std::uint64_t seed,
     const SpectralState* previous_winner,
     const InitialSobolevConstraint& sobolev,
-    const std::string& initial_profile) {
+    const std::string& initial_profile,
+    bool preserve_warm_layout) {
     std::mt19937_64 generator(seed);
     SpectralState state;
     if (previous_winner != nullptr && restart == 0) {
-        state = SpectralStateFactory::lift(
-            *previous_winner, cutoff, generator);
+        state = preserve_warm_layout &&
+                SpectralStateOps::cutoff(*previous_winner) == cutoff
+            ? *previous_winner
+            : SpectralStateFactory::lift(
+                  *previous_winner, cutoff, generator);
     } else if (initial_profile != "mixed") {
         state = LocalSignatureStateFactory::make(
             cutoff,
             LocalSignatureStateFactory::parse(initial_profile),
             seed);
     } else if (previous_winner != nullptr && restart % 3 == 0) {
-        state = SpectralStateFactory::lift(
-            *previous_winner, cutoff, generator);
+        state = preserve_warm_layout &&
+                SpectralStateOps::cutoff(*previous_winner) == cutoff
+            ? *previous_winner
+            : SpectralStateFactory::lift(
+                  *previous_winner, cutoff, generator);
         state = SpectralStateFactory::mutate(
             state, 0.08L + 0.02L * static_cast<SpectralReal>(restart % 5),
             generator, restart % 2 == 0);
@@ -248,6 +256,8 @@ LocalQuarticClosureAdversary::maximize(
                ? "local-projective-height-power-ratio"
         : (options.objective == "projective-height-outer-power-ratio"
                ? "local-projective-height-outer-power-ratio"
+        : (options.objective == "projective-height-envelope-ratio"
+               ? "local-projective-height-envelope-ratio"
         : (options.objective == "signed-closure-ratio"
                ? "local-signed-closure-ratio"
                : (options.objective == "block-ratio"
@@ -259,7 +269,7 @@ LocalQuarticClosureAdversary::maximize(
                                     : (options.objective ==
                                                "maximum-sld-ratio"
                                            ? "local-frozen-maximum-sld-ratio"
-                                           : "local-sld-ratio")))))))))))))))));
+                                           : "local-sld-ratio"))))))))))))))))));
     search.method = options.method;
     search.lbfgs_history = options.lbfgs_history;
     search.sobolev_order = options.sobolev_order;
@@ -269,12 +279,32 @@ LocalQuarticClosureAdversary::maximize(
         ? options.workers : 1;
     const GradientSearchResult optimized = adversary.maximize_q(
         initial, search);
+    LocalQuarticClosureRestartResult result;
+    result.state = optimized.state;
+    if (options.lean_diagnostics) {
+        result.value.finite = std::isfinite(optimized.objective);
+        if (options.objective ==
+            "projective-height-envelope-ratio") {
+            result.projective_height_component_envelope_absolute =
+                std::sqrt(std::max(0.0L, optimized.objective));
+        }
+        result.initial_objective = optimized.initial_objective;
+        result.objective = optimized.objective;
+        result.objective_step = optimized.objective_step;
+        result.final_projected_gradient_norm =
+            optimized.final_projected_gradient_norm;
+        result.sobolev_value = optimized.final_sobolev_value;
+        result.seed = seed;
+        result.restart = restart;
+        result.accepted_steps = optimized.accepted_steps;
+        result.evaluations = optimized.trajectory_evaluations;
+        result.warm_continuation = warm_continuation;
+        return result;
+    }
     const LocalQuarticClosureObjective closure(
         dynamics, search.closure_selection);
     const LocalQuarticClosureObjectiveValue initial_value =
         closure.evaluate(initial);
-    LocalQuarticClosureRestartResult result;
-    result.state = optimized.state;
     result.value = closure.evaluate(result.state);
     result.remainder_envelope_ratio =
         LocalSldRemainderEnvelopeObjective(
@@ -363,6 +393,17 @@ LocalQuarticClosureAdversary::maximize(
         height_outer_power_value.diagonal_outer_h1_sum;
     result.projective_height_active_shell_count =
         height_outer_power_value.active_height_shell_count;
+    const LocalSldProjectiveHeightEnvelopeObjectiveValue
+        height_envelope_value =
+            LocalSldProjectiveHeightEnvelopeObjective(
+                dynamics, search.closure_selection,
+                search.objective_threads).evaluate(result.state);
+    result.projective_height_component_envelope_absolute =
+        height_envelope_value.absolute_component_power_one_envelope;
+    result.projective_height_component_bracket_envelope =
+        height_envelope_value.absolute_component_bracket_envelope;
+    result.projective_height_pair_count =
+        height_envelope_value.height_pair_count;
     result.common_block_objective =
         is_common_block_objective(options.objective);
     if (result.common_block_objective) {
@@ -423,7 +464,7 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
     const LocalQuarticClosureAdversaryOptions& options) {
     if (options.minimum_cutoff < 1 ||
         options.maximum_cutoff < options.minimum_cutoff ||
-        options.maximum_cutoff > 8 || options.restarts < 1 ||
+        options.maximum_cutoff > 16 || options.restarts < 1 ||
         options.restarts > 1000 || options.workers < 1 ||
         options.workers > 256 || options.iterations < 0 ||
         options.line_search_steps < 1 ||
@@ -450,6 +491,7 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
          options.objective != "projective-height-stretching-ratio" &&
          options.objective != "projective-height-power-ratio" &&
          options.objective != "projective-height-outer-power-ratio" &&
+         options.objective != "projective-height-envelope-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "sld-ratio" &&
          options.objective != "block-ratio" &&
@@ -530,7 +572,8 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
             starts[static_cast<std::size_t>(restart)] = make_start(
                 cutoff, restart, seed,
                 has_previous_winner ? &previous_winner : nullptr,
-                sobolev, options.initial_profile);
+                sobolev, options.initial_profile,
+                options.preserve_warm_layout);
         }
 
         LocalQuarticClosureCutoffResult row;
@@ -539,6 +582,17 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
             SpectralGalerkin galerkin;
             galerkin.configure(options.backend, 1);
             const SpectralDynamics dynamics(galerkin);
+            if (options.lean_diagnostics &&
+                options.objective ==
+                    "projective-height-envelope-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveHeightEnvelopeObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.workers)
+                        .evaluate(starts.front())
+                        .squared_component_power_one_envelope;
+            } else {
             const LocalQuarticClosureObjectiveValue warm_value =
                 LocalQuarticClosureObjective(
                     dynamics, closure_selection(options.selection))
@@ -625,6 +679,16 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                         closure_selection(options.selection))
                         .evaluate(starts.front())
                         .squared_outer_power_one;
+            }
+            if (options.objective ==
+                "projective-height-envelope-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveHeightEnvelopeObjective(
+                        dynamics,
+                        closure_selection(options.selection))
+                        .evaluate(starts.front())
+                        .squared_component_power_one_envelope;
+            }
             }
         }
         std::vector<LocalQuarticClosureRestartResult> results(

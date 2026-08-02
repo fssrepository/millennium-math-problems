@@ -51,7 +51,8 @@ public:
         const SpectralState& state,
         const ProjectiveInteractionGroup& group,
         const SpectralIncrement& advecting,
-        const SpectralIncrement& advected);
+        const SpectralIncrement& advected,
+        int threads = 1);
 
     [[nodiscard]] static SpectralIncrement evaluate_bilinear_sum(
         const SpectralState& state,
@@ -64,14 +65,16 @@ public:
     [[nodiscard]] static SpectralIncrement vjp(
         const SpectralState& state,
         const ProjectiveInteractionGroup& group,
-        const SpectralIncrement& output_cotangent);
+        const SpectralIncrement& output_cotangent,
+        int threads = 1);
 
     [[nodiscard]] static ProjectiveBilinearCotangents bilinear_vjp(
         const SpectralState& state,
         const ProjectiveInteractionGroup& group,
         const SpectralIncrement& advecting,
         const SpectralIncrement& advected,
-        const SpectralIncrement& output_cotangent);
+        const SpectralIncrement& output_cotangent,
+        int threads = 1);
 
     [[nodiscard]] static ProjectiveSquareFunctionMoment square_function(
         const SpectralState& state,

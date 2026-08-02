@@ -111,7 +111,12 @@ LocalSldProjectiveHeightSchurSummary::summarize(
         std::vector<SpectralReal> component_diagonal(
             shell_count, 0.0L);
         for (const auto& entry : matrix.entries) {
+            const SpectralReal scaled_magnitude =
+                std::abs(value(entry) * matrix.power_one_scale);
+            component.total_power_one_envelope += scaled_magnitude;
             if (entry.first_shell == entry.second_shell) {
+                component.diagonal_power_one_envelope +=
+                    scaled_magnitude;
                 component_diagonal[
                     static_cast<std::size_t>(entry.first_shell)] =
                     std::abs(value(entry));

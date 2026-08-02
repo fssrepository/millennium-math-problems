@@ -276,7 +276,13 @@ void write_json(
     for (std::size_t index = 0; index < schur.components.size(); ++index) {
         const auto& component = schur.components[index];
         output << "    {\"component\": \"" << component.component
-            << "\", \"maximum_off_diagonal_geometric_ratio\": "
+            << "\", \"total_power_one_envelope\": "
+            << static_cast<double>(
+                   component.total_power_one_envelope)
+            << ", \"diagonal_power_one_envelope\": "
+            << static_cast<double>(
+                   component.diagonal_power_one_envelope)
+            << ", \"maximum_off_diagonal_geometric_ratio\": "
             << static_cast<double>(
                    component.maximum_off_diagonal_geometric_ratio)
             << ", \"maximum_weighted_row_sum\": "

@@ -94,7 +94,7 @@ OuterGraph build_outer_graph(
         add_scaled(
             result.gradient,
             ProjectiveAdvectionDecomposition::vjp(
-                state, aggregate.front(), ab),
+                state, aggregate.front(), ab, threads),
             1.0L);
     }
     return result;

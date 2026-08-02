@@ -934,10 +934,22 @@ absolute five-component envelope obeys the proved finite Schur reduction
 `sum_(i<=j)e_ij <= R sum_i e_i`. On the principal K8 stress states the
 normalized row sum is `2.89`--`3.85`. Separately optimized diagonal states
 give signed and absolute-envelope finite height slopes `-0.374` and `-0.435`.
-The lowest open analytical subtask is now precise: prove a cutoff-uniform
-bound for `R` and a cutoff-uniform summation of the diagonal envelopes. The
-finite slopes are only lower-branch evidence, not either upper bound. See
+Perturbed coherent fans give row sums `2.987`, `3.993`, and `4.089` at K8,
+K12, and K16 while the products `R sum_i e_i` collapse from `1.55e-10` to
+`3.79e-13`. The lowest open analytical subtask is therefore the weaker and
+more precise joint estimate `sup R sum_i e_i < infinity`; separate uniform
+bounds for the two factors are only a sufficient route. The finite slopes
+and fan sequence are diagnostics, not upper bounds. See
 `proof/l4/lemmas/shifted-local-density/DYADIC_PROJECTIVE_HEIGHT_SCHUR.md`.
+The complete five-component envelope itself is now an exact-gradient
+objective with directional error `6.61e-12`. Its optimized values are
+`0.0094401` at K8 and `0.0094648` on a restricted-support K12 continuation;
+zero-padding the latter to the complete K12 Galerkin cube gives `0.0095014`
+before any full-K12 optimization. The corresponding full-cube Schur data are
+`R=2.9681`, diagonal envelope `0.0052331`, and bound `0.0155326`. Hence the
+current finite evidence is bounded-looking but nondecaying. The proof still
+requires a cutoff-uniform analytic estimate, not extrapolation of these two
+cutoffs.
 
 The absolute closure ratio was subsequently reverse-differentiated and
 optimized directly. A K1 branch reaches `C_state=1/3`, but its stretching is

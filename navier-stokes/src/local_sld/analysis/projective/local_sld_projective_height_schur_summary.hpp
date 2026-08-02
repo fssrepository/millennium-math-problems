@@ -30,6 +30,8 @@ struct LocalSldProjectiveHeightSchurGapRow {
 
 struct LocalSldProjectiveHeightComponentSchurRow {
     const char* component = "";
+    SpectralReal total_power_one_envelope = 0.0L;
+    SpectralReal diagonal_power_one_envelope = 0.0L;
     SpectralReal maximum_off_diagonal_geometric_ratio = 0.0L;
     SpectralReal maximum_weighted_row_sum = 0.0L;
     std::size_t unscaled_off_diagonal_pair_count = 0;

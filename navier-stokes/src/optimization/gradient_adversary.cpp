@@ -12,6 +12,7 @@
 #include "local_sld_projective_height_stretching_objective.hpp"
 #include "local_sld_projective_height_power_objective.hpp"
 #include "local_sld_projective_height_outer_power_objective.hpp"
+#include "local_sld_projective_height_envelope_objective.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
 
 #include <algorithm>
@@ -250,6 +251,13 @@ SpectralReal GradientAdversary::objective_value(
             dynamics_, options.closure_selection,
             options.objective_threads)
             .evaluate(initial).squared_outer_power_one;
+    }
+    if (options.objective ==
+        "local-projective-height-envelope-ratio") {
+        return LocalSldProjectiveHeightEnvelopeObjective(
+            dynamics_, options.closure_selection,
+            options.objective_threads)
+            .evaluate(initial).squared_component_power_one_envelope;
     }
     if (options.objective == "local-sld-ratio") {
         return LocalQuarticClosureObjective(
@@ -532,6 +540,15 @@ GradientSearchResult GradientAdversary::maximize_q(
                 .squared_outer_power_one;
             trajectory.objective_step = 0;
             trajectory.initial_gradient = outer_power.gradient(result.state);
+        } else if (options.objective ==
+                   "local-projective-height-envelope-ratio") {
+            const LocalSldProjectiveHeightEnvelopeObjective envelope(
+                dynamics_, options.closure_selection,
+                options.objective_threads);
+            trajectory.objective_value = envelope.evaluate(result.state)
+                .squared_component_power_one_envelope;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = envelope.gradient(result.state);
         } else if (options.objective == "local-sld-ratio") {
             const LocalQuarticClosureObjective closure(
                 dynamics_, options.closure_selection);

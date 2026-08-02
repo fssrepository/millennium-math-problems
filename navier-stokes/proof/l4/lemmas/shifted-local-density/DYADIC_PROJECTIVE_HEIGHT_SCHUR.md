@@ -1,7 +1,7 @@
 # Dyadic projective-height Schur reduction
 
 This note gives an exact algebraic reduction of the open projective part of
-RQ-11 to two cutoff-uniform dyadic estimates. It does not prove either
+RQ-11 to one cutoff-uniform joint dyadic estimate. It does not prove that
 uniform estimate and therefore does not prove RQ-11, the local SLD lemma, or
 the Clay problem.
 
@@ -67,16 +67,23 @@ sum_j e_j + sum_(i<j) e_ij
 ```
 
 The left side dominates the absolute value of the complete projective
-power-one block. Therefore RQ-11 follows if both
+power-one block. Therefore the direct sufficient condition for RQ-11 is
 
 ```text
-sup_(N,u) R_N(u) < infinity,                         (DHS-4)
+sup_(N,u) R_N(u) sum_j e_j,N(u) < infinity.          (DHS-4)
+```
+
+The two separate estimates
+
+```text
+sup_(N,u) R_N(u) < infinity,
 sup_(N,u) sum_j e_j,N(u) < infinity                  (DHS-5)
 ```
 
-hold on the normalized state class. A sufficient form of DHS-5 is a dyadic
-decay `e_j<=C 2^(-alpha j)` for any `alpha>0`. DHS-3 is proved algebraically;
-DHS-4 and DHS-5 are the remaining analytic statements.
+would imply DHS-4, but they are stronger than necessary. A sufficient form
+of the second estimate is a dyadic decay `e_j<=C 2^(-alpha j)` for any
+`alpha>0`. DHS-3 is proved algebraically; the joint estimate DHS-4 is the
+remaining analytic statement.
 
 The component envelope is essential. Normalizing off-diagonal entries by the
 absolute value of the signed diagonal `J_jj` is invalid because internal
@@ -104,9 +111,14 @@ gap       1       2       3       4       5       6       7       8
 ratio   .537    .426    .283    .246    .158    .0529   .00789  .000125.
 ```
 
-The same maximum row sum stays between `2.89` and `3.85` on the K8
-open-power, height-power, and height-stretching adversary winners tested so
-far. This is finite evidence for DHS-4, not a uniform theorem.
+The maximum row sum lies between `2.89` and `3.85` on the initial K8
+open-power, height-power, and height-stretching adversary winners. A coherent
+fan perturbed by the same K8 state gives row sums `2.987`, `3.993`, and
+`4.089` at cutoffs K8, K12, and K16. Its corresponding Schur products
+`R sum_j e_j` are `1.55e-10`, `5.45e-12`, and `3.79e-13`. Thus a separately
+uniform row-sum estimate may be unnecessarily strong: the row factor grows
+on this finite sequence while the joint quantity in DHS-4 collapses. This is
+finite diagnostic evidence, not a theorem that either separate bound fails.
 
 An exact-gradient objective maximizes the complete signed diagonal block
 
@@ -124,7 +136,44 @@ approximately
 The fitted signed-diagonal height slope is `-0.374`. More importantly, the
 absolute five-component diagonal envelope has fitted slope `-0.435`, so the
 observed decay is not caused only by cancellation inside `J_jj`. These are
-optimized finite lower branches, not the upper bound DHS-5.
+optimized finite lower branches, not an upper bound in DHS-4 or DHS-5.
+
+The exact-gradient `projective-height-outer-power-ratio` objective attacks the
+leading coercive part of the joint quantity directly:
+
+```text
+|S_full| sum_j ||A^(1/2) B_j(u,u)||_2^2/(Z^2 P^2).
+```
+
+Starting from the H=64 K8 height-power winner, 36 L-BFGS iterations in two
+restarted stages raise this quantity from `0.001472` to `0.002940`. The exact
+full component matrix of the resulting state has `R=2.8952`, diagonal
+envelope `0.0051801`, total envelope `0.0089833`, and Schur upper bound
+`0.0149976`.
+
+The sharper exact-gradient `projective-height-envelope-ratio` objective now
+maximizes the left side of DHS-3 itself:
+
+```text
+[ |S_full| sum_(i<=j) sum_(five components) |J_ij,component|
+  /(Z^2 P^2) ]^2.                                  (DHS-6)
+```
+
+Its sign-chamber reverse derivative includes all shell pairs and all five
+components; a central-difference test has relative error `6.61e-12`. Eight
+K8 L-BFGS steps raise the unsquared envelope from `0.0089833` to `0.0094401`.
+The resulting exact matrix has diagonal envelope `0.0052205`, `R=2.9616`,
+and Schur bound `0.0154608`.
+
+A sparse-support K12 continuation reaches `0.0094648` after six steps. Sparse
+support omits inactive Fourier targets and is explicitly marked
+`complete_galerkin_cutoff=false`; it is only a restricted-support diagnostic.
+Zero-padding that winner to the complete K12 Galerkin cube gives `0.0095014`
+without any further K12 optimization. Its exact matrix has diagonal envelope
+`0.0052331`, `R=2.9681`, and Schur bound `0.0155326`. Thus the optimized finite
+total envelope does not exhibit the earlier diagonal-shell decay between K8
+and K12. This neither disproves nor proves a cutoff-uniform bound; it removes
+finite decay as the current reason to expect one.
 
 ## Reproduction
 
@@ -141,10 +190,32 @@ optimized finite lower branches, not the upper bound DHS-5.
   --height 64 --state proof/l4/states/local-projective-height-power/H64-K8-warm/K8.tsv \
   --threads 12 --exclude-triple-family \
   --certificate proof/l4/analysis/shifted-local-density/remainder-quartet/K8-optimized-height-power-transfer.json
+
+./build/navier_stokes_lab local-closure-adversary \
+  --objective projective-height-outer-power-ratio \
+  --selection double-triple-remainder --min-cutoff 8 --max-cutoff 8 \
+  --restarts 1 --workers 12 --iterations 12 --method lbfgs --backend direct \
+  --warm-state proof/l4/states/local-projective-height-power/H64-K8-warm/K8.tsv \
+  --certificate proof/l4/adversary/shifted-local-density/projective-height-outer-power/K8-height-power-warm.json \
+  --state-dir proof/l4/states/local-projective-height-outer-power/K8-height-power-warm
+
+./build/navier_stokes_lab local-closure-adversary \
+  --objective projective-height-envelope-ratio \
+  --selection double-triple-remainder --min-cutoff 12 --max-cutoff 12 \
+  --restarts 1 --workers 12 --iterations 4 --method lbfgs --backend direct \
+  --lean --preserve-warm-layout \
+  --warm-state proof/l4/states/local-projective-height-envelope/K12-warm-blend-two-step-sparse/K12.tsv \
+  --certificate proof/l4/adversary/shifted-local-density/projective-height-envelope/K12-six-step-sparse.json \
+  --state-dir proof/l4/states/local-projective-height-envelope/K12-six-step-sparse
 ```
 
 Artifacts:
 
 - [`../../analysis/shifted-local-density/remainder-quartet/K8-open-power-height64-winner-height-matrix.json`](../../analysis/shifted-local-density/remainder-quartet/K8-open-power-height64-winner-height-matrix.json)
 - [`../../analysis/shifted-local-density/remainder-quartet/K8-optimized-height-power-transfer.json`](../../analysis/shifted-local-density/remainder-quartet/K8-optimized-height-power-transfer.json)
-
+- [`../../analysis/shifted-local-density/remainder-quartet/K8-height-outer-power-winner-height-matrix.json`](../../analysis/shifted-local-density/remainder-quartet/K8-height-outer-power-winner-height-matrix.json)
+- [`../../adversary/shifted-local-density/projective-height-outer-power/K8-height-power-warm.json`](../../adversary/shifted-local-density/projective-height-outer-power/K8-height-power-warm.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K8-height-envelope-winner-height-matrix.json`](../../analysis/shifted-local-density/remainder-quartet/K8-height-envelope-winner-height-matrix.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K12-height-envelope-six-step-full-matrix.json`](../../analysis/shifted-local-density/remainder-quartet/K12-height-envelope-six-step-full-matrix.json)
+- [`../../adversary/shifted-local-density/projective-height-envelope/K12-six-step-sparse.json`](../../adversary/shifted-local-density/projective-height-envelope/K12-six-step-sparse.json)
+- [`../../adversary/shifted-local-density/projective-height-envelope/K12-six-step-full-evaluate.json`](../../adversary/shifted-local-density/projective-height-envelope/K12-six-step-full-evaluate.json)

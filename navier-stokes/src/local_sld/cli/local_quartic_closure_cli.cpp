@@ -71,6 +71,10 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
             options.state_directory = next(index, name);
         } else if (name == "--warm-state") {
             options.warm_state_path = next(index, name);
+        } else if (name == "--lean") {
+            options.lean_diagnostics = true;
+        } else if (name == "--preserve-warm-layout") {
+            options.preserve_warm_layout = true;
         } else {
             throw std::invalid_argument(
                 "unknown local-closure-adversary option: " + name);
@@ -78,7 +82,7 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
     }
     if (options.minimum_cutoff < 1 ||
         options.maximum_cutoff < options.minimum_cutoff ||
-        options.maximum_cutoff > 8 || options.restarts < 1 ||
+        options.maximum_cutoff > 16 || options.restarts < 1 ||
         options.workers < 1 || options.iterations < 0 ||
         options.line_search_steps < 1 ||
         options.lbfgs_history < 1 || options.lbfgs_history > 64 ||
@@ -106,6 +110,7 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
          options.objective != "projective-height-stretching-ratio" &&
          options.objective != "projective-height-power-ratio" &&
          options.objective != "projective-height-outer-power-ratio" &&
+         options.objective != "projective-height-envelope-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "block-ratio" &&
          options.objective != "mixed-ratio" &&
@@ -145,7 +150,9 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
 void LocalQuarticClosureCli::print_help(std::ostream& out) {
     out << "Local quartic closure exact-gradient adversary options:\n"
         << "  --min-cutoff K       first Fourier cutoff\n"
-        << "  --max-cutoff K       last Fourier cutoff (maximum 8)\n"
+        << "  --max-cutoff K       last Fourier cutoff (maximum 16; prefer sparse warm states above K8)\n"
+        << "  --lean               skip unrelated post-search diagnostics for fast high-cutoff replay\n"
+        << "  --preserve-warm-layout keep a sparse same-cutoff warm layout (restricted-support diagnostic, not the complete Galerkin cutoff)\n"
         << "  --restarts N         independent starts per cutoff\n"
         << "  --workers N          parallel restart workers (use 12)\n"
         << "  --iterations N       exact-gradient iterations per start; 0 evaluates only\n"
@@ -160,7 +167,7 @@ void LocalQuarticClosureCli::print_help(std::ostream& out) {
         << "  --step X             initial Riemannian step\n"
         << "  --method NAME        lbfgs or steepest\n"
         << "  --backend NAME       direct oracle, fft, or auto (default direct)\n"
-        << "  --objective NAME     sld-ratio, terminal-sld-ratio, maximum-sld-ratio, lqc3-ratio, signed-lqc3-ratio, remainder-envelope-ratio, remainder-absorption-ratio, shape-power-ratio, projective-coherence-ratio, projective-stretching-ratio, projective-height-stretching-ratio, projective-height-power-ratio, projective-height-outer-power-ratio, projective-cross-power-ratio, projective-open-power-ratio, closure-ratio, signed-closure-ratio, block-ratio, or mixed-ratio\n"
+        << "  --objective NAME     sld-ratio, terminal-sld-ratio, maximum-sld-ratio, lqc3-ratio, signed-lqc3-ratio, remainder-envelope-ratio, remainder-absorption-ratio, shape-power-ratio, projective-coherence-ratio, projective-stretching-ratio, projective-height-stretching-ratio, projective-height-power-ratio, projective-height-outer-power-ratio, projective-height-envelope-ratio, projective-cross-power-ratio, projective-open-power-ratio, closure-ratio, signed-closure-ratio, block-ratio, or mixed-ratio\n"
         << "  --selection NAME     local, doubling-family, doubling-remainder, remainder-without-123, double-triple-family, double-triple-remainder, or double-triple-remainder-without-123\n"
         << "  --initial-profile NAME  mixed, decaying, flat, or outer-half-flat\n"
         << "  --sobolev-order M    optional homogeneous Sobolev cap\n"

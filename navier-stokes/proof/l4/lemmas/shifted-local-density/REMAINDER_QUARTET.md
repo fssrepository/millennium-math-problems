@@ -336,8 +336,14 @@ sum times the sum of its diagonal component envelopes. On the H=64 K8
 open-power winner those values are `0.0038521`, `2.9859`, and `0.0021600`,
 respectively. Separate diagonal-quartet adversaries give an absolute-envelope
 height slope `-0.435` on H=8,16,32,64. The exact algebra is proved, but the
-uniform row-sum and diagonal-envelope estimates are still open. See
+joint cutoff-uniform bound on the row-sum--diagonal-envelope product is still
+open. Separate uniform estimates for the factors are sufficient but not
+necessary. See
 [DYADIC_PROJECTIVE_HEIGHT_SCHUR.md](DYADIC_PROJECTIVE_HEIGHT_SCHUR.md).
+The complete five-component envelope is also optimized directly with an
+exact sign-chamber gradient. Current full-Galerkin stress values are
+`0.0094401` at K8 and `0.0095014` at K12; they remove finite decay as evidence
+for the missing theorem but do not show divergence or prove boundedness.
 
 ## Reproduction
 

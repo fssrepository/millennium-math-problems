@@ -447,9 +447,14 @@ exact-gradient objective reaches `0.0010076`, `0.0008591`, `0.0006330`, and
 H=8,16,32,64. The fitted finite lower-branch height exponent is `-0.557`, not
 a uniform upper bound. An exact dyadic height matrix now reduces the growing
 tail to a weighted Schur row bound and a summable diagonal component envelope.
-The finite Schur inequality is proved algebraically; the required uniform
-row-sum and diagonal-envelope bounds are not. The optimized finite diagonal
-envelope has fitted height slope `-0.435`. See
+The finite Schur inequality is proved algebraically; the required joint
+uniform bound on the row-sum--diagonal-envelope product is not. Separate
+uniform bounds on its two factors would suffice but appear stronger than the
+target. The optimized finite diagonal envelope has fitted height slope
+`-0.435`, but direct optimization of the complete five-component envelope
+removes that apparent decay: it gives `0.0094401` at K8 and `0.0095014` after
+embedding the K12 continuation in the complete K12 Galerkin cube. These are
+finite stress values, not a uniform bound. See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_CROSS_QUARTET.md` and

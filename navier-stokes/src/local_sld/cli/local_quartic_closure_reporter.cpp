@@ -57,6 +57,9 @@ std::string objective_formula(const std::string& objective) {
     if (objective == "projective-height-outer-power-ratio") {
         return "maximize |S_full|^2 (sum_j ||A^(1/2)B_j(u,u)||_2^2)^2 / (Z^4 P^4) over dyadic primitive-height shells";
     }
+    if (objective == "projective-height-envelope-ratio") {
+        return "maximize the square of the exact five-component absolute dyadic height-matrix envelope times |S_full| / (Z^2 P^2)";
+    }
     if (objective == "signed-closure-ratio") {
         return "maximize (K+G) E^(1/4) / (Z^(7/4) P)";
     }
@@ -102,6 +105,12 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
         << options.initial_profile << "\",\n"
         << "  \"warm_state_path\": \"" << options.warm_state_path
         << "\",\n"
+        << "  \"lean_diagnostics\": "
+        << (options.lean_diagnostics ? "true" : "false") << ",\n"
+        << "  \"preserves_sparse_warm_layout\": "
+        << (options.preserve_warm_layout ? "true" : "false") << ",\n"
+        << "  \"complete_galerkin_cutoff\": "
+        << (options.preserve_warm_layout ? "false" : "true") << ",\n"
         << "  \"gradient\": \"exact discrete reverse mode; selected local objectives use direct triads and RK4 follows the requested backend\",\n"
         << "  \"workers\": " << report.workers << ",\n"
         << "  \"restarts_per_cutoff\": " << report.restarts << ",\n"
@@ -209,6 +218,14 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
             << ", \"projective_height_outer_h1_sum\": "
             << static_cast<double>(
                    winner.projective_height_outer_h1_sum)
+            << ", \"projective_height_component_envelope_absolute\": "
+            << static_cast<double>(
+                   winner.projective_height_component_envelope_absolute)
+            << ", \"projective_height_component_bracket_envelope\": "
+            << static_cast<double>(
+                   winner.projective_height_component_bracket_envelope)
+            << ", \"projective_height_pair_count\": "
+            << winner.projective_height_pair_count
             << ", \"projective_height_active_shell_count\": "
             << winner.projective_height_active_shell_count
             << ", \"squared_lqc3_target_ratio\": "
