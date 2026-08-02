@@ -96,6 +96,8 @@ add_executable(navier_stokes_lab
     src/local_sld/core/projective/local_sld_projective_normalization_objective.cpp
     src/local_sld/core/projective/local_sld_projective_normalization_alignment_objective.cpp
     src/local_sld/core/projective/local_sld_projective_normalization_cauchy_objective.cpp
+    src/local_sld/core/projective/local_sld_projective_normalization_schur_objective.cpp
+    src/local_sld/core/projective/local_sld_projective_height_gap_correlation_objective.cpp
 
     src/local_sld/analysis/closure/local_critical_derivative_ledger.cpp
     src/local_sld/analysis/closure/local_quartic_closure_target.cpp
@@ -134,6 +136,12 @@ add_executable(navier_stokes_lab
     src/local_sld/analysis/projective/local_sld_projective_height_matrix.cpp
     src/local_sld/analysis/projective/local_sld_projective_normalization_tail_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_normalization_tradeoff_scan.cpp
+    src/local_sld/analysis/projective/local_sld_projective_normalization_cauchy_scan.cpp
+    src/local_sld/analysis/projective/local_sld_projective_normalization_satellite_scan.cpp
+    src/local_sld/analysis/projective/local_sld_projective_normalization_tail_schur_ledger.cpp
+    src/local_sld/analysis/projective/local_sld_projective_normalization_tail_schur_cli.cpp
+    src/local_sld/analysis/projective/local_sld_projective_height_gap_output_ledger.cpp
+    src/local_sld/analysis/projective/local_sld_projective_height_gap_triad_attribution.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_coercivity_path_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_coercivity_line_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_tail_summary.cpp
@@ -151,6 +159,8 @@ add_executable(navier_stokes_lab
     src/local_sld/optimization/cyclic/local_sld_cyclic_trajectory_ansatz.cpp
     src/local_sld/optimization/trajectory/local_sld_trajectory_adjoint.cpp
     src/local_sld/optimization/projective/local_sld_projective_normalization_alternating_adversary.cpp
+    src/local_sld/optimization/projective/local_sld_projective_height_gap_correlation_adversary.cpp
+    src/local_sld/optimization/projective/local_sld_projective_normalization_schur_adversary.cpp
 
     src/local_sld/states/local_sld_projective_fan_state.cpp
     src/local_sld/states/local_sld_two_scale_state.cpp

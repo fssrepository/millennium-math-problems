@@ -276,7 +276,7 @@ ProjectiveAdvectionDecomposition::evaluate_bilinear_sum(
         const int worker = omp_get_thread_num();
         SpectralIncrement& partial = partials[
             static_cast<std::size_t>(worker)];
-#pragma omp for schedule(dynamic, 1)
+#pragma omp for schedule(static, 1)
         for (std::ptrdiff_t position = 0;
              position < static_cast<std::ptrdiff_t>(group_indices.size());
              ++position) {
@@ -338,6 +338,113 @@ SpectralIncrement ProjectiveAdvectionDecomposition::vjp(
         }
     }
     return cotangents.advecting;
+}
+
+SpectralIncrement ProjectiveAdvectionDecomposition::vjp_sum(
+    const SpectralState& state,
+    const std::vector<ProjectiveInteractionGroup>& groups,
+    const std::vector<std::size_t>& group_indices,
+    const SpectralIncrement& output_cotangent,
+    int threads) {
+    require_layout(state, output_cotangent);
+    if (threads < 1 || threads > 256) {
+        throw std::invalid_argument(
+            "projective VJP-sum threads must be 1..256");
+    }
+    for (const std::size_t index : group_indices) {
+        if (index >= groups.size()) {
+            throw std::invalid_argument(
+                "projective VJP-sum group index out of range");
+        }
+    }
+    SpectralIncrement cotangent = output_cotangent;
+    project(cotangent, state);
+    int worker_count = 1;
+#ifdef NS_HAVE_OPENMP
+    worker_count = std::min(
+        threads,
+        std::max(1, static_cast<int>(group_indices.size())));
+#else
+    static_cast<void>(threads);
+#endif
+    std::vector<SpectralIncrement> partials(
+        static_cast<std::size_t>(worker_count),
+        SpectralIncrement(state.waves.size()));
+    const SpectralComplex minus_imaginary_unit{0.0L, -1.0L};
+#ifdef NS_HAVE_OPENMP
+#pragma omp parallel num_threads(worker_count) if(worker_count > 1)
+    {
+        const int worker = omp_get_thread_num();
+        SpectralIncrement& partial = partials[
+            static_cast<std::size_t>(worker)];
+#pragma omp for schedule(static, 1)
+        for (std::ptrdiff_t position = 0;
+             position < static_cast<std::ptrdiff_t>(group_indices.size());
+             ++position) {
+            const auto& group = groups[group_indices[
+                static_cast<std::size_t>(position)]];
+            for (const InteractionIndex interaction : group.interactions) {
+                const auto [p, q, target] = interaction;
+                const ComplexVector& target_cotangent = cotangent[target];
+                const SpectralComplex first_coefficient =
+                    minus_imaginary_unit * dot_hermitian(
+                        state.velocity[q], target_cotangent);
+                for (std::size_t component = 0; component < 3; ++component) {
+                    const SpectralReal wave_component =
+                        static_cast<SpectralReal>(
+                            component == 0   ? state.waves[q].x
+                            : component == 1 ? state.waves[q].y
+                                             : state.waves[q].z);
+                    partial[p][component] +=
+                        wave_component * first_coefficient;
+                }
+                const SpectralComplex second_coefficient =
+                    minus_imaginary_unit * std::conj(
+                        wave_dot(state.waves[q], state.velocity[p]));
+                for (std::size_t component = 0; component < 3; ++component) {
+                    partial[q][component] +=
+                        second_coefficient * target_cotangent[component];
+                }
+            }
+        }
+    }
+#else
+    SpectralIncrement& partial = partials.front();
+    for (const std::size_t index : group_indices) {
+        for (const InteractionIndex interaction : groups[index].interactions) {
+            const auto [p, q, target] = interaction;
+            const ComplexVector& target_cotangent = cotangent[target];
+            const SpectralComplex first_coefficient =
+                minus_imaginary_unit * dot_hermitian(
+                    state.velocity[q], target_cotangent);
+            for (std::size_t component = 0; component < 3; ++component) {
+                const SpectralReal wave_component =
+                    static_cast<SpectralReal>(
+                        component == 0   ? state.waves[q].x
+                        : component == 1 ? state.waves[q].y
+                                         : state.waves[q].z);
+                partial[p][component] +=
+                    wave_component * first_coefficient;
+            }
+            const SpectralComplex second_coefficient =
+                minus_imaginary_unit * std::conj(
+                    wave_dot(state.waves[q], state.velocity[p]));
+            for (std::size_t component = 0; component < 3; ++component) {
+                partial[q][component] +=
+                    second_coefficient * target_cotangent[component];
+            }
+        }
+    }
+#endif
+    SpectralIncrement result(state.waves.size());
+    for (const SpectralIncrement& partial : partials) {
+        for (std::size_t mode = 0; mode < result.size(); ++mode) {
+            for (std::size_t component = 0; component < 3; ++component) {
+                result[mode][component] += partial[mode][component];
+            }
+        }
+    }
+    return result;
 }
 
 ProjectiveBilinearCotangents

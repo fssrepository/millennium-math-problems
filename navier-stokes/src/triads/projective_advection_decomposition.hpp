@@ -68,6 +68,13 @@ public:
         const SpectralIncrement& output_cotangent,
         int threads = 1);
 
+    [[nodiscard]] static SpectralIncrement vjp_sum(
+        const SpectralState& state,
+        const std::vector<ProjectiveInteractionGroup>& groups,
+        const std::vector<std::size_t>& group_indices,
+        const SpectralIncrement& output_cotangent,
+        int threads = 1);
+
     [[nodiscard]] static ProjectiveBilinearCotangents bilinear_vjp(
         const SpectralState& state,
         const ProjectiveInteractionGroup& group,

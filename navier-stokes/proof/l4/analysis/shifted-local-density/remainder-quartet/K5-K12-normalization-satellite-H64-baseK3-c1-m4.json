@@ -1,0 +1,27 @@
+{
+  "schema": "navier-stokes-local-sld-projective-normalization-low-high-satellite-v1",
+  "base_state_path": "proof/l4/states/local-projective-normalization-cauchy/H8-K8-twenty-four-step/K8.tsv",
+  "base_cutoff": 3,
+  "core_maximum_height": 64,
+  "satellite_amplitude_formula": "coefficient/cutoff^2",
+  "satellite_layout": "structured scaled outer-shell wave family",
+  "satellite_coefficient": 1,
+  "satellite_mode_pairs": 4,
+  "seed": 20260802,
+  "triad_selection": "double-triple-remainder-without-123",
+  "fitted_cauchy_cutoff_slope": 1.04346838798497155,
+  "fitted_actual_cutoff_slope": 1.13839948912256639,
+  "maximum_cauchy_bound": 6.10025754009841531e-05,
+  "maximum_selected_channel": 2.32624323099611966e-23,
+  "rows": [
+    {"cutoff": 5, "satellite_amplitude": 0.0400000000000000008, "satellite_energy_fraction": 0.00160000000000000008, "enstrophy": 4.7144604711396223, "palinstrophy": 36.6832425020015549, "full_stretching": 1.64225433778637231, "selected_aggregate_h1_norm2": 48.9343306551535306, "tail_aggregate_h2_norm2": 0.007215715386291492, "cauchy_bound_power_one": 1.75453045116432693e-05, "selected_channel_power_one": 5.9351193409278592e-24, "actual_over_cauchy_bound": 3.38273943150387859e-19, "quarter_compensated_bound": 4.96256151926635281e-05, "state_path": "proof/l4/states/local-projective-normalization-satellite/H64-baseK3-c1-m4/K5.tsv", "finite": true},
+    {"cutoff": 6, "satellite_amplitude": 0.0277777777777777762, "satellite_energy_fraction": 0.000771604938271604895, "enstrophy": 4.71124008942369255, "palinstrophy": 36.7726539859891872, "full_stretching": 1.64275745413012797, "selected_aggregate_h1_norm2": 49.7796715065950579, "tail_aggregate_h2_norm2": 0.0813314273263106013, "cauchy_bound_power_one": 5.91295565988065575e-05, "selected_channel_power_one": 5.90452739210390751e-24, "actual_over_cauchy_bound": 9.98574610015438727e-20, "quarter_compensated_bound": 0.000167243641758279545, "state_path": "proof/l4/states/local-projective-normalization-satellite/H64-baseK3-c1-m4/K6.tsv", "finite": true},
+    {"cutoff": 8, "satellite_amplitude": 0.015625, "satellite_energy_fraction": 0.000244140625, "enstrophy": 4.70587839411947151, "palinstrophy": 36.8808624815762229, "full_stretching": 1.64102074104874318, "selected_aggregate_h1_norm2": 49.8095281503029526, "tail_aggregate_h2_norm2": 0.0876800319069447748, "cauchy_bound_power_one": 6.10025754009841531e-05, "selected_channel_power_one": 5.85319208036943804e-24, "actual_over_cauchy_bound": 9.59499175550383219e-20, "quarter_compensated_bound": 0.000172541338943518285, "state_path": "proof/l4/states/local-projective-normalization-satellite/H64-baseK3-c1-m4/K8.tsv", "finite": true},
+    {"cutoff": 10, "satellite_amplitude": 0.0100000000000000002, "satellite_energy_fraction": 0.000100000000000000005, "enstrophy": 4.70255185667063902, "palinstrophy": 36.9483226654287051, "full_stretching": 1.64137564711693895, "selected_aggregate_h1_norm2": 49.8247586506424867, "tail_aggregate_h2_norm2": 0.0848545596422834031, "cauchy_bound_power_one": 5.98235566636496236e-05, "selected_channel_power_one": 5.83195070278664258e-24, "actual_over_cauchy_bound": 9.74858572113331117e-20, "quarter_compensated_bound": 0.000169206570366257295, "state_path": "proof/l4/states/local-projective-normalization-satellite/H64-baseK3-c1-m4/K10.tsv", "finite": true},
+    {"cutoff": 12, "satellite_amplitude": 0.00694444444444444406, "satellite_energy_fraction": 4.8225308641975306e-05, "enstrophy": 4.70047955659412597, "palinstrophy": 36.9956846818611496, "full_stretching": 1.64150313409204873, "selected_aggregate_h1_norm2": 49.8297567444610436, "tail_aggregate_h2_norm2": 0.080831997614605966, "cauchy_bound_power_one": 5.8247607195911362e-05, "selected_channel_power_one": 2.32624323099611966e-23, "actual_over_cauchy_bound": 3.993714665689148e-19, "quarter_compensated_bound": 0.000164749112144477086, "state_path": "proof/l4/states/local-projective-normalization-satellite/H64-baseK3-c1-m4/K12.tsv", "finite": true}
+  ],
+  "every_row_finite": true,
+  "finite_satellite_scan_is_not_a_proof": true,
+  "uniform_cauchy_majorant_proved": false,
+  "interpretation": "finite locality stress test only: structured scale-separated satellites may be excluded exactly by the local triad selector, while a dense comparable-frequency band tests local high-high output; neither outcome proves or falsifies a cutoff-uniform majorant without an unbounded-cutoff construction"
+}

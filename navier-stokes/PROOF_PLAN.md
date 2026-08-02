@@ -1020,11 +1020,86 @@ analytic gradients.  Alignment optimization raises `sqrt(A_H)` from
 `0.0832` to `0.7712` while shrinking the actual term by about `4.47e5`, so
 alignment alone is not the lemma.  Direct majorant optimization raises
 `M_H` from `0.006476` to `0.010410` at K8; exact zero padding gives
-`0.010458` at K12 and one K12 gradient step gives `0.010474`.  The next
-precise palinstrophy target is
+`0.010458` at K12 and one K12 gradient step gives `0.010474`.  The height
+scan sharpens this into the explicit candidate
+
+```text
+PNT-8: sup_(K,u,H>=1) H^(1/2) M_H^2 < infinity,
+       equivalently M_H <= C H^(-1/4).
+```
+
+Independent H=8,16,32,64 optimizations have fitted slopes `-0.4181` at K8,
+`-0.3320` after exact zero padding to K12, and `-0.2754` after one K12 step.
+The last scan keeps `H^(1/4)M_H` between `0.01672` and `0.01899`; an H128
+stress run gives `0.01332`.  This is a finite candidate, not a decay proof.
+The exact locality condition excludes strongly separated low/high satellites;
+a dense comparable-frequency high band activates the tail but plateaus and
+then decreases from K8 through K12.  Thus the next analytic task is a local
+high/high estimate for `T2` coupled to `S_full^2 B1/(Z^3P^5)`, rather than
+more blind cutoff extrapolation.  An exact height-shell Gram ledger now gives
+
+```text
+T2 <= R_H D_H,
+D_H=sum_(j>H)||A b_j||_2^2,
+R_H=max_i sum_j |<A b_i,A b_j>|/(||A b_i||_2 ||A b_j||_2).
+```
+
+Across the K8/K12 H=8,16,32,64 scans, `R_H<=1.66034`, all inter-shell Gram
+terms have the same sign, and the Schur bound is 89--98% sharp.  Cancellation
+therefore does not explain the height decay.  The squared diagonal and Schur
+slopes at K12 are `-0.4569` and `-0.5787`, and their maximum H-half-compensated
+values are `2.67e-4` and `3.89e-4`.  The next conventional proof attempt is
+the joint PNT-12 bound on `H^(1/2) S_full^2 B1 R_H D_H/(Z^3P^5)`; neither a
+uniform `R_H` bound nor diagonal height decay is yet proved.  The overall
+palinstrophy target remains
 PNT-4: a cutoff-uniform joint bound for
 `|S_full(s*t_tail+s_tail*t_core)|/(Z^2 P^3)`.  Separate H2-tail or alignment
 estimates are intentionally not substituted for this joint target.
+The normalized height-gap estimate
+`|<A b_i,A b_j>| <= C 2^(-|i-j|)||A b_i||||A b_j||` (PNT-13) has now failed
+its exact-gradient adversarial screen.  Raw correlations reach `0.985710`,
+`0.998998`, and `0.994971` at gaps 4, 6, and 7, so the required finite
+weighted constants are `15.7714`, `63.9359`, and `127.356`.  The K8 and K12
+states concentrate 99% of their Gram pairing on one or two cutoff-wall output
+modes.  This rejects standalone almost-orthogonality as the proof mechanism;
+an explicit scalable construction would be required for a formal unboundedness
+theorem.
+
+The ordered-triad attribution prevents overinterpreting that output sparsity.
+For the dominant K8 mode the shell-2/shell-8 effective interaction counts are
+`1.09/6.75`; for the dominant K12 mode the shell-2/shell-9 counts are
+`4.11/43.43`.  The high-shell generator becomes denser even though its output
+stays concentrated on the Galerkin wall.  No sparse cutoff-scalable
+counterexample has therefore been extracted from these states.
+
+The PNT-13 adversaries strengthen rather than weaken the routing evidence for
+the joint PNT-12 target.  Their largest compensated Schur majorant is
+`3.56e-13`, about nine orders below the `3.89e-4` PNT-majorant stress value.
+Their common normalized factors collapse to between `2.19e-24` and
+`1.59e-17` even while the raw shell correlation approaches one.  The next
+conventional proof attempt must therefore retain
+`S_full^2 B1 R_H D_H/(Z^3P^5)` as one coupled quantity.  Separate uniform
+correlation decay is no longer an active sublemma.
+
+PNT-12 is now optimized directly rather than only inherited from the
+aggregate Cauchy objective.  For a fixed tail row `i`, the C++ objective is
+`J_(H,i)=H^(1/2) 9 S_full^2 B1 R_(H,i)D_H/(4Z^3P^5)` and its exact gradient
+contains every Gram-row, diagonal-tail, and common-normalization derivative.
+Sixteen K8 steps raise the H8 row-5 value from `3.44363e-4` to `3.63935e-4`.
+At H16, row 6 rises from `3.71126e-4` to `3.97807e-4`; zero padding gives
+`4.12917e-4`, and one K12 step reaches the new finite record `4.18215e-4`.
+This is `7.46%` above the previous proxy-derived K12 record.  The final K12
+directional-gradient error is `1.21e-10`.  The increase means the old decimal
+plateau was optimizer-dependent, not a bound; it does not show that PNT-12 is
+unbounded.
+
+The new group-index `vjp_sum` removes aggregate interaction copies and lowers
+the K12 peak RSS from `7.94 GiB` to `4.88 GiB`.  Direct K8 searches use about
+`0.51 GiB` and roughly ten CPU cores.  The analytical restart point remains
+the joint PNT-12 inequality itself.  Further computation should test its
+height/cutoff scaling row by row, while the proof attempt must couple the
+projective diagonal count and Gram row to the falling
+`S_full^2B1/(Z^3P^5)` factor.
 See `proof/l4/lemmas/shifted-local-density/PALINSTROPHY_NORMALIZATION_TAIL.md`.
 
 The absolute closure ratio was subsequently reverse-differentiated and

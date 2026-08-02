@@ -19,6 +19,8 @@
 #include "local_sld_projective_normalization_objective.hpp"
 #include "local_sld_projective_normalization_alignment_objective.hpp"
 #include "local_sld_projective_normalization_cauchy_objective.hpp"
+#include "local_sld_projective_normalization_schur_objective.hpp"
+#include "local_sld_projective_height_gap_correlation_objective.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
 
 #include <algorithm>
@@ -354,6 +356,25 @@ SpectralReal GradientAdversary::objective_value(
             options.objective_threads)
             .evaluate(initial)
             .squared_cauchy_bound_power_one;
+    }
+    if (options.objective ==
+        "local-projective-height-gap-correlation-ratio") {
+        return LocalSldProjectiveHeightGapCorrelationObjective(
+            options.closure_selection,
+            options.projective_first_height_shell,
+            options.projective_second_height_shell,
+            options.objective_threads)
+            .evaluate(initial).weighted_correlation_squared;
+    }
+    if (options.objective ==
+        "local-projective-normalization-schur-row-ratio") {
+        return LocalSldProjectiveNormalizationSchurObjective(
+            dynamics_, options.closure_selection,
+            options.projective_core_maximum_height,
+            options.projective_schur_row_shell,
+            options.objective_threads)
+            .evaluate(initial)
+            .height_half_compensated_schur_squared_majorant;
     }
     if (is_normalization_component_objective(options.objective)) {
         return LocalSldProjectiveNormalizationObjective(
@@ -738,6 +759,28 @@ GradientSearchResult GradientAdversary::maximize_q(
                 .squared_cauchy_bound_power_one;
             trajectory.objective_step = 0;
             trajectory.initial_gradient = cauchy.gradient(result.state);
+        } else if (options.objective ==
+                   "local-projective-height-gap-correlation-ratio") {
+            const LocalSldProjectiveHeightGapCorrelationObjective correlation(
+                options.closure_selection,
+                options.projective_first_height_shell,
+                options.projective_second_height_shell,
+                options.objective_threads);
+            trajectory.objective_value = correlation.evaluate(result.state)
+                .weighted_correlation_squared;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = correlation.gradient(result.state);
+        } else if (options.objective ==
+                   "local-projective-normalization-schur-row-ratio") {
+            const LocalSldProjectiveNormalizationSchurObjective schur(
+                dynamics_, options.closure_selection,
+                options.projective_core_maximum_height,
+                options.projective_schur_row_shell,
+                options.objective_threads);
+            trajectory.objective_value = schur.evaluate(result.state)
+                .height_half_compensated_schur_squared_majorant;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = schur.gradient(result.state);
         } else if (is_normalization_component_objective(
                        options.objective)) {
             const LocalSldProjectiveNormalizationObjective normalization(

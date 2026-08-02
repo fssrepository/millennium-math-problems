@@ -9,11 +9,8 @@
 namespace lemma {
 namespace {
 
-using Shape = std::array<SpectralInteger, 3>;
-
 struct ShapeRegion {
     std::vector<std::size_t> indices;
-    std::vector<Shape> shapes;
 };
 
 struct CauchyGraph {
@@ -98,16 +95,11 @@ CauchyGraph build_graph(
     const auto& groups = ProjectiveAdvectionDecomposition::group(
         state, selection);
     graph.selected.indices.reserve(groups.size());
-    graph.selected.shapes.reserve(groups.size());
     for (std::size_t index = 0; index < groups.size(); ++index) {
         graph.selected.indices.push_back(index);
-        graph.selected.shapes.push_back(
-            groups[index].primitive_squared_lengths);
         if (groups[index].primitive_squared_lengths[2] >
             core_maximum_height) {
             graph.tail.indices.push_back(index);
-            graph.tail.shapes.push_back(
-                groups[index].primitive_squared_lengths);
         }
     }
     graph.au = laplacian_weight(state, state.velocity);
@@ -204,25 +196,21 @@ LocalSldProjectiveNormalizationCauchyObjective::gradient(
     const SpectralReal objective =
         2.25L * graph.full_stretching * graph.full_stretching *
         graph.selected_h1_norm2 * graph.tail_h2_norm2 / denominator;
-    const auto& selected_aggregate =
-        ProjectiveAdvectionDecomposition::aggregate_family(
-            state, selection_, graph.selected.shapes);
-    const auto& tail_aggregate =
-        ProjectiveAdvectionDecomposition::aggregate_family(
-            state, selection_, graph.tail.shapes);
+    const auto& groups = ProjectiveAdvectionDecomposition::group(
+        state, selection_);
 
     SpectralIncrement selected_h1_cotangent = graph.selected_ab;
     scale(selected_h1_cotangent, 2.0L);
     const SpectralIncrement selected_h1_gradient =
-        ProjectiveAdvectionDecomposition::vjp(
-            state, selected_aggregate.front(),
+        ProjectiveAdvectionDecomposition::vjp_sum(
+            state, groups, graph.selected.indices,
             selected_h1_cotangent, threads_);
     SpectralIncrement tail_h2_cotangent = laplacian_weight(
         state, graph.tail_ab);
     scale(tail_h2_cotangent, 2.0L);
     const SpectralIncrement tail_h2_gradient =
-        ProjectiveAdvectionDecomposition::vjp(
-            state, tail_aggregate.front(),
+        ProjectiveAdvectionDecomposition::vjp_sum(
+            state, groups, graph.tail.indices,
             tail_h2_cotangent, threads_);
 
     result = LocalQuarticClosureObjective(
