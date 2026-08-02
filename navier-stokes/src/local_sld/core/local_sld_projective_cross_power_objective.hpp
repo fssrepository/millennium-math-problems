@@ -25,7 +25,8 @@ class LocalSldProjectiveCrossPowerObjective {
 public:
     LocalSldProjectiveCrossPowerObjective(
         const SpectralDynamics& dynamics,
-        TriadSelection selection);
+        TriadSelection selection,
+        int threads = 1);
 
     [[nodiscard]] LocalSldProjectiveCrossPowerObjectiveValue evaluate(
         const SpectralState& state) const;
@@ -42,6 +43,7 @@ public:
 private:
     const SpectralDynamics& dynamics_;
     TriadSelection selection_;
+    int threads_ = 1;
 };
 
 }  // namespace lemma

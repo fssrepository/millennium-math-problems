@@ -20,7 +20,8 @@ public:
         const std::vector<ProjectiveInteractionGroup>& groups,
         SpectralReal enstrophy,
         SpectralReal palinstrophy,
-        bool compute_gradient);
+        bool compute_gradient,
+        int threads = 1);
 };
 
 }  // namespace lemma

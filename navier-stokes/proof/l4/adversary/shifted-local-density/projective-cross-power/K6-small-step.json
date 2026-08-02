@@ -1,0 +1,33 @@
+{
+  "schema": "navier-stokes-local-quartic-closure-adversary-v1",
+  "search_objective": "projective-cross-power-ratio",
+  "triad_selection": "double-triple-remainder",
+  "optimized_formula": "maximize |(K_cross+G_cross) S_full|^2 / (Z^4 P^4) after subtracting every same-projective-ray quartet",
+  "closure_objective": "maximize |K+G| / (k0 B0^(1/4) Z^(5/4) P^(3/4))",
+  "direct_sld_objective": "maximize 4 S^3 Z P (K+G) / (k0 (S^4 Z^2 P + B0 Z^3 P^4))",
+  "implemented_static_scale": "Z^(7/4) P / E^(1/4)",
+  "optimizer": "lbfgs",
+  "backend": "direct",
+  "initial_profile": "mixed",
+  "warm_state_path": "proof/l4/states/local-projective-cross-power/K5-warm/K5.tsv",
+  "gradient": "exact discrete reverse mode; selected local objectives use direct triads and RK4 follows the requested backend",
+  "workers": 1,
+  "restarts_per_cutoff": 1,
+  "iterations_per_restart": 2,
+  "trajectory_steps": 0,
+  "viscosity": 0.100000000000000006,
+  "time_step": 0.00200000000000000004,
+  "absorption_theta": 0.900000000000000022,
+  "shape_power": 3,
+  "sobolev_order": 0,
+  "sobolev_cap": 0,
+  "fitted_cutoff_slope": 0,
+  "maximum_constant_ratio": 0.00798925000789136967,
+  "maximum_objective": 1.24705891862648393e-06,
+  "candidate_lemma_proved": false,
+  "finite_search_is_not_a_proof": true,
+  "remaining_requirement": "derive a cutoff-independent analytic bound for the two-entry bracket",
+  "rows": [
+    {"cutoff": 6, "initial_objective": 1.24671484245358097e-06, "optimized_objective": 1.24705891862648393e-06, "objective_gain": 3.4407617290288708e-10, "initial_constant_ratio": 0.00799243889101779528, "optimized_constant_ratio": 0.00798925000789136967, "lqc3_target_ratio": 0.0129087063953250685, "signed_lqc3_target_ratio": -0.0129087063953250685, "remainder_upper_envelope_ratio": 0.0312204975507602463, "remainder_absorption_ratio": -0.00156092829130942607, "shape_power_absolute_product": 3.28939821002760764e-06, "shape_power_normalized_stretching": -0.0743938120765825495, "projective_coherence_ratio": 0.919159186140336759, "projective_coherence_amplification": 0.958727899948852436, "projective_coherence_shape_count": 3204, "projective_stretching_ratio": 0.0346044671368866893, "projective_stretching_alignment_squared": 0.0376479587634815788, "projective_stretching_reconstruction_error": 0, "projective_cross_power_absolute": 0.00111671792258675778, "projective_cross_bracket": 0.092375439067323914, "projective_diagonal_bracket": -0.1415404176605283, "squared_lqc3_target_ratio": 0.000166634700800706315, "signed_constant_ratio": -0.00798925000789136967, "normalized_stretching_ratio": -0.0406400154718339207, "signed_shape_factor": -0.000268485230838310545, "factorized_local_sld_ratio": 2.14499563259368882e-06, "factorization_relative_error": 0, "common_block_objective": false, "common_block_constant_ratio": 0, "common_block_shape_factor": 0, "common_block_sld_ratio": 0, "common_block_reconstruction_error": 0, "refined_objective": 0, "time_step_relative_error": 0, "frozen_initial_frequency": 0, "frozen_initial_ep_shift": 0, "objective_step": 0, "refined_objective_step": 0, "improvement_factor": 0.999601012510710762, "signed_two_entry_bracket": -0.0491649785932044003, "candidate_scale": 6.15389160993106543, "signed_stretching": -0.135506988309586046, "local_polynomial_numerator": 0.00221656137133169643, "local_polynomial_denominator": 1033.36404869574108, "signed_local_sld_ratio": 2.14499563259368882e-06, "energy": 1, "enstrophy": 1.50462408515478585, "palinstrophy": 3.01058453274343929, "warm_lift_constant_ratio": 0.00799243889101779528, "warm_lift_objective": 2.1461040196722828e-06, "projection_residual": 0.000279449398378305198, "projected_gradient_norm": 2.74444078111450652e-06, "sobolev_value": 0, "winning_restart": 0, "winning_seed": "1127675556562534488", "warm_continuation_won": true, "accepted_steps": 2, "evaluations": 8, "state_path": "proof/l4/states/local-projective-cross-power/K6-small-step/K6.tsv", "restart_constant_ratios": [0.00798925000789136967], "restart_objectives": [1.24705891862648393e-06]}
+  ]
+}

@@ -293,6 +293,17 @@ identically zero. At K1024 the exact integer enumeration contains 15,862
 primitive rays and has target synthesis ratio `15,822.5`. This is an
 obstruction to standalone synthesis, not to RQ-11.
 
+The exact projective self/cross decomposition then removes another ambiguity.
+On the K7 power-one winner, same-ray quartets contribute `0.00614715` and
+unequal-ray quartets contribute only `0.00021762` to the full `0.00636477`.
+The double/triple/`(1,2,3)`-free K5 tail splits as `0.00202885` self and
+`0.00053328` cross. An exact-gradient cross-only search reaches `0.0011166`
+at K5 and `0.00111672` after a small-step K6 continuation; evaluate-only
+lifts through K8 are unchanged. On its K5 winner, `+0.00171121` self cancels
+`-0.00111656` cross. See
+[PROJECTIVE_CROSS_QUARTET.md](PROJECTIVE_CROSS_QUARTET.md). None of these
+finite values is the required uniform cross theorem.
+
 ## Reproduction
 
 ```bash
@@ -373,6 +384,10 @@ Artifacts:
 - [`../../analysis/shifted-local-density/projective-quartet/coherent-fan-unique-rays-K3-K24.json`](../../analysis/shifted-local-density/projective-quartet/coherent-fan-unique-rays-K3-K24.json)
 - [`../../adversary/shifted-local-density/projective-coherence/K1-K5.json`](../../adversary/shifted-local-density/projective-coherence/K1-K5.json)
 - [`../../analysis/shifted-local-density/remainder-quartet/projective-coherence-winners-K1-K5-tradeoff.json`](../../analysis/shifted-local-density/remainder-quartet/projective-coherence-winners-K1-K5-tradeoff.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K7-power-one-quartic-cross.json`](../../analysis/shifted-local-density/remainder-quartet/K7-power-one-quartic-cross.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K5-power-one-tail-quartic-cross.json`](../../analysis/shifted-local-density/remainder-quartet/K5-power-one-tail-quartic-cross.json)
+- [`../../adversary/shifted-local-density/projective-cross-power/K5-warm.json`](../../adversary/shifted-local-density/projective-cross-power/K5-warm.json)
+- [`../../adversary/shifted-local-density/projective-cross-power/K6-small-step.json`](../../adversary/shifted-local-density/projective-cross-power/K6-small-step.json)
 
 The exact remaining remainder statement is the stretching-aware cross-ray
 tradeoff RQ-11. Every fixed ray and the bilinear projective square function

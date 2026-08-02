@@ -441,6 +441,12 @@ shape factor. The scalar shape multiplier is at most two, so the remaining
 remainder statement is the energy-independent power-one bound
 `|(K_rem+G_rem)S_full| <= C Z^2P^2`; its precise unresolved step is coupling
 cross-ray coherence to the stretching direction detected by `Au`.
+The exact refinement in
+[PROJECTIVE_CROSS_QUARTET.md](PROJECTIVE_CROSS_QUARTET.md) separates every
+same-ray self quartet from the unequal-ray block. The K7 power-one winner is
+`96.6%` self by signed total, while a cross-only exact-gradient branch is
+flat near `0.0011166` through a K8 lift. The finite branch is not the missing
+cutoff-uniform cross estimate.
 
 ## Reduced proof obligation
 

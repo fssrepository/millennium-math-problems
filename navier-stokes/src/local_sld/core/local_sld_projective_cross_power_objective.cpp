@@ -55,8 +55,14 @@ SpectralIncrement laplacian_weight(
 LocalSldProjectiveCrossPowerObjective::
 LocalSldProjectiveCrossPowerObjective(
     const SpectralDynamics& dynamics,
-    TriadSelection selection)
-    : dynamics_(dynamics), selection_(selection) {}
+    TriadSelection selection,
+    int threads)
+    : dynamics_(dynamics), selection_(selection), threads_(threads) {
+    if (threads < 1 || threads > 256) {
+        throw std::invalid_argument(
+            "projective cross-power threads must be 1..256");
+    }
+}
 
 SpectralReal LocalSldProjectiveCrossPowerObjective::diagonal_bracket(
     const SpectralState& state) const {
@@ -71,7 +77,7 @@ SpectralReal LocalSldProjectiveCrossPowerObjective::diagonal_bracket(
         state, selection_);
     return ProjectiveQuarticDiagonalKernel::evaluate(
         state, groups, selected.enstrophy,
-        selected.palinstrophy, false).bracket;
+        selected.palinstrophy, false, threads_).bracket;
 }
 
 SpectralIncrement
@@ -88,7 +94,7 @@ LocalSldProjectiveCrossPowerObjective::diagonal_bracket_gradient(
         state, selection_);
     return ProjectiveQuarticDiagonalKernel::evaluate(
         state, groups, selected.enstrophy,
-        selected.palinstrophy, true).gradient;
+        selected.palinstrophy, true, threads_).gradient;
 }
 
 LocalSldProjectiveCrossPowerObjectiveValue
@@ -148,7 +154,7 @@ SpectralIncrement LocalSldProjectiveCrossPowerObjective::gradient(
     const ProjectiveQuarticDiagonalMoment diagonal_moment =
         ProjectiveQuarticDiagonalKernel::evaluate(
             state, groups, selected.enstrophy,
-            selected.palinstrophy, true);
+            selected.palinstrophy, true, threads_);
     const SpectralReal diagonal = diagonal_moment.bracket;
     const SpectralReal cross =
         selected.signed_two_entry_bracket - diagonal;

@@ -121,6 +121,15 @@ cross-ray cancellation compatible with
 |(K_rem+G_rem)S_full| <= C Z^2P^2.                  (PQ-9)
 ```
 
+The exact self/cross expansion in
+[PROJECTIVE_CROSS_QUARTET.md](PROJECTIVE_CROSS_QUARTET.md) sharpens this
+further. On the K7 power-one winner, `0.00614715` of the total `0.00636477`
+comes from same-ray self quartets and only `0.00021762` from unequal-ray
+terms. A cross-only exact-gradient search stays near `0.0011166` from K4
+through a zero-padded K8 replay. These are finite diagnostics; the remaining
+proof obligation is the cutoff-uniform cross estimate and uniform summation
+of the self rays.
+
 The projective ledger groups exact signatures by their gcd. On the K7
 power-one winner it reduces 8105 exact signatures to 7322 primitive shapes,
 but one ray contributes `95.42%` of the absolute total. After removing the

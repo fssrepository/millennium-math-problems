@@ -76,7 +76,7 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
     if (options.minimum_cutoff < 1 ||
         options.maximum_cutoff < options.minimum_cutoff ||
         options.maximum_cutoff > 8 || options.restarts < 1 ||
-        options.workers < 1 || options.iterations < 1 ||
+        options.workers < 1 || options.iterations < 0 ||
         options.line_search_steps < 1 ||
         options.lbfgs_history < 1 || options.lbfgs_history > 64 ||
         !(options.initial_step > 0.0L) ||
@@ -139,7 +139,7 @@ void LocalQuarticClosureCli::print_help(std::ostream& out) {
         << "  --max-cutoff K       last Fourier cutoff (maximum 8)\n"
         << "  --restarts N         independent starts per cutoff\n"
         << "  --workers N          parallel restart workers (use 12)\n"
-        << "  --iterations N       exact-gradient iterations per start\n"
+        << "  --iterations N       exact-gradient iterations per start; 0 evaluates only\n"
         << "  --line-search N      backtracking trials per iteration\n"
         << "  --lbfgs-history N    limited-memory curvature pairs\n"
         << "  --trajectory-steps N RK4 steps for frozen-data trajectory objectives\n"

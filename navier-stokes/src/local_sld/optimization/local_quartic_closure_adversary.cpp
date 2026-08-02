@@ -249,6 +249,8 @@ LocalQuarticClosureAdversary::maximize(
     search.sobolev_order = options.sobolev_order;
     search.sobolev_cap = options.sobolev_cap;
     search.closure_selection = closure_selection(options.selection);
+    search.objective_threads = options.restarts == 1
+        ? options.workers : 1;
     const GradientSearchResult optimized = adversary.maximize_q(
         initial, search);
     const LocalQuarticClosureObjective closure(
@@ -294,7 +296,8 @@ LocalQuarticClosureAdversary::maximize(
         stretching_value.product_reconstruction_error;
     const LocalSldProjectiveCrossPowerObjectiveValue cross_power_value =
         LocalSldProjectiveCrossPowerObjective(
-            dynamics, search.closure_selection).evaluate(result.state);
+            dynamics, search.closure_selection,
+            search.objective_threads).evaluate(result.state);
     result.projective_cross_power_absolute =
         cross_power_value.absolute_cross_power_one;
     result.projective_cross_bracket = cross_power_value.cross_bracket;
@@ -362,7 +365,7 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
         options.maximum_cutoff < options.minimum_cutoff ||
         options.maximum_cutoff > 8 || options.restarts < 1 ||
         options.restarts > 1000 || options.workers < 1 ||
-        options.workers > 256 || options.iterations < 1 ||
+        options.workers > 256 || options.iterations < 0 ||
         options.line_search_steps < 1 ||
         !(options.initial_step > 0.0L) ||
         !(options.absorption_theta >= 0.0L) ||

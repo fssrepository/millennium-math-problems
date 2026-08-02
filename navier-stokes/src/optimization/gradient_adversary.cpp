@@ -214,7 +214,8 @@ SpectralReal GradientAdversary::objective_value(
     }
     if (options.objective == "local-projective-cross-power-ratio") {
         return LocalSldProjectiveCrossPowerObjective(
-            dynamics_, options.closure_selection)
+            dynamics_, options.closure_selection,
+            options.objective_threads)
             .evaluate(initial).squared_cross_power_one;
     }
     if (options.objective == "local-sld-ratio") {
@@ -451,7 +452,8 @@ GradientSearchResult GradientAdversary::maximize_q(
         } else if (options.objective ==
                    "local-projective-cross-power-ratio") {
             const LocalSldProjectiveCrossPowerObjective cross_power(
-                dynamics_, options.closure_selection);
+                dynamics_, options.closure_selection,
+                options.objective_threads);
             trajectory.objective_value = cross_power.evaluate(result.state)
                 .squared_cross_power_one;
             trajectory.objective_step = 0;

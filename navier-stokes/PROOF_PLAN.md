@@ -907,6 +907,12 @@ standalone synthesis estimate cannot be uniform: its ratio is at least
 `K^2/640`, while its stretching is exactly zero. The remaining analytic gap
 is therefore the stretching-aware cross-ray tradeoff in RQ-11, not unsigned
 uniform summation.
+The exact self/cross quartet ledger shows that the K7 power-one winner splits
+as `0.00614715` same-ray and `0.00021762` unequal-ray. A new cross-only exact
+gradient objective stays near `0.0011166` from K4 through a K8 lift, while its
+K5 winner exhibits opposite-sign self/cross cancellation. The active analytic
+subtask is now the explicit unequal-ray formula PCQ-3 in
+`PROJECTIVE_CROSS_QUARTET.md`, followed by uniform summation of PCQ-1.
 
 The absolute closure ratio was subsequently reverse-differentiated and
 optimized directly. A K1 branch reaches `C_state=1/3`, but its stretching is

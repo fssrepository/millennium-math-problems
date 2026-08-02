@@ -435,6 +435,7 @@ absolute power-one total; after removing the proved equal-low families, the K5
 tail has `3.027` effective projective shapes. See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_QUARTET.md` and
+`proof/l4/lemmas/shifted-local-density/PROJECTIVE_CROSS_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/REMAINDER_QUARTET.md`.
 
 The helical local target has its own replayable optimizer and same-state

@@ -1,7 +1,13 @@
 #include "projective_quartic_diagonal_kernel.hpp"
 
+#include <algorithm>
 #include <map>
 #include <stdexcept>
+#include <vector>
+
+#ifdef NS_HAVE_OPENMP
+#include <omp.h>
+#endif
 
 namespace lemma {
 namespace {
@@ -318,29 +324,79 @@ ProjectiveQuarticDiagonalKernel::evaluate(
     const std::vector<ProjectiveInteractionGroup>& groups,
     SpectralReal enstrophy,
     SpectralReal palinstrophy,
-    bool compute_gradient) {
+    bool compute_gradient,
+    int threads) {
     if (!(enstrophy > 0.0L) || !(palinstrophy > 0.0L)) {
         throw std::invalid_argument(
             "projective diagonal kernel requires positive Z and P");
     }
+    if (threads < 1 || threads > 256) {
+        throw std::invalid_argument(
+            "projective diagonal threads must be 1..256");
+    }
     ProjectiveQuarticDiagonalMoment result;
     result.projective_shape_count = groups.size();
-    if (compute_gradient) {
-        result.gradient.resize(state.waves.size());
-    }
-    SpectralReal d_enstrophy = 0.0L;
-    SpectralReal d_palinstrophy = 0.0L;
     SpectralIncrement au(state.waves.size());
     for (std::size_t mode = 0; mode < au.size(); ++mode) {
         au[mode] = au_at(state, mode);
     }
-    for (const ProjectiveInteractionGroup& group : groups) {
+    int worker_count = 1;
+#ifdef NS_HAVE_OPENMP
+    worker_count = std::max(
+        1, std::min(threads, static_cast<int>(groups.size())));
+#endif
+    std::vector<SpectralReal> partial_bracket(
+        static_cast<std::size_t>(worker_count), 0.0L);
+    std::vector<SpectralReal> partial_d_enstrophy(
+        static_cast<std::size_t>(worker_count), 0.0L);
+    std::vector<SpectralReal> partial_d_palinstrophy(
+        static_cast<std::size_t>(worker_count), 0.0L);
+    std::vector<SpectralIncrement> partial_gradients;
+    if (compute_gradient) {
+        partial_gradients.assign(
+            static_cast<std::size_t>(worker_count),
+            SpectralIncrement(state.waves.size()));
+    }
+#ifdef NS_HAVE_OPENMP
+#pragma omp parallel for schedule(dynamic, 1) num_threads(worker_count) \
+    if(worker_count > 1)
+#endif
+    for (std::ptrdiff_t group_index = 0;
+         group_index < static_cast<std::ptrdiff_t>(groups.size());
+         ++group_index) {
+        int worker = 0;
+#ifdef NS_HAVE_OPENMP
+        worker = omp_get_thread_num();
+#endif
+        const std::size_t worker_index = static_cast<std::size_t>(worker);
         const SparseGroupMoment group_moment = accumulate_group(
-            state, group, au, enstrophy, palinstrophy,
-            compute_gradient ? &result.gradient : nullptr);
-        result.bracket += group_moment.bracket;
-        d_enstrophy += group_moment.d_enstrophy;
-        d_palinstrophy += group_moment.d_palinstrophy;
+            state, groups[static_cast<std::size_t>(group_index)], au,
+            enstrophy, palinstrophy,
+            compute_gradient
+                ? &partial_gradients[worker_index] : nullptr);
+        partial_bracket[worker_index] += group_moment.bracket;
+        partial_d_enstrophy[worker_index] += group_moment.d_enstrophy;
+        partial_d_palinstrophy[worker_index] +=
+            group_moment.d_palinstrophy;
+    }
+    SpectralReal d_enstrophy = 0.0L;
+    SpectralReal d_palinstrophy = 0.0L;
+    if (compute_gradient) {
+        result.gradient.resize(state.waves.size());
+    }
+    for (std::size_t worker = 0;
+         worker < static_cast<std::size_t>(worker_count); ++worker) {
+        result.bracket += partial_bracket[worker];
+        d_enstrophy += partial_d_enstrophy[worker];
+        d_palinstrophy += partial_d_palinstrophy[worker];
+        if (compute_gradient) {
+            for (std::size_t mode = 0;
+                 mode < result.gradient.size(); ++mode) {
+                add_dense(
+                    result.gradient, mode,
+                    partial_gradients[worker][mode]);
+            }
+        }
     }
     if (compute_gradient) {
         for (std::size_t mode = 0; mode < result.gradient.size(); ++mode) {
