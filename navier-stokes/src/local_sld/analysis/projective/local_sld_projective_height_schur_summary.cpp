@@ -153,12 +153,38 @@ LocalSldProjectiveHeightSchurSummary::summarize(
             entry.absolute_component_power_one_envelope;
         gap.commutator_paired_envelope_sum +=
             source.commutator_paired_power_one_envelope;
+        const SpectralReal absolute_scale =
+            std::abs(matrix.power_one_scale);
+        const SpectralReal commutator_envelope =
+            std::abs(source.outer_square +
+                     source.advected_commutator) * absolute_scale;
+        const SpectralReal remainder_envelope =
+            (std::abs(source.advecting_nested) +
+             std::abs(source.enstrophy_normalization) +
+             std::abs(source.palinstrophy_normalization)) *
+            absolute_scale;
+        gap.commutator_term_envelope_sum += commutator_envelope;
+        gap.remainder_terms_envelope_sum += remainder_envelope;
         if (has_paired_outer_scale) {
             gap.commutator_paired_outer_maximum_symmetric_geometric_ratio =
                 std::max(
                     gap
                         .commutator_paired_outer_maximum_symmetric_geometric_ratio,
                     paired_outer_ratio);
+            const SpectralReal symmetry_factor =
+                entry.first_shell == entry.second_shell
+                ? 1.0L : 2.0L;
+            gap.commutator_outer_maximum_symmetric_geometric_ratio =
+                std::max(
+                    gap
+                        .commutator_outer_maximum_symmetric_geometric_ratio,
+                    commutator_envelope /
+                        (symmetry_factor * paired_outer_scale));
+            gap.remainder_outer_maximum_symmetric_geometric_ratio =
+                std::max(
+                    gap.remainder_outer_maximum_symmetric_geometric_ratio,
+                    remainder_envelope /
+                        (symmetry_factor * paired_outer_scale));
         } else if (entry.first_shell != entry.second_shell &&
                    source.commutator_paired_power_one_envelope > 1e-30L) {
             ++gap.commutator_paired_outer_unscaled_pair_count;

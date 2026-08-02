@@ -25,6 +25,8 @@ struct LocalSldProjectiveHeightMatrixEntry {
     SpectralReal power_one = 0.0L;
     SpectralReal absolute_component_power_one_envelope = 0.0L;
     SpectralReal commutator_paired_power_one_envelope = 0.0L;
+    std::size_t shared_target_mode_count = 0;
+    SpectralReal target_incidence_cosine = 0.0L;
     SpectralReal absolute_fraction = 0.0L;
 };
 
@@ -34,6 +36,8 @@ struct LocalSldProjectiveHeightShellSummary {
     SpectralInteger maximum_height = 0;
     std::size_t shape_count = 0;
     std::size_t interaction_count = 0;
+    std::size_t target_mode_count = 0;
+    SpectralReal target_multiplicity_l2_squared = 0.0L;
     SpectralReal stretching = 0.0L;
     SpectralReal palinstrophy_cross = 0.0L;
     SpectralReal aggregate_l2_norm2 = 0.0L;
@@ -49,6 +53,9 @@ struct LocalSldProjectiveHeightShellSummary {
     SpectralReal stretching_h1_alignment_squared = 0.0L;
     SpectralReal h1_synthesis_stretching_product = 0.0L;
     SpectralReal palinstrophy_cross_alignment_squared = 0.0L;
+    SpectralReal commutator_hminus1_norm2 = 0.0L;
+    SpectralReal commutator_to_outer_ratio_squared = 0.0L;
+    SpectralReal diagonal_commutator_alignment_squared = 0.0L;
 };
 
 struct LocalSldProjectiveHeightMatrixReport {

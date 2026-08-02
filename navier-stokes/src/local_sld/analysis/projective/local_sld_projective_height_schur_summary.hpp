@@ -29,6 +29,10 @@ struct LocalSldProjectiveHeightSchurGapRow {
     SpectralReal commutator_paired_envelope_sum = 0.0L;
     SpectralReal
         commutator_paired_outer_maximum_symmetric_geometric_ratio = 0.0L;
+    SpectralReal commutator_term_envelope_sum = 0.0L;
+    SpectralReal remainder_terms_envelope_sum = 0.0L;
+    SpectralReal commutator_outer_maximum_symmetric_geometric_ratio = 0.0L;
+    SpectralReal remainder_outer_maximum_symmetric_geometric_ratio = 0.0L;
     std::size_t commutator_paired_outer_unscaled_pair_count = 0;
 };
 

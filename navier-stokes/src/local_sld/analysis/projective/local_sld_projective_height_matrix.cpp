@@ -22,9 +22,11 @@ namespace {
 struct HeightShellData {
     LocalSldProjectiveHeightShellSummary summary;
     std::vector<std::size_t> group_indices;
+    std::vector<std::size_t> target_multiplicity;
     SpectralIncrement b;
     SpectralIncrement ab;
     SpectralIncrement transported_au;
+    SpectralIncrement commutator;
 };
 
 SpectralIncrement laplacian_weight(
@@ -55,6 +57,25 @@ SpectralReal pairing(
     SpectralReal result = 0.0L;
     for (std::size_t mode = 0; mode < left.size(); ++mode) {
         result += std::real(dot_hermitian(left[mode], right[mode]));
+    }
+    return result;
+}
+
+SpectralReal hminus1_norm_squared(
+    const SpectralState& state,
+    const SpectralIncrement& field) {
+    if (field.size() != state.waves.size()) {
+        throw std::invalid_argument(
+            "projective height-matrix H-1 layout mismatch");
+    }
+    SpectralReal result = 0.0L;
+    for (std::size_t mode = 0; mode < field.size(); ++mode) {
+        const SpectralReal wave2 = static_cast<SpectralReal>(
+            norm_squared(state.waves[mode]));
+        if (wave2 > 0.0L) {
+            result += std::real(dot_hermitian(
+                field[mode], field[mode])) / wave2;
+        }
     }
     return result;
 }
@@ -148,6 +169,11 @@ void write_json(
             << ", \"shape_count\": " << shell.shape_count
             << ", \"interaction_count\": "
             << shell.interaction_count
+            << ", \"target_mode_count\": "
+            << shell.target_mode_count
+            << ", \"target_multiplicity_l2_squared\": "
+            << static_cast<double>(
+                   shell.target_multiplicity_l2_squared)
             << ", \"stretching\": "
             << static_cast<double>(shell.stretching)
             << ", \"palinstrophy_cross\": "
@@ -181,6 +207,15 @@ void write_json(
             << ", \"palinstrophy_cross_alignment_squared\": "
             << static_cast<double>(
                    shell.palinstrophy_cross_alignment_squared)
+            << ", \"commutator_hminus1_norm2\": "
+            << static_cast<double>(
+                   shell.commutator_hminus1_norm2)
+            << ", \"commutator_to_outer_ratio_squared\": "
+            << static_cast<double>(
+                   shell.commutator_to_outer_ratio_squared)
+            << ", \"diagonal_commutator_alignment_squared\": "
+            << static_cast<double>(
+                   shell.diagonal_commutator_alignment_squared)
             << '}'
             << (index + 1 == report.shells.size() ? "\n" : ",\n");
     }
@@ -214,6 +249,10 @@ void write_json(
             << ", \"commutator_paired_power_one_envelope\": "
             << static_cast<double>(
                    entry.commutator_paired_power_one_envelope)
+            << ", \"shared_target_mode_count\": "
+            << entry.shared_target_mode_count
+            << ", \"target_incidence_cosine\": "
+            << static_cast<double>(entry.target_incidence_cosine)
             << ", \"absolute_fraction\": "
             << static_cast<double>(entry.absolute_fraction) << '}'
             << (index + 1 == report.entries.size() ? "\n" : ",\n");
@@ -285,6 +324,17 @@ void write_json(
             << static_cast<double>(
                    gap
                        .commutator_paired_outer_maximum_symmetric_geometric_ratio)
+            << ", \"commutator_term_envelope_sum\": "
+            << static_cast<double>(gap.commutator_term_envelope_sum)
+            << ", \"remainder_terms_envelope_sum\": "
+            << static_cast<double>(gap.remainder_terms_envelope_sum)
+            << ", \"commutator_outer_maximum_symmetric_geometric_ratio\": "
+            << static_cast<double>(
+                   gap
+                       .commutator_outer_maximum_symmetric_geometric_ratio)
+            << ", \"remainder_outer_maximum_symmetric_geometric_ratio\": "
+            << static_cast<double>(
+                   gap.remainder_outer_maximum_symmetric_geometric_ratio)
             << ", \"commutator_paired_outer_unscaled_pair_count\": "
             << gap.commutator_paired_outer_unscaled_pair_count << '}'
             << (index + 1 == schur.gaps.size() ? "\n" : ",\n");
@@ -452,6 +502,22 @@ LocalSldProjectiveHeightMatrix::analyze(
         data.summary.interaction_count =
             partition[index].interaction_count;
         data.group_indices = partition[index].group_indices;
+        data.target_multiplicity.assign(state.waves.size(), 0);
+        for (const std::size_t group_index : data.group_indices) {
+            for (const InteractionIndex interaction :
+                 groups[group_index].interactions) {
+                ++data.target_multiplicity[interaction[2]];
+            }
+        }
+        for (const std::size_t multiplicity :
+             data.target_multiplicity) {
+            if (multiplicity > 0) {
+                ++data.summary.target_mode_count;
+                data.summary.target_multiplicity_l2_squared +=
+                    static_cast<SpectralReal>(multiplicity) *
+                    static_cast<SpectralReal>(multiplicity);
+            }
+        }
     }
     const LocalQuarticClosureObjectiveValue selected =
         LocalQuarticClosureObjective(dynamics, selection).evaluate(state);
@@ -476,11 +542,37 @@ LocalSldProjectiveHeightMatrix::analyze(
         shell.b = evaluate(shell, state.velocity, state.velocity);
         shell.ab = laplacian_weight(state, shell.b);
         shell.transported_au = evaluate(shell, state.velocity, au);
+        shell.commutator = shell.transported_au;
+        for (std::size_t mode = 0;
+             mode < shell.commutator.size(); ++mode) {
+            for (std::size_t coordinate = 0; coordinate < 3;
+                 ++coordinate) {
+                shell.commutator[mode][coordinate] -=
+                    shell.ab[mode][coordinate];
+            }
+        }
         shell.summary.stretching = pairing(au, shell.b);
         shell.summary.palinstrophy_cross = pairing(shell.ab, au);
         shell.summary.aggregate_l2_norm2 = pairing(shell.b, shell.b);
         shell.summary.aggregate_h1_norm2 = pairing(shell.b, shell.ab);
         shell.summary.aggregate_h2_norm2 = pairing(shell.ab, shell.ab);
+        shell.summary.commutator_hminus1_norm2 =
+            hminus1_norm_squared(state, shell.commutator);
+        if (shell.summary.aggregate_h1_norm2 > 0.0L) {
+            shell.summary.commutator_to_outer_ratio_squared =
+                shell.summary.commutator_hminus1_norm2 /
+                shell.summary.aggregate_h1_norm2;
+        }
+        const SpectralReal diagonal_commutator = pairing(
+            shell.b, shell.commutator);
+        const SpectralReal commutator_alignment_denominator =
+            shell.summary.aggregate_h1_norm2 *
+            shell.summary.commutator_hminus1_norm2;
+        if (commutator_alignment_denominator > 0.0L) {
+            shell.summary.diagonal_commutator_alignment_squared =
+                diagonal_commutator * diagonal_commutator /
+                commutator_alignment_denominator;
+        }
         const ProjectiveSquareFunctionNorms square_function =
             ProjectiveAdvectionDecomposition::square_function_norms(
                 state, groups, shell.group_indices, threads);
@@ -560,6 +652,28 @@ LocalSldProjectiveHeightMatrix::analyze(
             entry.first_maximum_height = left.summary.maximum_height;
             entry.second_minimum_height = right.summary.minimum_height;
             entry.second_maximum_height = right.summary.maximum_height;
+            SpectralReal target_dot = 0.0L;
+            for (std::size_t mode = 0;
+                 mode < state.waves.size(); ++mode) {
+                const std::size_t left_multiplicity =
+                    left.target_multiplicity[mode];
+                const std::size_t right_multiplicity =
+                    right.target_multiplicity[mode];
+                if (left_multiplicity > 0 &&
+                    right_multiplicity > 0) {
+                    ++entry.shared_target_mode_count;
+                }
+                target_dot +=
+                    static_cast<SpectralReal>(left_multiplicity) *
+                    static_cast<SpectralReal>(right_multiplicity);
+            }
+            const SpectralReal incidence_denominator = std::sqrt(
+                left.summary.target_multiplicity_l2_squared *
+                right.summary.target_multiplicity_l2_squared);
+            if (incidence_denominator > 0.0L) {
+                entry.target_incidence_cosine =
+                    target_dot / incidence_denominator;
+            }
             if (first == second) {
                 const SpectralIncrement nested = evaluate(
                     left, left.b, state.velocity);
