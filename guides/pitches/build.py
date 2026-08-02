@@ -758,7 +758,7 @@ def brief_slide_1() -> Image.Image:
         alpha = max(0, 245 - round(x / 1250 * 245))
         od.line((x, 0, x, H), fill=(3, 10, 19, alpha))
     image.alpha_composite(overlay)
-    pill(image, (90, 62), "PLAIN-LANGUAGE BRIEF", fill=CYAN, color=INK, size=15)
+    pill(image, (90, 62), "NAVIER-STOKES BRIEF", fill=CYAN, color=INK, size=15)
     text(image, (90, 154), "Can a smooth fluid\nbecome infinitely rough?", size=63, weight="bold", max_width=840)
     text(
         image,

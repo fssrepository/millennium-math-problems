@@ -1,6 +1,6 @@
 # Millennium Math Problems
 
-> **AI-assisted Computer-Assisted Proof research (CAP).** The current
+> **AI-assisted computational proof search and lemma-falsification laboratory.** The current
 > repository architecture, deterministic C++ laboratory, proof-state
 > documentation, and public guides were produced under human direction by
 > **OpenAI Codex Sol 5.6 at Extra High reasoning effort**. Replayable
@@ -21,7 +21,7 @@ counterexamples as reproducible public knowledge.
 | Guide | PDF | Slides | Purpose |
 |---|---|---|---|
 | Project overview | [Download PDF](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/pitches/output/Millennium_Math_Problems_Project_Overview_v1.0.0_EN.pdf) | [Download PPTX](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/pitches/output/Millennium_Math_Problems_Project_Overview_v1.0.0_EN.pptx) | What this repository does, the fast-falsification loop, optional empirical input, present evidence, and the proof roadmap. |
-| Navier–Stokes in plain language | [Download PDF](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/problems/navier-stokes/output/Navier_Stokes_Brief_v1.0.0_EN.pdf) | [Download PPTX](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/problems/navier-stokes/output/Navier_Stokes_Brief_v1.0.0_EN.pptx) | The problem, why it is difficult, what the C++ laboratory tests, and how far the project has reached. |
+| Navier–Stokes brief | [Download PDF](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/problems/navier-stokes/output/Navier_Stokes_Brief_v1.0.0_EN.pdf) | [Download PPTX](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/problems/navier-stokes/output/Navier_Stokes_Brief_v1.0.0_EN.pptx) | The problem, why it is difficult, what the C++ laboratory tests, and how far the project has reached. |
 
 ## Problem portfolio
 
