@@ -134,16 +134,16 @@ add_executable(navier_stokes_lab
     src/local_sld/analysis/projective/local_sld_projective_height_transfer_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_schur_summary.cpp
 
-    src/local_sld/optimization/local_quartic_closure_adversary.cpp
-    src/local_sld/optimization/local_signature_adversary.cpp
-    src/local_sld/optimization/local_signature_factor_adversary.cpp
-    src/local_sld/optimization/local_signature_gradient_adversary.cpp
-    src/local_sld/optimization/local_signature_state_factory.cpp
-    src/local_sld/optimization/local_signature_trajectory.cpp
-    src/local_sld/optimization/local_sld_cyclic_ansatz.cpp
-    src/local_sld/optimization/local_sld_cyclic_krylov_ansatz.cpp
-    src/local_sld/optimization/local_sld_cyclic_trajectory_ansatz.cpp
-    src/local_sld/optimization/local_sld_trajectory_adjoint.cpp
+    src/local_sld/optimization/closure/local_quartic_closure_adversary.cpp
+    src/local_sld/optimization/signature/local_signature_adversary.cpp
+    src/local_sld/optimization/signature/local_signature_factor_adversary.cpp
+    src/local_sld/optimization/signature/local_signature_gradient_adversary.cpp
+    src/local_sld/optimization/signature/local_signature_state_factory.cpp
+    src/local_sld/optimization/signature/local_signature_trajectory.cpp
+    src/local_sld/optimization/cyclic/local_sld_cyclic_ansatz.cpp
+    src/local_sld/optimization/cyclic/local_sld_cyclic_krylov_ansatz.cpp
+    src/local_sld/optimization/cyclic/local_sld_cyclic_trajectory_ansatz.cpp
+    src/local_sld/optimization/trajectory/local_sld_trajectory_adjoint.cpp
 
     src/local_sld/states/local_sld_projective_fan_state.cpp
     src/local_sld/states/local_sld_two_scale_state.cpp
@@ -180,6 +180,10 @@ target_include_directories(navier_stokes_lab PRIVATE
     src/local_sld/analysis/trajectory
     src/local_sld/analysis/projective
     src/local_sld/optimization
+    src/local_sld/optimization/closure
+    src/local_sld/optimization/cyclic
+    src/local_sld/optimization/signature
+    src/local_sld/optimization/trajectory
     src/local_sld/states
     src/local_sld/cli
 )
