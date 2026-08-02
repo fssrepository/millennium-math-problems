@@ -278,12 +278,16 @@ void write_json(
         << "  \"dominant_channel_switch_observed\": "
         << (report.dominant_channel_switch_observed ? "true" : "false")
         << ",\n"
+        << "  \"canonical_dominant_channel_switch_observed\": "
+        << (report.canonical_dominant_channel_switch_observed
+                ? "true" : "false")
+        << ",\n"
         << "  \"every_matrix_exact\": "
         << (report.every_matrix_exact ? "true" : "false")
         << ",\n"
         << "  \"finite_optimized_scan_is_not_a_proof\": true,\n"
         << "  \"uniform_joint_cross_tail_bound_proved\": false,\n"
-        << "  \"candidate_lemma\": \"uniformly control the joint normalized absolute sum of s_core*t_tail, s_tail*t_core, and s_tail*t_tail; no single channel can be discarded on the optimized finite family\"\n"
+        << "  \"candidate_lemma\": \"uniformly control the canonical two-term decomposition s_selected*t_tail+s_tail*t_core; the selected-stretching/tail-cross channel retains the high-derivative tail obstruction without an H-dependent split\"\n"
         << "}\n";
 }
 
@@ -579,6 +583,9 @@ int LocalSldProjectiveNormalizationTailScanCli::run(
         << "] cauchy_bound_slope="
         << static_cast<double>(
                report.fitted_joint_cross_tail_cauchy_bound_height_slope)
+        << " selected_tail_slope="
+        << static_cast<double>(
+               report.fitted_selected_stretching_tail_cross_height_slope)
         << " cauchy_ratio=["
         << static_cast<double>(
                report.minimum_joint_cross_tail_cauchy_ratio)

@@ -483,12 +483,16 @@ monotonically, so simply enlarging a fixed core is not the missing theorem.
 The open normalization is now factored exactly into core--tail, tail--core,
 and tail--tail products, each with an analytic gradient.  Alternating the
 dominant factor with the full open objective raises the H8 K8 stress value
-from `0.000345645` to `0.000573211`; the tail--tail factor supplies `75.6%` of
-the latter.  Energy-preserving zero padding to the complete K12 cube leaves
+from `0.000345645` to `0.000573211`.  Refactoring the open product as the two
+disjoint channels `s_selected*t_tail+s_tail*t_core` and optimizing the first
+raises the K8 record to `0.000590223`; that selected/tail channel supplies
+`91.3%`.  Energy-preserving zero padding to the complete K12 cube leaves
 all three pairings and the objective exactly unchanged, while the raw Cauchy
 bound grows from `0.00844764` to `0.00849852`.  One full K12 component/open
-step reaches `0.000575812`.  Thus the active palinstrophy sublemma is a joint
-tail--tail scale/alignment estimate, not a standalone aggregate-norm or angle
+step reaches `0.000575812` on the preceding branch; the canonical K12 branch
+reaches `0.000592977` after one component/open step.  Thus the active
+palinstrophy sublemma is the joint two-channel PNT-4 estimate, led by the
+selected-stretching/tail-cross term, not a standalone aggregate-norm or angle
 bound.  These finite values do not prove a cutoff-uniform estimate.
 See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and

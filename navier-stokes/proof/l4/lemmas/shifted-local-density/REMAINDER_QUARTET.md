@@ -371,9 +371,12 @@ The open product is now factored into the exact core--tail, tail--core, and
 tail--tail contributions.  Dominant-factor/open-sum alternating optimization
 raises the H8 K8 stress value to `0.000573211`, of which `75.6%` is tail--tail.
 The value is exactly invariant under zero padding to K12 even though its raw
-Cauchy norm bound increases; one full K12 step reaches `0.000575812`.  This
-narrows the palinstrophy-normalization restart point to the joint tail--tail
-estimate PNT-4 in
+Cauchy norm bound increases; one full K12 step reaches `0.000575812`.  The
+canonical identity `s*t_tail+s_tail*t_core` removes the H-dependent three-way
+dominance.  Optimizing its first channel raises the K8 record to `0.000590223`
+and supplies `91.3%` of the result.  This narrows the
+palinstrophy-normalization restart point to the joint two-channel estimate
+PNT-4 in
 [PALINSTROPHY_NORMALIZATION_TAIL.md](PALINSTROPHY_NORMALIZATION_TAIL.md).
 
 ## Reproduction

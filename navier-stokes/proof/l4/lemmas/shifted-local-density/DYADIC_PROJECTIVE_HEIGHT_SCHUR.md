@@ -289,9 +289,12 @@ factors support a dominant-component alternating search.  It raises the H8
 K8 stress value from `0.000345645` to `0.000573211`, with `75.6%` in the
 tail--tail factor.  Zero padding to complete K12 leaves the factorized value
 unchanged but raises the aggregate-norm Cauchy majorant from `0.00844764` to
-`0.00849852`; one K12 component/open step reaches `0.000575812`.  The active
-normalization target is consequently the joint tail--tail estimate PNT-4,
-not separate tail-norm or alignment decay.  See
+`0.00849852`; one K12 component/open step reaches `0.000575812`.  The exact
+two-term identity `s*t_tail+s_tail*t_core` removes the H-dependent three-way
+dominance.  Optimizing its first channel raises the K8 record to `0.000590223`
+and supplies `91.3%` of the result.  The active normalization target is
+consequently the joint two-channel estimate PNT-4, not separate tail-norm or
+alignment decay.  See
 [PALINSTROPHY_NORMALIZATION_TAIL.md](PALINSTROPHY_NORMALIZATION_TAIL.md).
 
 ## Reproduction

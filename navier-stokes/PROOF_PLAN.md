@@ -1008,10 +1008,15 @@ tail--tail share is `75.6%`.  Zero padding that state into the complete K12
 cube leaves every pairing and the normalized objective exactly unchanged,
 although the joint aggregate-norm Cauchy bound increases by `0.60%`; one full
 K12 component/open step reaches `0.000575812`.  The zero-padding invariance is
-algebraic and is covered by the C++ self-test.  For a fixed finite core, the
-next precise palinstrophy target is PNT-4: a cutoff-uniform joint bound for
-`|S_full <Au,b_tail><Au,A b_tail>|/(Z^2 P^3)`.  Separate H2-tail or
-alignment estimates are intentionally not substituted for this joint target.
+algebraic and is covered by the C++ self-test.  The H-dependent three-term
+dominance is removed by the exact identity `s*t_tail+s_tail*t_core`.  Its new
+selected-stretching/tail-cross objective raises the K8 record to `0.000590223`
+and supplies `91.3%` of that value.  Zero padding followed by one canonical
+K12 component/open step reaches `0.000592977`, with a `91.4%` selected/tail
+share.  The next precise palinstrophy target is
+PNT-4: a cutoff-uniform joint bound for
+`|S_full(s*t_tail+s_tail*t_core)|/(Z^2 P^3)`.  Separate H2-tail or alignment
+estimates are intentionally not substituted for this joint target.
 See `proof/l4/lemmas/shifted-local-density/PALINSTROPHY_NORMALIZATION_TAIL.md`.
 
 The absolute closure ratio was subsequently reverse-differentiated and
