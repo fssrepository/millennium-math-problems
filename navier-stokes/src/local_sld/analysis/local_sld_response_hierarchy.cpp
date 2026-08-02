@@ -1,7 +1,7 @@
 #include "local_sld_response_hierarchy.hpp"
 
 #include "local_sld_cyclic_basis.hpp"
-#include "local_sld_cyclic_orbit_basis.hpp"
+#include "local_sld_response_basis.hpp"
 #include "spectral_galerkin.hpp"
 #include "state_analysis.hpp"
 
@@ -17,76 +17,67 @@
 namespace lemma {
 namespace {
 
-void add_increment(
-    SpectralIncrement& target,
-    const SpectralIncrement& source) {
-    if (target.size() != source.size()) {
-        throw std::invalid_argument(
-            "response hierarchy increment layout mismatch");
-    }
-    for (std::size_t mode = 0; mode < target.size(); ++mode) {
-        for (std::size_t component = 0; component < 3; ++component) {
-            target[mode][component] += source[mode][component];
-        }
-    }
-}
+struct ResponseShellStatistics {
+    int lowest = 0;
+    int highest = 0;
+    SpectralReal highest_fraction = 0.0L;
+    SpectralReal lower_half_fraction = 0.0L;
+};
 
-int highest_active_shell(const SpectralState& state) {
+ResponseShellStatistics shell_statistics(
+    const LocalSldResponseBasisElement& element) {
+    std::vector<SpectralReal> shell_energy(static_cast<std::size_t>(
+        SpectralStateOps::cutoff(element.state) + 1), 0.0L);
+    SpectralReal total = 0.0L;
     SpectralReal maximum_mode_energy = 0.0L;
-    for (const ComplexVector& value : state.velocity) {
-        maximum_mode_energy = std::max(
-            maximum_mode_energy,
-            std::real(dot_hermitian(value, value)));
+    for (std::size_t mode = 0; mode < element.state.waves.size(); ++mode) {
+        const SpectralReal energy = std::max(
+            0.0L,
+            std::real(dot_hermitian(
+                element.state.velocity[mode],
+                element.state.velocity[mode])));
+        maximum_mode_energy = std::max(maximum_mode_energy, energy);
+        total += energy;
+        const WaveVector wave = element.state.waves[mode];
+        const int shell = std::max(
+            {std::abs(wave.x), std::abs(wave.y), std::abs(wave.z)});
+        shell_energy[static_cast<std::size_t>(shell)] += energy;
     }
+    ResponseShellStatistics result;
     const SpectralReal threshold = 1e-24L * maximum_mode_energy;
-    int result = 0;
-    for (std::size_t mode = 0; mode < state.waves.size(); ++mode) {
-        if (std::real(dot_hermitian(
-                state.velocity[mode], state.velocity[mode])) <= threshold) {
+    bool found = false;
+    for (std::size_t mode = 0; mode < element.state.waves.size(); ++mode) {
+        const SpectralReal energy = std::max(
+            0.0L,
+            std::real(dot_hermitian(
+                element.state.velocity[mode],
+                element.state.velocity[mode])));
+        if (!(energy > threshold)) {
             continue;
         }
-        const WaveVector wave = state.waves[mode];
-        result = std::max(
-            result,
-            std::max({std::abs(wave.x), std::abs(wave.y),
-                      std::abs(wave.z)}));
+        const WaveVector wave = element.state.waves[mode];
+        const int shell = std::max(
+            {std::abs(wave.x), std::abs(wave.y), std::abs(wave.z)});
+        result.lowest = found ? std::min(result.lowest, shell) : shell;
+        result.highest = std::max(result.highest, shell);
+        found = true;
+    }
+    if (!(total > 0.0L)) {
+        return result;
+    }
+    result.highest_fraction =
+        shell_energy[static_cast<std::size_t>(result.highest)] / total;
+    const int lower_half_limit = std::max(
+        1, element.analytic_degree / 2);
+    for (int shell = 1;
+         shell <= std::min(
+             lower_half_limit,
+             static_cast<int>(shell_energy.size()) - 1);
+         ++shell) {
+        result.lower_half_fraction +=
+            shell_energy[static_cast<std::size_t>(shell)] / total;
     }
     return result;
-}
-
-SpectralReal maximum_gram_error(
-    const std::vector<SpectralState>& basis) {
-    SpectralReal result = 0.0L;
-    for (std::size_t left = 0; left < basis.size(); ++left) {
-        for (std::size_t right = 0; right < basis.size(); ++right) {
-            const SpectralReal expected = left == right ? 1.0L : 0.0L;
-            result = std::max(result, std::abs(
-                LocalSldCyclicBasis::pairing(
-                    basis[left].velocity, basis[right].velocity) -
-                expected));
-        }
-    }
-    return result;
-}
-
-void append_orthogonalized(
-    const SpectralDynamics& dynamics,
-    std::vector<SpectralState>& basis,
-    SpectralState candidate) {
-    for (const SpectralState& previous : basis) {
-        const SpectralReal weight = LocalSldCyclicBasis::pairing(
-            previous.velocity, candidate.velocity);
-        for (std::size_t mode = 0;
-             mode < candidate.velocity.size(); ++mode) {
-            for (std::size_t component = 0; component < 3; ++component) {
-                candidate.velocity[mode][component] -=
-                    weight * previous.velocity[mode][component];
-            }
-        }
-    }
-    dynamics.enforce_constraints(candidate);
-    SpectralStateOps::normalize_energy(candidate);
-    basis.push_back(std::move(candidate));
 }
 
 void write_certificate(
@@ -103,7 +94,7 @@ void write_certificate(
     }
     output << std::setprecision(18)
         << "{\n"
-        << "  \"schema\": \"navier-stokes-local-sld-response-hierarchy-v1\",\n"
+        << "  \"schema\": \"navier-stokes-local-sld-response-hierarchy-v2\",\n"
         << "  \"construction\": \"Gram-Schmidt orthogonalized coefficients of the quadratic response recursion sum_{i+j=n-1} B(b_i,b_j)\",\n"
         << "  \"state_path\": \"" << options.state_path << "\",\n"
         << "  \"residual_state_path\": \""
@@ -134,6 +125,8 @@ void write_certificate(
     for (std::size_t index = 0; index < report.rows.size(); ++index) {
         const LocalSldResponseHierarchyRow& row = report.rows[index];
         output << "    {\"order\": " << row.order
+            << ", \"response_order\": " << row.response_order
+            << ", \"analytic_degree\": " << row.analytic_degree
             << ", \"label\": \"" << row.label << "\""
             << ", \"coefficient\": "
             << static_cast<double>(row.coefficient)
@@ -144,7 +137,17 @@ void write_certificate(
             << ", \"projection_residual\": "
             << static_cast<double>(row.projection_residual)
             << ", \"highest_active_shell\": "
-            << row.highest_active_shell << "}"
+            << row.highest_active_shell
+            << ", \"lowest_active_shell\": "
+            << row.lowest_active_shell
+            << ", \"highest_shell_energy_fraction\": "
+            << static_cast<double>(
+                   row.highest_shell_energy_fraction)
+            << ", \"lower_half_shell_energy_fraction\": "
+            << static_cast<double>(
+                   row.lower_half_shell_energy_fraction)
+            << ", \"scalar_response\": "
+            << (row.scalar_response ? "true" : "false") << "}"
             << (index + 1 == report.rows.size() ? "\n" : ",\n");
     }
     output << "  ],\n"
@@ -159,49 +162,12 @@ std::vector<SpectralState> LocalSldResponseHierarchy::build(
     const SpectralDynamics& dynamics,
     int cutoff,
     int depth) {
-    if (cutoff < 2 || cutoff > 12 || depth < 2 || depth > 16) {
-        throw std::invalid_argument(
-            "response hierarchy requires cutoff 2..12 and depth 2..16");
-    }
+    const std::vector<LocalSldResponseBasisElement> elements =
+        LocalSldResponseBasis::build(dynamics, cutoff, depth);
     std::vector<SpectralState> basis;
-    basis.reserve(static_cast<std::size_t>(depth));
-    basis.push_back(LocalSldCyclicBasis::axis_state(cutoff));
-    basis.push_back(LocalSldCyclicBasis::response_state(
-        dynamics, basis.front()));
-    for (int order = 2; order < depth; ++order) {
-        SpectralState candidate = basis.front();
-        for (ComplexVector& value : candidate.velocity) {
-            value = {};
-        }
-        for (int left = 0; left < order; ++left) {
-            const int right = order - 1 - left;
-            add_increment(
-                candidate.velocity,
-                dynamics.advection_bilinear_direct_partition(
-                    candidate,
-                    basis[static_cast<std::size_t>(left)].velocity,
-                    basis[static_cast<std::size_t>(right)].velocity,
-                    TriadPartition::all));
-        }
-        dynamics.enforce_constraints(candidate);
-        for (const SpectralState& previous : basis) {
-            const SpectralReal weight = LocalSldCyclicBasis::pairing(
-                previous.velocity, candidate.velocity);
-            for (std::size_t mode = 0;
-                 mode < candidate.velocity.size(); ++mode) {
-                for (std::size_t component = 0; component < 3;
-                     ++component) {
-                    candidate.velocity[mode][component] -=
-                        weight * previous.velocity[mode][component];
-                }
-            }
-        }
-        dynamics.enforce_constraints(candidate);
-        if (SpectralStateOps::energy(candidate) < 1e-28L) {
-            break;
-        }
-        SpectralStateOps::normalize_energy(candidate);
-        basis.push_back(std::move(candidate));
+    basis.reserve(elements.size());
+    for (const LocalSldResponseBasisElement& element : elements) {
+        basis.push_back(element.state);
     }
     return basis;
 }
@@ -216,69 +182,50 @@ LocalSldResponseHierarchyReport LocalSldResponseHierarchy::analyze(
     report.cutoff = SpectralStateOps::cutoff(reference);
     report.requested_depth = depth;
     report.reference_energy = SpectralStateOps::energy(reference);
-    std::vector<SpectralState> basis = build(
-        dynamics, report.cutoff, depth);
-    report.constructed_depth = static_cast<int>(basis.size());
+    const std::vector<LocalSldResponseBasisElement> basis =
+        LocalSldResponseBasis::build(
+            dynamics, report.cutoff, depth,
+            include_transverse_two_one_one,
+            include_three_one_zero_orbits);
+    report.constructed_depth = depth;
     report.included_transverse_two_one_one =
         include_transverse_two_one_one;
     report.included_three_one_zero_orbits =
         include_three_one_zero_orbits;
-    if (include_transverse_two_one_one) {
-        append_orthogonalized(
-            dynamics, basis,
-            LocalSldCyclicOrbitBasis::transverse_two_one_one(
-                report.cutoff));
-    }
-    if (include_three_one_zero_orbits) {
-        append_orthogonalized(
-            dynamics, basis,
-            LocalSldCyclicOrbitBasis::forward_three_one_zero(
-                report.cutoff));
-        append_orthogonalized(
-            dynamics, basis,
-            LocalSldCyclicOrbitBasis::backward_three_one_zero(
-                report.cutoff));
-    }
-    report.maximum_gram_error = maximum_gram_error(basis);
+    report.maximum_gram_error =
+        LocalSldResponseBasis::maximum_gram_error(basis);
     report.residual_state = reference;
     SpectralReal cumulative = 0.0L;
     for (std::size_t order = 0; order < basis.size(); ++order) {
         LocalSldResponseHierarchyRow row;
         row.order = static_cast<int>(order);
-        if (order < static_cast<std::size_t>(report.constructed_depth)) {
-            row.label = "response-order-" + std::to_string(order);
-        } else {
-            std::size_t extra = order - static_cast<std::size_t>(
-                report.constructed_depth);
-            if (include_transverse_two_one_one) {
-                if (extra == 0) {
-                    row.label = "transverse-(2,1,1)-orbit";
-                } else {
-                    --extra;
-                }
-            }
-            if (row.label.empty()) {
-                row.label = extra == 0
-                    ? "forward-(3,1,0)-orbit"
-                    : "backward-(3,1,0)-orbit";
-            }
-        }
+        row.response_order = basis[order].response_order;
+        row.analytic_degree = basis[order].analytic_degree;
+        row.scalar_response = basis[order].scalar_response;
+        row.label = basis[order].label;
         row.coefficient = LocalSldCyclicBasis::pairing(
-            reference.velocity, basis[order].velocity);
+            reference.velocity, basis[order].state.velocity);
         row.coefficient_energy =
             row.coefficient * row.coefficient / report.reference_energy;
         cumulative += row.coefficient_energy;
         row.cumulative_projection_energy = cumulative;
         row.projection_residual = std::sqrt(std::max(
             0.0L, 1.0L - cumulative));
-        row.highest_active_shell = highest_active_shell(basis[order]);
+        row.highest_active_shell = basis[order].highest_active_shell;
+        const ResponseShellStatistics statistics =
+            shell_statistics(basis[order]);
+        row.lowest_active_shell = statistics.lowest;
+        row.highest_shell_energy_fraction =
+            statistics.highest_fraction;
+        row.lower_half_shell_energy_fraction =
+            statistics.lower_half_fraction;
         report.rows.push_back(row);
         for (std::size_t mode = 0;
              mode < report.residual_state.velocity.size(); ++mode) {
             for (std::size_t component = 0; component < 3; ++component) {
                 report.residual_state.velocity[mode][component] -=
                     row.coefficient *
-                    basis[order].velocity[mode][component];
+                    basis[order].state.velocity[mode][component];
             }
         }
     }

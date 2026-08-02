@@ -55,7 +55,7 @@ void write_certificate(
     }
     output << std::setprecision(18)
         << "{\n"
-        << "  \"schema\": \"navier-stokes-local-sld-response-diagonal-v1\",\n"
+        << "  \"schema\": \"navier-stokes-local-sld-response-diagonal-v2\",\n"
         << "  \"definition\": \"at cutoff K retain only response orders 0 through K, before the recursion requires shell K+1\",\n"
         << "  \"weighted_l1_definition\": \"A_r(K)=sum_{n=0}^K r^n |<u,b_n>|/sqrt(E)\",\n"
         << "  \"quadratic_identity\": \"sum r^n sum_{i+j=n-1} a_i a_j <= r A_r(K)^2\",\n"
@@ -107,6 +107,14 @@ void write_certificate(
         write_real_array(output, row.safe_coefficients);
         output << ", \"safe_highest_shells\": ";
         write_int_array(output, row.safe_highest_shells);
+        output << ", \"safe_lowest_shells\": ";
+        write_int_array(output, row.safe_lowest_shells);
+        output << ", \"safe_highest_shell_energy_fractions\": ";
+        write_real_array(
+            output, row.safe_highest_shell_energy_fractions);
+        output << ", \"safe_lower_half_shell_energy_fractions\": ";
+        write_real_array(
+            output, row.safe_lower_half_shell_energy_fractions);
         output << '}'
             << (index + 1 == report.rows.size() ? "\n" : ",\n");
     }
@@ -158,6 +166,12 @@ LocalSldResponseDiagonalReport LocalSldResponseDiagonal::analyze(
             static_cast<std::size_t>(row.safe_order_count));
         row.safe_highest_shells.reserve(
             static_cast<std::size_t>(row.safe_order_count));
+        row.safe_lowest_shells.reserve(
+            static_cast<std::size_t>(row.safe_order_count));
+        row.safe_highest_shell_energy_fractions.reserve(
+            static_cast<std::size_t>(row.safe_order_count));
+        row.safe_lower_half_shell_energy_fractions.reserve(
+            static_cast<std::size_t>(row.safe_order_count));
         for (int order = 0; order < row.safe_order_count; ++order) {
             const LocalSldResponseHierarchyRow& entry =
                 hierarchy.rows[static_cast<std::size_t>(order)];
@@ -167,6 +181,12 @@ LocalSldResponseDiagonalReport LocalSldResponseDiagonal::analyze(
             row.safe_coefficients.push_back(coefficient);
             row.safe_highest_shells.push_back(
                 entry.highest_active_shell);
+            row.safe_lowest_shells.push_back(
+                entry.lowest_active_shell);
+            row.safe_highest_shell_energy_fractions.push_back(
+                entry.highest_shell_energy_fraction);
+            row.safe_lower_half_shell_energy_fractions.push_back(
+                entry.lower_half_shell_energy_fraction);
             row.safe_shells_inside_cutoff =
                 row.safe_shells_inside_cutoff &&
                 entry.highest_active_shell <= cutoff;

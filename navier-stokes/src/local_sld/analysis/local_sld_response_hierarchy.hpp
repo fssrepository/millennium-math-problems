@@ -21,12 +21,18 @@ struct LocalSldResponseHierarchyOptions {
 
 struct LocalSldResponseHierarchyRow {
     int order = 0;
+    int response_order = -1;
+    int analytic_degree = 0;
     std::string label;
     SpectralReal coefficient = 0.0L;
     SpectralReal coefficient_energy = 0.0L;
     SpectralReal cumulative_projection_energy = 0.0L;
     SpectralReal projection_residual = 0.0L;
     int highest_active_shell = 0;
+    int lowest_active_shell = 0;
+    SpectralReal highest_shell_energy_fraction = 0.0L;
+    SpectralReal lower_half_shell_energy_fraction = 0.0L;
+    bool scalar_response = false;
 };
 
 struct LocalSldResponseHierarchyReport {

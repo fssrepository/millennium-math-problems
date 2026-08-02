@@ -70,6 +70,15 @@ The next conventional estimate must treat two parts:
 1. a scale-uniform signed bound for the complete `(m,m,2m)` family;
 2. a summable bound for `F_r+F_x` which preserves the mixed signs in LSB-1.
 
+[`DOUBLING_QUARTET.md`](DOUBLING_QUARTET.md) now proves the
+cutoff-independent one-shell power for item 1. Orthogonal incidence gives
+`|K_d+G_d|_j <= C R_j^5 E_{near,j}^2`, a half-derivative improvement over the
+required `R_j^(11/2)E_{near,j}^2` scale. A two-scale construction also proves
+that separately summing the absolute palinstrophy-normalization term is false:
+the naive sequence ratio grows like `L^(1/8)`. Item 1 is therefore reduced to
+a signed cross-shell cancellation inside the already combined `K_d+G_d`, not
+an unresolved one-shell counting estimate.
+
 Bounding `F_d`, `F_r`, and `F_x` by unrelated raw norms would discard the
 decomposition's purpose and can restore the previously identified
 `(P/Z)^(3/4)` loss.

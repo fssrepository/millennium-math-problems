@@ -1,6 +1,7 @@
 #include "lemma_engine.hpp"
 #include "adversary_reporter.hpp"
 #include "dyadic_shell_bounds.hpp"
+#include "doubling_quartet_closure.hpp"
 #include "dynamic_adversary.hpp"
 #include "family_reporter.hpp"
 #include "far_tail_closure.hpp"
@@ -565,6 +566,8 @@ bool self_test(std::ostream& out) {
         OrthogonalTriadGeometry::certify(5);
     const OrthogonalTriadClosure orthogonal_closure =
         OrthogonalTriadGeometry::analyze_closure();
+    const DoublingQuartetClosureReport doubling_quartet_closure =
+        DoublingQuartetClosure::certify(5);
     const LocalSignatureGeometryCertificate local_signature_geometry =
         LocalSignatureGeometry::certify(3);
     const SignatureFamilyClosure signature_family_closure =
@@ -625,6 +628,23 @@ bool self_test(std::ostream& out) {
         orthogonal_closure.high_frequency_absorbable_from_energy &&
         orthogonal_closure.orthogonal_degree_is_subcritical &&
         orthogonal_closure.generic_local_degree_is_supercritical;
+    const bool doubling_quartet_closure_ok =
+        doubling_quartet_closure.closed_single_shell_power_bound &&
+        doubling_quartet_closure.bilinear_l2_frequency_power ==
+            Rational(3, 2) &&
+        doubling_quartet_closure.bracket_frequency_power == Rational(5) &&
+        doubling_quartet_closure.required_frequency_power ==
+            Rational(11, 2) &&
+        doubling_quartet_closure.frequency_gain == Rational(-1, 2) &&
+        doubling_quartet_closure.maximum_tested_normalization_ratio >
+            1.0L &&
+        !doubling_quartet_closure.normalization_sequence_screen_survives &&
+        !doubling_quartet_closure.normalization_sequence_bound_proved &&
+        doubling_quartet_closure.naive_cross_shell_bound_rejected &&
+        doubling_quartet_closure.two_scale_ratio_growth_power ==
+            Rational(1, 8) &&
+        !doubling_quartet_closure.cutoff_independent_closed_family_bound &&
+        !doubling_quartet_closure.full_local_lemma_proved;
     const bool local_signature_geometry_ok =
         local_signature_geometry.all_fixed_signature_degree_bounds_hold &&
         local_signature_geometry.maximum_input_degree_ratio <= 1.0L &&
@@ -1913,17 +1933,45 @@ bool self_test(std::ostream& out) {
         response_diagonal.finite_cutoff_diagonal_is_not_a_proof;
     const LocalSldResponseTensorReport response_tensor =
         LocalSldResponseTensor::analyze(
-            active_dynamics, 2, 3, 1.5L, 1.25L, 1e-16L);
+            active_dynamics, 2, 3, 2.0L, 1.15L, 1e-16L);
     const bool response_tensor_ok =
         response_tensor.boundary_free_depth &&
         response_tensor.pairs.size() == 9 &&
         response_tensor.retained_tensor_entries > 0 &&
         response_tensor.maximum_gram_error < 1e-14L &&
         response_tensor.maximum_projected_bilinear_constant > 0.0L &&
+        std::abs(
+            response_tensor.maximum_projected_bilinear_constant -
+            response_tensor.maximum_projected_degree_block_constant) <
+            1e-14L &&
         std::isfinite(
             response_tensor.maximum_projected_bilinear_constant) &&
+        response_tensor.axis_pair_candidate_survives &&
+        std::abs(
+            response_tensor.projected_constant_over_axis_candidate -
+            1.0L) < 1e-14L &&
         response_tensor.maximum_norm_reconstruction_error < 1e-14L &&
+        response_tensor.maximum_shell_norm_reconstruction_error < 1e-14L &&
+        response_tensor.maximum_shell_weighted_complement_ratio > 0.0L &&
+        response_tensor.maximum_input_weighted_h1_complement_norm > 0.0L &&
+        std::abs(
+            response_tensor.finite_combined_weighted_bound -
+            response_tensor.maximum_projected_degree_block_constant -
+            response_tensor.maximum_shell_weighted_complement_ratio) <
+            1e-18L &&
         response_tensor.finite_tensor_is_not_a_proof;
+    const LocalSldResponseTensorReport augmented_response_tensor =
+        LocalSldResponseTensor::analyze(
+            active_dynamics, 3, 4, 2.0L, 1.15L, 1e-16L,
+            true, true, 1);
+    const bool augmented_response_tensor_ok =
+        augmented_response_tensor.included_transverse_two_one_one &&
+        augmented_response_tensor.included_three_one_zero_orbits &&
+        augmented_response_tensor.closure_extensions_constructed == 1 &&
+        augmented_response_tensor.basis_size == 8 &&
+        augmented_response_tensor.maximum_gram_error < 1e-14L &&
+        augmented_response_tensor.maximum_shell_norm_reconstruction_error <
+            1e-14L;
     const LocalSldTrajectoryEvaluatorReport trajectory_evaluation =
         LocalSldTrajectoryEvaluator::evaluate(
             active_dynamics, cyclic_ansatz.state,
@@ -2117,6 +2165,21 @@ bool self_test(std::ostream& out) {
                orthogonal_geometry.maximum_target_degree_ratio)
         << ", high-frequency power="
         << orthogonal_closure.transfer_to_viscosity_frequency_power.str()
+        << ")\n"
+        << "doubling quartet closure test: "
+        << (doubling_quartet_closure_ok ? "PASS" : "FAIL")
+        << " (bilinear="
+        << doubling_quartet_closure.bilinear_l2_frequency_power.str()
+        << ", bracket="
+        << doubling_quartet_closure.bracket_frequency_power.str()
+        << ", target="
+        << doubling_quartet_closure.required_frequency_power.str()
+        << ", gain="
+        << doubling_quartet_closure.frequency_gain.str()
+        << ", normalization screen="
+        << static_cast<double>(
+               doubling_quartet_closure
+                   .maximum_tested_normalization_ratio)
         << ")\n"
         << "local signature closure test: "
         << (local_signature_geometry_ok ? "PASS" : "FAIL")
@@ -2439,9 +2502,25 @@ bool self_test(std::ostream& out) {
         << ", projected constant="
         << static_cast<double>(
                response_tensor.maximum_projected_bilinear_constant)
+        << ", degree-block constant="
+        << static_cast<double>(
+               response_tensor.maximum_projected_degree_block_constant)
+        << ", shell-weighted complement="
+        << static_cast<double>(
+               response_tensor.maximum_shell_weighted_complement_ratio)
         << ", complement fraction="
         << static_cast<double>(
                response_tensor.maximum_complement_fraction)
+        << ")\n"
+        << "augmented local SLD response tensor test: "
+        << (augmented_response_tensor_ok ? "PASS" : "FAIL")
+        << " (basis=" << augmented_response_tensor.basis_size
+        << ", closure extensions="
+        << augmented_response_tensor.closure_extensions_constructed
+        << ", projected constant="
+        << static_cast<double>(
+               augmented_response_tensor
+                   .maximum_projected_bilinear_constant)
         << ")\n"
         << "local SLD trajectory evaluator test: "
         << (trajectory_evaluation_ok ? "PASS" : "FAIL")
@@ -2486,7 +2565,8 @@ bool self_test(std::ostream& out) {
            transition_block_scaling_ok &&
            moving_gap_controller_ok &&
            triad_ok && helical_ok && helical_gap_ok && local_symmetry_ok &&
-           orthogonal_geometry_ok && local_signature_geometry_ok &&
+           orthogonal_geometry_ok && doubling_quartet_closure_ok &&
+           local_signature_geometry_ok &&
            local_signature_objective_ok && pure_helical_ok && fft_ok &&
            helical_sector_objective_ok && helical_adversary_ok &&
            helical_trajectory_adjoint_ok &&
@@ -2503,6 +2583,7 @@ bool self_test(std::ostream& out) {
            cyclic_krylov_ansatz_ok && signature_block_ok &&
            response_hierarchy_ok && response_family_ok &&
            response_diagonal_ok && response_tensor_ok &&
+           augmented_response_tensor_ok &&
            trajectory_evaluation_ok &&
            adversary_ok && dynamic_class_ok && q_derivative_ok && evolution_ok;
 }

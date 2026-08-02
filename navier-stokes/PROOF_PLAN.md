@@ -107,9 +107,54 @@ through K8, the weighted coefficient sum
 `A_1.25(K)=sum_{n<=K}1.25^n |<u,b_n>|/sqrt(E)` remains between `1.12012` and
 `1.15916` from K2 through K8. This is evidence for the explicit weighted
 response target in
-`proof/l4/lemmas/shifted-local-density/RESPONSE_DIAGONAL.md`; proving its
-cutoff-uniform bilinear operator bound and complement estimate is now the
-lowest open analytical subtask.
+`proof/l4/lemmas/shifted-local-density/RESPONSE_DIAGONAL.md`.
+
+The exact direct-triad tensor has now separated the response-space derivative
+loss from cutoff growth. Same-radius weights at `r=1.25` grow from `0.9723` at
+K2 to `5.2028` at K8 and cannot close the algebra. With input radius `R=2` and
+output radius `r=23/20`, however, every ordered response interaction through
+K12 obeys the same sharp finite bound
+
+```text
+sum_m (23/20)^m |<b_m,B(b_i,b_j)>|
+    <= [23/(20 sqrt(3))] 2^(i+j),
+```
+
+with equality at the axis pair. The lowest open analytical subtask is now to
+prove this explicit scalar inequality for arbitrary response order.
+
+The transverse space is now graded before orthogonalization and extended by
+the largest missing bilinear products. With all three explicit orbit families
+and sixteen closure directions, the invariant degree-block projected
+constants at K3/K4/K5 are `1.04467`, `1.04894`, and `1.04894`; adding the
+separately maximized shell complement gives finite bounds `1.17088`, `1.30595`,
+and `1.32010`. The lowest open complement subtask is to prove a uniform
+dimension/support count for this indefinitely generated graded orbit tree and
+sum it in the `R=2 -> r=23/20` gap. A strict response-degree support shortcut
+has been rejected: K5 contains a coefficient of magnitude `0.409773` two
+degrees above `d_left+d_right+1`. The proof therefore also needs quantitative
+off-diagonal decay of the response tensor, not just a count of nominal support.
+See
+`proof/l4/lemmas/shifted-local-density/RESPONSE_TENSOR.md`.
+
+The response route also has a newly certified limitation. At radius three,
+the measured diagonal grows from `A_3(6)=2.14594` to `A_3(8)=5.97485`, and
+the eighth response vector keeps `95.01%` of its energy in the lower half of
+the physical shells. Response order is therefore not a proxy for Fourier
+frequency, so smooth initial data alone does not provide the exponential
+response weight. This route remains a structural extremizer model rather than
+the current universal closure.
+
+The universal dominant-block calculation has progressed independently. The
+complete `(m,m,2m)` family is an equal-length orthogonal incidence graph.
+Target-wise degree `O(R)` gives `||B_d||_2 <= C R^(3/2)E`, and every one-shell
+entry of the closed `K_d+G_d` bracket has scale `R^5E^2`, gaining one half
+derivative over LQC-3. The naive absolute global normalization sum is false:
+two shells with high-shell energy `L^(-11/4)` make its ratio grow as
+`L^(1/8)`. The lowest universal analytical subtask is now a signed cross-shell
+estimate for the already combined `K_d+G_d`; after that, the closed remainder
+and mixed blocks must be treated at the same scale. See
+`proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md`.
 
 The first explicit L4 candidate in the reduction was
 

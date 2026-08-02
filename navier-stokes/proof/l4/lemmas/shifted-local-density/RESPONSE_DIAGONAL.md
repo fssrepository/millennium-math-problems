@@ -94,7 +94,26 @@ Galerkin trajectory from the fixed smooth datum, not merely on optimized
 finite states. Proving either requirement by assuming a uniform future
 Sobolev norm would be circular.
 
-The next machine task is a sparse interaction-tensor ledger for
-`<b_m,B(b_i,b_j)>` on the boundary-free diagonal. The next analytic task is to
-turn its exact symmetry and shell support into a cutoff-independent weighted
-operator bound.
+The sparse interaction-tensor ledger is now implemented. Same-radius weights
+expose the expected derivative loss, while the two-radius experiment isolates
+the explicit candidate
+
+```text
+sum_m (23/20)^m |<b_m,B(b_i,b_j)>|
+    <= [23/(20 sqrt(3))] 2^(i+j).
+```
+
+See [`RESPONSE_TENSOR.md`](RESPONSE_TENSOR.md). The next analytic task is to
+prove this candidate from exact support and symmetry and to establish the
+corresponding shell-resolved bound for the orthogonal response/orbit
+complement.
+
+The stronger input radius `R=3` does improve the finite tensor constant, but
+it does not currently supply a universal route. On the zero-padded K4 branch,
+`A_3(K)` rises from `2.14594` at K6 to `5.97485` at K8. More importantly, the
+new localization ledger shows that response order is not physical frequency:
+for `b_8`, only `6.11e-11` of the energy lies in its highest shell, while
+`95.01%` lies in shells at most half its response degree. Standard Sobolev
+smoothness therefore does not by itself imply the exponential response-degree
+weight required by RD-L. Any use of RD-L needs an additional recurrence
+estimate; it cannot be inferred from the smooth initial datum alone.

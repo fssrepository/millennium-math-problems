@@ -51,7 +51,10 @@ bool TriadPartitioner::includes(
         selection.signature_mode() ==
             TriadSelection::SignatureMode::exclude_equal_low_doubling) {
         matches = signature[0] == signature[1] &&
-            signature[2] == 2 * signature[0];
+            signature[2] == 2 * signature[0] &&
+            signature[0] >= selection.minimum_low_squared() &&
+            signature[0] <
+                selection.maximum_low_squared_exclusive();
         return selection.signature_mode() ==
                 TriadSelection::SignatureMode::include_equal_low_doubling
             ? matches

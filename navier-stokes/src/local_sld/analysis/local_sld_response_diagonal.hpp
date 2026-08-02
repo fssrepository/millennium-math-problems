@@ -35,6 +35,9 @@ struct LocalSldResponseDiagonalRow {
     SpectralReal common_weighted_l1_difference = 0.0L;
     std::vector<SpectralReal> safe_coefficients;
     std::vector<int> safe_highest_shells;
+    std::vector<int> safe_lowest_shells;
+    std::vector<SpectralReal> safe_highest_shell_energy_fractions;
+    std::vector<SpectralReal> safe_lower_half_shell_energy_fractions;
 };
 
 struct LocalSldResponseDiagonalReport {

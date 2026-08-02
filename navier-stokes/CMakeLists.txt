@@ -44,6 +44,7 @@ add_executable(navier_stokes_lab
     src/helical/helical_triad_ledger.cpp
 
     src/proof/dyadic_shell_bounds.cpp
+    src/proof/doubling_quartet_closure.cpp
     src/proof/far_tail_closure.cpp
     src/proof/moving_gap_controller.cpp
     src/proof/periodic_shell_geometry.cpp
@@ -61,6 +62,7 @@ add_executable(navier_stokes_lab
     src/local_sld/core/local_sld_block_objective.cpp
     src/local_sld/core/local_sld_cyclic_basis.cpp
     src/local_sld/core/local_sld_cyclic_orbit_basis.cpp
+    src/local_sld/core/local_sld_response_basis.cpp
 
     src/local_sld/analysis/local_critical_derivative_ledger.cpp
     src/local_sld/analysis/local_quartic_closure_target.cpp

@@ -1,5 +1,16 @@
 # Shifted local critical-density candidate
 
+Companion response-space proof targets:
+
+- [`RESPONSE_DIAGONAL.md`](RESPONSE_DIAGONAL.md) defines the boundary-free
+  cutoff diagonal and its weighted coefficient majorant.
+- [`RESPONSE_TENSOR.md`](RESPONSE_TENSOR.md) records the exact interaction
+  tensor and the explicit two-radius bilinear candidate that survived every
+  ordered response pair through K12.
+- [`DOUBLING_QUARTET.md`](DOUBLING_QUARTET.md) proves the half-derivative
+  one-shell gain for the dominant orthogonal family and identifies the exact
+  signed cross-shell obstruction still blocking its global sum.
+
 This note records a scale-compatible replacement for the rejected pointwise
 monotonicity and unshifted multiplicative-growth routes.
 

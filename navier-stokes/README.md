@@ -171,6 +171,14 @@ source file:
 - `LocalSldResponseHierarchy` constructs the full quadratic response
   recursion, while `LocalSldCyclicOrbitBasis` supplies the missing transverse
   `(2,1,1)` polarization and both oriented `(3,1,0)` cyclic orbits;
+- `LocalSldResponseDiagonal` excludes Galerkin-wall-contaminated response
+  orders, while `LocalSldResponseTensor` evaluates every exact direct-triad
+  interaction and its orthogonal complement with separate input/output
+  analytic radii;
+- `LocalSldResponseBasis` performs degree-ordered orthonormalization of scalar
+  responses and transverse cyclic orbits; the tensor can greedily insert
+  missing quadratic products without contaminating low analytic degrees with
+  higher-cutoff response directions;
 - `LocalSldTrajectoryEvaluator` evaluates and dt-refines any saved state with
   either the direct RK4 oracle or the FFT forward/VJP backend;
 - `LocalSldSignatureBlock` splits `K+G` exactly into a selected squared-length
@@ -201,6 +209,10 @@ source file:
 - `FarTailClosure` verifies the cutoff-independent moving-gap Young reduction,
   while `TransitionBlockScaling` rejects logarithmic band counting as a
   closure mechanism;
+- `DoublingQuartetClosure` combines the equal-length orthogonal incidence
+  bound with exact rational quartet power counting: the complete doubling
+  family gains half a derivative on each shell, while an exact two-scale
+  counterexample rejects the naive absolute cross-shell normalization sum;
 - `TriadVerifier` owns direct interaction analysis, detailed triad
   cancellation, local/nonlocal flux partitioning, and certificate aggregation;
 - `StateAnalyzer` and `StateFamilyAnalyzer` measure shell decay, active modes,
@@ -228,6 +240,10 @@ each layer independently replaceable.
 The current direct local-lemma search is reproducible with:
 
 ```bash
+./build/navier_stokes_lab doubling-quartet-certificate \
+  --max-cutoff 12 \
+  --certificate proof/l4/analysis/shifted-local-density/doubling-quartet/closed-family-K12.json
+
 ./build/navier_stokes_lab local-closure-adversary \
   --objective sld-ratio --min-cutoff 1 --max-cutoff 4 \
   --restarts 12 --workers 12 --iterations 20 --method lbfgs \
@@ -258,6 +274,18 @@ The current direct local-lemma search is reproducible with:
   --state proof/l4/states/local-sld-trajectory/maximum-T032-K4-from-K3/K4.tsv \
   --max-depth 16 --radius 1.25 --threads 12 \
   --certificate proof/l4/analysis/shifted-local-density/cyclic-response-diagonal-K2-K4-r125.json
+
+./build/navier_stokes_lab local-sld-response-tensor \
+  --cutoff 12 --depth 13 \
+  --input-radius 2 --output-radius 1.15 \
+  --tolerance 1e-14 --threads 12 \
+  --certificate proof/l4/analysis/shifted-local-density/response-tensor/R200-r115/K12.json
+
+./build/navier_stokes_lab local-sld-response-tensor \
+  --cutoff 5 --depth 6 --input-radius 2 --output-radius 1.15 \
+  --include-211-transverse --include-310-orbits \
+  --closure-extensions 16 --tolerance 1e-14 --threads 12 \
+  --certificate proof/l4/analysis/shifted-local-density/response-tensor/augmented-graded-R200-r115/K5-closure16.json
 
 ./build/navier_stokes_lab local-sld-trajectory-evaluate \
   --state proof/l4/states/local-sld-trajectory/response-hierarchy-projection-K3/depth16-plus-orbits.tsv \
@@ -346,7 +374,26 @@ zero-padded through K8, `A_1.25(K)` stays below `1.15916`; the full radius
 sweep and the exact sequence majorant are recorded in
 `proof/l4/lemmas/shifted-local-density/RESPONSE_DIAGONAL.md`. This is the
 current route toward a weighted response-space lemma, not a proof of its
-required cutoff-uniform operator or complement bounds.
+required cutoff-uniform operator or complement bounds. The exact interaction
+tensor sharpens the next target: with input radius `2` and output radius
+`23/20`, every ordered pair through K12 satisfies
+`sum_m (23/20)^m |<b_m,B(b_i,b_j)>| <= [23/(20 sqrt(3))]2^(i+j)`, with
+equality at the axis pair. Proving it for all response orders, together with
+a shell-resolved transverse-complement estimate, is the current analytical
+task. In the degree-graded augmented tree, sixteen closure extensions give
+projected block constants `1.04467`, `1.04894`, and `1.04894` at K3--K5; the
+corresponding projected-plus-complement finite bounds are `1.17088`, `1.30595`,
+and `1.32010`. See
+`proof/l4/lemmas/shifted-local-density/RESPONSE_TENSOR.md`.
+
+For the universal dominant block, equal-length orthogonal incidence proves the
+one-shell bound `|K_d+G_d|_j <= C R_j^5 E_{near,j}^2`, which is half a
+derivative better than the LQC-3 target. The remaining global summation cannot
+split the normalization term absolutely: the explicit two-shell energy
+profile `E_high=L^(-11/4)` makes the tempting sequence estimate fail by
+`L^(1/8)`. The active proof target is therefore the signed cross-shell
+cancellation in the complete `K_d+G_d`; see
+`proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md`.
 
 The helical local target has its own replayable optimizer and same-state
 cutoff scan:
