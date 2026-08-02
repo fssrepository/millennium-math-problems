@@ -13,6 +13,7 @@
 #include "helical_sector_adjoint.hpp"
 #include "helical_trajectory_adversary.hpp"
 #include "proof_scaling.hpp"
+#include "remainder_quartet_closure.hpp"
 #include "parallel_executor.hpp"
 #include "periodic_shell_geometry.hpp"
 #include "periodic_tail_bound.hpp"
@@ -38,6 +39,8 @@
 #include "local_sld_response_family.hpp"
 #include "local_sld_response_hierarchy.hpp"
 #include "local_sld_response_tensor.hpp"
+#include "local_sld_doubling_shell_ledger.hpp"
+#include "local_sld_doubling_scale_scan.hpp"
 #include "local_sld_block_objective.hpp"
 #include "local_sld_signature_block.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
@@ -636,6 +639,10 @@ bool self_test(std::ostream& out) {
         doubling_quartet_closure.required_frequency_power ==
             Rational(11, 2) &&
         doubling_quartet_closure.frequency_gain == Rational(-1, 2) &&
+        doubling_quartet_closure.structural_entries_neighbor_shell_local &&
+        doubling_quartet_closure.structural_entry_global_bound_proved &&
+        doubling_quartet_closure.direct_normalization_target_bound_proved &&
+        doubling_quartet_closure.projected_normalization_bound_proved &&
         doubling_quartet_closure.maximum_tested_normalization_ratio >
             1.0L &&
         !doubling_quartet_closure.normalization_sequence_screen_survives &&
@@ -643,8 +650,25 @@ bool self_test(std::ostream& out) {
         doubling_quartet_closure.naive_cross_shell_bound_rejected &&
         doubling_quartet_closure.two_scale_ratio_growth_power ==
             Rational(1, 8) &&
-        !doubling_quartet_closure.cutoff_independent_closed_family_bound &&
+        doubling_quartet_closure.cutoff_independent_closed_family_bound &&
         !doubling_quartet_closure.full_local_lemma_proved;
+    const RemainderQuartetClosureReport remainder_quartet_closure =
+        RemainderQuartetClosure::certify();
+    const bool remainder_quartet_closure_ok =
+        remainder_quartet_closure.dense_bilinear_frequency_power ==
+            Rational(5, 2) &&
+        remainder_quartet_closure.dense_frequency_loss ==
+            Rational(3, 2) &&
+        remainder_quartet_closure
+                .required_effective_incidence_degree_power ==
+            Rational(3, 2) &&
+        remainder_quartet_closure.fixed_signature_frequency_gain ==
+            Rational(-1, 2) &&
+        remainder_quartet_closure.every_fixed_signature_closes &&
+        remainder_quartet_closure
+            .remainder_requires_collective_cancellation &&
+        !remainder_quartet_closure
+             .cutoff_independent_remainder_bound_proved;
     const bool local_signature_geometry_ok =
         local_signature_geometry.all_fixed_signature_degree_bounds_hold &&
         local_signature_geometry.maximum_input_degree_ratio <= 1.0L &&
@@ -1355,6 +1379,25 @@ bool self_test(std::ostream& out) {
                 std::abs(local_closure_directional_adjoint),
                 std::abs(
                     local_closure_directional_finite_difference)));
+    const SpectralIncrement lqc3_target_gradient =
+        local_closure_objective.squared_lqc3_target_ratio_gradient(
+            partition_state);
+    const Real lqc3_target_directional_adjoint =
+        increment_inner_product(lqc3_target_gradient, partition_tangent);
+    const Real lqc3_target_directional_finite_difference =
+        (local_closure_objective.evaluate(partition_plus_state)
+             .squared_lqc3_target_ratio -
+         local_closure_objective.evaluate(partition_minus_state)
+             .squared_lqc3_target_ratio) /
+        (2.0L * finite_difference_step);
+    const Real lqc3_target_gradient_error = std::abs(
+        lqc3_target_directional_adjoint -
+        lqc3_target_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(lqc3_target_directional_adjoint),
+                std::abs(lqc3_target_directional_finite_difference)));
     const SpectralIncrement signed_closure_gradient =
         local_closure_objective.signed_constant_ratio_gradient(
             partition_state);
@@ -1754,6 +1797,7 @@ bool self_test(std::ostream& out) {
         local_closure_value.factorization_relative_error < 1e-12L &&
         local_closure_value_error < 1e-12L &&
         local_closure_gradient_error < 1e-9L &&
+        lqc3_target_gradient_error < 1e-9L &&
         signed_closure_gradient_error < 1e-9L &&
         local_sld_gradient_error < 1e-9L &&
         selected_block_gradient_error < 1e-9L &&
@@ -1972,6 +2016,32 @@ bool self_test(std::ostream& out) {
         augmented_response_tensor.maximum_gram_error < 1e-14L &&
         augmented_response_tensor.maximum_shell_norm_reconstruction_error <
             1e-14L;
+    const LocalSldDoublingShellReport doubling_shell_ledger =
+        LocalSldDoublingShellLedger::analyze(
+            active_dynamics, cyclic_ansatz.state);
+    const bool doubling_shell_ledger_ok =
+        doubling_shell_ledger.exact_reconstruction &&
+        doubling_shell_ledger.projected_square.identity_verified &&
+        doubling_shell_ledger.projected_square.completion_relative_error <
+            1e-14L &&
+        doubling_shell_ledger.bracket_reconstruction_error < 1e-14L &&
+        doubling_shell_ledger.advection_reconstruction_error < 1e-14L &&
+        doubling_shell_ledger.structural_entries_are_neighbor_shell_local &&
+        !doubling_shell_ledger.signed_cross_shell_bound_proved;
+    LocalSldDoublingScaleScanOptions doubling_scale_options;
+    doubling_scale_options.minimum_scale = 2;
+    doubling_scale_options.maximum_scale = 2;
+    doubling_scale_options.minimum_angle = -0.2L;
+    doubling_scale_options.maximum_angle = 0.2L;
+    doubling_scale_options.angle_count = 3;
+    doubling_scale_options.threads = 2;
+    const LocalSldDoublingScaleScanReport doubling_scale_scan =
+        LocalSldDoublingScaleScan::analyze(doubling_scale_options);
+    const bool doubling_scale_scan_ok =
+        doubling_scale_scan.rows.size() == 3 &&
+        doubling_scale_scan.every_square_identity_verified &&
+        doubling_scale_scan.every_block_decomposition_verified &&
+        !doubling_scale_scan.cutoff_independent_bound_proved;
     const LocalSldTrajectoryEvaluatorReport trajectory_evaluation =
         LocalSldTrajectoryEvaluator::evaluate(
             active_dynamics, cyclic_ansatz.state,
@@ -2181,6 +2251,17 @@ bool self_test(std::ostream& out) {
                doubling_quartet_closure
                    .maximum_tested_normalization_ratio)
         << ")\n"
+        << "remainder quartet closure test: "
+        << (remainder_quartet_closure_ok ? "PASS" : "FAIL")
+        << " (dense="
+        << remainder_quartet_closure
+               .dense_normalization_bracket_frequency_power.str()
+        << ", target="
+        << remainder_quartet_closure.target_frequency_power.str()
+        << ", required degree="
+        << remainder_quartet_closure
+               .required_effective_incidence_degree_power.str()
+        << ")\n"
         << "local signature closure test: "
         << (local_signature_geometry_ok ? "PASS" : "FAIL")
         << " (input degree="
@@ -2376,6 +2457,8 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(local_closure_value_error)
         << ", closure gradient error="
         << static_cast<double>(local_closure_gradient_error)
+        << ", LQC-3 gradient error="
+        << static_cast<double>(lqc3_target_gradient_error)
         << ", signed closure gradient error="
         << static_cast<double>(signed_closure_gradient_error)
         << ", direct SLD gradient error="
@@ -2522,6 +2605,26 @@ bool self_test(std::ostream& out) {
                augmented_response_tensor
                    .maximum_projected_bilinear_constant)
         << ")\n"
+        << "local SLD doubling shell-matrix test: "
+        << (doubling_shell_ledger_ok ? "PASS" : "FAIL")
+        << " (shells=" << doubling_shell_ledger.shells.size()
+        << ", square error="
+        << static_cast<double>(doubling_shell_ledger.projected_square
+                                   .completion_relative_error)
+        << ", cancellation="
+        << static_cast<double>(
+               doubling_shell_ledger.signed_cancellation_fraction)
+        << ", reconstruction="
+        << static_cast<double>(
+               doubling_shell_ledger.bracket_reconstruction_error)
+        << ")\n"
+        << "local SLD doubling scale-scan test: "
+        << (doubling_scale_scan_ok ? "PASS" : "FAIL")
+        << " (rows=" << doubling_scale_scan.rows.size()
+        << ", maximum signed ratio="
+        << static_cast<double>(
+               doubling_scale_scan.maximum_signed_row.signed_target_ratio)
+        << ")\n"
         << "local SLD trajectory evaluator test: "
         << (trajectory_evaluation_ok ? "PASS" : "FAIL")
         << " (maximum="
@@ -2566,6 +2669,7 @@ bool self_test(std::ostream& out) {
            moving_gap_controller_ok &&
            triad_ok && helical_ok && helical_gap_ok && local_symmetry_ok &&
            orthogonal_geometry_ok && doubling_quartet_closure_ok &&
+           remainder_quartet_closure_ok &&
            local_signature_geometry_ok &&
            local_signature_objective_ok && pure_helical_ok && fft_ok &&
            helical_sector_objective_ok && helical_adversary_ok &&
@@ -2584,6 +2688,8 @@ bool self_test(std::ostream& out) {
            response_hierarchy_ok && response_family_ok &&
            response_diagonal_ok && response_tensor_ok &&
            augmented_response_tensor_ok &&
+           doubling_shell_ledger_ok &&
+           doubling_scale_scan_ok &&
            trajectory_evaluation_ok &&
            adversary_ok && dynamic_class_ok && q_derivative_ok && evolution_ok;
 }

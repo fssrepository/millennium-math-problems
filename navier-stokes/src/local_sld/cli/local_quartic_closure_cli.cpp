@@ -56,6 +56,8 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
             options.objective = next(index, name);
         } else if (name == "--selection") {
             options.selection = next(index, name);
+        } else if (name == "--initial-profile") {
+            options.initial_profile = next(index, name);
         } else if (name == "--certificate") {
             options.certificate_path = next(index, name);
         } else if (name == "--state-dir") {
@@ -79,6 +81,7 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
          options.backend != "fft") ||
         (options.objective != "sld-ratio" &&
          options.objective != "closure-ratio" &&
+         options.objective != "lqc3-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "block-ratio" &&
          options.objective != "mixed-ratio" &&
@@ -87,6 +90,10 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
         (options.selection != "local" &&
          options.selection != "doubling-family" &&
          options.selection != "doubling-remainder") ||
+        (options.initial_profile != "mixed" &&
+         options.initial_profile != "decaying" &&
+         options.initial_profile != "flat" &&
+         options.initial_profile != "outer-half-flat") ||
         ((options.objective == "block-ratio" ||
           options.objective == "mixed-ratio") &&
          options.selection == "local") ||
@@ -119,8 +126,9 @@ void LocalQuarticClosureCli::print_help(std::ostream& out) {
         << "  --step X             initial Riemannian step\n"
         << "  --method NAME        lbfgs or steepest\n"
         << "  --backend NAME       direct oracle, fft, or auto (default direct)\n"
-        << "  --objective NAME     sld-ratio, terminal-sld-ratio, maximum-sld-ratio, closure-ratio, signed-closure-ratio, block-ratio, or mixed-ratio\n"
+        << "  --objective NAME     sld-ratio, terminal-sld-ratio, maximum-sld-ratio, lqc3-ratio, closure-ratio, signed-closure-ratio, block-ratio, or mixed-ratio\n"
         << "  --selection NAME     local, doubling-family, or doubling-remainder\n"
+        << "  --initial-profile NAME  mixed, decaying, flat, or outer-half-flat\n"
         << "  --sobolev-order M    optional homogeneous Sobolev cap\n"
         << "  --sobolev-cap X      cutoff-independent squared cap\n"
         << "  --seed N             deterministic master seed\n"

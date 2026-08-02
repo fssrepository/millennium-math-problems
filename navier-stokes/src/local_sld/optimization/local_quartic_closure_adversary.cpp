@@ -1,6 +1,7 @@
 #include "local_quartic_closure_adversary.hpp"
 
 #include "initial_sobolev_constraint.hpp"
+#include "local_signature_state_factory.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
 #include "parallel_executor.hpp"
 #include "spectral_adjoint.hpp"
@@ -77,12 +78,18 @@ SpectralReal state_distance_squared(const SpectralState& left,
 SpectralState make_start(
     int cutoff, int restart, std::uint64_t seed,
     const SpectralState* previous_winner,
-    const InitialSobolevConstraint& sobolev) {
+    const InitialSobolevConstraint& sobolev,
+    const std::string& initial_profile) {
     std::mt19937_64 generator(seed);
     SpectralState state;
     if (previous_winner != nullptr && restart == 0) {
         state = SpectralStateFactory::lift(
             *previous_winner, cutoff, generator);
+    } else if (initial_profile != "mixed") {
+        state = LocalSignatureStateFactory::make(
+            cutoff,
+            LocalSignatureStateFactory::parse(initial_profile),
+            seed);
     } else if (previous_winner != nullptr && restart % 3 == 0) {
         state = SpectralStateFactory::lift(
             *previous_winner, cutoff, generator);
@@ -187,6 +194,8 @@ LocalQuarticClosureAdversary::maximize(
     search.initial_step = options.initial_step;
     search.objective = options.objective == "closure-ratio"
         ? "local-closure-ratio"
+        : (options.objective == "lqc3-ratio"
+               ? "local-lqc3-ratio"
         : (options.objective == "signed-closure-ratio"
                ? "local-signed-closure-ratio"
                : (options.objective == "block-ratio"
@@ -198,7 +207,7 @@ LocalQuarticClosureAdversary::maximize(
                                     : (options.objective ==
                                                "maximum-sld-ratio"
                                            ? "local-frozen-maximum-sld-ratio"
-                                           : "local-sld-ratio")))));
+                                           : "local-sld-ratio"))))));
     search.method = options.method;
     search.lbfgs_history = options.lbfgs_history;
     search.sobolev_order = options.sobolev_order;
@@ -282,6 +291,7 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
         (options.backend != "auto" && options.backend != "direct" &&
          options.backend != "fft") ||
         (options.objective != "closure-ratio" &&
+         options.objective != "lqc3-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "sld-ratio" &&
          options.objective != "block-ratio" &&
@@ -291,6 +301,10 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
         (options.selection != "local" &&
          options.selection != "doubling-family" &&
          options.selection != "doubling-remainder") ||
+        (options.initial_profile != "mixed" &&
+         options.initial_profile != "decaying" &&
+         options.initial_profile != "flat" &&
+         options.initial_profile != "outer-half-flat") ||
         (is_common_block_objective(options.objective) &&
          options.selection == "local") ||
         (is_frozen_trajectory_objective(options.objective) &&
@@ -312,6 +326,7 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
         : 0;
     report.objective = options.objective;
     report.backend = options.backend;
+    report.initial_profile = options.initial_profile;
     report.viscosity = options.viscosity;
     report.time_step = options.time_step;
     report.sobolev_order = options.sobolev_order;
@@ -346,7 +361,7 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
             starts[static_cast<std::size_t>(restart)] = make_start(
                 cutoff, restart, seed,
                 has_previous_winner ? &previous_winner : nullptr,
-                sobolev);
+                sobolev, options.initial_profile);
         }
 
         LocalQuarticClosureCutoffResult row;
@@ -362,6 +377,8 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
             row.warm_lift_constant_ratio = warm_value.constant_ratio;
             row.warm_lift_objective = options.objective == "closure-ratio"
                 ? warm_value.squared_constant_ratio
+                : (options.objective == "lqc3-ratio"
+                       ? warm_value.squared_lqc3_target_ratio
                 : (options.objective == "signed-closure-ratio"
                        ? warm_value.signed_constant_ratio
                        : (options.objective == "terminal-sld-ratio"
@@ -389,7 +406,7 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                                     block_for_objective(options.objective))
                                     .evaluate(starts.front())
                                     .block_sld_ratio
-                              : warm_value.signed_local_sld_ratio))));
+                              : warm_value.signed_local_sld_ratio)))));
         }
         std::vector<LocalQuarticClosureRestartResult> results(
             static_cast<std::size_t>(options.restarts));

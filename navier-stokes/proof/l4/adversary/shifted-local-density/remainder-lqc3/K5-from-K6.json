@@ -1,0 +1,31 @@
+{
+  "schema": "navier-stokes-local-quartic-closure-adversary-v1",
+  "search_objective": "lqc3-ratio",
+  "triad_selection": "doubling-remainder",
+  "optimized_formula": "maximize |K+G| / (Z^(5/4) P^(3/4))",
+  "closure_objective": "maximize |K+G| / (k0 B0^(1/4) Z^(5/4) P^(3/4))",
+  "direct_sld_objective": "maximize 4 S^3 Z P (K+G) / (k0 (S^4 Z^2 P + B0 Z^3 P^4))",
+  "implemented_static_scale": "Z^(7/4) P / E^(1/4)",
+  "optimizer": "lbfgs",
+  "backend": "direct",
+  "initial_profile": "mixed",
+  "warm_state_path": "proof/l4/states/local-lqc3-ratio/doubling-remainder-K6-projected-K5/K5.tsv",
+  "gradient": "exact discrete reverse mode; selected local objectives use direct triads and RK4 follows the requested backend",
+  "workers": 12,
+  "restarts_per_cutoff": 12,
+  "iterations_per_restart": 12,
+  "trajectory_steps": 0,
+  "viscosity": 0.100000000000000006,
+  "time_step": 0.00200000000000000004,
+  "sobolev_order": 0,
+  "sobolev_cap": 0,
+  "fitted_cutoff_slope": 0,
+  "maximum_constant_ratio": 0.0293683857099628493,
+  "maximum_objective": 0.170495736697586248,
+  "candidate_lemma_proved": false,
+  "finite_search_is_not_a_proof": true,
+  "remaining_requirement": "derive a cutoff-independent analytic bound for the two-entry bracket",
+  "rows": [
+    {"cutoff": 5, "initial_objective": 0.00683191900036192803, "optimized_objective": 0.170495736697586248, "objective_gain": 0.163663817697224323, "initial_constant_ratio": 0.0089220088360001705, "optimized_constant_ratio": 0.0293683857099628493, "lqc3_target_ratio": 0.412911293981632621, "squared_lqc3_target_ratio": 0.170495736697586248, "signed_constant_ratio": -0.0293683857099628493, "normalized_stretching_ratio": 0.000687221038963515044, "signed_shape_factor": 1.29822309729295699e-09, "factorized_local_sld_ratio": -3.81267166588821925e-11, "factorization_relative_error": 1.65524015567122753e-19, "common_block_objective": false, "common_block_constant_ratio": 0, "common_block_shape_factor": 0, "common_block_sld_ratio": 0, "common_block_reconstruction_error": 0, "refined_objective": 0, "time_step_relative_error": 0, "frozen_initial_frequency": 0, "frozen_initial_ep_shift": 0, "objective_step": 0, "refined_objective_step": 0, "improvement_factor": 3.29167861742770951, "signed_two_entry_bracket": -600.679076777260207, "candidate_scale": 20453.2548267876882, "signed_stretching": 0.289063311977743043, "local_polynomial_numerator": -170220.121985023841, "local_polynomial_denominator": 4464589057273793, "signed_local_sld_ratio": -3.81267166588821925e-11, "energy": 1, "enstrophy": 13.3222404469917048, "palinstrophy": 220.166992850784027, "warm_lift_constant_ratio": 0.0167648453625183595, "warm_lift_objective": 0.0187348566379162626, "projection_residual": 0.966799802589077162, "projected_gradient_norm": 0.181825025802054535, "sobolev_value": 0, "winning_restart": 6, "winning_seed": "6339838265424610281", "warm_continuation_won": false, "accepted_steps": 12, "evaluations": 25, "state_path": "proof/l4/states/local-lqc3-ratio/doubling-remainder-K5-from-K6/K5.tsv", "restart_constant_ratios": [0.0270034632357028168, 0.0249209184576877525, 0.00532495415850008872, 0.0264533432028660927, 0.00645661637371696892, 0.00635375867089393431, 0.0293683857099628493, 0.00650048024103782804, 0.00552749495215981539, 0.027309416339179278, 0.0172145213071906618, 0.00558581888058163473], "restart_objectives": [0.167623134321495365, 0.061015771375329618, 0.00456789069498082095, 0.158758700699428434, 0.00536946340265329232, 0.00464284382049945984, 0.170495736697586248, 0.00500678675550741362, 0.00390394965297798709, 0.15474878189146582, 0.0430825941172426341, 0.0041091361612808977]}
+  ]
+}

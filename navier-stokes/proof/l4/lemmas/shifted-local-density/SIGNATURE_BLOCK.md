@@ -153,6 +153,20 @@ state retains `99.96181%` of the frozen trajectory objective at the same peak
 time. This supports an orbit-wise summability lemma, but finite K3 projection
 accuracy does not establish cutoff-uniform control of `F_d+F_r+F_x`.
 
+## Analytical block status
+
+The dominant block is now closed conventionally, not merely measured.
+Equal-length orthogonal incidence gives the shell bound
+`C R^5 E_near^2`; neighbor-shell locality sums its structural terms, while
+direct sequence estimates send both global normalization terms to
+`C Z^(5/4)P^(3/4)`. Therefore `F_d` has a cutoff-independent LQC-3 bound.
+
+No such bound is yet proved for `F_r` or `F_x`. Their small values on the
+trajectory winner are useful routing evidence only. The active work is to
+resolve the remainder by squared-length signature geometry without paying the
+dense-family counting loss, then use the same decomposition for the mixed
+block.
+
 ## Rejected sign shortcut
 
 The stronger shortcut `K+G<=0` is false. The signed-closure gradient has

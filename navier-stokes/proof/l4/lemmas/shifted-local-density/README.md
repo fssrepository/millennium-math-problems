@@ -8,8 +8,11 @@ Companion response-space proof targets:
   tensor and the explicit two-radius bilinear candidate that survived every
   ordered response pair through K12.
 - [`DOUBLING_QUARTET.md`](DOUBLING_QUARTET.md) proves the half-derivative
-  one-shell gain for the dominant orthogonal family and identifies the exact
-  signed cross-shell obstruction still blocking its global sum.
+  one-shell gain and the direct sequence estimates that close the complete
+  dominant orthogonal family at the cutoff-independent LQC-3 target scale.
+- [`REMAINDER_QUARTET.md`](REMAINDER_QUARTET.md) computes the exact dense
+  signature loss and reduces the next open block to an effective
+  `R^(3/2)` incidence or equivalent signed quartet estimate.
 
 This note records a scale-compatible replacement for the rejected pointwise
 monotonicity and unshifted multiplicative-growth routes.
@@ -411,6 +414,14 @@ response comparisons beyond order K are polluted by the Galerkin boundary,
 so [RESPONSE_DIAGONAL.md](RESPONSE_DIAGONAL.md) retains only orders `0..K`
 and states the weighted response-majorant target. The observed diagonal is
 evidence, not the required cutoff-uniform bilinear and complement estimate.
+
+The complete equal-low doubling quartet is no longer an open sub-block.
+Equal-length orthogonal incidence gives its half-derivative one-shell gain;
+fixed-width shell locality sums the structural entries, and the direct bounds
+`S <= C Z^(5/4)P^(1/4)` and `T <= C Z^(1/4)P^(5/4)` close both normalization
+terms at `Z^(5/4)P^(3/4)`. The full shifted-density lemma remains open because
+the closed signature remainder and the mixed doubling/remainder block have
+not yet been controlled uniformly.
 
 ## Reduced proof obligation
 

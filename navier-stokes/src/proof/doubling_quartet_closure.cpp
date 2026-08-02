@@ -93,6 +93,54 @@ DoublingQuartetClosureReport DoublingQuartetClosure::certify(
         report.every_quartet_entry_has_same_power &&
         report.target_energy_homogeneity_matches &&
         report.frequency_gain < Rational(0);
+    // A block with low squared radius m is supported only at squared radii
+    // m and 2m. Two structural blocks can therefore pair only when their
+    // low radii differ by at most a factor two, hence by at most one of the
+    // factor-four squared-radius shells used by the ledger.
+    report.structural_entries_neighbor_shell_local = true;
+    report.structural_entry_global_bound_proved =
+        report.closed_single_shell_power_bound &&
+        report.shell_sum_closes_by_zp &&
+        report.torus_spectral_gap_closes_target;
+    const bool stretching_sequence_bound =
+        Rational(2) * report.stretching_enstrophy_power +
+                Rational(4) * report.stretching_palinstrophy_power ==
+            report.stretching_frequency_power &&
+        report.stretching_enstrophy_power +
+                report.stretching_palinstrophy_power ==
+            Rational(3, 2);
+    const bool weighted_stretching_sequence_bound =
+        Rational(2) * report.weighted_stretching_enstrophy_power +
+                Rational(4) *
+                    report.weighted_stretching_palinstrophy_power ==
+            Rational(11, 2) &&
+        report.weighted_stretching_enstrophy_power +
+                report.weighted_stretching_palinstrophy_power ==
+            Rational(3, 2);
+    const Rational squared_normalization_z =
+        Rational(2) * report.stretching_enstrophy_power - Rational(1);
+    const Rational squared_normalization_p =
+        Rational(2) * report.stretching_palinstrophy_power;
+    const Rational cross_normalization_z =
+        report.stretching_enstrophy_power +
+        report.weighted_stretching_enstrophy_power;
+    const Rational cross_normalization_p =
+        report.stretching_palinstrophy_power +
+        report.weighted_stretching_palinstrophy_power - Rational(1);
+    report.direct_normalization_target_bound_proved =
+        stretching_sequence_bound &&
+        weighted_stretching_sequence_bound &&
+        squared_normalization_z == report.normalization_enstrophy_power &&
+        squared_normalization_p == report.normalization_palinstrophy_power &&
+        cross_normalization_z == report.normalization_enstrophy_power &&
+        cross_normalization_p == report.normalization_palinstrophy_power &&
+        report.normalization_enstrophy_power -
+                report.target_enstrophy_power == Rational(1, 4) &&
+        report.normalization_palinstrophy_power -
+                report.target_palinstrophy_power == Rational(-1, 4) &&
+        report.torus_spectral_gap_closes_target;
+    report.projected_normalization_bound_proved =
+        report.direct_normalization_target_bound_proved;
     for (int first_shell = 0; first_shell <= maximum_cutoff; ++first_shell) {
         for (int second_shell = first_shell + 1;
              second_shell <= maximum_cutoff; ++second_shell) {
@@ -144,7 +192,8 @@ DoublingQuartetClosureReport DoublingQuartetClosure::certify(
         report.closed_single_shell_power_bound &&
         report.shell_sum_closes_by_zp &&
         report.torus_spectral_gap_closes_target &&
-        report.normalization_sequence_bound_proved;
+        report.structural_entry_global_bound_proved &&
+        report.projected_normalization_bound_proved;
     report.full_local_lemma_proved = false;
     return report;
 }
@@ -200,13 +249,14 @@ int DoublingQuartetClosureCli::run(
     }
     certificate << std::setprecision(18)
         << "{\n"
-        << "  \"schema\": \"navier-stokes-doubling-quartet-closure-v1\",\n"
+        << "  \"schema\": \"navier-stokes-doubling-quartet-closure-v2\",\n"
         << "  \"family\": \"all squared-length signatures (m,m,2m), equivalently equal-length orthogonal input pairs\",\n"
         << "  \"maximum_cutoff\": " << options.maximum_cutoff << ",\n"
         << "  \"incidence_bound\": \"maximum target degree <= 2(2K+1) on a radius-K shell\",\n"
         << "  \"bilinear_shell_bound\": \"||B_d(v,w)||_2 <= C R^(3/2)||v||_2||w||_2\",\n"
         << "  \"closed_quartet_shell_bound\": \"|K_d+G_d|_j <= C R^5 E_near,j^2\",\n"
-        << "  \"shell_sum_bound\": \"sum_j R_j^5 E_near,j^2 <= C Z H3 <= C Z^(3/2)P^(1/2) <= C Z^(5/4)P^(3/4)\",\n"
+        << "  \"shell_sum_bound\": \"sum_j R_j^5 E_near,j^2 <= C Z^(3/2)P^(1/2) <= C Z^(5/4)P^(3/4); use each R_j^2 E_j <= Z, each R_j^4 E_j <= P, then P >= Z on the mean-zero torus\",\n"
+        << "  \"normalization_target_bound\": \"S <= C Z^(5/4)P^(1/4), T <= C Z^(1/4)P^(5/4), hence S^2/Z and |S T|/P are <= C Z^(3/2)P^(1/2) <= C Z^(5/4)P^(3/4)\",\n"
         << "  \"bilinear_l2_frequency_power\": \""
         << report.bilinear_l2_frequency_power.str() << "\",\n"
         << "  \"stretching_frequency_power\": \""
@@ -235,6 +285,19 @@ int DoublingQuartetClosureCli::run(
         << "  \"closed_single_shell_power_bound\": "
         << (report.closed_single_shell_power_bound ? "true" : "false")
         << ",\n"
+        << "  \"structural_entries_neighbor_shell_local\": "
+        << (report.structural_entries_neighbor_shell_local
+            ? "true" : "false")
+        << ",\n"
+        << "  \"structural_entry_global_bound_proved\": "
+        << (report.structural_entry_global_bound_proved
+            ? "true" : "false") << ",\n"
+        << "  \"direct_normalization_target_bound_proved\": "
+        << (report.direct_normalization_target_bound_proved
+            ? "true" : "false") << ",\n"
+        << "  \"projected_normalization_bound_proved\": "
+        << (report.projected_normalization_bound_proved
+            ? "true" : "false") << ",\n"
         << "  \"maximum_tested_normalization_ratio\": "
         << static_cast<double>(
                report.maximum_tested_normalization_ratio) << ",\n"
@@ -263,7 +326,7 @@ int DoublingQuartetClosureCli::run(
         << (report.naive_cross_shell_bound_rejected
             ? "true" : "false") << ",\n"
         << "  \"full_local_lemma_proved\": false,\n"
-        << "  \"remaining_requirement\": \"retain signed cancellation between the palinstrophy-normalization term and the other closed-family quartet entries; the naive absolute cross-shell sequence bound is false\",\n"
+        << "  \"remaining_requirement\": \"extend the now-closed doubling-family estimate to the closed signature remainder and to the mixed block; the full local SLD lemma remains open\",\n"
         << "  \"geometry_rows\": [\n";
     for (std::size_t index = 0;
          index < report.geometry.rows.size(); ++index) {
@@ -298,7 +361,7 @@ int DoublingQuartetClosureCli::run(
         << (report.cutoff_independent_closed_family_bound
             ? "PASS" : "FAIL") << '\n'
         << "Certificate written to " << options.certificate_path << '\n';
-    return report.closed_single_shell_power_bound ? 0 : 2;
+    return report.cutoff_independent_closed_family_bound ? 0 : 2;
 }
 
 }  // namespace lemma

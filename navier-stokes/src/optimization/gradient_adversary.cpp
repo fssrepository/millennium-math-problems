@@ -170,6 +170,11 @@ SpectralReal GradientAdversary::objective_value(
             dynamics_, options.closure_selection)
             .evaluate(initial).squared_constant_ratio;
     }
+    if (options.objective == "local-lqc3-ratio") {
+        return LocalQuarticClosureObjective(
+            dynamics_, options.closure_selection)
+            .evaluate(initial).squared_lqc3_target_ratio;
+    }
     if (options.objective == "local-sld-ratio") {
         return LocalQuarticClosureObjective(
             dynamics_, options.closure_selection)
@@ -338,6 +343,15 @@ GradientSearchResult GradientAdversary::maximize_q(
             trajectory.objective_step = 0;
             trajectory.initial_gradient =
                 closure.squared_constant_ratio_gradient(result.state);
+        } else if (options.objective == "local-lqc3-ratio") {
+            const LocalQuarticClosureObjective closure(
+                dynamics_, options.closure_selection);
+            trajectory.objective_value =
+                closure.evaluate(result.state)
+                    .squared_lqc3_target_ratio;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient =
+                closure.squared_lqc3_target_ratio_gradient(result.state);
         } else if (options.objective == "local-sld-ratio") {
             const LocalQuarticClosureObjective closure(
                 dynamics_, options.closure_selection);

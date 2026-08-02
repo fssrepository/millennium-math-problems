@@ -21,6 +21,9 @@ std::string objective_formula(const std::string& objective) {
     if (objective == "closure-ratio") {
         return "maximize |K+G| E^(1/4) / (Z^(7/4) P)";
     }
+    if (objective == "lqc3-ratio") {
+        return "maximize |K+G| / (Z^(5/4) P^(3/4))";
+    }
     if (objective == "signed-closure-ratio") {
         return "maximize (K+G) E^(1/4) / (Z^(7/4) P)";
     }
@@ -62,6 +65,8 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
         << "  \"implemented_static_scale\": \"Z^(7/4) P / E^(1/4)\",\n"
         << "  \"optimizer\": \"" << options.method << "\",\n"
         << "  \"backend\": \"" << options.backend << "\",\n"
+        << "  \"initial_profile\": \""
+        << options.initial_profile << "\",\n"
         << "  \"warm_state_path\": \"" << options.warm_state_path
         << "\",\n"
         << "  \"gradient\": \"exact discrete reverse mode; selected local objectives use direct triads and RK4 follows the requested backend\",\n"
@@ -101,6 +106,10 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
             << static_cast<double>(winner.initial_constant_ratio)
             << ", \"optimized_constant_ratio\": "
             << static_cast<double>(value.constant_ratio)
+            << ", \"lqc3_target_ratio\": "
+            << static_cast<double>(value.lqc3_target_ratio)
+            << ", \"squared_lqc3_target_ratio\": "
+            << static_cast<double>(value.squared_lqc3_target_ratio)
             << ", \"signed_constant_ratio\": "
             << static_cast<double>(value.signed_constant_ratio)
             << ", \"normalized_stretching_ratio\": "
@@ -233,11 +242,12 @@ void LocalQuarticClosureReporter::print_summary(
     out << "local quartic closure exact-gradient adversary"
         << " objective=" << report.objective
         << " backend=" << report.backend
+        << " profile=" << report.initial_profile
         << " workers=" << report.workers
         << " restarts=" << report.restarts
         << " iterations=" << report.iterations << '\n'
         << "cutoff,initial_objective,optimized_objective,gain,"
-           "closure_C,signed_S,warm_lift_objective,projection_residual,"
+           "closure_C,lqc3_C,signed_S,warm_lift_objective,projection_residual,"
            "gradient_norm,time_refinement_error,accepted,evaluations,seed\n";
     for (const auto& row : report.rows) {
         out << row.cutoff << ','
@@ -245,6 +255,7 @@ void LocalQuarticClosureReporter::print_summary(
             << static_cast<double>(row.winner.objective) << ','
             << static_cast<double>(row.objective_gain) << ','
             << static_cast<double>(row.winner.value.constant_ratio) << ','
+            << static_cast<double>(row.winner.value.lqc3_target_ratio) << ','
             << static_cast<double>(row.winner.value.signed_stretching) << ','
             << static_cast<double>(row.warm_lift_objective) << ','
             << static_cast<double>(row.projection_residual) << ','

@@ -179,6 +179,12 @@ source file:
   responses and transverse cyclic orbits; the tensor can greedily insert
   missing quadratic products without contaminating low analytic degrees with
   higher-cutoff response directions;
+- `LocalSldTwoScaleState` constructs exact cyclic low/high dilations without
+  repeated response generation; `LocalSldDoublingScaleScan` evaluates the
+  doubling, remainder, and mixed blocks across scale and response angle;
+- `LocalSldDoublingShellLedger` emits the exact ordered dyadic-shell matrix,
+  while `LocalSldProjectedSquare` verifies the completed-square identity for
+  any fixed triad selection;
 - `LocalSldTrajectoryEvaluator` evaluates and dt-refines any saved state with
   either the direct RK4 oracle or the FFT forward/VJP backend;
 - `LocalSldSignatureBlock` splits `K+G` exactly into a selected squared-length
@@ -211,8 +217,11 @@ source file:
   closure mechanism;
 - `DoublingQuartetClosure` combines the equal-length orthogonal incidence
   bound with exact rational quartet power counting: the complete doubling
-  family gains half a derivative on each shell, while an exact two-scale
-  counterexample rejects the naive absolute cross-shell normalization sum;
+  family now closes at the cutoff-independent `Z^(5/4)P^(3/4)` scale; an exact
+  two-scale counterexample is retained because it rejects a tempting but
+  unnecessary intermediate absorption inequality;
+- `RemainderQuartetClosure` computes the exact dense-signature loss and the
+  effective `R^(3/2)` incidence degree required for the next open block;
 - `TriadVerifier` owns direct interaction analysis, detailed triad
   cancellation, local/nonlocal flux partitioning, and certificate aggregation;
 - `StateAnalyzer` and `StateFamilyAnalyzer` measure shell decay, active modes,
@@ -231,11 +240,11 @@ self-test; state construction, trajectory diagnostics, triad verification,
 forward dynamics, the discrete adjoint, constrained optimization, CLI, and
 report generation are separate compilation units. Pointwise bounds for both
 raw signature participation and signed amplification have been adversarially
-rejected. The next mathematical task is a trajectory-integrated estimate for
-the exact coupled density `A_sig^4 R^2/(Z P^3)` for each fixed smooth initial
-datum. The far dyadic tail and every fixed local signature family already have
-cutoff-independent closures. This keeps rebuilds dependency-free and makes
-each layer independently replaceable.
+rejected. The dominant doubling quartet now has a conventional
+cutoff-independent proof; the next mathematical tasks are the closed local
+signature remainder and its mixed interaction with the doubling block. The
+full local SLD lemma and the Clay problem remain open. This keeps rebuilds
+dependency-free and makes each layer independently replaceable.
 
 The current direct local-lemma search is reproducible with:
 
@@ -243,6 +252,12 @@ The current direct local-lemma search is reproducible with:
 ./build/navier_stokes_lab doubling-quartet-certificate \
   --max-cutoff 12 \
   --certificate proof/l4/analysis/shifted-local-density/doubling-quartet/closed-family-K12.json
+
+./build/navier_stokes_lab local-sld-doubling-scale-scan \
+  --min-scale 2 --max-scale 12 \
+  --angle-min -1.2 --angle-max 1.2 --angle-count 25 \
+  --energy-decay-power 2.75 --threads 12 \
+  --certificate proof/l4/analysis/shifted-local-density/doubling-quartet/two-scale-L2-L12-angle-scan.json
 
 ./build/navier_stokes_lab local-closure-adversary \
   --objective sld-ratio --min-cutoff 1 --max-cutoff 4 \
@@ -388,11 +403,12 @@ and `1.32010`. See
 
 For the universal dominant block, equal-length orthogonal incidence proves the
 one-shell bound `|K_d+G_d|_j <= C R_j^5 E_{near,j}^2`, which is half a
-derivative better than the LQC-3 target. The remaining global summation cannot
-split the normalization term absolutely: the explicit two-shell energy
-profile `E_high=L^(-11/4)` makes the tempting sequence estimate fail by
-`L^(1/8)`. The active proof target is therefore the signed cross-shell
-cancellation in the complete `K_d+G_d`; see
+derivative better than the LQC-3 target. Neighbor-shell locality sums the
+structural entries. Direct sequence estimates give
+`S <= C Z^(5/4)P^(1/4)` and `T <= C Z^(1/4)P^(5/4)`, closing both global
+normalization terms at `Z^(5/4)P^(3/4)`. Thus the complete doubling block is
+now proved cutoff-independently. The active proof targets are the closed
+signature remainder and the mixed block; see
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md`.
 
 The helical local target has its own replayable optimizer and same-state

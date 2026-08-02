@@ -23,6 +23,7 @@
 #include "state_transform.hpp"
 #include "orthogonal_triad_geometry.hpp"
 #include "doubling_quartet_closure.hpp"
+#include "remainder_quartet_closure.hpp"
 #include "local_signature_geometry.hpp"
 #include "local_signature_adversary.hpp"
 #include "local_signature_factor_adversary.hpp"
@@ -36,6 +37,8 @@
 #include "local_sld_response_family.hpp"
 #include "local_sld_response_diagonal.hpp"
 #include "local_sld_response_tensor.hpp"
+#include "local_sld_doubling_shell_ledger.hpp"
+#include "local_sld_doubling_scale_scan.hpp"
 #include "local_sld_trajectory_evaluator.hpp"
 #include "local_sld_signature_block.hpp"
 #include "shifted_critical_density_cli.hpp"
@@ -889,6 +892,7 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab helical-cutoff-scan [options]\n"
         << "  navier_stokes_lab orthogonal-triad-certificate [options]\n"
         << "  navier_stokes_lab doubling-quartet-certificate [options]\n"
+        << "  navier_stokes_lab remainder-quartet-certificate [options]\n"
         << "  navier_stokes_lab local-signature-certificate [options]\n"
         << "  navier_stokes_lab local-signature-adversary [options]\n"
         << "  navier_stokes_lab local-signature-factor [options]\n"
@@ -902,6 +906,8 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab local-sld-response-family [options]\n"
         << "  navier_stokes_lab local-sld-response-diagonal [options]\n"
         << "  navier_stokes_lab local-sld-response-tensor [options]\n"
+        << "  navier_stokes_lab local-sld-doubling-shells [options]\n"
+        << "  navier_stokes_lab local-sld-doubling-scale-scan [options]\n"
         << "  navier_stokes_lab local-sld-trajectory-evaluate [options]\n"
         << "  navier_stokes_lab local-sld-block [options]\n"
         << "  navier_stokes_lab shifted-density [options]\n"
@@ -939,6 +945,8 @@ void print_help(std::ostream& out) {
     out << '\n';
     lemma::DoublingQuartetClosureCli::print_help(out);
     out << '\n';
+    lemma::RemainderQuartetClosureCli::print_help(out);
+    out << '\n';
     lemma::LocalSignatureCli::print_help(out);
     out << '\n';
     lemma::LocalSignatureAdversaryCli::print_help(out);
@@ -964,6 +972,10 @@ void print_help(std::ostream& out) {
     lemma::LocalSldResponseDiagonalCli::print_help(out);
     out << '\n';
     lemma::LocalSldResponseTensorCli::print_help(out);
+    out << '\n';
+    lemma::LocalSldDoublingShellCli::print_help(out);
+    out << '\n';
+    lemma::LocalSldDoublingScaleScan::print_help(out);
     out << '\n';
     lemma::LocalSldTrajectoryEvaluatorCli::print_help(out);
     out << '\n';
@@ -1021,6 +1033,12 @@ int main(int argc, char** argv) {
         if (command == "doubling-quartet-certificate") {
             return lemma::DoublingQuartetClosureCli::run(
                 lemma::DoublingQuartetClosureCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command == "remainder-quartet-certificate") {
+            return lemma::RemainderQuartetClosureCli::run(
+                lemma::RemainderQuartetClosureCli::parse(
                     argc, argv, 2),
                 std::cout);
         }
@@ -1093,6 +1111,18 @@ int main(int argc, char** argv) {
         if (command == "local-sld-response-tensor") {
             return lemma::LocalSldResponseTensorCli::run(
                 lemma::LocalSldResponseTensorCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command == "local-sld-doubling-shells") {
+            return lemma::LocalSldDoublingShellCli::run(
+                lemma::LocalSldDoublingShellCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command == "local-sld-doubling-scale-scan") {
+            return lemma::LocalSldDoublingScaleScan::run(
+                lemma::LocalSldDoublingScaleScan::parse(
                     argc, argv, 2),
                 std::cout);
         }

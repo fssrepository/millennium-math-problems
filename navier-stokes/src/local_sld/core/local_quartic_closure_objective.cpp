@@ -228,6 +228,14 @@ LocalQuarticClosureObjectiveValue LocalQuarticClosureObjective::evaluate(
             result.candidate_scale;
         result.squared_constant_ratio =
             result.constant_ratio * result.constant_ratio;
+        result.lqc3_target_scale =
+            std::pow(result.enstrophy, 1.25L) *
+            std::pow(result.palinstrophy, 0.75L);
+        result.lqc3_target_ratio = std::abs(
+            result.signed_two_entry_bracket) /
+            result.lqc3_target_scale;
+        result.squared_lqc3_target_ratio =
+            result.lqc3_target_ratio * result.lqc3_target_ratio;
         result.initial_frequency = std::sqrt(
             result.enstrophy / result.energy);
         result.initial_ep_shift = result.energy * result.palinstrophy;
@@ -276,6 +284,7 @@ LocalQuarticClosureObjectiveValue LocalQuarticClosureObjective::evaluate(
             factorization_scale;
     }
     result.finite = std::isfinite(result.squared_constant_ratio) &&
+        std::isfinite(result.squared_lqc3_target_ratio) &&
         std::isfinite(result.signed_local_sld_ratio) &&
         std::isfinite(result.factorization_relative_error) &&
         result.candidate_scale > 0.0L;
@@ -524,6 +533,33 @@ LocalQuarticClosureObjective::signed_constant_ratio_gradient(
     add_scaled(
         result, laplacian_weight(state, graph.au),
         -2.0L * objective / graph.palinstrophy);
+    return result;
+}
+
+SpectralIncrement
+LocalQuarticClosureObjective::squared_lqc3_target_ratio_gradient(
+    const SpectralState& state) const {
+    const ClosureGraph graph = build_graph(dynamics_, state, selection_);
+    SpectralIncrement result(state.waves.size());
+    if (!(graph.enstrophy > 0.0L) ||
+        !(graph.palinstrophy > 0.0L)) {
+        return result;
+    }
+    const SpectralReal bracket = bracket_value(graph);
+    const SpectralReal factor = 1.0L /
+        (std::pow(graph.enstrophy, 2.5L) *
+         std::pow(graph.palinstrophy, 1.5L));
+    const SpectralReal objective = bracket * bracket * factor;
+    result = bracket_gradient(dynamics_, state, graph, selection_);
+    for (ComplexVector& mode : result) {
+        for (SpectralComplex& component : mode) {
+            component *= 2.0L * bracket * factor;
+        }
+    }
+    add_scaled(result, graph.au,
+               -5.0L * objective / graph.enstrophy);
+    add_scaled(result, laplacian_weight(state, graph.au),
+               -3.0L * objective / graph.palinstrophy);
     return result;
 }
 

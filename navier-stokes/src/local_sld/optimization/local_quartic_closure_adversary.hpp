@@ -29,6 +29,7 @@ struct LocalQuarticClosureAdversaryOptions {
     std::string backend = "direct";
     std::string objective = "sld-ratio";
     std::string selection = "local";
+    std::string initial_profile = "mixed";
     std::string certificate_path;
     std::string state_directory;
     std::string warm_state_path;
@@ -77,6 +78,7 @@ struct LocalQuarticClosureAdversaryReport {
     int trajectory_steps = 0;
     std::string objective;
     std::string backend;
+    std::string initial_profile;
     SpectralReal viscosity = 0.0L;
     SpectralReal time_step = 0.0L;
     int sobolev_order = 0;

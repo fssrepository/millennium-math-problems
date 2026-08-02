@@ -149,11 +149,15 @@ The universal dominant-block calculation has progressed independently. The
 complete `(m,m,2m)` family is an equal-length orthogonal incidence graph.
 Target-wise degree `O(R)` gives `||B_d||_2 <= C R^(3/2)E`, and every one-shell
 entry of the closed `K_d+G_d` bracket has scale `R^5E^2`, gaining one half
-derivative over LQC-3. The naive absolute global normalization sum is false:
-two shells with high-shell energy `L^(-11/4)` make its ratio grow as
-`L^(1/8)`. The lowest universal analytical subtask is now a signed cross-shell
-estimate for the already combined `K_d+G_d`; after that, the closed remainder
-and mixed blocks must be treated at the same scale. See
+derivative over LQC-3. The naive attempt to absorb the global normalization
+sum into the structural shell sum is false: two shells with high-shell energy
+`L^(-11/4)` make that intermediate ratio grow as `L^(1/8)`. Direct estimates
+avoid the obstruction: `S <= C Z^(5/4)P^(1/4)` and
+`T <= C Z^(1/4)P^(5/4)`, so both normalization entries are bounded by
+`C Z^(3/2)P^(1/2) <= C Z^(5/4)P^(3/4)`. Together with neighbor-shell locality
+of the structural terms, this proves the complete doubling-family block
+cutoff-independently. The lowest universal analytical subtask is now the
+closed signature remainder; the mixed block follows. See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md`.
 
 The first explicit L4 candidate in the reduction was

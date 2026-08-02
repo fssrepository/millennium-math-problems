@@ -1,9 +1,9 @@
 # Doubling-family quartet closure
 
-This note gives a cutoff-independent one-shell estimate for the dominant
-`(m,m,2m)` local quartet and records the exact cross-shell obstruction that
-remains. It closes neither the complete doubling-family bracket nor the local
-SLD lemma.
+This note proves a cutoff-independent estimate for the complete dominant
+`(m,m,2m)` local quartet. It closes the doubling-family block at the LQC-3
+target scale. It does not close the signature remainder, the mixed block, or
+the full local SLD lemma.
 
 ## Orthogonal incidence bound
 
@@ -57,7 +57,29 @@ All exponents are evaluated as exact rationals by
 `DoublingQuartetClosure`; the self-test requires `3/2`, `5`, `11/2`, and
 `-1/2` exactly.
 
-## Rejected absolute cross-shell sum
+## Global sum of structural entries
+
+A block whose low squared radius is `m` is supported only at squared radii
+`m` and `2m`. Two outer, commutator, or nested structural blocks can therefore
+pair only if their low radii differ by at most a factor two. In the
+factor-four squared-radius ledger this is at most one neighboring shell.
+
+Let `E_near,j` contain that fixed-width neighborhood. The one-shell result
+and bounded overlap give
+
+```text
+sum_j R_j^5 E_near,j^2
+    <= C Z^(3/2) P^(1/2)
+    <= C Z^(5/4) P^(3/4).                            (DQ-3)
+```
+
+For the first inequality, write `z_j=R_j^2 E_near,j` and
+`p_j=R_j^4 E_near,j`. Then
+`R_j^5 E_near,j^2=z_j^(3/2)p_j^(1/2)` and use
+`z_j<=sum z_i`, `p_j<=sum p_i`, plus bounded overlap. The second inequality
+is `(Z/P)^(1/4)<=1`, which follows from the mean-zero torus spectral gap.
+
+## Rejected intermediate absorption
 
 DQ-2 does not by itself sum the two global normalization entries. The tempting
 sequence inequality is
@@ -68,10 +90,10 @@ T = sum_j R_j^(11/2) E_j^(3/2),
 P = sum_j R_j^4 E_j,
 M = sum_j R_j^5 E_j^2,
 
-S T <= P M.                                             (DQ-3)
+S T <= P M.                                             (DQ-4)
 ```
 
-DQ-3 is false. Take one unit-energy shell at radius one and a second shell at
+DQ-4 is false. Take one unit-energy shell at radius one and a second shell at
 radius `L` with energy `L^(-11/4)`. The high-shell powers are
 
 ```text
@@ -83,18 +105,82 @@ The low shell controls `S` and `M`, while the high shell controls `T` and `P`.
 Consequently
 
 ```text
-S T/(P M) grows like L^(1/8).                          (DQ-4)
+S T/(P M) grows like L^(1/8).                          (DQ-5)
 ```
 
 The C++ two-shell ledger independently reaches ratio `2.99973` within its K12
-scan and emits the maximizing tested configuration. DQ-4 is the analytic
+scan and emits the maximizing tested configuration. DQ-5 is the analytic
 counterexample; the finite scan only verifies the implementation.
 
-Therefore the dominant family cannot be closed by taking absolute values of
-the palinstrophy-normalization term separately. The next lemma must combine
-its signed cross-shell contribution with the commutator, outer-square, and
-advecting entries before summation. This is exactly the cancellation retained
-by `K_d+G_d` and by the full block factorization.
+Thus the normalization term cannot first be absorbed into the structural
+shell sum `M`. This rejects that intermediate proof route, but it does not
+reject the target estimate itself.
+
+## Direct normalization estimate
+
+The normalization sums can instead be sent directly to the LQC-3 target.
+The incidence bound gives
+
+```text
+|S_j| <= C R_j^(7/2) E_near,j^(3/2)
+|T_j| <= C R_j^(11/2) E_near,j^(3/2),
+```
+
+where `T=<A B_d,A u>`. In terms of `z_j` and `p_j`,
+
+```text
+R_j^(7/2) E_j^(3/2)  = z_j^(5/4) p_j^(1/4),
+R_j^(11/2) E_j^(3/2) = z_j^(1/4) p_j^(5/4).
+```
+
+Since each `z_j<=Z` and `p_j<=P`, bounded overlap yields
+
+```text
+|S| <= C Z^(5/4) P^(1/4),
+|T| <= C Z^(1/4) P^(5/4).                            (DQ-6)
+```
+
+Therefore both global normalization entries close:
+
+```text
+S^2/Z <= C Z^(3/2)P^(1/2),
+|S T|/P <= C Z^(3/2)P^(1/2)
+         <= C Z^(5/4)P^(3/4).                        (DQ-7)
+```
+
+Together, DQ-3 and DQ-7 prove
+
+```text
+|K_d+G_d| <= C Z^(5/4)P^(3/4),                       (DQ-8)
+```
+
+with `C` independent of the Galerkin cutoff. This is stronger than the
+doubling-block instance of LQC-3 up to its fixed positive initial-data factor.
+The exact-rational engine checks both exponent routes independently. The
+failed DQ-4 absorption screen remains in the certificate so that this invalid
+shortcut is not accidentally reintroduced.
+
+## Exact projected-square diagnostic
+
+`LocalSldProjectedSquare` also verifies, for any fixed triad selection,
+
+```text
+-<B,A B> + S^2/(2Z) + 3S T/(2P)
+ = -||A^(1/2)(B-c A u)||_2^2
+   + S^2/(2Z) + c^2 H3,
+c=3S/(4P).
+```
+
+This identity is useful for retaining sign, but DQ-5 is what removes the
+otherwise non-closing `H3` remainder. The shell ledger reconstructs the
+complete ordered matrix and the completed square with relative errors around
+`10^-19` on the stored examples.
+
+A 275-state two-scale screen over `L=2,...,12` and 25 response angles tests
+the rejected energy profile `E_high=L^(-11/4)` directly. The largest positive
+target ratio is `0.016067970718` at `L=2`; the per-scale positive maximum
+decreases to `0.003136407508` at `L=12`. This finite scan is a regression and
+falsification artifact, not the proof of DQ-8.
 
 ## Reproduction
 
@@ -102,11 +188,20 @@ by `K_d+G_d` and by the full block factorization.
 ./build/navier_stokes_lab doubling-quartet-certificate \
   --max-cutoff 12 \
   --certificate proof/l4/analysis/shifted-local-density/doubling-quartet/closed-family-K12.json
+
+./build/navier_stokes_lab local-sld-doubling-scale-scan \
+  --min-scale 2 --max-scale 12 \
+  --angle-min -1.2 --angle-max 1.2 --angle-count 25 \
+  --energy-decay-power 2.75 --threads 12 \
+  --certificate proof/l4/analysis/shifted-local-density/doubling-quartet/two-scale-L2-L12-angle-scan.json
 ```
 
 Artifact:
 
 - [`../../analysis/shifted-local-density/doubling-quartet/closed-family-K12.json`](../../analysis/shifted-local-density/doubling-quartet/closed-family-K12.json)
+- [`../../analysis/shifted-local-density/doubling-quartet/two-scale-L2-L12-angle-scan.json`](../../analysis/shifted-local-density/doubling-quartet/two-scale-L2-L12-angle-scan.json)
+- [`../../analysis/shifted-local-density/doubling-quartet/two-scale-L12-Ehigh-Lm11over4-shell-matrix.json`](../../analysis/shifted-local-density/doubling-quartet/two-scale-L12-Ehigh-Lm11over4-shell-matrix.json)
 
-The certificate deliberately reports `full_local_lemma_proved=false` and
-`cutoff_independent_closed_family_bound=false`.
+The certificate reports `cutoff_independent_closed_family_bound=true` and,
+deliberately, `full_local_lemma_proved=false`. The next proof block is the
+closed signature remainder, followed by the mixed term.

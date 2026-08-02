@@ -1,0 +1,39 @@
+{
+  "schema": "navier-stokes-local-sld-doubling-shell-v1",
+  "definition": "exact ordered dyadic-shell matrix of the complete closed (m,m,2m) K+G bracket",
+  "state_path": "proof/l4/states/local-sld-trajectory/maximum-T032-K4-from-K3/K4.tsv",
+  "cutoff": 4,
+  "evolved_steps": 596,
+  "viscosity": 0.100000000000000006,
+  "time_step": 0.00050000000000000001,
+  "enstrophy": 0.998648571007903496,
+  "palinstrophy": 1.11962939373865367,
+  "full_family_bracket": -0.159125408910991528,
+  "reconstructed_family_bracket": -0.159125408910991528,
+  "bracket_reconstruction_error": 3.49192261123823196e-18,
+  "advection_reconstruction_error": 3.41745776279315899e-26,
+  "diagonal_total": -0.159125411497567648,
+  "off_diagonal_total": 2.58657613231420393e-09,
+  "absolute_matrix_sum": 0.159125414084145766,
+  "signed_cancellation_fraction": 3.25099185407846762e-08,
+  "maximum_absolute_entry": 0.159125411482233359,
+  "shells": [
+    {"shell": 0, "minimum_input_squared": 1, "maximum_input_squared_exclusive": 4, "advection_norm2": 0.276712996929347754, "stretching": -0.121867987750703594, "palinstrophy_cross": -0.365603963252110753},
+    {"shell": 1, "minimum_input_squared": 4, "maximum_input_squared_exclusive": 16, "advection_norm2": 2.99719472296096301e-12, "stretching": -8.53915903675764532e-10, "palinstrophy_cross": -1.26423317250763854e-08},
+    {"shell": 2, "minimum_input_squared": 16, "maximum_input_squared_exclusive": 64, "advection_norm2": 2.29228029425338263e-21, "stretching": 1.04194141458620273e-16, "palinstrophy_cross": 5.62648363876549501e-15}
+  ],
+  "matrix": [
+    {"left_shell": 0, "right_shell": 0, "outer_square": -0.536606179048413678, "advected_commutator": 0.293532811739629529, "enstrophy_normalization": 0.007435952380834129, "palinstrophy_normalization": 0.0596921886354349479, "advecting_nested": 0.0168198148102817711, "total": -0.159125411482233359},
+    {"left_shell": 0, "right_shell": 1, "outer_square": -2.33465193312407062e-46, "advected_commutator": 4.65195539079327055e-46, "enstrophy_normalization": 5.21029198410906608e-11, "palinstrophy_normalization": 2.06411452275373109e-09, "advecting_nested": -2.31730345766919993e-46, "total": 2.11621744259482187e-09},
+    {"left_shell": 0, "right_shell": 2, "outer_square": -0, "advected_commutator": 0, "enstrophy_normalization": -6.35755696428754977e-18, "palinstrophy_normalization": -9.18636438543693274e-16, "advecting_nested": -0, "total": -9.24993995507980806e-16},
+    {"left_shell": 1, "right_shell": 0, "outer_square": -2.33465193312407062e-46, "advected_commutator": 1.16732596656203531e-46, "enstrophy_normalization": 5.21029198410906608e-11, "palinstrophy_normalization": 4.18256755869979073e-10, "advecting_nested": 3.50324616081204268e-46, "total": 4.70359675711069701e-10},
+    {"left_shell": 1, "right_shell": 1, "outer_square": -3.06848795587847665e-11, "advected_commutator": 1.53505206502114827e-11, "enstrophy_normalization": 3.65079564382927826e-19, "palinstrophy_normalization": 1.44630288110861639e-17, "advecting_nested": 4.47801825296749582e-17, "total": -1.53342993002823794e-11},
+    {"left_shell": 1, "right_shell": 2, "outer_square": 1.30436754458721008e-17, "advected_commutator": -2.32222008177688205e-17, "enstrophy_normalization": -4.45467189581819505e-26, "palinstrophy_normalization": -6.43678687936647922e-24, "advecting_nested": 5.1918698444890786e-20, "total": -1.01266131547854284e-17},
+    {"left_shell": 2, "right_shell": 0, "outer_square": -0, "advected_commutator": 0, "enstrophy_normalization": -6.35755696428754977e-18, "palinstrophy_normalization": -5.10353576968718472e-17, "advecting_nested": -0, "total": -5.73929146611593916e-17},
+    {"left_shell": 2, "right_shell": 1, "outer_square": 1.30436754458721008e-17, "advected_commutator": -6.52183772293605039e-18, "enstrophy_normalization": -4.45467189581819505e-26, "palinstrophy_normalization": -1.76476730714997007e-24, "advecting_nested": -4.55504060943636409e-38, "total": 6.52183591362202387e-18},
+    {"left_shell": 2, "right_shell": 2, "outer_square": -8.22522251368690643e-20, "advected_commutator": 4.15135807457302218e-20, "enstrophy_normalization": 5.43555532420275824e-33, "palinstrophy_normalization": 7.85411631005715806e-31, "advecting_nested": -7.73779935817682703e-23, "total": -4.08160223839297638e-20}
+  ],
+  "exact_reconstruction": true,
+  "signed_cross_shell_bound_proved": false,
+  "finite_matrix_is_not_a_proof": true
+}

@@ -19,10 +19,14 @@ struct DoublingQuartetClosureReport {
     Rational required_frequency_power{11, 2};
     Rational required_energy_power{2};
     Rational frequency_gain{-1, 2};
-    Rational shell_enstrophy_power{1};
-    Rational shell_h3_power{1};
     Rational global_enstrophy_power{3, 2};
     Rational global_palinstrophy_power{1, 2};
+    Rational stretching_enstrophy_power{5, 4};
+    Rational stretching_palinstrophy_power{1, 4};
+    Rational weighted_stretching_enstrophy_power{1, 4};
+    Rational weighted_stretching_palinstrophy_power{5, 4};
+    Rational normalization_enstrophy_power{3, 2};
+    Rational normalization_palinstrophy_power{1, 2};
     Rational target_enstrophy_power{5, 4};
     Rational target_palinstrophy_power{3, 4};
     bool target_energy_homogeneity_matches = false;
@@ -30,6 +34,10 @@ struct DoublingQuartetClosureReport {
     bool shell_sum_closes_by_zp = false;
     bool torus_spectral_gap_closes_target = false;
     bool closed_single_shell_power_bound = false;
+    bool structural_entries_neighbor_shell_local = false;
+    bool structural_entry_global_bound_proved = false;
+    bool projected_normalization_bound_proved = false;
+    bool direct_normalization_target_bound_proved = false;
     SpectralReal maximum_tested_normalization_ratio = 0.0L;
     int maximizing_first_shell = 0;
     int maximizing_second_shell = 0;

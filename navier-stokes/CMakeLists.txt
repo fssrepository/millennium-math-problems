@@ -50,6 +50,7 @@ add_executable(navier_stokes_lab
     src/proof/periodic_shell_geometry.cpp
     src/proof/periodic_tail_bound.cpp
     src/proof/proof_scaling.cpp
+    src/proof/remainder_quartet_closure.cpp
     src/proof/transition_block_scaling.cpp
 
     src/reporting/adversary_reporter.cpp
@@ -63,6 +64,7 @@ add_executable(navier_stokes_lab
     src/local_sld/core/local_sld_cyclic_basis.cpp
     src/local_sld/core/local_sld_cyclic_orbit_basis.cpp
     src/local_sld/core/local_sld_response_basis.cpp
+    src/local_sld/core/local_sld_two_scale_state.cpp
 
     src/local_sld/analysis/local_critical_derivative_ledger.cpp
     src/local_sld/analysis/local_quartic_closure_target.cpp
@@ -74,9 +76,12 @@ add_executable(navier_stokes_lab
     src/local_sld/analysis/local_quartic_shell_ledger.cpp
     src/local_sld/analysis/local_signature_geometry.cpp
     src/local_sld/analysis/local_sld_response_diagonal.cpp
+    src/local_sld/analysis/local_sld_doubling_shell_ledger.cpp
+    src/local_sld/analysis/local_sld_doubling_scale_scan.cpp
     src/local_sld/analysis/local_sld_response_family.cpp
     src/local_sld/analysis/local_sld_response_hierarchy.cpp
     src/local_sld/analysis/local_sld_response_tensor.cpp
+    src/local_sld/analysis/local_sld_projected_square.cpp
     src/local_sld/analysis/local_sld_signature_block.cpp
     src/local_sld/analysis/local_sld_trajectory_evaluator.cpp
     src/local_sld/analysis/shifted_critical_density.cpp

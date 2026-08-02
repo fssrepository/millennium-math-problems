@@ -1,0 +1,20 @@
+{
+  "schema": "navier-stokes-remainder-quartet-closure-v1",
+  "family": "local squared-length signatures excluding (m,m,2m)",
+  "dense_incidence_degree_power": "3",
+  "dense_bilinear_frequency_power": "5/2",
+  "dense_structural_bracket_frequency_power": "7",
+  "dense_normalization_bracket_frequency_power": "7",
+  "target_frequency_power": "11/2",
+  "dense_frequency_loss": "3/2",
+  "required_effective_incidence_degree_power": "3/2",
+  "required_incidence_reduction_power": "3/2",
+  "fixed_signature_bracket_frequency_power": "5",
+  "fixed_signature_frequency_gain": "-1/2",
+  "dense_energy_only_count_closes": false,
+  "every_fixed_signature_closes": true,
+  "remainder_requires_collective_cancellation": true,
+  "cutoff_independent_remainder_bound_proved": false,
+  "full_local_lemma_proved": false,
+  "remaining_requirement": "replace the dense R^3 interaction degree by an effective R^(3/2) bound, or prove an equivalent signed quartet cancellation across signatures"
+}
