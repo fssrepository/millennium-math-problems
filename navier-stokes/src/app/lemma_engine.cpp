@@ -33,6 +33,7 @@
 #include "local_sld_cyclic_ansatz.hpp"
 #include "local_sld_cyclic_krylov_ansatz.hpp"
 #include "local_sld_cyclic_trajectory_ansatz.hpp"
+#include "local_sld_response_family.hpp"
 #include "local_sld_response_hierarchy.hpp"
 #include "local_sld_block_objective.hpp"
 #include "local_sld_signature_block.hpp"
@@ -1878,6 +1879,20 @@ bool self_test(std::ostream& out) {
         response_hierarchy.maximum_gram_error < 1e-14L &&
         response_hierarchy.final_projection_energy > 0.999999L &&
         response_hierarchy.final_projection_energy < 1.000001L;
+    const LocalSldResponseFamilyReport response_family =
+        LocalSldResponseFamily::analyze(
+            active_dynamics,
+            {{"reference-a", cyclic_ansatz.state},
+             {"reference-b", cyclic_ansatz.state}},
+            4, false, false);
+    const bool response_family_ok =
+        response_family.rows.size() == 2 &&
+        response_family.depth == 4 &&
+        response_family.maximum_coefficient_l2_difference < 1e-18L &&
+        std::abs(
+            response_family.rows[0].final_projection_energy -
+            response_family.rows[1].final_projection_energy) < 1e-18L &&
+        response_family.finite_cutoff_family_is_not_a_proof;
     const LocalSldTrajectoryEvaluatorReport trajectory_evaluation =
         LocalSldTrajectoryEvaluator::evaluate(
             active_dynamics, cyclic_ansatz.state,
@@ -2369,6 +2384,13 @@ bool self_test(std::ostream& out) {
         << ", Gram error="
         << static_cast<double>(response_hierarchy.maximum_gram_error)
         << ")\n"
+        << "local SLD response family test: "
+        << (response_family_ok ? "PASS" : "FAIL")
+        << " (rows=" << response_family.rows.size()
+        << ", coefficient difference="
+        << static_cast<double>(
+               response_family.maximum_coefficient_l2_difference)
+        << ")\n"
         << "local SLD trajectory evaluator test: "
         << (trajectory_evaluation_ok ? "PASS" : "FAIL")
         << " (maximum="
@@ -2427,7 +2449,7 @@ bool self_test(std::ostream& out) {
            local_sld_gradient_search_ok &&
            cyclic_ansatz_ok && cyclic_trajectory_ansatz_ok &&
            cyclic_krylov_ansatz_ok && signature_block_ok &&
-           response_hierarchy_ok &&
+           response_hierarchy_ok && response_family_ok &&
            trajectory_evaluation_ok &&
            adversary_ok && dynamic_class_ok && q_derivative_ok && evolution_ok;
 }

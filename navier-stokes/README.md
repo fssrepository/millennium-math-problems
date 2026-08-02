@@ -70,6 +70,16 @@ ctest --test-dir build --output-on-failure
 The proof engine is split by responsibility instead of being one monolithic
 source file:
 
+- `src/app/` contains only command dispatch and the integrated proof runner;
+- `src/spectral/` contains Fourier states, direct/FFT Galerkin dynamics,
+  objectives, adjoints, and trajectory evaluation;
+- `src/optimization/`, `src/triads/`, `src/helical/`, and `src/proof/` isolate
+  their respective algorithms;
+- `src/local_sld/core/`, `analysis/`, `optimization/`, and `cli/` separate the
+  active shifted-local-density lemma work into numerical primitives,
+  diagnostic ledgers, searches, and artifact/report handling;
+- `src/reporting/` contains the remaining shared certificate writers.
+
 - `ScalingCertificate` stores exact rational scaling results, while
   `ScalingAnalyzer` constructs the certificate;
 - `SpectralGalerkin` selects direct or dealiased-FFT evaluation and controls
@@ -280,6 +290,9 @@ Trajectory searches accept `--backend direct`, `--backend fft`, or
 `--backend auto`. `direct` remains the reference oracle; `auto` switches the
 forward RK4 and its exact discrete VJP to the validated FFT path from K3 while
 the selected local closure objective retains exact triad sums.
+Each completed optimizer restart is also written immediately below
+`STATE_DIR/restarts/K*/R*.tsv`. A machine or process interruption can therefore
+lose only the currently running restarts, not every completed branch.
 
 The first command maximizes the signed polynomial quotient itself. The
 `closure-ratio` objective remains available as a stronger sufficient screen,

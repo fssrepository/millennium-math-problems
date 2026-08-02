@@ -10,8 +10,11 @@
 
 #include <algorithm>
 #include <cmath>
+#include <filesystem>
+#include <iomanip>
 #include <limits>
 #include <random>
+#include <sstream>
 #include <stdexcept>
 #include <utility>
 
@@ -123,6 +126,39 @@ SpectralReal fitted_slope(
     return n >= 2.0L && std::abs(denominator) > 1e-30L
         ? (n * sxy - sx * sy) / denominator
         : 0.0L;
+}
+
+void write_restart_checkpoint(
+    const LocalQuarticClosureAdversaryOptions& options,
+    int cutoff,
+    const LocalQuarticClosureRestartResult& result) {
+    if (options.state_directory.empty()) {
+        return;
+    }
+    const std::filesystem::path directory =
+        std::filesystem::path(options.state_directory) /
+        "restarts" / ("K" + std::to_string(cutoff));
+    std::filesystem::create_directories(directory);
+    std::ostringstream filename;
+    filename << 'R' << std::setw(3) << std::setfill('0')
+             << result.restart << ".tsv";
+    std::ostringstream metadata;
+    metadata << std::setprecision(18)
+             << "completed local quartic closure restart checkpoint; "
+             << "cutoff=" << cutoff
+             << "; restart=" << result.restart
+             << "; seed=" << result.seed
+             << "; objective=" << options.objective
+             << "; selection=" << options.selection
+             << "; optimized_objective="
+             << static_cast<double>(result.objective)
+             << "; refined_objective="
+             << static_cast<double>(result.refined_objective)
+             << "; accepted_steps=" << result.accepted_steps
+             << "; candidate_lemma_proved=false";
+    SpectralStateWriter::write_tsv(
+        (directory / filename.str()).string(),
+        result.state, metadata.str());
 }
 
 }  // namespace
@@ -361,6 +397,8 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
             results[restart] = LocalQuarticClosureAdversary::maximize(
                 starts[restart], options, static_cast<int>(restart),
                 seeds[restart], has_previous_winner && restart == 0);
+            write_restart_checkpoint(
+                options, cutoff, results[restart]);
         });
         row.restart_constant_ratios.reserve(results.size());
         for (auto& candidate : results) {
