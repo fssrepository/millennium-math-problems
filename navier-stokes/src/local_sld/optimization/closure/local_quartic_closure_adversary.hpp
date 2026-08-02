@@ -84,6 +84,7 @@ struct LocalQuarticClosureRestartResult {
     SpectralReal projective_height_commutator_coercivity_ratio = 0.0L;
     SpectralReal projective_height_dynamic_coercivity_ratio = 0.0L;
     SpectralReal projective_palinstrophy_normalization_power_one = 0.0L;
+    SpectralReal projective_tail_stretching_alignment_squared = 0.0L;
     SpectralReal projective_height_component_bracket_envelope = 0.0L;
     std::size_t projective_height_pair_count = 0;
     std::size_t projective_height_active_shell_count = 0;

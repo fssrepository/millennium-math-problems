@@ -83,6 +83,7 @@ add_executable(navier_stokes_lab
     src/local_sld/core/remainder/local_sld_remainder_envelope_objective.cpp
     src/local_sld/core/closure/local_sld_shape_power_objective.cpp
     src/local_sld/core/projective/local_sld_projective_coherence_objective.cpp
+    src/local_sld/core/projective/local_sld_projective_core_tail_alignment_objective.cpp
     src/local_sld/core/projective/local_sld_projective_stretching_objective.cpp
     src/local_sld/core/projective/local_sld_projective_cross_power_objective.cpp
     src/local_sld/core/projective/local_sld_projective_open_power_objective.cpp
@@ -130,6 +131,7 @@ add_executable(navier_stokes_lab
     src/local_sld/analysis/projective/local_sld_projective_open_power_replay_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_matrix.cpp
     src/local_sld/analysis/projective/local_sld_projective_normalization_tail_scan.cpp
+    src/local_sld/analysis/projective/local_sld_projective_normalization_tradeoff_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_coercivity_path_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_coercivity_line_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_tail_summary.cpp

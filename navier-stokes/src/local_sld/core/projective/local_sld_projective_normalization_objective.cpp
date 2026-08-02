@@ -34,6 +34,27 @@ void add_scaled(
     }
 }
 
+void scale(
+    SpectralIncrement& value,
+    SpectralReal factor) {
+    for (ComplexVector& mode : value) {
+        for (SpectralComplex& component : mode) {
+            component *= factor;
+        }
+    }
+}
+
+SpectralIncrement product_gradient(
+    const SpectralIncrement& first_gradient,
+    SpectralReal first,
+    const SpectralIncrement& second_gradient,
+    SpectralReal second) {
+    SpectralIncrement result = first_gradient;
+    scale(result, second);
+    add_scaled(result, second_gradient, first);
+    return result;
+}
+
 }  // namespace
 
 LocalSldProjectiveNormalizationObjective::
@@ -41,11 +62,13 @@ LocalSldProjectiveNormalizationObjective(
     const SpectralDynamics& dynamics,
     TriadSelection selection,
     SpectralInteger core_maximum_height,
-    int threads)
+    int threads,
+    LocalSldProjectiveNormalizationComponent component)
     : dynamics_(dynamics),
       selection_(selection),
       core_maximum_height_(core_maximum_height),
       threads_(threads),
+      component_(component),
       core_(core_maximum_height > 0
           ? ProjectiveCoreFamily::through_maximum_height(
                 core_maximum_height)
@@ -53,6 +76,11 @@ LocalSldProjectiveNormalizationObjective(
     if (threads < 1 || threads > 256 || core_maximum_height < 0) {
         throw std::invalid_argument(
             "projective normalization requires nonnegative core height and threads 1..256");
+    }
+    if (component_ != LocalSldProjectiveNormalizationComponent::open_sum &&
+        core_maximum_height_ < 1) {
+        throw std::invalid_argument(
+            "projective normalization components require a positive core height");
     }
 }
 
@@ -98,13 +126,58 @@ LocalSldProjectiveNormalizationObjective::evaluate(
         result.fixed_core_stretching = core_stretching;
         result.fixed_core_palinstrophy_cross = core_cross;
     }
+    result.tail_stretching = result.selected_stretching -
+        result.fixed_core_stretching;
+    result.tail_palinstrophy_cross =
+        result.selected_palinstrophy_cross -
+        result.fixed_core_palinstrophy_cross;
+    result.core_stretching_tail_cross_product =
+        result.fixed_core_stretching *
+        result.tail_palinstrophy_cross;
+    result.tail_stretching_core_cross_product =
+        result.tail_stretching *
+        result.fixed_core_palinstrophy_cross;
+    result.tail_stretching_tail_cross_product =
+        result.tail_stretching *
+        result.tail_palinstrophy_cross;
+    const SpectralReal open_product =
+        result.core_stretching_tail_cross_product +
+        result.tail_stretching_core_cross_product +
+        result.tail_stretching_tail_cross_product;
+    switch (component_) {
+        case LocalSldProjectiveNormalizationComponent::open_sum:
+            result.selected_normalization_product = open_product;
+            break;
+        case LocalSldProjectiveNormalizationComponent::
+                core_stretching_tail_cross:
+            result.selected_normalization_product =
+                result.core_stretching_tail_cross_product;
+            break;
+        case LocalSldProjectiveNormalizationComponent::
+                tail_stretching_core_cross:
+            result.selected_normalization_product =
+                result.tail_stretching_core_cross_product;
+            break;
+        case LocalSldProjectiveNormalizationComponent::
+                tail_stretching_tail_cross:
+            result.selected_normalization_product =
+                result.tail_stretching_tail_cross_product;
+            break;
+    }
     result.open_palinstrophy_normalization =
-        1.5L *
-        (result.selected_stretching *
-             result.selected_palinstrophy_cross -
-         result.fixed_core_stretching *
-             result.fixed_core_palinstrophy_cross) /
+        1.5L * result.selected_normalization_product /
         result.palinstrophy;
+    const SpectralReal component_scale =
+        1.5L * std::abs(result.full_stretching) /
+        (result.enstrophy * result.enstrophy *
+         result.palinstrophy * result.palinstrophy *
+         result.palinstrophy);
+    result.core_stretching_tail_cross_power_one = component_scale *
+        std::abs(result.core_stretching_tail_cross_product);
+    result.tail_stretching_core_cross_power_one = component_scale *
+        std::abs(result.tail_stretching_core_cross_product);
+    result.tail_stretching_tail_cross_power_one = component_scale *
+        std::abs(result.tail_stretching_tail_cross_product);
     result.palinstrophy_normalization_power_one =
         std::abs(
             result.full_stretching *
@@ -132,36 +205,28 @@ SpectralIncrement LocalSldProjectiveNormalizationObjective::gradient(
     SpectralIncrement result(state.waves.size());
     if (!(selected.enstrophy > 0.0L) ||
         !(selected.palinstrophy > 0.0L) ||
-        full.signed_stretching == 0.0L ||
-        selected.signed_stretching == 0.0L) {
+        full.signed_stretching == 0.0L) {
         return result;
     }
     const LocalSldProjectiveNormalizationObjectiveValue objective_value =
         evaluate(state);
     const SpectralReal value = objective_value
         .squared_palinstrophy_normalization_power_one;
-    const SpectralReal open_product =
-        selected.signed_stretching * selected.palinstrophy_cross -
-        objective_value.fixed_core_stretching *
-            objective_value.fixed_core_palinstrophy_cross;
-    if (open_product == 0.0L) {
+    const SpectralReal selected_product =
+        objective_value.selected_normalization_product;
+    if (selected_product == 0.0L) {
         return result;
     }
     add_scaled(
         result,
         full_objective.signed_stretching_gradient(state),
         2.0L * value / full.signed_stretching);
-    SpectralIncrement open_product_gradient =
+    const SpectralIncrement selected_stretching_gradient =
         selected_objective.signed_stretching_gradient(state);
-    for (ComplexVector& mode : open_product_gradient) {
-        for (SpectralComplex& component : mode) {
-            component *= selected.palinstrophy_cross;
-        }
-    }
-    add_scaled(
-        open_product_gradient,
-        selected_objective.palinstrophy_cross_gradient(state),
-        selected.signed_stretching);
+    const SpectralIncrement selected_cross_gradient =
+        selected_objective.palinstrophy_cross_gradient(state);
+    SpectralIncrement core_stretching_gradient(state.waves.size());
+    SpectralIncrement core_cross_gradient(state.waves.size());
     if (!core_.empty()) {
         const auto& aggregate =
             ProjectiveAdvectionDecomposition::aggregate_family(
@@ -174,13 +239,13 @@ SpectralIncrement LocalSldProjectiveNormalizationObjective::gradient(
         const SpectralIncrement au = laplacian_weight(
             state, state.velocity);
         const SpectralIncrement core_ab = laplacian_weight(state, core_b);
-        SpectralIncrement core_stretching_gradient = core_ab;
+        core_stretching_gradient = core_ab;
         add_scaled(
             core_stretching_gradient,
             ProjectiveAdvectionDecomposition::vjp(
                 state, core_group, au, threads_),
             1.0L);
-        SpectralIncrement core_cross_gradient =
+        core_cross_gradient =
             laplacian_weight(state, core_ab);
         add_scaled(
             core_cross_gradient,
@@ -188,18 +253,58 @@ SpectralIncrement LocalSldProjectiveNormalizationObjective::gradient(
                 state, core_group,
                 laplacian_weight(state, au), threads_),
             1.0L);
-        add_scaled(
-            open_product_gradient,
-            core_stretching_gradient,
-            -objective_value.fixed_core_palinstrophy_cross);
-        add_scaled(
-            open_product_gradient,
-            core_cross_gradient,
-            -objective_value.fixed_core_stretching);
+    }
+    SpectralIncrement tail_stretching_gradient =
+        selected_stretching_gradient;
+    add_scaled(
+        tail_stretching_gradient, core_stretching_gradient, -1.0L);
+    SpectralIncrement tail_cross_gradient = selected_cross_gradient;
+    add_scaled(tail_cross_gradient, core_cross_gradient, -1.0L);
+    SpectralIncrement selected_product_gradient(state.waves.size());
+    switch (component_) {
+        case LocalSldProjectiveNormalizationComponent::open_sum:
+            selected_product_gradient = product_gradient(
+                selected_stretching_gradient,
+                selected.signed_stretching,
+                selected_cross_gradient,
+                selected.palinstrophy_cross);
+            add_scaled(
+                selected_product_gradient,
+                product_gradient(
+                    core_stretching_gradient,
+                    objective_value.fixed_core_stretching,
+                    core_cross_gradient,
+                    objective_value.fixed_core_palinstrophy_cross),
+                -1.0L);
+            break;
+        case LocalSldProjectiveNormalizationComponent::
+                core_stretching_tail_cross:
+            selected_product_gradient = product_gradient(
+                core_stretching_gradient,
+                objective_value.fixed_core_stretching,
+                tail_cross_gradient,
+                objective_value.tail_palinstrophy_cross);
+            break;
+        case LocalSldProjectiveNormalizationComponent::
+                tail_stretching_core_cross:
+            selected_product_gradient = product_gradient(
+                tail_stretching_gradient,
+                objective_value.tail_stretching,
+                core_cross_gradient,
+                objective_value.fixed_core_palinstrophy_cross);
+            break;
+        case LocalSldProjectiveNormalizationComponent::
+                tail_stretching_tail_cross:
+            selected_product_gradient = product_gradient(
+                tail_stretching_gradient,
+                objective_value.tail_stretching,
+                tail_cross_gradient,
+                objective_value.tail_palinstrophy_cross);
+            break;
     }
     add_scaled(
-        result, open_product_gradient,
-        2.0L * value / open_product);
+        result, selected_product_gradient,
+        2.0L * value / selected_product);
     const SpectralIncrement au = laplacian_weight(
         state, state.velocity);
     add_scaled(result, au, -8.0L * value / selected.enstrophy);

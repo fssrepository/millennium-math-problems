@@ -84,6 +84,22 @@ std::string objective_formula(const std::string& objective) {
         "projective-open-palinstrophy-normalization-ratio") {
         return "maximize the squared palinstrophy-normalization contribution remaining after subtracting the complete fixed primitive-height core";
     }
+    if (objective ==
+        "projective-tail-stretching-alignment-ratio") {
+        return "maximize |<Au,B_tail(u,u)>|^2 / (Z ||A^(1/2)B_tail(u,u)||_2^2) above a fixed primitive-height core";
+    }
+    if (objective ==
+        "projective-core-stretching-tail-cross-ratio") {
+        return "maximize the squared normalized |S_full s_core t_tail| channel in the open palinstrophy-normalization factorization";
+    }
+    if (objective ==
+        "projective-tail-stretching-core-cross-ratio") {
+        return "maximize the squared normalized |S_full s_tail t_core| channel in the open palinstrophy-normalization factorization";
+    }
+    if (objective ==
+        "projective-tail-stretching-tail-cross-ratio") {
+        return "maximize the squared normalized |S_full s_tail t_tail| channel in the open palinstrophy-normalization factorization";
+    }
     if (objective == "signed-closure-ratio") {
         return "maximize (K+G) E^(1/4) / (Z^(7/4) P)";
     }
@@ -205,6 +221,9 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
             << ", \"projective_stretching_reconstruction_error\": "
             << static_cast<double>(
                    winner.projective_stretching_reconstruction_error)
+            << ", \"projective_tail_stretching_alignment_squared\": "
+            << static_cast<double>(
+                   winner.projective_tail_stretching_alignment_squared)
             << ", \"projective_cross_power_absolute\": "
             << static_cast<double>(winner.projective_cross_power_absolute)
             << ", \"projective_cross_bracket\": "

@@ -5,6 +5,13 @@
 
 namespace lemma {
 
+enum class LocalSldProjectiveNormalizationComponent {
+    open_sum,
+    core_stretching_tail_cross,
+    tail_stretching_core_cross,
+    tail_stretching_tail_cross,
+};
+
 struct LocalSldProjectiveNormalizationObjectiveValue {
     SpectralReal enstrophy = 0.0L;
     SpectralReal palinstrophy = 0.0L;
@@ -15,6 +22,15 @@ struct LocalSldProjectiveNormalizationObjectiveValue {
     std::size_t fixed_core_shape_count = 0;
     SpectralReal fixed_core_stretching = 0.0L;
     SpectralReal fixed_core_palinstrophy_cross = 0.0L;
+    SpectralReal tail_stretching = 0.0L;
+    SpectralReal tail_palinstrophy_cross = 0.0L;
+    SpectralReal core_stretching_tail_cross_product = 0.0L;
+    SpectralReal tail_stretching_core_cross_product = 0.0L;
+    SpectralReal tail_stretching_tail_cross_product = 0.0L;
+    SpectralReal selected_normalization_product = 0.0L;
+    SpectralReal core_stretching_tail_cross_power_one = 0.0L;
+    SpectralReal tail_stretching_core_cross_power_one = 0.0L;
+    SpectralReal tail_stretching_tail_cross_power_one = 0.0L;
     SpectralReal open_palinstrophy_normalization = 0.0L;
     SpectralReal palinstrophy_normalization_power_one = 0.0L;
     SpectralReal squared_palinstrophy_normalization_power_one = 0.0L;
@@ -29,7 +45,9 @@ public:
         const SpectralDynamics& dynamics,
         TriadSelection selection,
         SpectralInteger core_maximum_height = 0,
-        int threads = 1);
+        int threads = 1,
+        LocalSldProjectiveNormalizationComponent component =
+            LocalSldProjectiveNormalizationComponent::open_sum);
 
     [[nodiscard]] LocalSldProjectiveNormalizationObjectiveValue evaluate(
         const SpectralState& state) const;
@@ -41,6 +59,8 @@ private:
     TriadSelection selection_;
     SpectralInteger core_maximum_height_ = 0;
     int threads_ = 1;
+    LocalSldProjectiveNormalizationComponent component_ =
+        LocalSldProjectiveNormalizationComponent::open_sum;
     std::vector<ProjectivePrimitiveSignature> core_;
 };
 

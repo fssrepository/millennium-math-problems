@@ -48,6 +48,7 @@
 #include "local_sld_remainder_absorption_objective.hpp"
 #include "local_sld_shape_power_objective.hpp"
 #include "local_sld_projective_coherence_objective.hpp"
+#include "local_sld_projective_core_tail_alignment_objective.hpp"
 #include "local_sld_projective_stretching_objective.hpp"
 #include "local_sld_projective_cross_power_objective.hpp"
 #include "local_sld_projective_open_power_objective.hpp"
@@ -1465,6 +1466,16 @@ bool self_test(std::ostream& out) {
             active_dynamics,
             TriadSelection::local_without_equal_low_doubling(),
             4, 2);
+    const LocalSldProjectiveCoreTailAlignmentObjective
+        projective_core_stretching_alignment_objective(
+            active_dynamics,
+            TriadSelection::local_without_equal_low_doubling(),
+            4, LocalSldProjectiveHeightRegion::core, 2);
+    const LocalSldProjectiveCoreTailAlignmentObjective
+        projective_tail_stretching_alignment_objective(
+            active_dynamics,
+            TriadSelection::local_without_equal_low_doubling(),
+            2, LocalSldProjectiveHeightRegion::tail, 2);
     const LocalSldProjectiveHeightPowerObjective
         projective_height_power_objective(
             active_dynamics,
@@ -1505,6 +1516,27 @@ bool self_test(std::ostream& out) {
             active_dynamics,
             TriadSelection::local_without_equal_low_doubling(),
             2, 2);
+    const LocalSldProjectiveNormalizationObjective
+        projective_core_stretching_tail_cross_objective(
+            active_dynamics,
+            TriadSelection::local_without_equal_low_doubling(),
+            2, 2,
+            LocalSldProjectiveNormalizationComponent::
+                core_stretching_tail_cross);
+    const LocalSldProjectiveNormalizationObjective
+        projective_tail_stretching_core_cross_objective(
+            active_dynamics,
+            TriadSelection::local_without_equal_low_doubling(),
+            2, 2,
+            LocalSldProjectiveNormalizationComponent::
+                tail_stretching_core_cross);
+    const LocalSldProjectiveNormalizationObjective
+        projective_tail_stretching_tail_cross_objective(
+            active_dynamics,
+            TriadSelection::local_without_equal_low_doubling(),
+            2, 2,
+            LocalSldProjectiveNormalizationComponent::
+                tail_stretching_tail_cross);
     const LocalSldProjectiveCrossPowerObjective
         projective_cross_power_objective(
             active_dynamics,
@@ -1791,6 +1823,32 @@ bool self_test(std::ostream& out) {
                     projective_height_stretching_directional_adjoint),
                 std::abs(
                     projective_height_stretching_directional_finite_difference)));
+    auto projective_alignment_gradient_error =
+        [&](const LocalSldProjectiveCoreTailAlignmentObjective& objective) {
+            const SpectralIncrement gradient = objective.gradient(
+                partition_state);
+            const Real directional_adjoint = increment_inner_product(
+                gradient, partition_tangent);
+            const Real directional_finite_difference =
+                (objective.evaluate(partition_plus_state)
+                     .stretching_h1_alignment_squared -
+                 objective.evaluate(partition_minus_state)
+                     .stretching_h1_alignment_squared) /
+                (2.0L * finite_difference_step);
+            return std::abs(
+                directional_adjoint - directional_finite_difference) /
+                std::max(
+                    1e-30L,
+                    std::max(
+                        std::abs(directional_adjoint),
+                        std::abs(directional_finite_difference)));
+        };
+    const Real projective_core_stretching_alignment_gradient_error =
+        projective_alignment_gradient_error(
+            projective_core_stretching_alignment_objective);
+    const Real projective_tail_stretching_alignment_gradient_error =
+        projective_alignment_gradient_error(
+            projective_tail_stretching_alignment_objective);
     const SpectralIncrement projective_height_power_gradient =
         projective_height_power_objective.gradient(partition_state);
     const Real projective_height_power_directional_adjoint =
@@ -2007,6 +2065,35 @@ bool self_test(std::ostream& out) {
                     projective_open_normalization_directional_adjoint),
                 std::abs(
                     projective_open_normalization_directional_finite_difference)));
+    auto projective_normalization_component_gradient_error =
+        [&](const LocalSldProjectiveNormalizationObjective& objective) {
+            const SpectralIncrement gradient = objective.gradient(
+                partition_state);
+            const Real directional_adjoint = increment_inner_product(
+                gradient, partition_tangent);
+            const Real directional_finite_difference =
+                (objective.evaluate(partition_plus_state)
+                     .squared_palinstrophy_normalization_power_one -
+                 objective.evaluate(partition_minus_state)
+                     .squared_palinstrophy_normalization_power_one) /
+                (2.0L * finite_difference_step);
+            return std::abs(
+                directional_adjoint - directional_finite_difference) /
+                std::max(
+                    1e-30L,
+                    std::max(
+                        std::abs(directional_adjoint),
+                        std::abs(directional_finite_difference)));
+        };
+    const Real projective_core_stretching_tail_cross_gradient_error =
+        projective_normalization_component_gradient_error(
+            projective_core_stretching_tail_cross_objective);
+    const Real projective_tail_stretching_core_cross_gradient_error =
+        projective_normalization_component_gradient_error(
+            projective_tail_stretching_core_cross_objective);
+    const Real projective_tail_stretching_tail_cross_gradient_error =
+        projective_normalization_component_gradient_error(
+            projective_tail_stretching_tail_cross_objective);
     const SpectralIncrement projective_cross_power_gradient =
         projective_cross_power_objective.gradient(partition_state);
     const Real projective_cross_power_directional_adjoint =
@@ -2454,6 +2541,8 @@ bool self_test(std::ostream& out) {
         projective_coherence_gradient_error < 1e-9L &&
         projective_stretching_gradient_error < 1e-9L &&
         projective_height_stretching_gradient_error < 1e-9L &&
+        projective_core_stretching_alignment_gradient_error < 1e-9L &&
+        projective_tail_stretching_alignment_gradient_error < 1e-9L &&
         projective_height_power_gradient_error < 1e-9L &&
         projective_height_outer_power_gradient_error < 1e-9L &&
         projective_height_envelope_gradient_error < 1e-9L &&
@@ -2463,6 +2552,9 @@ bool self_test(std::ostream& out) {
         projective_height_dynamic_ratio_gradient_error < 1e-9L &&
         projective_normalization_gradient_error < 1e-9L &&
         projective_open_normalization_gradient_error < 1e-9L &&
+        projective_core_stretching_tail_cross_gradient_error < 1e-9L &&
+        projective_tail_stretching_core_cross_gradient_error < 1e-9L &&
+        projective_tail_stretching_tail_cross_gradient_error < 1e-9L &&
         projective_cross_power_gradient_error < 1e-9L &&
         projective_open_power_gradient_error < 1e-9L &&
         signed_closure_gradient_error < 1e-9L &&
@@ -3386,6 +3478,12 @@ bool self_test(std::ostream& out) {
         << ", projective height-stretching gradient error="
         << static_cast<double>(
                projective_height_stretching_gradient_error)
+        << ", projective core/tail stretching-alignment gradient errors="
+        << static_cast<double>(
+               projective_core_stretching_alignment_gradient_error)
+        << '/'
+        << static_cast<double>(
+               projective_tail_stretching_alignment_gradient_error)
         << ", projective height-power gradient error="
         << static_cast<double>(projective_height_power_gradient_error)
         << ", projective height outer-power gradient error="
@@ -3411,6 +3509,15 @@ bool self_test(std::ostream& out) {
         << ", projective open-normalization gradient error="
         << static_cast<double>(
                projective_open_normalization_gradient_error)
+        << ", projective normalization component gradient errors="
+        << static_cast<double>(
+               projective_core_stretching_tail_cross_gradient_error)
+        << '/'
+        << static_cast<double>(
+               projective_tail_stretching_core_cross_gradient_error)
+        << '/'
+        << static_cast<double>(
+               projective_tail_stretching_tail_cross_gradient_error)
         << ", projective cross-power gradient error="
         << static_cast<double>(projective_cross_power_gradient_error)
         << ", projective open-power gradient error="

@@ -6,6 +6,7 @@
 #include "local_sld_remainder_absorption_objective.hpp"
 #include "local_sld_shape_power_objective.hpp"
 #include "local_sld_projective_coherence_objective.hpp"
+#include "local_sld_projective_core_tail_alignment_objective.hpp"
 #include "local_sld_projective_stretching_objective.hpp"
 #include "local_sld_projective_cross_power_objective.hpp"
 #include "local_sld_projective_open_power_objective.hpp"
@@ -169,6 +170,32 @@ TriadSelection objective_selection(
     return TriadPartition::all;
 }
 
+bool is_normalization_component_objective(
+    const std::string& objective) {
+    return objective ==
+            "local-projective-core-stretching-tail-cross-ratio" ||
+        objective ==
+            "local-projective-tail-stretching-core-cross-ratio" ||
+        objective ==
+            "local-projective-tail-stretching-tail-cross-ratio";
+}
+
+LocalSldProjectiveNormalizationComponent normalization_component(
+    const std::string& objective) {
+    if (objective ==
+        "local-projective-core-stretching-tail-cross-ratio") {
+        return LocalSldProjectiveNormalizationComponent::
+            core_stretching_tail_cross;
+    }
+    if (objective ==
+        "local-projective-tail-stretching-core-cross-ratio") {
+        return LocalSldProjectiveNormalizationComponent::
+            tail_stretching_core_cross;
+    }
+    return LocalSldProjectiveNormalizationComponent::
+        tail_stretching_tail_cross;
+}
+
 }  // namespace
 
 GradientAdversary::GradientAdversary(const SpectralDynamics& dynamics,
@@ -219,6 +246,15 @@ SpectralReal GradientAdversary::objective_value(
         return LocalSldProjectiveStretchingObjective(
             dynamics_, options.closure_selection)
             .evaluate(initial).stretching_aware_synthesis_ratio;
+    }
+    if (options.objective ==
+        "local-projective-tail-stretching-alignment-ratio") {
+        return LocalSldProjectiveCoreTailAlignmentObjective(
+            dynamics_, options.closure_selection,
+            options.projective_core_maximum_height,
+            LocalSldProjectiveHeightRegion::tail,
+            options.objective_threads)
+            .evaluate(initial).stretching_h1_alignment_squared;
     }
     if (options.objective == "local-projective-cross-power-ratio") {
         return LocalSldProjectiveCrossPowerObjective(
@@ -289,6 +325,15 @@ SpectralReal GradientAdversary::objective_value(
             dynamics_, options.closure_selection,
             options.projective_core_maximum_height,
             options.objective_threads)
+            .evaluate(initial)
+            .squared_palinstrophy_normalization_power_one;
+    }
+    if (is_normalization_component_objective(options.objective)) {
+        return LocalSldProjectiveNormalizationObjective(
+            dynamics_, options.closure_selection,
+            options.projective_core_maximum_height,
+            options.objective_threads,
+            normalization_component(options.objective))
             .evaluate(initial)
             .squared_palinstrophy_normalization_power_one;
     }
@@ -538,6 +583,17 @@ GradientSearchResult GradientAdversary::maximize_q(
             trajectory.objective_step = 0;
             trajectory.initial_gradient = stretching.gradient(result.state);
         } else if (options.objective ==
+                   "local-projective-tail-stretching-alignment-ratio") {
+            const LocalSldProjectiveCoreTailAlignmentObjective alignment(
+                dynamics_, options.closure_selection,
+                options.projective_core_maximum_height,
+                LocalSldProjectiveHeightRegion::tail,
+                options.objective_threads);
+            trajectory.objective_value = alignment.evaluate(result.state)
+                .stretching_h1_alignment_squared;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = alignment.gradient(result.state);
+        } else if (options.objective ==
                    "local-projective-cross-power-ratio") {
             const LocalSldProjectiveCrossPowerObjective cross_power(
                 dynamics_, options.closure_selection,
@@ -629,6 +685,18 @@ GradientSearchResult GradientAdversary::maximize_q(
                 dynamics_, options.closure_selection,
                 options.projective_core_maximum_height,
                 options.objective_threads);
+            trajectory.objective_value = normalization.evaluate(result.state)
+                .squared_palinstrophy_normalization_power_one;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = normalization.gradient(
+                result.state);
+        } else if (is_normalization_component_objective(
+                       options.objective)) {
+            const LocalSldProjectiveNormalizationObjective normalization(
+                dynamics_, options.closure_selection,
+                options.projective_core_maximum_height,
+                options.objective_threads,
+                normalization_component(options.objective));
             trajectory.objective_value = normalization.evaluate(result.state)
                 .squared_palinstrophy_normalization_power_one;
             trajectory.objective_step = 0;
