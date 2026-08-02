@@ -39,8 +39,18 @@ TriadSelection closure_selection(const std::string& name) {
         return TriadSelection::
             local_without_equal_low_doubling_and_signature(1, 2, 3);
     }
+    if (name == "double-triple-family") {
+        return TriadSelection::local_equal_low_double_triple();
+    }
+    if (name == "double-triple-remainder") {
+        return TriadSelection::local_without_equal_low_double_triple();
+    }
+    if (name == "double-triple-remainder-without-123") {
+        return TriadSelection::
+            local_without_equal_low_double_triple_and_signature(1, 2, 3);
+    }
     throw std::invalid_argument(
-        "closure selection must be local, doubling-family, doubling-remainder, or remainder-without-123");
+        "unsupported closure selection");
 }
 
 bool is_common_block_objective(const std::string& objective) {
@@ -343,14 +353,19 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
         (options.selection != "local" &&
          options.selection != "doubling-family" &&
          options.selection != "doubling-remainder" &&
-         options.selection != "remainder-without-123") ||
+         options.selection != "remainder-without-123" &&
+         options.selection != "double-triple-family" &&
+         options.selection != "double-triple-remainder" &&
+         options.selection != "double-triple-remainder-without-123") ||
         (options.initial_profile != "mixed" &&
          options.initial_profile != "decaying" &&
          options.initial_profile != "flat" &&
          options.initial_profile != "outer-half-flat") ||
         (is_common_block_objective(options.objective) &&
          (options.selection == "local" ||
-          options.selection == "remainder-without-123")) ||
+          options.selection == "remainder-without-123" ||
+          options.selection ==
+              "double-triple-remainder-without-123")) ||
         (is_frozen_trajectory_objective(options.objective) &&
          (options.trajectory_steps < 1 || !(options.viscosity > 0.0L) ||
           !(options.time_step > 0.0L)))) {

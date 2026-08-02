@@ -3,6 +3,7 @@
 #include "dyadic_shell_bounds.hpp"
 #include "doubling_quartet_closure.hpp"
 #include "equal_low_quartet_closure.hpp"
+#include "projective_quartet_closure.hpp"
 #include "dynamic_adversary.hpp"
 #include "family_reporter.hpp"
 #include "far_tail_closure.hpp"
@@ -46,6 +47,7 @@
 #include "local_sld_doubling_shell_ledger.hpp"
 #include "local_sld_doubling_scale_scan.hpp"
 #include "local_sld_remainder_double_square.hpp"
+#include "local_sld_remainder_projective_ledger.hpp"
 #include "local_sld_remainder_signature_ledger.hpp"
 #include "local_sld_remainder_tradeoff_ledger.hpp"
 #include "local_sld_block_objective.hpp"
@@ -701,6 +703,25 @@ bool self_test(std::ostream& out) {
         triple_quartet_closure.direct_normalization_target_bound_proved &&
         triple_quartet_closure.cutoff_independent_closed_family_bound &&
         !triple_quartet_closure.full_local_lemma_proved;
+    const ProjectiveQuartetClosureReport projective_quartet_closure =
+        ProjectiveQuartetClosure::certify(4, {2, 3, 5});
+    const bool projective_quartet_closure_ok =
+        projective_quartet_closure.geometry.primitive_signature &&
+        projective_quartet_closure.geometry.triangle_feasible &&
+        projective_quartet_closure.geometry.fixed_plane_sphere_geometry &&
+        projective_quartet_closure.geometry.all_degree_bounds_hold &&
+        projective_quartet_closure.incidence_degree_power == Rational(1) &&
+        projective_quartet_closure.bilinear_l2_frequency_power ==
+            Rational(3, 2) &&
+        projective_quartet_closure.bracket_frequency_power == Rational(5) &&
+        projective_quartet_closure.target_frequency_power ==
+            Rational(11, 2) &&
+        projective_quartet_closure.frequency_gain == Rational(-1, 2) &&
+        projective_quartet_closure
+            .cutoff_independent_fixed_projective_ray_bound &&
+        !projective_quartet_closure
+             .uniform_sum_over_projective_shapes_proved &&
+        !projective_quartet_closure.full_local_lemma_proved;
     const bool local_signature_geometry_ok =
         local_signature_geometry.all_fixed_signature_degree_bounds_hold &&
         local_signature_geometry.maximum_input_degree_ratio <= 1.0L &&
@@ -2213,7 +2234,21 @@ bool self_test(std::ostream& out) {
             WaveVector{1, 1, 0}, WaveVector{-1, 0, 1},
             WaveVector{0, 1, 1},
             TriadSelection::
-                local_without_equal_low_doubling_and_signature(1, 2, 3));
+                local_without_equal_low_doubling_and_signature(1, 2, 3)) &&
+        TriadPartitioner::includes(
+            WaveVector{1, 1, 0}, WaveVector{0, 1, 1},
+            WaveVector{1, 2, 1},
+            TriadSelection::local_equal_low_double_triple()) &&
+        !TriadPartitioner::includes(
+            WaveVector{1, 1, 0}, WaveVector{0, 1, 1},
+            WaveVector{1, 2, 1},
+            TriadSelection::local_without_equal_low_double_triple()) &&
+        TriadPartitioner::includes(
+            WaveVector{1, 1, 0}, WaveVector{-1, 0, 1},
+            WaveVector{0, 1, 1},
+            TriadSelection::
+                local_without_equal_low_double_triple_and_signature(
+                    1, 2, 3));
     const LocalSldRemainderSignatureReport remainder_signature_ledger =
         LocalSldRemainderSignatureLedger::analyze(
             active_dynamics, cyclic_ansatz.state, 2);
@@ -2226,6 +2261,18 @@ bool self_test(std::ostream& out) {
         remainder_signature_ledger.dominant_absolute_fraction > 0.0L &&
         remainder_signature_ledger.dominant_absolute_fraction <= 1.0L &&
         !remainder_signature_ledger.cutoff_independent_bound_proved;
+    const LocalSldRemainderProjectiveReport
+        remainder_projective_ledger =
+            LocalSldRemainderProjectiveLedger::analyze(
+                remainder_signature_ledger);
+    const bool remainder_projective_ledger_ok =
+        remainder_projective_ledger.exact_reconstruction &&
+        remainder_projective_ledger.projective_shape_count > 0 &&
+        remainder_projective_ledger.effective_projective_shapes >= 1.0L &&
+        remainder_projective_ledger.dominant_projective_fraction > 0.0L &&
+        remainder_projective_ledger.dominant_projective_fraction <= 1.0L &&
+        !remainder_projective_ledger
+             .cutoff_independent_projective_sum_proved;
     const LocalSldRemainderDoubleSquareReport remainder_double_square =
         LocalSldRemainderDoubleSquare::analyze(
             active_dynamics, cyclic_ansatz.state);
@@ -2444,6 +2491,15 @@ bool self_test(std::ostream& out) {
         << triple_quartet_closure.target_frequency_power.str()
         << ", gain=R^"
         << triple_quartet_closure.frequency_gain.str()
+        << ")\n"
+        << "projective quartet closure test: "
+        << (projective_quartet_closure_ok ? "PASS" : "FAIL")
+        << " (signature=2,3,5, bracket=R^"
+        << projective_quartet_closure.bracket_frequency_power.str()
+        << ", target=R^"
+        << projective_quartet_closure.target_frequency_power.str()
+        << ", gain=R^"
+        << projective_quartet_closure.frequency_gain.str()
         << ")\n"
         << "local signature closure test: "
         << (local_signature_geometry_ok ? "PASS" : "FAIL")
@@ -2849,6 +2905,17 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(
                remainder_signature_ledger.bracket_reconstruction_error)
         << ")\n"
+        << "local SLD remainder projective-ledger test: "
+        << (remainder_projective_ledger_ok ? "PASS" : "FAIL")
+        << " (shapes="
+        << remainder_projective_ledger.projective_shape_count
+        << ", effective="
+        << static_cast<double>(
+               remainder_projective_ledger.effective_projective_shapes)
+        << ", reconstruction error="
+        << static_cast<double>(
+               remainder_projective_ledger.reconstruction_error)
+        << ")\n"
         << "local SLD remainder double-square test: "
         << (remainder_double_square_ok ? "PASS" : "FAIL")
         << " (signed LQC-3="
@@ -2899,6 +2966,7 @@ bool self_test(std::ostream& out) {
            triad_ok && helical_ok && helical_gap_ok && local_symmetry_ok &&
            orthogonal_geometry_ok && doubling_quartet_closure_ok &&
            remainder_quartet_closure_ok && triple_quartet_closure_ok &&
+           projective_quartet_closure_ok &&
            local_signature_geometry_ok &&
            local_signature_objective_ok && pure_helical_ok && fft_ok &&
            helical_sector_objective_ok && helical_adversary_ok &&
@@ -2915,6 +2983,7 @@ bool self_test(std::ostream& out) {
            cyclic_ansatz_ok && cyclic_trajectory_ansatz_ok &&
            cyclic_krylov_ansatz_ok && signature_block_ok &&
            remainder_signature_ledger_ok &&
+           remainder_projective_ledger_ok &&
            remainder_double_square_ok &&
            remainder_tradeoff_ok &&
            response_hierarchy_ok && response_family_ok &&

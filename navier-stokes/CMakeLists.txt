@@ -29,6 +29,7 @@ add_executable(navier_stokes_lab
     src/triads/equal_low_triad_geometry.cpp
     src/triads/local_triad_symmetrizer.cpp
     src/triads/orthogonal_triad_geometry.cpp
+    src/triads/projective_triad_geometry.cpp
     src/triads/triad_commutator.cpp
     src/triads/triad_ledger.cpp
     src/triads/triad_partition.cpp
@@ -52,6 +53,7 @@ add_executable(navier_stokes_lab
     src/proof/periodic_shell_geometry.cpp
     src/proof/periodic_tail_bound.cpp
     src/proof/proof_scaling.cpp
+    src/proof/projective_quartet_closure.cpp
     src/proof/remainder_quartet_closure.cpp
     src/proof/transition_block_scaling.cpp
 
@@ -88,6 +90,7 @@ add_executable(navier_stokes_lab
     src/local_sld/analysis/local_sld_response_tensor.cpp
     src/local_sld/analysis/local_sld_projected_square.cpp
     src/local_sld/analysis/local_sld_remainder_double_square.cpp
+    src/local_sld/analysis/local_sld_remainder_projective_ledger.cpp
     src/local_sld/analysis/local_sld_remainder_signature_ledger.cpp
     src/local_sld/analysis/local_sld_remainder_tradeoff_ledger.cpp
     src/local_sld/analysis/local_sld_signature_block.cpp
