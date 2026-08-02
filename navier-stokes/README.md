@@ -70,6 +70,16 @@ ctest --test-dir build --output-on-failure
 The proof engine is split by responsibility instead of being one monolithic
 source file:
 
+- `src/app/` contains only command dispatch and the integrated proof runner;
+- `src/spectral/` contains Fourier states, direct/FFT Galerkin dynamics,
+  objectives, adjoints, and trajectory evaluation;
+- `src/optimization/`, `src/triads/`, `src/helical/`, and `src/proof/` isolate
+  their respective algorithms;
+- `src/local_sld/core/`, `analysis/`, `optimization/`, and `cli/` separate the
+  active shifted-local-density lemma work into numerical primitives,
+  diagnostic ledgers, searches, and artifact/report handling;
+- `src/reporting/` contains the remaining shared certificate writers.
+
 - `ScalingCertificate` stores exact rational scaling results, while
   `ScalingAnalyzer` constructs the certificate;
 - `SpectralGalerkin` selects direct or dealiased-FFT evaluation and controls
@@ -161,6 +171,20 @@ source file:
 - `LocalSldResponseHierarchy` constructs the full quadratic response
   recursion, while `LocalSldCyclicOrbitBasis` supplies the missing transverse
   `(2,1,1)` polarization and both oriented `(3,1,0)` cyclic orbits;
+- `LocalSldResponseDiagonal` excludes Galerkin-wall-contaminated response
+  orders, while `LocalSldResponseTensor` evaluates every exact direct-triad
+  interaction and its orthogonal complement with separate input/output
+  analytic radii;
+- `LocalSldResponseBasis` performs degree-ordered orthonormalization of scalar
+  responses and transverse cyclic orbits; the tensor can greedily insert
+  missing quadratic products without contaminating low analytic degrees with
+  higher-cutoff response directions;
+- `LocalSldTwoScaleState` constructs exact cyclic low/high dilations without
+  repeated response generation; `LocalSldDoublingScaleScan` evaluates the
+  doubling, remainder, and mixed blocks across scale and response angle;
+- `LocalSldDoublingShellLedger` emits the exact ordered dyadic-shell matrix,
+  while `LocalSldProjectedSquare` verifies the completed-square identity for
+  any fixed triad selection;
 - `LocalSldTrajectoryEvaluator` evaluates and dt-refines any saved state with
   either the direct RK4 oracle or the FFT forward/VJP backend;
 - `LocalSldSignatureBlock` splits `K+G` exactly into a selected squared-length
@@ -191,6 +215,19 @@ source file:
 - `FarTailClosure` verifies the cutoff-independent moving-gap Young reduction,
   while `TransitionBlockScaling` rejects logarithmic band counting as a
   closure mechanism;
+- `DoublingQuartetClosure` combines the equal-length orthogonal incidence
+  bound with exact rational quartet power counting: the complete doubling
+  family now closes at the cutoff-independent `Z^(5/4)P^(3/4)` scale; an exact
+  two-scale counterexample is retained because it rejects a tempting but
+  unnecessary intermediate absorption inequality;
+- `RemainderQuartetClosure` computes the exact dense-signature loss and the
+  effective `R^(3/2)` incidence degree required by any unsigned route;
+- `LocalSldRemainderSignatureLedger` reconstructs the closed remainder
+  bracket signature by signature in one parallel interaction pass;
+- `LocalSldRemainderDoubleSquare` removes the raw dense advection norm from
+  the one-sided target by two exact square completions, while
+  `LocalSldRemainderEnvelopeObjective` supplies the exact VJP for the
+  resulting commutator envelope;
 - `TriadVerifier` owns direct interaction analysis, detailed triad
   cancellation, local/nonlocal flux partitioning, and certificate aggregation;
 - `StateAnalyzer` and `StateFamilyAnalyzer` measure shell decay, active modes,
@@ -209,15 +246,25 @@ self-test; state construction, trajectory diagnostics, triad verification,
 forward dynamics, the discrete adjoint, constrained optimization, CLI, and
 report generation are separate compilation units. Pointwise bounds for both
 raw signature participation and signed amplification have been adversarially
-rejected. The next mathematical task is a trajectory-integrated estimate for
-the exact coupled density `A_sig^4 R^2/(Z P^3)` for each fixed smooth initial
-datum. The far dyadic tail and every fixed local signature family already have
-cutoff-independent closures. This keeps rebuilds dependency-free and makes
-each layer independently replaceable.
+rejected. The dominant doubling quartet now has a conventional
+cutoff-independent proof; the next mathematical tasks are the closed local
+signature remainder and its mixed interaction with the doubling block. The
+full local SLD lemma and the Clay problem remain open. This keeps rebuilds
+dependency-free and makes each layer independently replaceable.
 
 The current direct local-lemma search is reproducible with:
 
 ```bash
+./build/navier_stokes_lab doubling-quartet-certificate \
+  --max-cutoff 12 \
+  --certificate proof/l4/analysis/shifted-local-density/doubling-quartet/closed-family-K12.json
+
+./build/navier_stokes_lab local-sld-doubling-scale-scan \
+  --min-scale 2 --max-scale 12 \
+  --angle-min -1.2 --angle-max 1.2 --angle-count 25 \
+  --energy-decay-power 2.75 --threads 12 \
+  --certificate proof/l4/analysis/shifted-local-density/doubling-quartet/two-scale-L2-L12-angle-scan.json
+
 ./build/navier_stokes_lab local-closure-adversary \
   --objective sld-ratio --min-cutoff 1 --max-cutoff 4 \
   --restarts 12 --workers 12 --iterations 20 --method lbfgs \
@@ -241,6 +288,25 @@ The current direct local-lemma search is reproducible with:
   --projected-state proof/l4/states/local-sld-trajectory/response-hierarchy-projection-K3/depth16-plus-orbits.tsv \
   --residual-state proof/l4/states/local-sld-trajectory/response-hierarchy-residual-K3/depth16-plus-orbits.tsv \
   --certificate proof/l4/analysis/shifted-local-density/cyclic-response-hierarchy-K3-depth16-plus-orbits.json
+
+./build/navier_stokes_lab local-sld-response-diagonal \
+  --state proof/l4/states/local-sld-trajectory/maximum-T050-K2/K2.tsv \
+  --state proof/l4/states/local-sld-trajectory/maximum-T050-K3-from-K2/K3.tsv \
+  --state proof/l4/states/local-sld-trajectory/maximum-T032-K4-from-K3/K4.tsv \
+  --max-depth 16 --radius 1.25 --threads 12 \
+  --certificate proof/l4/analysis/shifted-local-density/cyclic-response-diagonal-K2-K4-r125.json
+
+./build/navier_stokes_lab local-sld-response-tensor \
+  --cutoff 12 --depth 13 \
+  --input-radius 2 --output-radius 1.15 \
+  --tolerance 1e-14 --threads 12 \
+  --certificate proof/l4/analysis/shifted-local-density/response-tensor/R200-r115/K12.json
+
+./build/navier_stokes_lab local-sld-response-tensor \
+  --cutoff 5 --depth 6 --input-radius 2 --output-radius 1.15 \
+  --include-211-transverse --include-310-orbits \
+  --closure-extensions 16 --tolerance 1e-14 --threads 12 \
+  --certificate proof/l4/analysis/shifted-local-density/response-tensor/augmented-graded-R200-r115/K5-closure16.json
 
 ./build/navier_stokes_lab local-sld-trajectory-evaluate \
   --state proof/l4/states/local-sld-trajectory/response-hierarchy-projection-K3/depth16-plus-orbits.tsv \
@@ -280,6 +346,9 @@ Trajectory searches accept `--backend direct`, `--backend fft`, or
 `--backend auto`. `direct` remains the reference oracle; `auto` switches the
 forward RK4 and its exact discrete VJP to the validated FFT path from K3 while
 the selected local closure objective retains exact triad sums.
+Each completed optimizer restart is also written immediately below
+`STATE_DIR/restarts/K*/R*.tsv`. A machine or process interruption can therefore
+lose only the currently running restarts, not every completed branch.
 
 The first command maximizes the signed polynomial quotient itself. The
 `closure-ratio` objective remains available as a stronger sufficient screen,
@@ -304,6 +373,13 @@ of the absolute three-block sum. The winning state retains `99.969%` of its
 energy in the first hard shell, but its projected gradient is still
 `4.04e-4`; this remains a lower bound, not a converged global maximum.
 
+Six accepted K4 continuation steps improve the finite lower bound to
+`8.53527437357e-4` at the same `t=0.298`; the dt-halving error is `9.00e-16`.
+The added shell-four energy is `1.97e-9`, the K4-to-K3 state residual is
+`2.96e-4`, and the final projected objective gradient is `5.17e-5`.
+At the refined peak the exact three-block split is
+`8.24057223723e-4 + 1.51705418626e-5 + 1.42996717717e-5`.
+
 The explicit response hierarchy makes that pattern quantitative. Orders
 `0..15`, the transverse `(2,1,1)` polarization, and both oriented `(3,1,0)`
 orbits capture `99.9998628%` of the K3 winner's energy. Evolving only its
@@ -311,6 +387,46 @@ orbits capture `99.9998628%` of the K3 winner's energy. Evolving only its
 `99.96181%` of the unrestricted lower bound. Direct and FFT trajectory
 evaluation agree to all reported digits. This identifies a compact candidate
 extremal structure; it is not a cutoff-uniform theorem.
+
+On the K4 winner the same 19 directions capture `99.9997617%` of state energy
+and `99.9331554%` of the trajectory objective. The cutoff-diagonal response
+ledger then retains only the boundary-free orders `0..K`. On the K4 state
+zero-padded through K8, `A_1.25(K)` stays below `1.15916`; the full radius
+sweep and the exact sequence majorant are recorded in
+`proof/l4/lemmas/shifted-local-density/RESPONSE_DIAGONAL.md`. This is the
+current route toward a weighted response-space lemma, not a proof of its
+required cutoff-uniform operator or complement bounds. The exact interaction
+tensor sharpens the next target: with input radius `2` and output radius
+`23/20`, every ordered pair through K12 satisfies
+`sum_m (23/20)^m |<b_m,B(b_i,b_j)>| <= [23/(20 sqrt(3))]2^(i+j)`, with
+equality at the axis pair. Proving it for all response orders, together with
+a shell-resolved transverse-complement estimate, is the current analytical
+task. In the degree-graded augmented tree, sixteen closure extensions give
+projected block constants `1.04467`, `1.04894`, and `1.04894` at K3--K5; the
+corresponding projected-plus-complement finite bounds are `1.17088`, `1.30595`,
+and `1.32010`. See
+`proof/l4/lemmas/shifted-local-density/RESPONSE_TENSOR.md`.
+
+For the universal dominant block, equal-length orthogonal incidence proves the
+one-shell bound `|K_d+G_d|_j <= C R_j^5 E_{near,j}^2`, which is half a
+derivative better than the LQC-3 target. Neighbor-shell locality sums the
+structural entries. Direct sequence estimates give
+`S <= C Z^(5/4)P^(1/4)` and `T <= C Z^(1/4)P^(5/4)`, closing both global
+normalization terms at `Z^(5/4)P^(3/4)`. Thus the complete doubling block is
+now proved cutoff-independently. The active proof targets are the closed
+signature remainder and the mixed block. For the remainder, a cross-objective
+warm start disproves the initially flat signed-LQC3 search: a dense positive
+branch grows from `0.103623` at K4 to `0.175398` at K6. Its stretching is
+nearly zero, however, so its actual local SLD ratio is below `6e-20`. Two exact
+square completions explain the negative dense branches, while fixed-fraction
+absorption and the positive commutator envelope are both too strong. The
+active target is the exact joint bracket--shape factorization; its direct
+remainder objective remains near `0.00022068` from K3 through K6. The scalar
+shape algebra reduces this further to the energy-independent estimate
+`|(K_rem+G_rem)S_full| <= C Z^2P^2`; its direct power-one search is nearly
+flat through K5. See
+`proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
+`proof/l4/lemmas/shifted-local-density/REMAINDER_QUARTET.md`.
 
 The helical local target has its own replayable optimizer and same-state
 cutoff scan:

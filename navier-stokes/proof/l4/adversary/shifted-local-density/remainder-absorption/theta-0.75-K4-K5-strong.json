@@ -1,0 +1,33 @@
+{
+  "schema": "navier-stokes-local-quartic-closure-adversary-v1",
+  "search_objective": "remainder-absorption-ratio",
+  "triad_selection": "doubling-remainder",
+  "optimized_formula": "maximize [K+G+(1-theta)||A^(1/2)(B-cAu)||^2] / (Z^(5/4) P^(3/4))",
+  "closure_objective": "maximize |K+G| / (k0 B0^(1/4) Z^(5/4) P^(3/4))",
+  "direct_sld_objective": "maximize 4 S^3 Z P (K+G) / (k0 (S^4 Z^2 P + B0 Z^3 P^4))",
+  "implemented_static_scale": "Z^(7/4) P / E^(1/4)",
+  "optimizer": "lbfgs",
+  "backend": "direct",
+  "initial_profile": "mixed",
+  "warm_state_path": "proof/l4/states/local-remainder-absorption/theta-0.75-K5-projected-K4/K4.tsv",
+  "gradient": "exact discrete reverse mode; selected local objectives use direct triads and RK4 follows the requested backend",
+  "workers": 12,
+  "restarts_per_cutoff": 12,
+  "iterations_per_restart": 12,
+  "trajectory_steps": 0,
+  "viscosity": 0.100000000000000006,
+  "time_step": 0.00200000000000000004,
+  "absorption_theta": 0.75,
+  "sobolev_order": 0,
+  "sobolev_cap": 0,
+  "fitted_cutoff_slope": 1.33905308092047681,
+  "maximum_constant_ratio": 0.00270193864945066997,
+  "maximum_objective": 0.271020400970515996,
+  "candidate_lemma_proved": false,
+  "finite_search_is_not_a_proof": true,
+  "remaining_requirement": "derive a cutoff-independent analytic bound for the two-entry bracket",
+  "rows": [
+    {"cutoff": 4, "initial_objective": 0.184978245296700511, "optimized_objective": 0.201017715000326613, "objective_gain": 0.016039469703626099, "initial_constant_ratio": 0.00238731239445836912, "optimized_constant_ratio": 0.00270193864945066997, "lqc3_target_ratio": 0.0252268968821419415, "signed_lqc3_target_ratio": 0.0252268968821419415, "remainder_upper_envelope_ratio": 0.203378177007002531, "remainder_absorption_ratio": 0.201017715000326613, "squared_lqc3_target_ratio": 0.000636396326302222774, "signed_constant_ratio": 0.00270193864945066997, "normalized_stretching_ratio": 1.15911308691087149e-05, "signed_shape_factor": 6.22927378385499015e-15, "factorized_local_sld_ratio": 1.68311155946076176e-17, "factorization_relative_error": 1.7879180504643256e-19, "common_block_objective": false, "common_block_constant_ratio": 0, "common_block_shape_factor": 0, "common_block_sld_ratio": 0, "common_block_reconstruction_error": 0, "refined_objective": 0, "time_step_relative_error": 0, "frozen_initial_frequency": 0, "frozen_initial_ep_shift": 0, "objective_step": 0, "refined_objective_step": 0, "improvement_factor": 1.13179098626666441, "signed_two_entry_bracket": 12.0212105491342349, "candidate_scale": 4449.10566403062512, "signed_stretching": 0.00207737303765174238, "local_polynomial_numerator": 0.000384930538841404889, "local_polynomial_denominator": 22870173796722.6406, "signed_local_sld_ratio": 1.68311155946076176e-17, "energy": 1, "enstrophy": 8.5098654313744575, "palinstrophy": 104.932013926221245, "warm_lift_constant_ratio": 0.00238731239445836912, "warm_lift_objective": 0.184978245296700511, "projection_residual": 0.320934244181065698, "projected_gradient_norm": 0.0251607192171310994, "sobolev_value": 0, "winning_restart": 0, "winning_seed": "7552690967718565467", "warm_continuation_won": true, "accepted_steps": 12, "evaluations": 31, "state_path": "proof/l4/states/local-remainder-absorption/theta-0.75-K4-K5-strong/K4.tsv", "restart_constant_ratios": [0.00270193864945066997, 0.00100531592962235295, 0.000950801667241587861, 0.00261228704918374174, 0.0010023281644493036, 0.00104914475638273586, 0.00265709901326360376, 0.000933789149880274397, 0.000783239098209335548, 0.00257960762642877629, 0.000585893715542830265, 0.00103110484995427333], "restart_objectives": [0.201017715000326613, 0.0292657425801414357, 0.0246256867306963792, 0.200579417855546671, 0.0329627056477305724, 0.0261470345410793163, 0.200666468795714481, 0.0306997861399571914, 0.0329545703593701542, 0.199485644755576036, 0.0209782170327095924, 0.0342591743783369415]},
+    {"cutoff": 5, "initial_objective": 0.18925942818924954, "optimized_objective": 0.271020400970515996, "objective_gain": 0.0817609727812664555, "initial_constant_ratio": 0.0013798136203037022, "optimized_constant_ratio": 0.00248199652556925499, "lqc3_target_ratio": 0.033182433105409366, "signed_lqc3_target_ratio": 0.033182433105409366, "remainder_upper_envelope_ratio": 0.273820640172104224, "remainder_absorption_ratio": 0.271020400970515996, "squared_lqc3_target_ratio": 0.00110107386679496756, "signed_constant_ratio": 0.00248199652556925499, "normalized_stretching_ratio": -1.81116470797321958e-06, "signed_shape_factor": -2.37647818679627709e-17, "factorized_local_sld_ratio": -5.89841060271948237e-20, "factorization_relative_error": 0, "common_block_objective": false, "common_block_constant_ratio": 0, "common_block_shape_factor": 0, "common_block_sld_ratio": 0, "common_block_reconstruction_error": 0, "refined_objective": 0, "time_step_relative_error": 0, "frozen_initial_frequency": 0, "frozen_initial_ep_shift": 0, "objective_step": 0, "refined_objective_step": 0, "improvement_factor": 1.79879114762105186, "signed_two_entry_bracket": 42.5192402932670248, "candidate_scale": 17131.0635833847846, "signed_stretching": -0.000737698390881515371, "local_polynomial_numerator": -0.000180357664993974594, "local_polynomial_denominator": 3057733297014285.5, "signed_local_sld_ratio": -5.89841060271948237e-20, "energy": 1, "enstrophy": 12.0941576448600383, "palinstrophy": 218.412244976904475, "warm_lift_constant_ratio": 0.0013798136203037022, "warm_lift_objective": 0.18925942818924954, "projection_residual": 0.25733578617026992, "projected_gradient_norm": 0.0390259784727323145, "sobolev_value": 0, "winning_restart": 0, "winning_seed": "17210855302808539410", "warm_continuation_won": true, "accepted_steps": 12, "evaluations": 33, "state_path": "proof/l4/states/local-remainder-absorption/theta-0.75-K4-K5-strong/K5.tsv", "restart_constant_ratios": [0.00248199652556925499, 0.000424504597752317669, 0.000535018081466026043, 0.00249053598433273023, 0.000868219020320697209, 0.00049997265792565504, 0.00246854815950995439, 0.000547383094289563056, 0.000620938792871379903, 0.00253687750199321771, 0.000416181440899927684, 0.000494308391188013349], "restart_objectives": [0.271020400970515996, 0.0226219440093634178, 0.0284502502404641311, 0.270931093423019298, 0.0300967974316560943, 0.0265582188375302272, 0.270821150854917758, 0.0208398570165271094, 0.0273346383288253711, 0.270522855575767773, 0.0182838697403107618, 0.0245054698316690585]}
+  ]
+}

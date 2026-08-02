@@ -1,5 +1,19 @@
 # Shifted local critical-density candidate
 
+Companion response-space proof targets:
+
+- [`RESPONSE_DIAGONAL.md`](RESPONSE_DIAGONAL.md) defines the boundary-free
+  cutoff diagonal and its weighted coefficient majorant.
+- [`RESPONSE_TENSOR.md`](RESPONSE_TENSOR.md) records the exact interaction
+  tensor and the explicit two-radius bilinear candidate that survived every
+  ordered response pair through K12.
+- [`DOUBLING_QUARTET.md`](DOUBLING_QUARTET.md) proves the half-derivative
+  one-shell gain and the direct sequence estimates that close the complete
+  dominant orthogonal family at the cutoff-independent LQC-3 target scale.
+- [`REMAINDER_QUARTET.md`](REMAINDER_QUARTET.md) computes the exact dense
+  signature loss, rejects the absolute dense-count route, and gives the exact
+  double-square reduction to the open signed commutator-absorption estimate.
+
 This note records a scale-compatible replacement for the rejected pointwise
 monotonicity and unshifted multiplicative-growth routes.
 
@@ -382,14 +396,40 @@ RK4 plus both parameter dependencies. Its gradient error is `5.62e-12`.
 Optimized K3 terminal ratios increase from `7.98918e-4` at `T=0.01` to
 `8.46863e-4` at `T=0.20`, so the unresolved lemma is explicitly the uniform
 frozen-data trajectory bound rather than the static conjecture alone.
-Maximizing over all stored times in `[0,0.5]` selects `t=0.2175` and gives
-the refined lower bound `8.48675785e-4`. The initial state still has
-`99.9723%` of its energy in the first hard shell; the search is not yet
+Warm continuation from K2 corrects that older secondary branch. K3 selects
+`t=0.298` and reaches `8.53498799310e-4`; six accepted K4 steps improve the
+finite lower bound to `8.53527437357e-4` at the same time. The K4 dt-halving
+error is `9.00e-16`, hard-shell-four energy is `1.97e-9`, and the final
+projected objective gradient is `5.17e-5`. The search is not proved globally
 stationary, so this remains a pattern and falsification artifact.
-At the refined peak, frozen-data block analysis gives `8.18560410e-4` from
-the doubling family and about `1.5e-5` from each correction, reconstructing
-the full quotient to `9.98e-19`. Dominance of the same family therefore
+At the refined K4 peak, frozen-data block analysis gives
+`8.24057223723e-4` from the doubling family, `1.51705418626e-5` from the
+closed remainder, and `1.42996717717e-5` from the mixed block. The relative
+reconstruction error is `1.36e-18`. Dominance of the same family therefore
 survives the evolution rather than being only a `t=0` artifact.
+
+Nineteen explicit response/orbit directions capture `99.9997617%` of the K4
+state energy and `99.9331554%` of its trajectory objective. Fixed-depth
+response comparisons beyond order K are polluted by the Galerkin boundary,
+so [RESPONSE_DIAGONAL.md](RESPONSE_DIAGONAL.md) retains only orders `0..K`
+and states the weighted response-majorant target. The observed diagonal is
+evidence, not the required cutoff-uniform bilinear and complement estimate.
+
+The complete equal-low doubling quartet is no longer an open sub-block.
+Equal-length orthogonal incidence gives its half-derivative one-shell gain;
+fixed-width shell locality sums the structural entries, and the direct bounds
+`S <= C Z^(5/4)P^(1/4)` and `T <= C Z^(1/4)P^(5/4)` close both normalization
+terms at `Z^(5/4)P^(3/4)`. The full shifted-density lemma remains open because
+the closed signature remainder and the mixed doubling/remainder block have not
+yet been controlled uniformly. For the remainder, cross-objective warm starts
+find a growing dense signed-LQC3 branch, but its stretching is nearly zero and
+the actual local source vanishes at cubic order. The exact double-square
+identity in [REMAINDER_QUARTET.md](REMAINDER_QUARTET.md) explains the negative
+dense branch and reduces the active numerical/analytic target to a joint
+tradeoff between the remainder bracket coefficient and the full stretching
+shape factor. The scalar shape multiplier is at most two, so the remaining
+remainder statement is the energy-independent power-one bound
+`|(K_rem+G_rem)S_full| <= C Z^2P^2`.
 
 ## Reduced proof obligation
 

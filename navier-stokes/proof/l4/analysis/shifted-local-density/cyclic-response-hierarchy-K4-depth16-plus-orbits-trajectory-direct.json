@@ -1,0 +1,23 @@
+{
+  "schema": "navier-stokes-local-sld-trajectory-evaluation-v1",
+  "state_path": "proof/l4/states/local-sld-trajectory/response-hierarchy-projection-K4/depth16-plus-orbits.tsv",
+  "cutoff": 4,
+  "backend": "direct",
+  "threads": 12,
+  "viscosity": 0.100000000000000006,
+  "time_step": 0.00100000000000000002,
+  "trajectory_steps": 320,
+  "initial_sld_ratio": 0.000134364324216977419,
+  "terminal_sld_ratio": 0.000847472084184963627,
+  "maximum_sld_ratio": 0.000852956900642360479,
+  "objective_step": 298,
+  "objective_time": 0.297999999999999987,
+  "refined_maximum_sld_ratio": 0.000852956900642359286,
+  "refined_objective_step": 596,
+  "time_step_relative_error": 1.43868814638876976e-15,
+  "initial_frequency": 1.00447112102017222,
+  "initial_ep_shift": 1.03222743492590552,
+  "finite": true,
+  "candidate_lemma_proved": false,
+  "finite_evaluation_is_not_a_proof": true
+}

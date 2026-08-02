@@ -70,6 +70,15 @@ The next conventional estimate must treat two parts:
 1. a scale-uniform signed bound for the complete `(m,m,2m)` family;
 2. a summable bound for `F_r+F_x` which preserves the mixed signs in LSB-1.
 
+[`DOUBLING_QUARTET.md`](DOUBLING_QUARTET.md) now proves the
+cutoff-independent one-shell power for item 1. Orthogonal incidence gives
+`|K_d+G_d|_j <= C R_j^5 E_{near,j}^2`, a half-derivative improvement over the
+required `R_j^(11/2)E_{near,j}^2` scale. A two-scale construction also proves
+that separately summing the absolute palinstrophy-normalization term is false:
+the naive sequence ratio grows like `L^(1/8)`. Item 1 is therefore reduced to
+a signed cross-shell cancellation inside the already combined `K_d+G_d`, not
+an unresolved one-shell counting estimate.
+
 Bounding `F_d`, `F_r`, and `F_x` by unrelated raw norms would discard the
 decomposition's purpose and can restore the previously identified
 `(P/Z)^(3/4)` loss.
@@ -143,6 +152,20 @@ orbits capture `99.9998628%` of the current K3 winner's energy. Their projected
 state retains `99.96181%` of the frozen trajectory objective at the same peak
 time. This supports an orbit-wise summability lemma, but finite K3 projection
 accuracy does not establish cutoff-uniform control of `F_d+F_r+F_x`.
+
+## Analytical block status
+
+The dominant block is now closed conventionally, not merely measured.
+Equal-length orthogonal incidence gives the shell bound
+`C R^5 E_near^2`; neighbor-shell locality sums its structural terms, while
+direct sequence estimates send both global normalization terms to
+`C Z^(5/4)P^(3/4)`. Therefore `F_d` has a cutoff-independent LQC-3 bound.
+
+No such bound is yet proved for `F_r` or `F_x`. Their small values on the
+trajectory winner are useful routing evidence only. The active work is to
+resolve the remainder by squared-length signature geometry without paying the
+dense-family counting loss, then use the same decomposition for the mixed
+block.
 
 ## Rejected sign shortcut
 

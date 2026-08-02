@@ -1,6 +1,6 @@
 # Proof roadmap and restart point
 
-Last updated: 2026-08-01
+Last updated: 2026-08-02
 
 ## Exact target
 
@@ -84,6 +84,12 @@ and falsification result, not the required analytic bound. Resume from the
 cyclic response hierarchy and the `(m,m,2m)`/remainder/mixed decomposition in
 `proof/l4/lemmas/shifted-local-density/SIGNATURE_BLOCK.md`.
 
+Six accepted K4 continuation steps improve that value to
+`8.53527437357e-4`, again at `t=0.298`, with dt-halving error `9.00e-16`.
+The new hard-shell-four energy is only `1.97e-9`; the K4-to-K3 state residual
+is `2.96e-4`, and the final projected objective gradient is `5.17e-5`.
+This is the current finite lower bound, not a global optimum or a lemma.
+
 The current K3 winner is not an unstructured high-dimensional state. Sixteen
 quadratic response orders plus the explicit transverse `(2,1,1)` and two
 oriented `(3,1,0)` orbit directions capture `99.9998628%` of its energy. The
@@ -91,6 +97,90 @@ projected state retains `99.96181%` of the trajectory objective and the same
 peak time. The next proof step is to replace this finite projection fact by a
 cutoff-uniform summability estimate for the response coefficients and orbit
 remainders; finite-dimensional agreement alone is not the lemma.
+
+At K4, the corresponding 19 directions capture `99.9997617%` of state energy
+and `99.9331554%` of the full trajectory objective. Direct-triad and FFT
+evaluation agree exactly at the serialized precision. A new cutoff-diagonal
+ledger avoids comparing response orders after they hit the Galerkin wall: at
+cutoff K it retains only orders `0,...,K`. For the same K4 state zero-padded
+through K8, the weighted coefficient sum
+`A_1.25(K)=sum_{n<=K}1.25^n |<u,b_n>|/sqrt(E)` remains between `1.12012` and
+`1.15916` from K2 through K8. This is evidence for the explicit weighted
+response target in
+`proof/l4/lemmas/shifted-local-density/RESPONSE_DIAGONAL.md`.
+
+The exact direct-triad tensor has now separated the response-space derivative
+loss from cutoff growth. Same-radius weights at `r=1.25` grow from `0.9723` at
+K2 to `5.2028` at K8 and cannot close the algebra. With input radius `R=2` and
+output radius `r=23/20`, however, every ordered response interaction through
+K12 obeys the same sharp finite bound
+
+```text
+sum_m (23/20)^m |<b_m,B(b_i,b_j)>|
+    <= [23/(20 sqrt(3))] 2^(i+j),
+```
+
+with equality at the axis pair. The lowest open analytical subtask is now to
+prove this explicit scalar inequality for arbitrary response order.
+
+The transverse space is now graded before orthogonalization and extended by
+the largest missing bilinear products. With all three explicit orbit families
+and sixteen closure directions, the invariant degree-block projected
+constants at K3/K4/K5 are `1.04467`, `1.04894`, and `1.04894`; adding the
+separately maximized shell complement gives finite bounds `1.17088`, `1.30595`,
+and `1.32010`. The lowest open complement subtask is to prove a uniform
+dimension/support count for this indefinitely generated graded orbit tree and
+sum it in the `R=2 -> r=23/20` gap. A strict response-degree support shortcut
+has been rejected: K5 contains a coefficient of magnitude `0.409773` two
+degrees above `d_left+d_right+1`. The proof therefore also needs quantitative
+off-diagonal decay of the response tensor, not just a count of nominal support.
+See
+`proof/l4/lemmas/shifted-local-density/RESPONSE_TENSOR.md`.
+
+The response route also has a newly certified limitation. At radius three,
+the measured diagonal grows from `A_3(6)=2.14594` to `A_3(8)=5.97485`, and
+the eighth response vector keeps `95.01%` of its energy in the lower half of
+the physical shells. Response order is therefore not a proxy for Fourier
+frequency, so smooth initial data alone does not provide the exponential
+response weight. This route remains a structural extremizer model rather than
+the current universal closure.
+
+The universal dominant-block calculation has progressed independently. The
+complete `(m,m,2m)` family is an equal-length orthogonal incidence graph.
+Target-wise degree `O(R)` gives `||B_d||_2 <= C R^(3/2)E`, and every one-shell
+entry of the closed `K_d+G_d` bracket has scale `R^5E^2`, gaining one half
+derivative over LQC-3. The naive attempt to absorb the global normalization
+sum into the structural shell sum is false: two shells with high-shell energy
+`L^(-11/4)` make that intermediate ratio grow as `L^(1/8)`. Direct estimates
+avoid the obstruction: `S <= C Z^(5/4)P^(1/4)` and
+`T <= C Z^(1/4)P^(5/4)`, so both normalization entries are bounded by
+`C Z^(3/2)P^(1/2) <= C Z^(5/4)P^(3/4)`. Together with neighbor-shell locality
+of the structural terms, this proves the complete doubling-family block
+cutoff-independently. The closed signature remainder has now been reduced
+further. Writing `W=B_rem-cAu` and
+`D=B_rem(u,Au)-[x->B_rem(x,u)]^*Au`, two exact square completions give
+
+```text
+K_rem+G_rem
+=-||A^(1/2)(W-(1/2)A^(-1)D)||^2
+ +S^2/(2Z)+c^2H3+c<Au,D>+(1/4)||A^(-1/2)D||^2.
+```
+
+The direct VJP also certifies `D=-[dB_rem(u,u)]^*Au`. A growing dense
+absolute-value branch is negative because of the displayed square. The first
+signed-LQC3 continuation appeared to stabilize at `0.102959`, but a
+cross-objective warm start finds a dense positive branch growing from
+`0.103623` at K4 to `0.175398` at K6. Its normalized stretching is only
+`O(1e-6)`, making the actual local source `O(1e-20)`. Maximizing only the
+positive envelope and retaining a fixed fraction of the negative square also
+produce growing branches. Therefore the lowest universal analytical subtask
+is the exact joint bracket--shape tradeoff, not an independent bound on D or
+the signed LQC3 quotient. Since
+`R_rem=[(K_rem+G_rem)S_full/(Z^2P^2)] 4x^2/(1+x^4)` and the last factor is at
+most `2`, the current remainder lemma is the power-one estimate
+`|(K_rem+G_rem)S_full| <= C Z^2P^2`. The mixed block follows. See
+`proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
+`proof/l4/lemmas/shifted-local-density/REMAINDER_QUARTET.md`.
 
 The first explicit L4 candidate in the reduction was
 
@@ -772,8 +862,8 @@ The exact local polynomial numerator is `4S^3ZP(K+G)`. At K6 it equals
 cutoff-independent upper bound for this signed two-entry expression. This is
 the next restart point after any failed computational or analytical attempt.
 
-The exact Young reduction now identifies the required estimate rather than
-leaving it qualitative:
+The exact Young reduction first identified the following sufficient absolute
+estimate:
 
 ```text
 |K+G| <= C k0 B0^(1/4) Z^(5/4)P^(3/4).               (LQC-3)
@@ -785,7 +875,26 @@ Multiplication by `4|S|^3ZP` and weighted AM--GM imply SLD-1P-L with
 signed two-entry structure. The K6 finite-state ratio is `0.127982322632` and
 the algebraic identity error is `8.00e-20`; neither number proves uniformity.
 `proof/l4/lemmas/shifted-local-density/CLOSURE_TARGET.md` is the exact current
-restart point.
+algebraic target, but the absolute estimate is stronger than the signed local
+polynomial inequality.
+
+For the closed doubling remainder, an exact-gradient absolute LQC-3 search
+finds a dense negative branch: its magnitude grows from `0.05903` at K2 to
+`0.42906` at K5. A signature-row ledger reconstructs the K5 bracket at
+`8e-19` relative error and measures 549.49 effective contributors with
+`0.999840` same-sign alignment. This is not a counterexample to the required
+upper bound. The first signed LQC-3 search padded a `0.102959` K5 low-mode
+winner through K8, but a later cross-objective warm start rejects that basin
+as a worst-case proxy: it gives `0.103623`, `0.136748`, and `0.175398` at
+K4--K6 with 452.20 effective K5 signature contributors. This stronger branch
+has nearly zero stretching, so its actual local SLD ratio is below `6e-20`.
+Direct optimization of the exact remainder block product instead stays near
+`0.00022068` from K3 through K6. The bracket--shape factorization in
+`proof/l4/lemmas/shifted-local-density/REMAINDER_QUARTET.md` is therefore the
+current remainder restart point. Its exact scalar reduction leaves the
+energy-independent power-one tradeoff
+`|(K_rem+G_rem)S_full| <= C Z^2P^2`; the corresponding exact-gradient roots
+remain between `0.00601` and `0.00636` through K5.
 
 The absolute closure ratio was subsequently reverse-differentiated and
 optimized directly. A K1 branch reaches `C_state=1/3`, but its stretching is
