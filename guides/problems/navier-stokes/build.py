@@ -832,7 +832,12 @@ def brief_slide_2() -> Image.Image:
         bullet_color=ORANGE,
     )
     text(image, (120, 822), "NONLINEAR TERM", size=14, color=ORANGE, weight="bold")
-    text(image, (320, 813), "(u · ∇)u", size=25, color=TEXT, weight="bold", mono=True)
+    ImageDraw.Draw(image).text(
+        (320, 813),
+        "(u · ∇)u",
+        font=ImageFont.truetype(FONT_MATH, size=25),
+        fill=rgba(TEXT),
+    )
 
     arrow(image, (805, 657), (1115, 657), color=AMBER, width=7, head=20)
     pill(image, (864, 608), "UNKNOWN BALANCE", fill=AMBER, color=INK, size=13)
