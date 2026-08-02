@@ -69,6 +69,9 @@ struct LocalSldProjectiveHeightMatrixReport {
     bool excludes_signature_123 = false;
     bool excludes_triple_family = false;
     SpectralReal selected_bracket = 0.0L;
+    SpectralReal selected_enstrophy = 0.0L;
+    SpectralReal selected_palinstrophy = 0.0L;
+    SpectralReal full_local_stretching = 0.0L;
     SpectralReal selected_power_one = 0.0L;
     SpectralReal power_one_scale = 0.0L;
     SpectralReal reconstructed_bracket = 0.0L;

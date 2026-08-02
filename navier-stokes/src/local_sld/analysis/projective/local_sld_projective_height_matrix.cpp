@@ -306,6 +306,26 @@ void write_json(
             << ", \"open_palinstrophy_normalization_power_one\": "
             << static_cast<double>(
                    row.open_palinstrophy_normalization_power_one)
+            << ", \"core_stretching\": "
+            << static_cast<double>(row.core_stretching)
+            << ", \"tail_stretching\": "
+            << static_cast<double>(row.tail_stretching)
+            << ", \"core_palinstrophy_cross\": "
+            << static_cast<double>(row.core_palinstrophy_cross)
+            << ", \"tail_palinstrophy_cross\": "
+            << static_cast<double>(row.tail_palinstrophy_cross)
+            << ", \"core_stretching_tail_cross_power_one\": "
+            << static_cast<double>(
+                   row.core_stretching_tail_cross_power_one)
+            << ", \"tail_stretching_core_cross_power_one\": "
+            << static_cast<double>(
+                   row.tail_stretching_core_cross_power_one)
+            << ", \"tail_stretching_tail_cross_power_one\": "
+            << static_cast<double>(
+                   row.tail_stretching_tail_cross_power_one)
+            << ", \"palinstrophy_factorization_error\": "
+            << static_cast<double>(
+                   row.palinstrophy_factorization_error)
             << ", \"open_absolute_power_one_sum\": "
             << static_cast<double>(row.open_absolute_power_one_sum)
             << ", \"open_effective_height_pairs\": "
@@ -558,6 +578,10 @@ void write_json(
         << "  \"maximum_cumulative_component_reconstruction_error\": "
         << static_cast<double>(
                tail.maximum_component_reconstruction_error)
+        << ",\n"
+        << "  \"maximum_cumulative_palinstrophy_factorization_error\": "
+        << static_cast<double>(
+               tail.maximum_palinstrophy_factorization_error)
         << ",\n"
         << "  \"exact_cumulative_height_decomposition\": "
         << (tail.exact_cumulative_decomposition ? "true" : "false")
@@ -870,6 +894,9 @@ LocalSldProjectiveHeightMatrix::analyze(
     report.excludes_signature_123 = exclude_signature_123;
     report.excludes_triple_family = exclude_triple_family;
     report.selected_bracket = selected.signed_two_entry_bracket;
+    report.selected_enstrophy = selected.enstrophy;
+    report.selected_palinstrophy = selected.palinstrophy;
+    report.full_local_stretching = full_local.signed_stretching;
     report.power_one_scale =
         full_local.signed_stretching /
         (selected.enstrophy * selected.enstrophy *

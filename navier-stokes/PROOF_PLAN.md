@@ -988,6 +988,18 @@ normalizations globally and verifies their elementary Cauchy bounds. The
 lowest open analytic target is now a cutoff-uniform bound for the resulting
 global response/norm expression, especially the palinstrophy cross term.
 
+The palinstrophy normalization now has its own squared exact-gradient
+objective, with central-difference error `1.63e-11`. A 12-start K1--K8 run
+that retains `(1,2,3)` finds a flat `0.0029279` branch, but removing that exact
+signature reduces the same state to `5.30e-7`: the large branch belongs to the
+fixed-family part. On the signature-free open selection, continuation reaches
+`0.0005621` at K8 and `0.0005624` after one full K12 step. The corresponding
+core-subtracted objective gives `0.0003456`, `0.0003319`, `0.0003936`, and
+`0.0002500` for core heights 8, 16, 32, and 64 at K8. Thus the optimizer
+relocates into the growing tail; no monotone core-height decay is available.
+The restart point is a structural bound for
+`s t-s_core t_core`, not another fixed-core extrapolation.
+
 The absolute closure ratio was subsequently reverse-differentiated and
 optimized directly. A K1 branch reaches `C_state=1/3`, but its stretching is
 only `1.23e-11`; the `S^3` factor makes it irrelevant to the actual local

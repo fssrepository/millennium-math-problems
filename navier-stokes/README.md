@@ -474,7 +474,13 @@ before taking shellwise absolute values gives the exact global pairing
 `<sum b_j,sum R_j>`. Young's inequality therefore removes the Schur estimate
 entirely from the signed dynamical block. The current analytic target is a
 cutoff-uniform bound for this global response norm and the two explicit
-normalization terms. See
+normalization terms. A dedicated exact-gradient normalization adversary has
+relative directional error `1.63e-11`. Its apparent `0.0029279` K8 branch is
+the already isolated `(1,2,3)` fixed-family contribution; removing that
+signature gives `0.0005621` at K8 and `0.0005624` after one full K12 step.
+Core-subtracted searches at heights 8, 16, 32, and 64 do not decay
+monotonically, so simply enlarging a fixed core is not the missing theorem.
+See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_CROSS_QUARTET.md` and

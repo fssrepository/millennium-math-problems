@@ -18,6 +18,14 @@ struct LocalSldProjectiveHeightTailRow {
     SpectralReal open_advecting_nested_power_one = 0.0L;
     SpectralReal open_enstrophy_normalization_power_one = 0.0L;
     SpectralReal open_palinstrophy_normalization_power_one = 0.0L;
+    SpectralReal core_stretching = 0.0L;
+    SpectralReal tail_stretching = 0.0L;
+    SpectralReal core_palinstrophy_cross = 0.0L;
+    SpectralReal tail_palinstrophy_cross = 0.0L;
+    SpectralReal core_stretching_tail_cross_power_one = 0.0L;
+    SpectralReal tail_stretching_core_cross_power_one = 0.0L;
+    SpectralReal tail_stretching_tail_cross_power_one = 0.0L;
+    SpectralReal palinstrophy_factorization_error = 0.0L;
     SpectralReal reconstructed_power_one = 0.0L;
     SpectralReal open_absolute_power_one_sum = 0.0L;
     SpectralReal open_effective_height_pairs = 0.0L;
@@ -31,6 +39,7 @@ struct LocalSldProjectiveHeightTailReport {
     std::vector<LocalSldProjectiveHeightTailRow> rows;
     SpectralReal maximum_reconstruction_error = 0.0L;
     SpectralReal maximum_component_reconstruction_error = 0.0L;
+    SpectralReal maximum_palinstrophy_factorization_error = 0.0L;
     bool exact_cumulative_decomposition = false;
     bool uniform_weighted_tail_bound_proved = false;
 };

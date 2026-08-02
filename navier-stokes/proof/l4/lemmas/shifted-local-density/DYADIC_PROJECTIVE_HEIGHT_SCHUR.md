@@ -274,6 +274,15 @@ diagnostics and for stronger shellwise envelopes, but the active proof target
 has narrowed to bounding the global response weight and the two exact
 normalization terms.
 
+A dedicated exact-gradient adversary isolates the palinstrophy normalization.
+The large `0.0029279` branch is carried by the fixed `(1,2,3)` family; after
+that exact signature is removed, a 52-step K8 continuation reaches
+`0.0005621`, and one complete K12 step gives `0.0005624`. Directly optimizing
+the portion outside fixed cores of heights 8, 16, 32, and 64 gives
+`0.0003456`, `0.0003319`, `0.0003936`, and `0.0002500`. These values reject a
+monotone finite core-height-decay argument and focus the open lemma on the
+cross-tail product `s t-s_core t_core`.
+
 ## Reproduction
 
 ```bash

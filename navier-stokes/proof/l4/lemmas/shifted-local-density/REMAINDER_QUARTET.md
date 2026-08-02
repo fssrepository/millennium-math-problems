@@ -361,6 +361,12 @@ it without any Schur row. The engine also reconstructs the two remaining
 normalizations as `s^2/(2Z)` and `3st/(2P)`. The current RQ-11 gap is therefore
 a cutoff-uniform bound for this global response/norm expression, with the
 palinstrophy cross term currently giving the loosest elementary estimate.
+The exact-gradient normalization objective confirms that the largest broad
+branch (`0.0029279`) is the removable `(1,2,3)` fixed-family contribution.
+On the signature-free open selection it reaches `0.0005621` at K8 and
+`0.0005624` after one full K12 step. Core-subtracted searches at H=8,16,32,64
+give `0.0003456`, `0.0003319`, `0.0003936`, and `0.0002500`; relocation makes
+finite core-height decay unavailable as a proof mechanism.
 
 ## Reproduction
 

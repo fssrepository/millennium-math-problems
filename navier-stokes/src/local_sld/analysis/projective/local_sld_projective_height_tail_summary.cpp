@@ -28,6 +28,28 @@ LocalSldProjectiveHeightTailSummary::summarize(
         LocalSldProjectiveHeightTailRow row;
         row.last_core_shell = static_cast<int>(core);
         row.core_maximum_height = matrix.shells[core].maximum_height;
+        for (std::size_t shell = 0; shell < matrix.shells.size(); ++shell) {
+            if (shell <= core) {
+                row.core_stretching += matrix.shells[shell].stretching;
+                row.core_palinstrophy_cross +=
+                    matrix.shells[shell].palinstrophy_cross;
+            } else {
+                row.tail_stretching += matrix.shells[shell].stretching;
+                row.tail_palinstrophy_cross +=
+                    matrix.shells[shell].palinstrophy_cross;
+            }
+        }
+        if (matrix.selected_palinstrophy > 0.0L) {
+            const SpectralReal factor =
+                1.5L * matrix.power_one_scale /
+                matrix.selected_palinstrophy;
+            row.core_stretching_tail_cross_power_one = factor *
+                row.core_stretching * row.tail_palinstrophy_cross;
+            row.tail_stretching_core_cross_power_one = factor *
+                row.tail_stretching * row.core_palinstrophy_cross;
+            row.tail_stretching_tail_cross_power_one = factor *
+                row.tail_stretching * row.tail_palinstrophy_cross;
+        }
         SpectralReal open_square_sum = 0.0L;
         for (const auto& entry : matrix.entries) {
             const bool first_core =
@@ -93,17 +115,26 @@ LocalSldProjectiveHeightTailSummary::summarize(
                 row.open_enstrophy_normalization_power_one +
                 row.open_palinstrophy_normalization_power_one,
             row.open_power_one);
+        row.palinstrophy_factorization_error = relative_error(
+            row.core_stretching_tail_cross_power_one +
+                row.tail_stretching_core_cross_power_one +
+                row.tail_stretching_tail_cross_power_one,
+            row.open_palinstrophy_normalization_power_one);
         report.maximum_reconstruction_error = std::max(
             report.maximum_reconstruction_error,
             row.reconstruction_error);
         report.maximum_component_reconstruction_error = std::max(
             report.maximum_component_reconstruction_error,
             row.component_reconstruction_error);
+        report.maximum_palinstrophy_factorization_error = std::max(
+            report.maximum_palinstrophy_factorization_error,
+            row.palinstrophy_factorization_error);
         report.rows.push_back(row);
     }
     report.exact_cumulative_decomposition =
         report.maximum_reconstruction_error < 1e-13L &&
-        report.maximum_component_reconstruction_error < 1e-13L;
+        report.maximum_component_reconstruction_error < 1e-13L &&
+        report.maximum_palinstrophy_factorization_error < 1e-13L;
     return report;
 }
 
