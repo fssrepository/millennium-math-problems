@@ -2896,6 +2896,8 @@ bool self_test(std::ostream& out) {
                 .maximum_reconstruction_error < 1e-13L &&
         remainder_projective_height_tail
                 .maximum_component_reconstruction_error < 1e-13L &&
+        remainder_projective_height_tail
+                .maximum_palinstrophy_factorization_error < 1e-13L &&
         !remainder_projective_height_tail
              .uniform_weighted_tail_bound_proved;
     const LocalSldProjectiveHeightSchurReport
@@ -3702,6 +3704,10 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(
                remainder_projective_height_tail
                    .maximum_reconstruction_error)
+        << ", palinstrophy factorization error="
+        << static_cast<double>(
+               remainder_projective_height_tail
+                   .maximum_palinstrophy_factorization_error)
         << ")\n"
         << "local SLD projective height-Schur test: "
         << (remainder_projective_height_schur_ok ? "PASS" : "FAIL")
