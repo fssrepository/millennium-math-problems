@@ -68,6 +68,10 @@ std::string objective_formula(const std::string& objective) {
         "projective-height-commutator-coercivity-ratio") {
         return "maximize the squared commutator-paired height envelope divided by the squared outer H1 shell weight";
     }
+    if (objective ==
+        "projective-height-dynamic-coercivity-ratio") {
+        return "maximize the squared height envelope after jointly pairing the outer, advected, and nested dynamical terms, divided by the squared outer H1 shell weight";
+    }
     if (objective == "signed-closure-ratio") {
         return "maximize (K+G) E^(1/4) / (Z^(7/4) P)";
     }
@@ -235,6 +239,9 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
             << ", \"projective_height_commutator_coercivity_ratio\": "
             << static_cast<double>(
                    winner.projective_height_commutator_coercivity_ratio)
+            << ", \"projective_height_dynamic_coercivity_ratio\": "
+            << static_cast<double>(
+                   winner.projective_height_dynamic_coercivity_ratio)
             << ", \"projective_height_component_bracket_envelope\": "
             << static_cast<double>(
                    winner.projective_height_component_bracket_envelope)

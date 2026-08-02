@@ -124,6 +124,12 @@ void finalize_entry(
          std::abs(entry.enstrophy_normalization) +
          std::abs(entry.palinstrophy_normalization)) *
         std::abs(power_one_scale);
+    entry.dynamic_paired_power_one_envelope =
+        (std::abs(entry.outer_square + entry.advected_commutator +
+                  entry.advecting_nested) +
+         std::abs(entry.enstrophy_normalization) +
+         std::abs(entry.palinstrophy_normalization)) *
+        std::abs(power_one_scale);
 }
 
 void write_json(
@@ -249,6 +255,9 @@ void write_json(
             << ", \"commutator_paired_power_one_envelope\": "
             << static_cast<double>(
                    entry.commutator_paired_power_one_envelope)
+            << ", \"dynamic_paired_power_one_envelope\": "
+            << static_cast<double>(
+                   entry.dynamic_paired_power_one_envelope)
             << ", \"shared_target_mode_count\": "
             << entry.shared_target_mode_count
             << ", \"target_incidence_cosine\": "
@@ -442,6 +451,28 @@ void write_json(
         << "  \"finite_commutator_paired_outer_schur_inequality_verified\": "
         << (schur
                     .finite_commutator_paired_outer_schur_inequality_verified
+                ? "true" : "false")
+        << ",\n"
+        << "  \"dynamic_paired_total_power_one_envelope\": "
+        << static_cast<double>(schur.dynamic_paired_total_envelope)
+        << ",\n"
+        << "  \"dynamic_paired_outer_maximum_weighted_schur_row_sum\": "
+        << static_cast<double>(
+               schur.dynamic_paired_outer_maximum_weighted_row_sum)
+        << ",\n"
+        << "  \"dynamic_paired_outer_weighted_schur_upper_bound\": "
+        << static_cast<double>(
+               schur.dynamic_paired_outer_weighted_schur_upper_bound)
+        << ",\n"
+        << "  \"dynamic_paired_outer_weighted_schur_upper_bound_ratio\": "
+        << static_cast<double>(
+               schur.dynamic_paired_outer_upper_bound_ratio)
+        << ",\n"
+        << "  \"dynamic_paired_outer_unscaled_off_diagonal_pair_count\": "
+        << schur.dynamic_paired_outer_unscaled_off_diagonal_pair_count
+        << ",\n"
+        << "  \"finite_dynamic_paired_outer_schur_inequality_verified\": "
+        << (schur.finite_dynamic_paired_outer_schur_inequality_verified
                 ? "true" : "false")
         << ",\n"
         << "  \"finite_weighted_schur_inequality_verified\": "
@@ -837,7 +868,8 @@ int LocalSldProjectiveHeightMatrixCli::run(
         << "Certificate written to " << options.certificate_path << '\n';
     return report.exact_height_matrix_decomposition &&
             tail.exact_cumulative_decomposition &&
-            schur.finite_schur_inequality_verified
+            schur.finite_schur_inequality_verified &&
+            schur.finite_dynamic_paired_outer_schur_inequality_verified
         ? 0 : 2;
 }
 

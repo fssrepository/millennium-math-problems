@@ -68,14 +68,20 @@ struct LocalSldProjectiveHeightSchurReport {
     SpectralReal commutator_paired_outer_maximum_weighted_row_sum = 0.0L;
     SpectralReal commutator_paired_outer_weighted_schur_upper_bound = 0.0L;
     SpectralReal commutator_paired_outer_upper_bound_ratio = 0.0L;
+    SpectralReal dynamic_paired_total_envelope = 0.0L;
+    SpectralReal dynamic_paired_outer_maximum_weighted_row_sum = 0.0L;
+    SpectralReal dynamic_paired_outer_weighted_schur_upper_bound = 0.0L;
+    SpectralReal dynamic_paired_outer_upper_bound_ratio = 0.0L;
     std::size_t unscaled_off_diagonal_pair_count = 0;
     std::size_t commutator_paired_unscaled_off_diagonal_pair_count = 0;
     std::size_t
         commutator_paired_outer_unscaled_off_diagonal_pair_count = 0;
+    std::size_t dynamic_paired_outer_unscaled_off_diagonal_pair_count = 0;
     bool finite_matrix_exact = false;
     bool finite_schur_inequality_verified = false;
     bool finite_commutator_paired_schur_inequality_verified = false;
     bool finite_commutator_paired_outer_schur_inequality_verified = false;
+    bool finite_dynamic_paired_outer_schur_inequality_verified = false;
     bool cutoff_uniform_weighted_schur_bound_proved = false;
 };
 

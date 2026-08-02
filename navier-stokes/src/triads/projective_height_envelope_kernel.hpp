@@ -30,7 +30,8 @@ public:
         SpectralReal palinstrophy,
         bool compute_gradient,
         int threads = 1,
-        bool pair_outer_and_advected_commutator = false);
+        bool pair_outer_and_advected_commutator = false,
+        bool pair_nested_with_commutator = false);
 };
 
 }  // namespace lemma

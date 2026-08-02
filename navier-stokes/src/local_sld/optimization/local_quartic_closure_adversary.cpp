@@ -15,6 +15,7 @@
 #include "local_sld_projective_height_outer_power_objective.hpp"
 #include "local_sld_projective_height_envelope_objective.hpp"
 #include "local_sld_projective_height_commutator_ratio_objective.hpp"
+#include "local_sld_projective_height_dynamic_ratio_objective.hpp"
 #include "local_sld_triad_selection.hpp"
 #include "parallel_executor.hpp"
 #include "spectral_adjoint.hpp"
@@ -255,6 +256,11 @@ LocalQuarticClosureAdversary::maximize(
                                            ? "local-frozen-maximum-sld-ratio"
                                            : "local-sld-ratio"))))))))))))))))))));
     search.method = options.method;
+    if (options.objective ==
+        "projective-height-dynamic-coercivity-ratio") {
+        search.objective =
+            "local-projective-height-dynamic-coercivity-ratio";
+    }
     search.lbfgs_history = options.lbfgs_history;
     search.sobolev_order = options.sobolev_order;
     search.sobolev_cap = options.sobolev_cap;
@@ -280,6 +286,11 @@ LocalQuarticClosureAdversary::maximize(
         if (options.objective ==
             "projective-height-commutator-coercivity-ratio") {
             result.projective_height_commutator_coercivity_ratio =
+                std::sqrt(std::max(0.0L, optimized.objective));
+        }
+        if (options.objective ==
+            "projective-height-dynamic-coercivity-ratio") {
+            result.projective_height_dynamic_coercivity_ratio =
                 std::sqrt(std::max(0.0L, optimized.objective));
         }
         result.initial_objective = optimized.initial_objective;
@@ -405,6 +416,11 @@ LocalQuarticClosureAdversary::maximize(
             dynamics, search.closure_selection,
             search.objective_threads)
             .evaluate(result.state).coercivity_ratio;
+    result.projective_height_dynamic_coercivity_ratio =
+        LocalSldProjectiveHeightDynamicRatioObjective(
+            dynamics, search.closure_selection,
+            search.objective_threads)
+            .evaluate(result.state).coercivity_ratio;
     result.projective_height_component_bracket_envelope =
         height_envelope_value.absolute_component_bracket_envelope;
     result.projective_height_pair_count =
@@ -501,6 +517,8 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
              "projective-height-commutator-envelope-ratio" &&
          options.objective !=
              "projective-height-commutator-coercivity-ratio" &&
+         options.objective !=
+             "projective-height-dynamic-coercivity-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "sld-ratio" &&
          options.objective != "block-ratio" &&
@@ -591,11 +609,22 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                  options.objective ==
                      "projective-height-commutator-envelope-ratio" ||
                  options.objective ==
-                     "projective-height-commutator-coercivity-ratio")) {
+                     "projective-height-commutator-coercivity-ratio" ||
+                 options.objective ==
+                     "projective-height-dynamic-coercivity-ratio")) {
                 if (options.objective ==
                     "projective-height-commutator-coercivity-ratio") {
                     row.warm_lift_objective =
                         LocalSldProjectiveHeightCommutatorRatioObjective(
+                            dynamics,
+                            closure_selection(options.selection),
+                            options.workers)
+                            .evaluate(starts.front())
+                            .squared_coercivity_ratio;
+                } else if (options.objective ==
+                           "projective-height-dynamic-coercivity-ratio") {
+                    row.warm_lift_objective =
+                        LocalSldProjectiveHeightDynamicRatioObjective(
                             dynamics,
                             closure_selection(options.selection),
                             options.workers)
@@ -723,6 +752,16 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                 "projective-height-commutator-coercivity-ratio") {
                 row.warm_lift_objective =
                     LocalSldProjectiveHeightCommutatorRatioObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.workers)
+                        .evaluate(starts.front())
+                        .squared_coercivity_ratio;
+            }
+            if (options.objective ==
+                "projective-height-dynamic-coercivity-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveHeightDynamicRatioObjective(
                         dynamics,
                         closure_selection(options.selection),
                         options.workers)

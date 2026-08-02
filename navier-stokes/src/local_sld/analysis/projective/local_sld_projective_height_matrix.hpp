@@ -25,6 +25,7 @@ struct LocalSldProjectiveHeightMatrixEntry {
     SpectralReal power_one = 0.0L;
     SpectralReal absolute_component_power_one_envelope = 0.0L;
     SpectralReal commutator_paired_power_one_envelope = 0.0L;
+    SpectralReal dynamic_paired_power_one_envelope = 0.0L;
     std::size_t shared_target_mode_count = 0;
     SpectralReal target_incidence_cosine = 0.0L;
     SpectralReal absolute_fraction = 0.0L;

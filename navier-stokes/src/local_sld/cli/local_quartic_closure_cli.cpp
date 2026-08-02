@@ -116,6 +116,8 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
              "projective-height-commutator-envelope-ratio" &&
          options.objective !=
              "projective-height-commutator-coercivity-ratio" &&
+         options.objective !=
+             "projective-height-dynamic-coercivity-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "block-ratio" &&
          options.objective != "mixed-ratio" &&
@@ -166,7 +168,7 @@ void LocalQuarticClosureCli::print_help(std::ostream& out) {
         << "  --step X             initial Riemannian step\n"
         << "  --method NAME        lbfgs or steepest\n"
         << "  --backend NAME       direct oracle, fft, or auto (default direct)\n"
-        << "  --objective NAME     sld-ratio, terminal-sld-ratio, maximum-sld-ratio, lqc3-ratio, signed-lqc3-ratio, remainder-envelope-ratio, remainder-absorption-ratio, shape-power-ratio, projective-coherence-ratio, projective-stretching-ratio, projective-height-stretching-ratio, projective-height-power-ratio, projective-height-outer-power-ratio, projective-height-envelope-ratio, projective-height-commutator-envelope-ratio, projective-height-commutator-coercivity-ratio, projective-cross-power-ratio, projective-open-power-ratio, closure-ratio, signed-closure-ratio, block-ratio, or mixed-ratio\n"
+        << "  --objective NAME     sld-ratio, terminal-sld-ratio, maximum-sld-ratio, lqc3-ratio, signed-lqc3-ratio, remainder-envelope-ratio, remainder-absorption-ratio, shape-power-ratio, projective-coherence-ratio, projective-stretching-ratio, projective-height-stretching-ratio, projective-height-power-ratio, projective-height-outer-power-ratio, projective-height-envelope-ratio, projective-height-commutator-envelope-ratio, projective-height-commutator-coercivity-ratio, projective-height-dynamic-coercivity-ratio, projective-cross-power-ratio, projective-open-power-ratio, closure-ratio, signed-closure-ratio, block-ratio, or mixed-ratio\n"
         << "  --selection NAME     local, doubling-family, doubling-remainder, remainder-without-123, double-triple-family, double-triple-remainder, or double-triple-remainder-without-123\n"
         << "  --initial-profile NAME  mixed, decaying, flat, or outer-half-flat\n"
         << "  --sobolev-order M    optional homogeneous Sobolev cap\n"

@@ -14,6 +14,7 @@
 #include "local_sld_projective_height_outer_power_objective.hpp"
 #include "local_sld_projective_height_envelope_objective.hpp"
 #include "local_sld_projective_height_commutator_ratio_objective.hpp"
+#include "local_sld_projective_height_dynamic_ratio_objective.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
 
 #include <algorithm>
@@ -270,6 +271,13 @@ SpectralReal GradientAdversary::objective_value(
     if (options.objective ==
         "local-projective-height-commutator-coercivity-ratio") {
         return LocalSldProjectiveHeightCommutatorRatioObjective(
+            dynamics_, options.closure_selection,
+            options.objective_threads)
+            .evaluate(initial).squared_coercivity_ratio;
+    }
+    if (options.objective ==
+        "local-projective-height-dynamic-coercivity-ratio") {
+        return LocalSldProjectiveHeightDynamicRatioObjective(
             dynamics_, options.closure_selection,
             options.objective_threads)
             .evaluate(initial).squared_coercivity_ratio;
@@ -576,6 +584,15 @@ GradientSearchResult GradientAdversary::maximize_q(
         } else if (options.objective ==
                    "local-projective-height-commutator-coercivity-ratio") {
             const LocalSldProjectiveHeightCommutatorRatioObjective ratio(
+                dynamics_, options.closure_selection,
+                options.objective_threads);
+            trajectory.objective_value = ratio.evaluate(result.state)
+                .squared_coercivity_ratio;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = ratio.gradient(result.state);
+        } else if (options.objective ==
+                   "local-projective-height-dynamic-coercivity-ratio") {
+            const LocalSldProjectiveHeightDynamicRatioObjective ratio(
                 dynamics_, options.closure_selection,
                 options.objective_threads);
             trajectory.objective_value = ratio.evaluate(result.state)
