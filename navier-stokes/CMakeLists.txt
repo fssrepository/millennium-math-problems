@@ -71,21 +71,20 @@ add_executable(navier_stokes_lab
     src/reporting/family_reporter.cpp
     src/reporting/lemma_reporter.cpp
 
-    src/local_sld/core/local_quartic_closure_objective.cpp
-    src/local_sld/core/local_sld_triad_selection.cpp
-    src/local_sld/core/local_signature_density.cpp
-    src/local_sld/core/local_signature_objective.cpp
-    src/local_sld/core/local_sld_block_objective.cpp
-    src/local_sld/core/local_sld_cyclic_basis.cpp
-    src/local_sld/core/local_sld_cyclic_orbit_basis.cpp
-    src/local_sld/core/local_sld_response_basis.cpp
-    src/local_sld/core/local_sld_remainder_absorption_objective.cpp
-    src/local_sld/core/local_sld_remainder_envelope_objective.cpp
-    src/local_sld/core/local_sld_shape_power_objective.cpp
-    src/local_sld/core/local_sld_projective_coherence_objective.cpp
-    src/local_sld/core/local_sld_projective_stretching_objective.cpp
-    src/local_sld/core/local_sld_projective_cross_power_objective.cpp
-    src/local_sld/core/local_sld_two_scale_state.cpp
+    src/local_sld/core/closure/local_quartic_closure_objective.cpp
+    src/local_sld/core/triads/local_sld_triad_selection.cpp
+    src/local_sld/core/signature/local_signature_density.cpp
+    src/local_sld/core/signature/local_signature_objective.cpp
+    src/local_sld/core/closure/local_sld_block_objective.cpp
+    src/local_sld/core/cyclic/local_sld_cyclic_basis.cpp
+    src/local_sld/core/cyclic/local_sld_cyclic_orbit_basis.cpp
+    src/local_sld/core/response/local_sld_response_basis.cpp
+    src/local_sld/core/remainder/local_sld_remainder_absorption_objective.cpp
+    src/local_sld/core/remainder/local_sld_remainder_envelope_objective.cpp
+    src/local_sld/core/closure/local_sld_shape_power_objective.cpp
+    src/local_sld/core/projective/local_sld_projective_coherence_objective.cpp
+    src/local_sld/core/projective/local_sld_projective_stretching_objective.cpp
+    src/local_sld/core/projective/local_sld_projective_cross_power_objective.cpp
     src/local_sld/core/projective/local_sld_projective_open_power_objective.cpp
     src/local_sld/core/projective/local_sld_projective_height_stretching_objective.cpp
     src/local_sld/core/projective/local_sld_projective_height_power_objective.cpp
@@ -147,6 +146,7 @@ add_executable(navier_stokes_lab
     src/local_sld/optimization/local_sld_trajectory_adjoint.cpp
 
     src/local_sld/states/local_sld_projective_fan_state.cpp
+    src/local_sld/states/local_sld_two_scale_state.cpp
 
     src/local_sld/cli/local_quartic_closure_cli.cpp
     src/local_sld/cli/local_quartic_closure_reporter.cpp
@@ -163,7 +163,13 @@ target_include_directories(navier_stokes_lab PRIVATE
     src/proof/projective
     src/reporting
     src/local_sld/core
+    src/local_sld/core/closure
+    src/local_sld/core/cyclic
     src/local_sld/core/projective
+    src/local_sld/core/remainder
+    src/local_sld/core/response
+    src/local_sld/core/signature
+    src/local_sld/core/triads
     src/local_sld/analysis
     src/local_sld/analysis/closure
     src/local_sld/analysis/density
