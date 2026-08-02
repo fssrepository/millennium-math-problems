@@ -1,5 +1,12 @@
 # Millennium Math Problems
 
+> **AI-assisted Computer-Assisted Proof research (CAP).** The current
+> repository architecture, deterministic C++ laboratory, proof-state
+> documentation, and public guides were produced under human direction by
+> **OpenAI Codex Sol 5.6 at Extra High reasoning effort**. Replayable
+> certificates, counterexamples, and restart states allow another AI or
+> researcher to continue from the recorded proof frontier.
+
 Public computational research laboratories organized by Millennium Prize
 Problem. The active Navier–Stokes project uses deterministic C++ tests to reject
 weak lemma routes early, shorten the research loop, and preserve useful
