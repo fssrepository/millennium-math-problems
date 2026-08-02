@@ -75,6 +75,8 @@ source file:
   objectives, adjoints, and trajectory evaluation;
 - `src/optimization/`, `src/triads/`, `src/helical/`, and `src/proof/` isolate
   their respective algorithms;
+- `src/proof/projective/` contains projective-family proof certificates,
+  beginning with the complete fixed finite-family self+cross closure;
 - `src/local_sld/core/`, `analysis/`, `optimization/`, and `cli/` separate the
   active shifted-local-density lemma work into numerical primitives,
   diagnostic ledgers, searches, and artifact/report handling;
@@ -432,10 +434,15 @@ shape algebra reduces this further to the energy-independent estimate
 `|(K_rem+G_rem)S_full| <= C Z^2P^2`; its direct power-one search is nearly
 flat through K7. On its K7 winner, one projective ray carries `95.42%` of the
 absolute power-one total; after removing the proved equal-low families, the K5
-tail has `3.027` effective projective shapes. See
+tail has `3.027` effective projective shapes. Cross attribution uses `2.103`
+effective rays on the K7 winner and `3.583` on the K6 cross-only winner. The
+complete self+cross block internal to every fixed finite ray family is now
+proved cutoff-independently with a half-derivative gain. The remaining
+projective target is core--growing-tail and tail--tail coupling. See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_CROSS_QUARTET.md` and
+`proof/l4/lemmas/shifted-local-density/FINITE_PROJECTIVE_FAMILY.md` and
 `proof/l4/lemmas/shifted-local-density/REMAINDER_QUARTET.md`.
 
 The helical local target has its own replayable optimizer and same-state

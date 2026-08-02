@@ -25,6 +25,7 @@
 #include "doubling_quartet_closure.hpp"
 #include "equal_low_quartet_closure.hpp"
 #include "projective_quartet_closure.hpp"
+#include "finite_projective_family_closure.hpp"
 #include "projective_square_function_closure.hpp"
 #include "projective_fan_obstruction.hpp"
 #include "remainder_quartet_closure.hpp"
@@ -48,6 +49,8 @@
 #include "local_sld_projective_fan_scan.hpp"
 #include "local_sld_projective_quartic_cross_ledger.hpp"
 #include "local_sld_projective_cross_attribution.hpp"
+#include "local_sld_projective_core_tail_ledger.hpp"
+#include "local_sld_projective_core_tail_scan.hpp"
 #include "local_sld_remainder_projective_ledger.hpp"
 #include "local_sld_remainder_signature_ledger.hpp"
 #include "local_sld_remainder_tradeoff_ledger.hpp"
@@ -906,6 +909,7 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab doubling-quartet-certificate [options]\n"
         << "  navier_stokes_lab equal-low-quartet-certificate [options]\n"
         << "  navier_stokes_lab projective-quartet-certificate [options]\n"
+        << "  navier_stokes_lab finite-projective-family-certificate [options]\n"
         << "  navier_stokes_lab projective-square-function-certificate [options]\n"
         << "  navier_stokes_lab projective-fan-certificate [options]\n"
         << "  navier_stokes_lab remainder-quartet-certificate [options]\n"
@@ -929,6 +933,8 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab local-sld-projective-fan-scan [options]\n"
         << "  navier_stokes_lab local-sld-projective-quartic-cross [options]\n"
         << "  navier_stokes_lab local-sld-projective-cross-attribution [options]\n"
+        << "  navier_stokes_lab local-sld-projective-core-tail [options]\n"
+        << "  navier_stokes_lab local-sld-projective-core-tail-scan [options]\n"
         << "  navier_stokes_lab local-sld-remainder-projective [options]\n"
         << "  navier_stokes_lab local-sld-remainder-signatures [options]\n"
         << "  navier_stokes_lab local-sld-remainder-tradeoff [options]\n"
@@ -972,6 +978,8 @@ void print_help(std::ostream& out) {
     lemma::EqualLowQuartetClosureCli::print_help(out);
     out << '\n';
     lemma::ProjectiveQuartetClosureCli::print_help(out);
+    out << '\n';
+    lemma::FiniteProjectiveFamilyClosureCli::print_help(out);
     out << '\n';
     lemma::ProjectiveSquareFunctionClosureCli::print_help(out);
     out << '\n';
@@ -1018,6 +1026,10 @@ void print_help(std::ostream& out) {
     lemma::LocalSldProjectiveQuarticCrossCli::print_help(out);
     out << '\n';
     lemma::LocalSldProjectiveCrossAttributionCli::print_help(out);
+    out << '\n';
+    lemma::LocalSldProjectiveCoreTailCli::print_help(out);
+    out << '\n';
+    lemma::LocalSldProjectiveCoreTailScanCli::print_help(out);
     out << '\n';
     lemma::LocalSldRemainderProjectiveCli::print_help(out);
     out << '\n';
@@ -1093,6 +1105,12 @@ int main(int argc, char** argv) {
         if (command == "projective-quartet-certificate") {
             return lemma::ProjectiveQuartetClosureCli::run(
                 lemma::ProjectiveQuartetClosureCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command == "finite-projective-family-certificate") {
+            return lemma::FiniteProjectiveFamilyClosureCli::run(
+                lemma::FiniteProjectiveFamilyClosureCli::parse(
                     argc, argv, 2),
                 std::cout);
         }
@@ -1225,6 +1243,18 @@ int main(int argc, char** argv) {
         if (command == "local-sld-projective-cross-attribution") {
             return lemma::LocalSldProjectiveCrossAttributionCli::run(
                 lemma::LocalSldProjectiveCrossAttributionCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command == "local-sld-projective-core-tail") {
+            return lemma::LocalSldProjectiveCoreTailCli::run(
+                lemma::LocalSldProjectiveCoreTailCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command == "local-sld-projective-core-tail-scan") {
+            return lemma::LocalSldProjectiveCoreTailScanCli::run(
+                lemma::LocalSldProjectiveCoreTailScanCli::parse(
                     argc, argv, 2),
                 std::cout);
         }

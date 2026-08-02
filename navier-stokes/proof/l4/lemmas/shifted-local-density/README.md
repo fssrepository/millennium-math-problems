@@ -15,6 +15,11 @@ Companion response-space proof targets:
 - [`PROJECTIVE_QUARTET.md`](PROJECTIVE_QUARTET.md) proves the complete scale
   ray `(am,bm,cm)` for every fixed primitive squared-length shape and isolates
   the still-open sum over shapes.
+- [`PROJECTIVE_CROSS_QUARTET.md`](PROJECTIVE_CROSS_QUARTET.md) gives the exact
+  self/cross expansion and its cross-only adversary and attribution ledgers.
+- [`FINITE_PROJECTIVE_FAMILY.md`](FINITE_PROJECTIVE_FAMILY.md) proves that the
+  complete self+cross block internal to every fixed finite ray family closes
+  cutoff-independently; only its coupling to a growing tail remains open.
 - [`REMAINDER_QUARTET.md`](REMAINDER_QUARTET.md) computes the exact dense
   signature loss, rejects the absolute dense-count route, and gives the exact
   double-square reduction to the open signed commutator-absorption estimate.

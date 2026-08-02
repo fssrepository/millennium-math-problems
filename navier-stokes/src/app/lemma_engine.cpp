@@ -4,6 +4,7 @@
 #include "doubling_quartet_closure.hpp"
 #include "equal_low_quartet_closure.hpp"
 #include "projective_quartet_closure.hpp"
+#include "finite_projective_family_closure.hpp"
 #include "projective_square_function_closure.hpp"
 #include "projective_fan_geometry.hpp"
 #include "dynamic_adversary.hpp"
@@ -54,6 +55,7 @@
 #include "local_sld_projective_coherence_ledger.hpp"
 #include "local_sld_projective_quartic_cross_ledger.hpp"
 #include "local_sld_projective_cross_attribution.hpp"
+#include "local_sld_projective_core_tail_ledger.hpp"
 #include "local_sld_remainder_double_square.hpp"
 #include "local_sld_projective_shape_envelope.hpp"
 #include "local_sld_remainder_projective_ledger.hpp"
@@ -738,6 +740,44 @@ bool self_test(std::ostream& out) {
         !projective_quartet_closure
              .uniform_sum_over_projective_shapes_proved &&
         !projective_quartet_closure.full_local_lemma_proved;
+    const FiniteProjectiveFamilyClosureReport
+        finite_projective_family_closure =
+            FiniteProjectiveFamilyClosure::certify(
+                4,
+                {{1, 1, 1}, {1, 2, 3}, {2, 3, 5}, {3, 3, 8}});
+    const std::vector<ProjectivePrimitiveSignature>
+        projective_height_two_core =
+            ProjectiveCoreFamily::through_maximum_height(2);
+    const bool finite_projective_family_closure_ok =
+        projective_height_two_core.size() == 3 &&
+        projective_height_two_core.front() ==
+            ProjectivePrimitiveSignature{1, 1, 1} &&
+        projective_height_two_core.back() ==
+            ProjectivePrimitiveSignature{1, 2, 2} &&
+        finite_projective_family_closure.family_cardinality == 4 &&
+        finite_projective_family_closure
+                .total_ordered_role_count == 16 &&
+        finite_projective_family_closure
+                .union_incidence_degree_power == Rational(1) &&
+        finite_projective_family_closure
+                .bilinear_l2_frequency_power == Rational(3, 2) &&
+        finite_projective_family_closure
+                .internal_quartet_frequency_power == Rational(5) &&
+        finite_projective_family_closure
+                .target_frequency_power == Rational(11, 2) &&
+        finite_projective_family_closure.frequency_gain ==
+            Rational(-1, 2) &&
+        finite_projective_family_closure
+                .complete_internal_self_cross_decomposition &&
+        finite_projective_family_closure
+                .internal_normalization_terms_bound_proved &&
+        finite_projective_family_closure
+                .cutoff_independent_internal_family_bound &&
+        !finite_projective_family_closure
+             .core_tail_coupling_bound_proved &&
+        !finite_projective_family_closure
+             .growing_tail_internal_bound_proved &&
+        !finite_projective_family_closure.full_local_lemma_proved;
     const ProjectiveSquareFunctionClosureReport
         projective_square_function =
             ProjectiveSquareFunctionClosure::certify();
@@ -2464,6 +2504,26 @@ bool self_test(std::ostream& out) {
             remainder_projective_ledger.projective_shape_count &&
         remainder_projective_cross_attribution.reconstruction_error <
             1e-13L;
+    const LocalSldProjectiveCoreTailReport
+        remainder_projective_core_tail =
+            LocalSldProjectiveCoreTailLedger::analyze(
+                active_dynamics, cyclic_ansatz.state,
+                {{1, 2, 3}, {2, 3, 5}}, 2);
+    const bool remainder_projective_core_tail_ok =
+        remainder_projective_core_tail.exact_core_tail_decomposition &&
+        remainder_projective_core_tail.active_core_shape_count > 0 &&
+        remainder_projective_core_tail.tail_shape_count > 0 &&
+        remainder_projective_core_tail
+                .stretching_partition_error < 1e-13L &&
+        remainder_projective_core_tail
+                .palinstrophy_cross_partition_error < 1e-13L &&
+        remainder_projective_core_tail
+                .bracket_partition_error < 1e-13L &&
+        remainder_projective_core_tail.fixed_core_internal_bound_proved &&
+        !remainder_projective_core_tail.core_tail_bound_proved &&
+        !remainder_projective_core_tail
+             .growing_tail_internal_bound_proved &&
+        !remainder_projective_core_tail.full_local_lemma_proved;
     const LocalSldRemainderDoubleSquareReport remainder_double_square =
         LocalSldRemainderDoubleSquare::analyze(
             active_dynamics, cyclic_ansatz.state);
@@ -2692,6 +2752,13 @@ bool self_test(std::ostream& out) {
         << ", gain=R^"
         << projective_quartet_closure.frequency_gain.str()
         << ")\n"
+        << "finite projective-family closure test: "
+        << (finite_projective_family_closure_ok ? "PASS" : "FAIL")
+        << " (rays="
+        << finite_projective_family_closure.family_cardinality
+        << ", internal self+cross=closed, gain=R^"
+        << finite_projective_family_closure.frequency_gain.str()
+        << ", core-tail=OPEN)\n"
         << "projective square-function closure test: "
         << (projective_square_function_ok ? "PASS" : "FAIL")
         << " (bilinear=R^"
@@ -3183,6 +3250,18 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(remainder_projective_cross_attribution
                                    .reconstruction_error)
         << ")\n"
+        << "local SLD projective core-tail test: "
+        << (remainder_projective_core_tail_ok ? "PASS" : "FAIL")
+        << " (core="
+        << remainder_projective_core_tail.active_core_shape_count
+        << ", tail=" << remainder_projective_core_tail.tail_shape_count
+        << ", mixed="
+        << static_cast<double>(
+               remainder_projective_core_tail.core_tail.power_one)
+        << ", error="
+        << static_cast<double>(
+               remainder_projective_core_tail.bracket_partition_error)
+        << ")\n"
         << "local SLD remainder double-square test: "
         << (remainder_double_square_ok ? "PASS" : "FAIL")
         << " (signed LQC-3="
@@ -3234,6 +3313,7 @@ bool self_test(std::ostream& out) {
            orthogonal_geometry_ok && doubling_quartet_closure_ok &&
            remainder_quartet_closure_ok && triple_quartet_closure_ok &&
            projective_quartet_closure_ok &&
+           finite_projective_family_closure_ok &&
            projective_square_function_ok &&
            projective_fan_geometry_ok &&
            local_signature_geometry_ok &&
@@ -3257,6 +3337,7 @@ bool self_test(std::ostream& out) {
            remainder_projective_coherence_ok &&
            remainder_projective_quartic_cross_ok &&
            remainder_projective_cross_attribution_ok &&
+           remainder_projective_core_tail_ok &&
            remainder_double_square_ok &&
            remainder_tradeoff_ok &&
            response_hierarchy_ok && response_family_ok &&

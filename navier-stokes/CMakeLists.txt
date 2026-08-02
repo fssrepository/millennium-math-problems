@@ -61,6 +61,8 @@ add_executable(navier_stokes_lab
     src/proof/projective_fan_obstruction.cpp
     src/proof/remainder_quartet_closure.cpp
     src/proof/transition_block_scaling.cpp
+    src/proof/projective/finite_projective_family_closure.cpp
+    src/proof/projective/projective_core_family.cpp
 
     src/reporting/adversary_reporter.cpp
     src/reporting/family_reporter.cpp
@@ -111,6 +113,8 @@ add_executable(navier_stokes_lab
     src/local_sld/analysis/shifted_critical_density.cpp
     src/local_sld/analysis/shifted_critical_density_budget.cpp
     src/local_sld/analysis/stretching_derivative_ledger.cpp
+    src/local_sld/analysis/projective/local_sld_projective_core_tail_ledger.cpp
+    src/local_sld/analysis/projective/local_sld_projective_core_tail_scan.cpp
 
     src/local_sld/optimization/local_quartic_closure_adversary.cpp
     src/local_sld/optimization/local_signature_adversary.cpp
@@ -137,9 +141,11 @@ target_include_directories(navier_stokes_lab PRIVATE
     src/triads
     src/helical
     src/proof
+    src/proof/projective
     src/reporting
     src/local_sld/core
     src/local_sld/analysis
+    src/local_sld/analysis/projective
     src/local_sld/optimization
     src/local_sld/states
     src/local_sld/cli

@@ -304,6 +304,15 @@ lifts through K8 are unchanged. On its K5 winner, `+0.00171121` self cancels
 [PROJECTIVE_CROSS_QUARTET.md](PROJECTIVE_CROSS_QUARTET.md). None of these
 finite values is the required uniform cross theorem.
 
+There is nevertheless a cutoff-independent advance beyond those finite
+values. The complete self+cross quartet internal to every fixed finite set of
+primitive rays closes by treating its sum as one bounded-incidence operator.
+The proof is [FINITE_PROJECTIVE_FAMILY.md](FINITE_PROJECTIVE_FAMILY.md), and a
+13-ray dominant-core certificate is replayable. Thus the open part of RQ-11
+can be localized to core--growing-tail and tail--tail coupling. Enlarging the
+fixed core can move the boundary, but cannot make its constant uniform in a
+cutoff-dependent family.
+
 ## Reproduction
 
 ```bash

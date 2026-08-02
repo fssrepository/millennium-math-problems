@@ -4,6 +4,7 @@
 #include "triad_partition.hpp"
 
 #include <array>
+#include <cstddef>
 #include <vector>
 
 namespace lemma {
@@ -38,6 +39,14 @@ public:
         const ProjectiveInteractionGroup& group,
         const SpectralIncrement& advecting,
         const SpectralIncrement& advected);
+
+    [[nodiscard]] static SpectralIncrement evaluate_bilinear_sum(
+        const SpectralState& state,
+        const std::vector<ProjectiveInteractionGroup>& groups,
+        const std::vector<std::size_t>& group_indices,
+        const SpectralIncrement& advecting,
+        const SpectralIncrement& advected,
+        int threads = 1);
 
     [[nodiscard]] static SpectralIncrement vjp(
         const SpectralState& state,

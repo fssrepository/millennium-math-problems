@@ -910,9 +910,15 @@ uniform summation.
 The exact self/cross quartet ledger shows that the K7 power-one winner splits
 as `0.00614715` same-ray and `0.00021762` unequal-ray. A new cross-only exact
 gradient objective stays near `0.0011166` from K4 through a K8 lift, while its
-K5 winner exhibits opposite-sign self/cross cancellation. The active analytic
-subtask is now the explicit unequal-ray formula PCQ-3 in
-`PROJECTIVE_CROSS_QUARTET.md`, followed by uniform summation of PCQ-1.
+K5 winner exhibits opposite-sign self/cross cancellation. A per-ray cross
+attribution has only `2.103` effective rays on that K7 state and `3.583` on
+the K6 cross-only winner. The plane--sphere incidence proof now applies to
+the union of any fixed finite ray set, so its complete internal self+cross
+quartet closes cutoff-independently with gain `-1/2`; the replayable 13-ray
+certificate is documented in `FINITE_PROJECTIVE_FAMILY.md`. The active
+analytic subtask is no longer the internal cross term of a fixed core. It is
+the core--growing-tail and tail--tail part of PCQ-3, with a constant uniform
+under movement of the core boundary.
 
 The absolute closure ratio was subsequently reverse-differentiated and
 optimized directly. A K1 branch reaches `C_state=1/3`, but its stretching is

@@ -102,6 +102,28 @@ not exclude another high-frequency cross branch. The remaining analytic task
 is a cutoff-independent estimate for PCQ-3 after multiplication by
 `S_full/(Z^2P^2)`, together with a uniform summation of PCQ-1.
 
+## Cross attribution and fixed-core closure
+
+The exact per-ray attribution ledger writes each ray's cross contribution as
+its full primary-ray attribution minus its self quartet. This is an
+attribution, not a pairwise ray-by-ray matrix. On the K7 power-one winner the
+cross block has `2.103` effective rays and the leading `(1,2,3)` ray carries
+`64.96%`. On the K6 cross-only winner it has `3.583` effective rays and the
+leading ray carries `45.78%`; the first four attributions are `(1,2,3)`,
+`(2,3,5)`, `(1,1,1)`, and `(1,3,4)`.
+
+This concentration leads to an analytic reduction stronger than a finite
+diagnostic. For any fixed finite ray set `F`, its union incidence is still
+`O_F(K)`. Applying the fixed-ray bilinear argument to the unexpanded operator
+`B_F=sum_(sigma in F)B_sigma` closes the complete internal self+cross quartet
+with a cutoff-independent constant and frequency gain `-1/2`. See
+[FINITE_PROJECTIVE_FAMILY.md](FINITE_PROJECTIVE_FAMILY.md).
+
+Therefore PCQ-3 is no longer open inside any fixed finite core. The remaining
+statement is precisely the coupling between such a core and the growing
+projective tail, plus the tail's internal block. The constant is not uniform
+when the core itself grows with the cutoff.
+
 ## Reproduction
 
 ```bash
@@ -138,3 +160,5 @@ Artifacts:
 - [`../../adversary/shifted-local-density/projective-cross-power/K5-warm.json`](../../adversary/shifted-local-density/projective-cross-power/K5-warm.json)
 - [`../../adversary/shifted-local-density/projective-cross-power/K6-small-step.json`](../../adversary/shifted-local-density/projective-cross-power/K6-small-step.json)
 - [`../../adversary/shifted-local-density/projective-cross-power/K8-lift-evaluate.json`](../../adversary/shifted-local-density/projective-cross-power/K8-lift-evaluate.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K7-power-one-cross-attribution.json`](../../analysis/shifted-local-density/remainder-quartet/K7-power-one-cross-attribution.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K6-cross-power-winner-cross-attribution.json`](../../analysis/shifted-local-density/remainder-quartet/K6-cross-power-winner-cross-attribution.json)

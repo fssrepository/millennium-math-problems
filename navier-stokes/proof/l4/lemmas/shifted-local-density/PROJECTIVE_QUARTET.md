@@ -126,9 +126,12 @@ The exact self/cross expansion in
 further. On the K7 power-one winner, `0.00614715` of the total `0.00636477`
 comes from same-ray self quartets and only `0.00021762` from unequal-ray
 terms. A cross-only exact-gradient search stays near `0.0011166` from K4
-through a zero-padded K8 replay. These are finite diagnostics; the remaining
-proof obligation is the cutoff-uniform cross estimate and uniform summation
-of the self rays.
+through a zero-padded K8 replay. These are finite diagnostics. Every fixed
+finite union of these rays is now closed as one operator, including all cross
+terms internal to that union; see
+[FINITE_PROJECTIVE_FAMILY.md](FINITE_PROJECTIVE_FAMILY.md). The remaining
+proof obligation is the coupling to the growing ray tail and the tail's
+internal block, not the interaction inside a fixed core.
 
 The projective ledger groups exact signatures by their gcd. On the K7
 power-one winner it reduces 8105 exact signatures to 7322 primitive shapes,
@@ -146,6 +149,11 @@ not the missing sum theorem.
 
 ./build/navier_stokes_lab projective-square-function-certificate \
   --certificate proof/l4/analysis/shifted-local-density/projective-quartet/square-function.json
+
+./build/navier_stokes_lab finite-projective-family-certificate \
+  --max-cutoff 8 --signature 1,2,3 --signature 2,3,5 \
+  --signature 3,3,8 --signature 1,3,4 \
+  --certificate proof/l4/certificates/shifted-local-density/projective/finite-core-K8.json
 
 ./build/navier_stokes_lab projective-fan-certificate \
   --max-cutoff 1024 \
@@ -168,6 +176,7 @@ Artifacts:
 - [`../../adversary/shifted-local-density/projective-coherence/K1-K5.json`](../../adversary/shifted-local-density/projective-coherence/K1-K5.json)
 - [`../../analysis/shifted-local-density/remainder-quartet/K7-power-one-projective.json`](../../analysis/shifted-local-density/remainder-quartet/K7-power-one-projective.json)
 - [`../../analysis/shifted-local-density/remainder-quartet/K5-power-one-tail-projective.json`](../../analysis/shifted-local-density/remainder-quartet/K5-power-one-tail-projective.json)
+- [`../../certificates/shifted-local-density/projective/finite-dominant-core-K8.json`](../../certificates/shifted-local-density/projective/finite-dominant-core-K8.json)
 
 The analytic plane--sphere argument is the proof of each fixed-ray statement;
 the K12 counts verify only the corresponding discrete implementation.
