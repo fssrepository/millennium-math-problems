@@ -94,36 +94,36 @@ add_executable(navier_stokes_lab
     src/local_sld/core/projective/local_sld_projective_height_commutator_ratio_objective.cpp
     src/local_sld/core/projective/local_sld_projective_height_dynamic_ratio_objective.cpp
 
-    src/local_sld/analysis/local_critical_derivative_ledger.cpp
-    src/local_sld/analysis/local_quartic_closure_target.cpp
-    src/local_sld/analysis/local_quartic_commutator.cpp
-    src/local_sld/analysis/local_quartic_identity_ledger.cpp
-    src/local_sld/analysis/local_quartic_projected_residual.cpp
-    src/local_sld/analysis/local_quartic_reduced_ledger.cpp
-    src/local_sld/analysis/local_quartic_shell_envelope.cpp
-    src/local_sld/analysis/local_quartic_shell_ledger.cpp
-    src/local_sld/analysis/local_signature_geometry.cpp
+    src/local_sld/analysis/closure/local_critical_derivative_ledger.cpp
+    src/local_sld/analysis/closure/local_quartic_closure_target.cpp
+    src/local_sld/analysis/closure/local_quartic_commutator.cpp
+    src/local_sld/analysis/closure/local_quartic_identity_ledger.cpp
+    src/local_sld/analysis/closure/local_quartic_projected_residual.cpp
+    src/local_sld/analysis/closure/local_quartic_reduced_ledger.cpp
+    src/local_sld/analysis/closure/local_quartic_shell_envelope.cpp
+    src/local_sld/analysis/closure/local_quartic_shell_ledger.cpp
+    src/local_sld/analysis/signature/local_signature_geometry.cpp
     src/local_sld/analysis/response/local_sld_response_diagonal.cpp
-    src/local_sld/analysis/local_sld_doubling_shell_ledger.cpp
-    src/local_sld/analysis/local_sld_doubling_scale_scan.cpp
+    src/local_sld/analysis/doubling/local_sld_doubling_shell_ledger.cpp
+    src/local_sld/analysis/doubling/local_sld_doubling_scale_scan.cpp
     src/local_sld/analysis/response/local_sld_response_family.cpp
     src/local_sld/analysis/response/local_sld_response_hierarchy.cpp
     src/local_sld/analysis/response/local_sld_response_tensor.cpp
     src/local_sld/analysis/response/local_sld_projected_square.cpp
-    src/local_sld/analysis/local_sld_projective_shape_envelope.cpp
-    src/local_sld/analysis/local_sld_projective_coherence_ledger.cpp
-    src/local_sld/analysis/local_sld_projective_cross_attribution.cpp
-    src/local_sld/analysis/local_sld_projective_fan_scan.cpp
-    src/local_sld/analysis/local_sld_projective_quartic_cross_ledger.cpp
-    src/local_sld/analysis/local_sld_remainder_double_square.cpp
-    src/local_sld/analysis/local_sld_remainder_projective_ledger.cpp
-    src/local_sld/analysis/local_sld_remainder_signature_ledger.cpp
-    src/local_sld/analysis/local_sld_remainder_tradeoff_ledger.cpp
-    src/local_sld/analysis/local_sld_signature_block.cpp
-    src/local_sld/analysis/local_sld_trajectory_evaluator.cpp
-    src/local_sld/analysis/shifted_critical_density.cpp
-    src/local_sld/analysis/shifted_critical_density_budget.cpp
-    src/local_sld/analysis/stretching_derivative_ledger.cpp
+    src/local_sld/analysis/projective/local_sld_projective_shape_envelope.cpp
+    src/local_sld/analysis/projective/local_sld_projective_coherence_ledger.cpp
+    src/local_sld/analysis/projective/local_sld_projective_cross_attribution.cpp
+    src/local_sld/analysis/projective/local_sld_projective_fan_scan.cpp
+    src/local_sld/analysis/projective/local_sld_projective_quartic_cross_ledger.cpp
+    src/local_sld/analysis/remainder/local_sld_remainder_double_square.cpp
+    src/local_sld/analysis/remainder/local_sld_remainder_projective_ledger.cpp
+    src/local_sld/analysis/remainder/local_sld_remainder_signature_ledger.cpp
+    src/local_sld/analysis/remainder/local_sld_remainder_tradeoff_ledger.cpp
+    src/local_sld/analysis/signature/local_sld_signature_block.cpp
+    src/local_sld/analysis/trajectory/local_sld_trajectory_evaluator.cpp
+    src/local_sld/analysis/density/shifted_critical_density.cpp
+    src/local_sld/analysis/density/shifted_critical_density_budget.cpp
+    src/local_sld/analysis/closure/stretching_derivative_ledger.cpp
     src/local_sld/analysis/projective/local_sld_projective_core_tail_ledger.cpp
     src/local_sld/analysis/projective/local_sld_projective_core_tail_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_core_height_scan.cpp
@@ -165,7 +165,13 @@ target_include_directories(navier_stokes_lab PRIVATE
     src/local_sld/core
     src/local_sld/core/projective
     src/local_sld/analysis
+    src/local_sld/analysis/closure
+    src/local_sld/analysis/density
+    src/local_sld/analysis/doubling
     src/local_sld/analysis/response
+    src/local_sld/analysis/remainder
+    src/local_sld/analysis/signature
+    src/local_sld/analysis/trajectory
     src/local_sld/analysis/projective
     src/local_sld/optimization
     src/local_sld/states
