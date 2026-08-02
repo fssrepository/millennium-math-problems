@@ -420,12 +420,14 @@ Equal-length orthogonal incidence gives its half-derivative one-shell gain;
 fixed-width shell locality sums the structural entries, and the direct bounds
 `S <= C Z^(5/4)P^(1/4)` and `T <= C Z^(1/4)P^(5/4)` close both normalization
 terms at `Z^(5/4)P^(3/4)`. The full shifted-density lemma remains open because
-the closed signature remainder and the mixed doubling/remainder block have
-not yet been controlled uniformly. For the remainder, the signed target is
-numerically flat through K8, but this is not used as proof. The exact
-double-square identity in [REMAINDER_QUARTET.md](REMAINDER_QUARTET.md) shows
-that a growing dense absolute branch is coercively negative and identifies a
-specific commutator/negative-square absorption inequality as the next lemma.
+the closed signature remainder and the mixed doubling/remainder block have not
+yet been controlled uniformly. For the remainder, cross-objective warm starts
+find a growing dense signed-LQC3 branch, but its stretching is nearly zero and
+the actual local source vanishes at cubic order. The exact double-square
+identity in [REMAINDER_QUARTET.md](REMAINDER_QUARTET.md) explains the negative
+dense branch and reduces the active numerical/analytic target to a joint
+tradeoff between the remainder bracket coefficient and the full stretching
+shape factor.
 
 ## Reduced proof obligation
 

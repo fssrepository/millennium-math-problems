@@ -143,18 +143,34 @@ The new `signed-lqc3-ratio` objective maximizes
 (K_rem+G_rem)/[Z^(5/4)P^(3/4)].
 ```
 
-Twelve-start L-BFGS continuation gives
+The first twelve-start L-BFGS continuation found
 
 ```text
 K                         1          2          3          4          5       6--8
 (K_rem+G_rem)/target   0.068941   0.102867   0.102951   0.102958   0.102959   0.102959
 ```
 
-The K6--K8 winners are the zero-padded K5 state to at most `1.97e-17`, and no
-step is accepted at any of those cutoffs. Its K5 signature ledger has
-effective count `1.00000038`; the
-positive branch is a low-frequency `(1,2,3)` state, not a dense cutoff branch.
-This is finite evidence, not a uniform inequality.
+Those K6--K8 winners are the zero-padded K5 state to at most `1.97e-17`, and
+its K5 signature ledger has effective count `1.00000038`. This was only one
+optimizer basin, not the signed maximum. Cross-objective warm starts expose a
+dense positive branch:
+
+```text
+K                         4          5          6
+(K_rem+G_rem)/target   0.103623   0.136748   0.175398
+```
+
+Its fitted cutoff slope is `1.296`, its K5 ledger has effective signature
+count `452.20`, and its K6 projected gradient norm is still `0.01165`.
+Consequently even the standalone signed LQC-3 quotient is too strong for the
+required local lemma. This falsifies the inference that the initial flat
+branch was a reliable worst-case proxy.
+
+The dense branch also reveals the missing structure. Its stretching values at
+K4--K6 are `1.50e-4`, `-4.97e-4`, and `-2.47e-3`; after normalization the
+values are only `3.93e-7`, `-5.81e-7`, and `-1.31e-6`. The corresponding
+actual local SLD ratios are `1.89e-21`, `-5.61e-21`, and `-5.87e-20` because
+the polynomial source contains the full cubic stretching factor.
 
 ## Why the commutator envelope alone is still too strong
 
@@ -177,18 +193,46 @@ The K5 fitted branch has slope `1.02`, so a standalone bound for RQ-7 or for
 bracket is `-0.06822`: the upper envelope `+0.28335` is canceled by the second
 square `-0.35157`. The square and commutator correlation is `0.951`.
 
-Thus the next analytic statement must preserve absorption. One sufficient
-form is a fixed `theta<1` and a cutoff-independent `C` such that, outside a
-target-sized low-square region,
+Retaining a fixed fraction of the first negative square is also insufficient
+as a standalone target. The exact-gradient objective
 
 ```text
-<W,D> <= theta ||A^(1/2)W||_2^2
-          + C Z^(5/4)P^(3/4),                        (RQ-8)
+K_rem+G_rem+(1-theta)||A^(1/2)W||_2^2
+--------------------------------------------------   (RQ-8)
+                 Z^(5/4)P^(3/4)
 ```
 
-with the three `S,c` correction terms bounded at the same target scale. An
-equivalent threshold dichotomy is acceptable. Estimating D independently and
-discarding either negative square repeats the failed dense-count route.
+has growing warm-start branches: for `theta=0.75` it reaches `0.20102` and
+`0.27102` at K4 and K5; for `theta=0.9` it reaches `0.12034` and `0.16832`.
+Thus neither discarding the square nor selecting one fixed absorption fraction
+captures the required depletion.
+
+## Direct bracket--shape target
+
+The actual common-shape remainder block factors exactly as
+
+```text
+c_rem = (K_rem+G_rem) E^(1/4)/(Z^(7/4)P),
+x     = S_full/(E^(1/4)Z^(1/4)P),
+Phi(x)=4x^3/(1+x^4),
+R_rem = c_rem Phi(x).                                (RQ-9)
+```
+
+Unlike signed LQC-3, RQ-9 retains the cubic stretching depletion. Direct
+`block-ratio` continuation gives
+
+```text
+K                 1          2          3          4          5          6
+R_rem       0.00015470 0.00022022 0.00022058 0.00022066 0.00022068 0.00022068
+```
+
+At K6 the factors are `c_rem=-0.0465041` and
+`Phi(x)=-0.00474545`. Starting from the dense signed-LQC3 K6 state and
+reoptimizing RQ-9 reaches only `1.06111e-6`, far below the known low-mode
+winner. These are finite falsification results, not a uniform estimate. The
+current analytic task is a cutoff-independent joint tradeoff between
+`c_rem` and `x`; bounding either factor through the stronger standalone
+targets above has already failed.
 
 ## Reproduction
 
@@ -209,6 +253,14 @@ discarding either negative square repeats the failed dense-count route.
   --certificate proof/l4/adversary/shifted-local-density/remainder-signed-lqc3/K1-K5.json \
   --state-dir proof/l4/states/local-signed-lqc3-ratio/doubling-remainder-K1-K5
 
+./build/navier_stokes_lab local-closure-adversary \
+  --objective block-ratio --selection doubling-remainder \
+  --min-cutoff 6 --max-cutoff 6 --restarts 12 --workers 12 \
+  --iterations 16 --method lbfgs --backend direct \
+  --state proof/l4/states/local-signed-lqc3-ratio/K4-K6-strong/K6.tsv \
+  --certificate proof/l4/adversary/shifted-local-density/remainder-block/K6-lqc3-warm.json \
+  --state-dir proof/l4/states/local-sld-block-ratio/remainder-K6-lqc3-warm
+
 ./build/navier_stokes_lab local-sld-remainder-square \
   --state proof/l4/states/local-signed-lqc3-ratio/doubling-remainder-K1-K5/K5.tsv \
   --threads 12 \
@@ -227,10 +279,13 @@ Artifacts:
 - [`../../analysis/shifted-local-density/remainder-quartet/scaling-obstruction.json`](../../analysis/shifted-local-density/remainder-quartet/scaling-obstruction.json)
 - [`../../analysis/shifted-local-density/doubling-quartet/two-scale-full-block-L2-L12-angle-scan.json`](../../analysis/shifted-local-density/doubling-quartet/two-scale-full-block-L2-L12-angle-scan.json)
 - [`../../adversary/shifted-local-density/remainder-signed-lqc3/K1-K5.json`](../../adversary/shifted-local-density/remainder-signed-lqc3/K1-K5.json)
+- [`../../adversary/shifted-local-density/remainder-signed-lqc3/K4-K6-strong.json`](../../adversary/shifted-local-density/remainder-signed-lqc3/K4-K6-strong.json)
+- [`../../adversary/shifted-local-density/common-sld-remainder-block-K1-K5.json`](../../adversary/shifted-local-density/common-sld-remainder-block-K1-K5.json)
+- [`../../adversary/shifted-local-density/common-sld-remainder-block-K6.json`](../../adversary/shifted-local-density/common-sld-remainder-block-K6.json)
+- [`../../adversary/shifted-local-density/remainder-block/K6-lqc3-warm.json`](../../adversary/shifted-local-density/remainder-block/K6-lqc3-warm.json)
 - [`../../adversary/shifted-local-density/remainder-envelope/K1-K5.json`](../../adversary/shifted-local-density/remainder-envelope/K1-K5.json)
 - [`../../analysis/shifted-local-density/remainder-quartet/positive-K5-double-square.json`](../../analysis/shifted-local-density/remainder-quartet/positive-K5-double-square.json)
 - [`../../analysis/shifted-local-density/remainder-quartet/K5-envelope-winner-double-square.json`](../../analysis/shifted-local-density/remainder-quartet/K5-envelope-winner-double-square.json)
 
-The exact remaining statement is the sign-aware absorption RQ-8 together with
-the displayed correction-term bounds, followed by the mixed block. No finite
-scan is treated as that proof.
+The exact remaining statement is the joint bracket--shape estimate RQ-9,
+followed by the mixed block. No finite scan is treated as that proof.

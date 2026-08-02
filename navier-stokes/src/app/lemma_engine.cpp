@@ -45,6 +45,7 @@
 #include "local_sld_doubling_scale_scan.hpp"
 #include "local_sld_remainder_double_square.hpp"
 #include "local_sld_remainder_signature_ledger.hpp"
+#include "local_sld_remainder_tradeoff_ledger.hpp"
 #include "local_sld_block_objective.hpp"
 #include "local_sld_signature_block.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
@@ -2183,6 +2184,14 @@ bool self_test(std::ostream& out) {
         remainder_double_square.second_completion_error < 1e-13L &&
         remainder_double_square.commutator_hminus1_norm2 >= -1e-14L &&
         !remainder_double_square.cutoff_independent_upper_bound_proved;
+    const LocalSldRemainderTradeoffRow remainder_tradeoff =
+        LocalSldRemainderTradeoffLedger::analyze(
+            active_dynamics, cyclic_ansatz.state);
+    const bool remainder_tradeoff_ok =
+        remainder_tradeoff.exact_factorization &&
+        remainder_tradeoff.shape_reconstruction_error < 1e-13L &&
+        remainder_tradeoff.product_reconstruction_error < 1e-13L &&
+        !remainder_tradeoff.cutoff_independent_tradeoff_proved;
     const AdversaryResult adversary =
         optimize_static_depletion(1, 1, 2, 0.1L, 11);
     const bool adversary_ok = adversary.modes == 26 &&
@@ -2784,6 +2793,20 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(
                remainder_double_square.second_completion_error)
         << ")\n"
+        << "local SLD remainder bracket--shape tradeoff test: "
+        << (remainder_tradeoff_ok ? "PASS" : "FAIL")
+        << " (c="
+        << static_cast<double>(
+               remainder_tradeoff.bracket_constant_ratio)
+        << ", x="
+        << static_cast<double>(
+               remainder_tradeoff.normalized_stretching)
+        << ", product="
+        << static_cast<double>(remainder_tradeoff.direct_block_ratio)
+        << ", reconstruction error="
+        << static_cast<double>(
+               remainder_tradeoff.product_reconstruction_error)
+        << ")\n"
         << "static adversary test: " << (adversary_ok ? "PASS" : "FAIL")
         << " (Q=" << static_cast<double>(adversary.objective.energy_level_quantity)
         << ")\n"
@@ -2825,6 +2848,7 @@ bool self_test(std::ostream& out) {
            cyclic_krylov_ansatz_ok && signature_block_ok &&
            remainder_signature_ledger_ok &&
            remainder_double_square_ok &&
+           remainder_tradeoff_ok &&
            response_hierarchy_ok && response_family_ok &&
            response_diagonal_ok && response_tensor_ok &&
            augmented_response_tensor_ok &&

@@ -167,12 +167,15 @@ K_rem+G_rem
 ```
 
 The direct VJP also certifies `D=-[dB_rem(u,u)]^*Au`. A growing dense
-absolute-value branch is negative because of the displayed square; the
-signed LQC-3 maximum instead stabilizes at `0.102959` through K8. However,
-maximizing only the positive envelope grows to `0.28335` at K5 and loses
-`0.35157` to the omitted negative square. Therefore the lowest universal
-analytical subtask is a commutator/negative-square absorption inequality, not
-an independent unsigned bound on D. The mixed block follows. See
+absolute-value branch is negative because of the displayed square. The first
+signed-LQC3 continuation appeared to stabilize at `0.102959`, but a
+cross-objective warm start finds a dense positive branch growing from
+`0.103623` at K4 to `0.175398` at K6. Its normalized stretching is only
+`O(1e-6)`, making the actual local source `O(1e-20)`. Maximizing only the
+positive envelope and retaining a fixed fraction of the negative square also
+produce growing branches. Therefore the lowest universal analytical subtask
+is the exact joint bracket--shape tradeoff, not an independent bound on D or
+the signed LQC3 quotient. The mixed block follows. See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/REMAINDER_QUARTET.md`.
 
@@ -877,10 +880,14 @@ finds a dense negative branch: its magnitude grows from `0.05903` at K2 to
 `0.42906` at K5. A signature-row ledger reconstructs the K5 bracket at
 `8e-19` relative error and measures 549.49 effective contributors with
 `0.999840` same-sign alignment. This is not a counterexample to the required
-upper bound. The signed LQC-3 search gives `0.102867`, `0.102951`, `0.102958`,
-`0.102959`, and `0.102959` at K2--K8; the K6--K8 states are zero-padded
-low-mode winners. The double-square identity and its absorption target in
-`proof/l4/lemmas/shifted-local-density/REMAINDER_QUARTET.md` are therefore the
+upper bound. The first signed LQC-3 search padded a `0.102959` K5 low-mode
+winner through K8, but a later cross-objective warm start rejects that basin
+as a worst-case proxy: it gives `0.103623`, `0.136748`, and `0.175398` at
+K4--K6 with 452.20 effective K5 signature contributors. This stronger branch
+has nearly zero stretching, so its actual local SLD ratio is below `6e-20`.
+Direct optimization of the exact remainder block product instead stays near
+`0.00022068` from K3 through K6. The bracket--shape factorization in
+`proof/l4/lemmas/shifted-local-density/REMAINDER_QUARTET.md` is therefore the
 current remainder restart point.
 
 The absolute closure ratio was subsequently reverse-differentiated and

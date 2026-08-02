@@ -86,6 +86,7 @@ add_executable(navier_stokes_lab
     src/local_sld/analysis/local_sld_projected_square.cpp
     src/local_sld/analysis/local_sld_remainder_double_square.cpp
     src/local_sld/analysis/local_sld_remainder_signature_ledger.cpp
+    src/local_sld/analysis/local_sld_remainder_tradeoff_ledger.cpp
     src/local_sld/analysis/local_sld_signature_block.cpp
     src/local_sld/analysis/local_sld_trajectory_evaluator.cpp
     src/local_sld/analysis/shifted_critical_density.cpp
