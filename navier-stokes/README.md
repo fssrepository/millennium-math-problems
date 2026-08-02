@@ -156,6 +156,13 @@ source file:
 - `LocalSldCyclicTrajectoryAnsatz` searches the frozen-data trajectory
   maximum in that one-angle family, refines the time step, and uses the exact
   adjoint to measure both the restricted and full projected gradients;
+- `LocalSldCyclicKrylovAnsatz` adds the orthogonalized advection-JVP response
+  and optimizes its three coefficients on the fixed-energy sphere;
+- `LocalSldResponseHierarchy` constructs the full quadratic response
+  recursion, while `LocalSldCyclicOrbitBasis` supplies the missing transverse
+  `(2,1,1)` polarization and both oriented `(3,1,0)` cyclic orbits;
+- `LocalSldTrajectoryEvaluator` evaluates and dt-refines any saved state with
+  either the direct RK4 oracle or the FFT forward/VJP backend;
 - `LocalSldSignatureBlock` splits `K+G` exactly into a selected squared-length
   signature family, its local complement, and their independently evaluated
   mixed terms;
@@ -228,6 +235,18 @@ The current direct local-lemma search is reproducible with:
   --certificate proof/l4/analysis/shifted-local-density/cyclic-trajectory-T050-K2.json \
   --state proof/l4/states/local-sld-trajectory/cyclic-ansatz-T050-K2/K2.tsv
 
+./build/navier_stokes_lab local-sld-response-hierarchy \
+  --state proof/l4/states/local-sld-trajectory/maximum-T050-K3-from-K2/K3.tsv \
+  --depth 16 --threads 12 --include-211-transverse --include-310-orbits \
+  --projected-state proof/l4/states/local-sld-trajectory/response-hierarchy-projection-K3/depth16-plus-orbits.tsv \
+  --residual-state proof/l4/states/local-sld-trajectory/response-hierarchy-residual-K3/depth16-plus-orbits.tsv \
+  --certificate proof/l4/analysis/shifted-local-density/cyclic-response-hierarchy-K3-depth16-plus-orbits.json
+
+./build/navier_stokes_lab local-sld-trajectory-evaluate \
+  --state proof/l4/states/local-sld-trajectory/response-hierarchy-projection-K3/depth16-plus-orbits.tsv \
+  --trajectory-steps 320 --threads 12 --nu 0.1 --dt 0.001 --backend auto \
+  --certificate proof/l4/analysis/shifted-local-density/cyclic-response-hierarchy-K3-depth16-plus-orbits-trajectory.json
+
 ./build/navier_stokes_lab local-sld-block \
   --state proof/l4/states/local-sld-ratio/K8/K8.tsv \
   --doubling-family --threads 12 \
@@ -250,11 +269,11 @@ The current direct local-lemma search is reproducible with:
 ./build/navier_stokes_lab local-closure-adversary \
   --objective maximum-sld-ratio --selection local \
   --min-cutoff 3 --max-cutoff 3 --restarts 12 --workers 12 \
-  --iterations 4 --trajectory-steps 500 --nu 0.1 --dt 0.001 \
+  --iterations 8 --trajectory-steps 500 --nu 0.1 --dt 0.001 \
   --backend auto \
-  --warm-state proof/l4/states/local-sld-trajectory/frozen-T020-K3/K3.tsv \
-  --certificate proof/l4/adversary/shifted-local-density/frozen-maximum-sld-T050-K3.json \
-  --state-dir proof/l4/states/local-sld-trajectory/maximum-T050-K3
+  --warm-state proof/l4/states/local-sld-trajectory/maximum-T050-K2/K2.tsv \
+  --certificate proof/l4/adversary/shifted-local-density/frozen-maximum-sld-T050-K3-from-K2.json \
+  --state-dir proof/l4/states/local-sld-trajectory/maximum-T050-K3-from-K2
 ```
 
 Trajectory searches accept `--backend direct`, `--backend fft`, or
@@ -284,6 +303,14 @@ with `6.20e-20` reconstruction error. The doubling family supplies `96.55%`
 of the absolute three-block sum. The winning state retains `99.969%` of its
 energy in the first hard shell, but its projected gradient is still
 `4.04e-4`; this remains a lower bound, not a converged global maximum.
+
+The explicit response hierarchy makes that pattern quantitative. Orders
+`0..15`, the transverse `(2,1,1)` polarization, and both oriented `(3,1,0)`
+orbits capture `99.9998628%` of the K3 winner's energy. Evolving only its
+19-vector projection gives `8.53172846573e-4` at the same `t=0.298`, which is
+`99.96181%` of the unrestricted lower bound. Direct and FFT trajectory
+evaluation agree to all reported digits. This identifies a compact candidate
+extremal structure; it is not a cutoff-uniform theorem.
 
 The helical local target has its own replayable optimizer and same-state
 cutoff scan:

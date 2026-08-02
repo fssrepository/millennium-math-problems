@@ -84,6 +84,14 @@ and falsification result, not the required analytic bound. Resume from the
 cyclic response hierarchy and the `(m,m,2m)`/remainder/mixed decomposition in
 `proof/l4/lemmas/shifted-local-density/SIGNATURE_BLOCK.md`.
 
+The current K3 winner is not an unstructured high-dimensional state. Sixteen
+quadratic response orders plus the explicit transverse `(2,1,1)` and two
+oriented `(3,1,0)` orbit directions capture `99.9998628%` of its energy. The
+projected state retains `99.96181%` of the trajectory objective and the same
+peak time. The next proof step is to replace this finite projection fact by a
+cutoff-uniform summability estimate for the response coefficients and orbit
+remainders; finite-dimensional agreement alone is not the lemma.
+
 The first explicit L4 candidate in the reduction was
 
 ```text

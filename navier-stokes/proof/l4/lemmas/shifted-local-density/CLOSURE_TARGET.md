@@ -221,6 +221,37 @@ doubling family, `1.51420260355e-5` from the closed remainder, and
 `6.20e-20`; the family retains `96.55%` of the absolute three-block sum.
 The initial state has `99.969%` of its energy in the first hard shell and the
 `(1,1,2)` signature carries `99.627%` of coherent local transfer.
+
+## Structured response hierarchy
+
+The low-shell pattern is reproducible without a full-state optimizer. Starting
+from the cyclic axis shear, define orthonormal response states recursively by
+
+```text
+raw b_n = sum_{i+j=n-1} B(b_i,b_j),
+b_n     = normalized Gram--Schmidt(raw b_n; b_0,...,b_{n-1}).
+```
+
+The scalar chain misses one polarization in the `(2,1,1)` orbit and two
+oriented `(3,1,0)` cyclic orbits. `LocalSldCyclicOrbitBasis` supplies explicit
+divergence-free representatives for those three directions. On the current
+K3 winner, orders `0..15` plus the three orbit directions give
+
+```text
+captured state energy              0.999998627866
+state-space residual norm          0.00117138141911
+projected frozen trajectory peak   8.53172846573e-4
+unrestricted frozen peak           8.53498799310e-4
+captured objective fraction        0.999618098189
+peak time for both states           0.298
+```
+
+The projected trajectory was evaluated independently by the direct and FFT
+RK4 implementations; their refined values agree to all reported digits. This
+is strong evidence for a compact extremal response structure. It is not a
+proof that every cutoff or every smooth datum stays in this structure. The
+analytic target is now a uniform summability bound for the response
+coefficients together with a controlled complement estimate.
 The next analytic task is to bound this evolving joint quotient uniformly,
 using the exact block split below. No finite horizon scan establishes that
 bound.

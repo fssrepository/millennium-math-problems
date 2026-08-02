@@ -3,6 +3,7 @@
   "construction": "Gram-Schmidt orthogonalized coefficients of the quadratic response recursion sum_{i+j=n-1} B(b_i,b_j)",
   "state_path": "proof/l4/states/local-sld-trajectory/maximum-T050-K3-from-K2/K3.tsv",
   "residual_state_path": "proof/l4/states/local-sld-trajectory/response-hierarchy-residual-K3/depth16-plus-orbits.tsv",
+  "projected_state_path": "proof/l4/states/local-sld-trajectory/response-hierarchy-projection-K3/depth16-plus-orbits.tsv",
   "cutoff": 3,
   "requested_depth": 16,
   "constructed_depth": 16,

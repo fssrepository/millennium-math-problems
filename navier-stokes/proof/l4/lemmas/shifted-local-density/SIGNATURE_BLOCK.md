@@ -137,6 +137,13 @@ This routes the main estimate through the complete `(m,m,2m)` family and a
 small, explicitly structured response hierarchy rather than an arbitrary
 high-dimensional state.
 
+The hierarchy has now been made explicit: 16 Gram--Schmidt response orders,
+one transverse `(2,1,1)` polarization, and two oriented `(3,1,0)` cyclic
+orbits capture `99.9998628%` of the current K3 winner's energy. Their projected
+state retains `99.96181%` of the frozen trajectory objective at the same peak
+time. This supports an orbit-wise summability lemma, but finite K3 projection
+accuracy does not establish cutoff-uniform control of `F_d+F_r+F_x`.
+
 ## Rejected sign shortcut
 
 The stronger shortcut `K+G<=0` is false. The signed-closure gradient has

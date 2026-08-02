@@ -37,6 +37,7 @@
 #include "local_sld_block_objective.hpp"
 #include "local_sld_signature_block.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
+#include "local_sld_trajectory_evaluator.hpp"
 #include "local_triad_symmetrizer.hpp"
 #include "moving_gap_controller.hpp"
 #include "projective_family.hpp"
@@ -1877,6 +1878,17 @@ bool self_test(std::ostream& out) {
         response_hierarchy.maximum_gram_error < 1e-14L &&
         response_hierarchy.final_projection_energy > 0.999999L &&
         response_hierarchy.final_projection_energy < 1.000001L;
+    const LocalSldTrajectoryEvaluatorReport trajectory_evaluation =
+        LocalSldTrajectoryEvaluator::evaluate(
+            active_dynamics, cyclic_ansatz.state,
+            0.1L, 0.001L, 2);
+    const bool trajectory_evaluation_ok =
+        trajectory_evaluation.finite &&
+        trajectory_evaluation.maximum.terminal_ratio >=
+            trajectory_evaluation.initial.terminal_ratio &&
+        trajectory_evaluation.maximum.terminal_ratio >=
+            trajectory_evaluation.terminal.terminal_ratio &&
+        trajectory_evaluation.time_step_relative_error < 1e-4L;
     const LocalSldSignatureBlockReport signature_block =
         LocalSldSignatureBlock::analyze(
             active_dynamics, cyclic_ansatz.state, {1, 1, 2});
@@ -2357,6 +2369,16 @@ bool self_test(std::ostream& out) {
         << ", Gram error="
         << static_cast<double>(response_hierarchy.maximum_gram_error)
         << ")\n"
+        << "local SLD trajectory evaluator test: "
+        << (trajectory_evaluation_ok ? "PASS" : "FAIL")
+        << " (maximum="
+        << static_cast<double>(
+               trajectory_evaluation.maximum.terminal_ratio)
+        << ", peak step=" << trajectory_evaluation.maximum.steps
+        << ", time refinement="
+        << static_cast<double>(
+               trajectory_evaluation.time_step_relative_error)
+        << ")\n"
         << "local SLD signature block test: "
         << (signature_block_ok ? "PASS" : "FAIL")
         << " (dominant="
@@ -2406,6 +2428,7 @@ bool self_test(std::ostream& out) {
            cyclic_ansatz_ok && cyclic_trajectory_ansatz_ok &&
            cyclic_krylov_ansatz_ok && signature_block_ok &&
            response_hierarchy_ok &&
+           trajectory_evaluation_ok &&
            adversary_ok && dynamic_class_ok && q_derivative_ok && evolution_ok;
 }
 
