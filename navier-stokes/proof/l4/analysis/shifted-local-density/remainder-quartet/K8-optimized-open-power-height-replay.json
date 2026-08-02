@@ -1,0 +1,17 @@
+{
+  "schema": "navier-stokes-local-sld-projective-open-power-replay-v1",
+  "threads": 12,
+  "fitted_absolute_height_slope": -0.557168056852125559,
+  "fitted_squared_height_slope": -1.11433611370425112,
+  "rows": [
+    {"core_maximum_height": 8, "cutoff": 8, "fixed_core_shape_count": 87, "absolute_open_power_one": 0.0010076363713240246, "squared_open_power_one": 1.01533105681504755e-06, "core_tail_power_one": 0.000198192824718383594, "tail_internal_power_one": 0.000809443546605640926, "reconstruction_error": 6.51475624346025794e-18, "state_path": "proof/l4/states/local-projective-open-power/height-8-K8-refined/K8.tsv"},
+    {"core_maximum_height": 16, "cutoff": 8, "fixed_core_shape_count": 573, "absolute_open_power_one": 0.000859087992059192306, "squared_open_power_one": 7.38032178100294747e-07, "core_tail_power_one": 0.000128170991945532591, "tail_internal_power_one": 0.000730917000113659714, "reconstruction_error": 5.66931384413605851e-18, "state_path": "proof/l4/states/local-projective-open-power/height-16-K8-refined/K8.tsv"},
+    {"core_maximum_height": 32, "cutoff": 8, "fixed_core_shape_count": 4222, "absolute_open_power_one": 0.000632953932594725521, "squared_open_power_one": 4.00630680787128329e-07, "core_tail_power_one": 0.000190472679874146146, "tail_internal_power_one": 0.000442481252720579321, "reconstruction_error": 1.28803878094280419e-17, "state_path": "proof/l4/states/local-projective-open-power/height-32-K8-warm/K8.tsv"},
+    {"core_maximum_height": 64, "cutoff": 8, "fixed_core_shape_count": 31948, "absolute_open_power_one": 0.000307924816673899135, "squared_open_power_one": 9.48176927236543963e-08, "core_tail_power_one": 0.000141156513171146177, "tail_internal_power_one": 0.000166768303502752959, "reconstruction_error": 9.71368637091498056e-18, "state_path": "proof/l4/states/local-projective-open-power/height-64-K8-warm/K8.tsv"}
+  ],
+  "every_reconstruction_exact": true,
+  "finite_optimized_replay_is_not_a_proof": true,
+  "uniform_height_tail_bound_proved": false,
+  "full_local_lemma_proved": false,
+  "interpretation": "each row uses a state optimized for its own fixed core height; the fitted decay is a finite lower-bound branch, not a uniform upper bound"
+}

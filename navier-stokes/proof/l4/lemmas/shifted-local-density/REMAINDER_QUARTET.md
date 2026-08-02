@@ -304,6 +304,52 @@ lifts through K8 are unchanged. On its K5 winner, `+0.00171121` self cancels
 [PROJECTIVE_CROSS_QUARTET.md](PROJECTIVE_CROSS_QUARTET.md). None of these
 finite values is the required uniform cross theorem.
 
+There is nevertheless a cutoff-independent advance beyond those finite
+values. The complete self+cross quartet internal to every fixed finite set of
+primitive rays closes by treating its sum as one bounded-incidence operator.
+The proof is [FINITE_PROJECTIVE_FAMILY.md](FINITE_PROJECTIVE_FAMILY.md), and a
+13-ray dominant-core certificate is replayable. Thus the open part of RQ-11
+can be localized to core--growing-tail and tail--tail coupling. Enlarging the
+fixed core can move the boundary, but cannot make its constant uniform in a
+cutoff-dependent family.
+
+The boundary now has its own exact-gradient adversary. For the canonical
+fixed core containing every primitive feasible shape of height at most `H`,
+it maximizes only
+
+```text
+|(J_core-tail+J_tail-tail)S_full|^2/(Z^4P^4).
+```
+
+The H=8 branch reaches `0.0010076` at K8 and is nearly cutoff-flat after K7.
+Reoptimizing at H=16,32,64 gives `0.0008591`, `0.0006330`, and `0.0003079`.
+The fitted finite height exponent is `-0.557`; this is not a uniform tail
+theorem. It shows that old power-one winners substantially underestimated the
+open boundary because the adversary can relocate to higher projective
+shapes. The exact core--tail ledger and replay are documented in
+[FINITE_PROJECTIVE_FAMILY.md](FINITE_PROJECTIVE_FAMILY.md).
+
+The growing boundary is now decomposed further by dyadic primitive height.
+The exact five-component matrix satisfies a finite weighted Schur reduction:
+its full absolute component envelope is at most the maximum normalized row
+sum times the sum of its diagonal component envelopes. On the H=64 K8
+open-power winner those values are `0.0038521`, `2.9859`, and `0.0021600`,
+respectively. Separate diagonal-quartet adversaries give an absolute-envelope
+height slope `-0.435` on H=8,16,32,64. The exact algebra is proved, but the
+joint cutoff-uniform bound on the row-sum--diagonal-envelope product is still
+open. Separate uniform estimates for the factors are sufficient but not
+necessary. See
+[DYADIC_PROJECTIVE_HEIGHT_SCHUR.md](DYADIC_PROJECTIVE_HEIGHT_SCHUR.md).
+The complete five-component envelope is also optimized directly with an
+exact sign-chamber gradient. Current full-Galerkin stress values are
+`0.0094401` at K8 and `0.0095014` at K12; they remove finite decay as evidence
+for the missing theorem but do not show divergence or prove boundedness.
+Keeping the dominant outer-square and advected terms paired as a commutator
+gives a much sharper exact majorant: `0.00179960` at K8 and `0.00182423` at
+complete K12. Its outer-coercive Schur row sums are `0.881010` and `0.883351`.
+The finite Schur inequality is proved; uniform dyadic commutator control is
+the remaining analytic step.
+
 ## Reproduction
 
 ```bash

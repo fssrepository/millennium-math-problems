@@ -1,0 +1,34 @@
+{
+  "schema": "navier-stokes-local-sld-projective-height-coercivity-path-v1",
+  "state_path": "proof/l4/states/local-projective-height-commutator-coercivity/K8-thirty-six-step/K8.tsv",
+  "triad_selection": "double-triple-remainder",
+  "cutoff": 8,
+  "threads": 12,
+  "base_wave": [1, 0, 0],
+  "base_selected_advection_h1_weight": 0,
+  "base_is_selected_advection_null": true,
+  "height_shell_count": 9,
+  "tail_log_log_slopes": {
+    "paired_envelope": 2.00019667938922607,
+    "outer_h1_weight": 2.00003945319722432,
+    "coercivity_ratio": 0.000157226192001810151
+  },
+  "rows": [
+    {"epsilon": 0.100000000000000006, "energy": 1, "paired_envelope": 0.0176401661038040926, "outer_h1_weight": 0.010347103475196141, "coercivity_ratio": 1.70484098724737088, "squared_coercivity_ratio": 2.90648279179858982, "signed_bracket": -0.0101444749368530089, "component_envelopes": [0.00813968896512163968, 0, 0.00632001122860532949, 0.000118372387573204945, 0.00306209352250391654]},
+    {"epsilon": 0.0383118684955728803, "energy": 1, "paired_envelope": 0.000357986581824706982, "outer_h1_weight": 0.000263210567355155202, "coercivity_ratio": 1.36007678347377525, "squared_coercivity_ratio": 1.84980885694437047, "signed_bracket": -0.000245001952378758763, "component_envelopes": [0.000184627729250587495, 0, 0.000128590229103454809, 3.94831023317185358e-07, 4.43737924473475051e-05]},
+    {"epsilon": 0.0146779926762206948, "energy": 1, "paired_envelope": 1.01599832681099118e-05, "outer_h1_weight": 1.35852094879487753e-05, "coercivity_ratio": 0.747870931038838394, "squared_coercivity_ratio": 0.559310929492898956, "signed_bracket": -8.9802003265153354e-06, "component_envelopes": [6.88395235358747826e-06, 0, 2.95589312664819344e-06, 1.21269969689612414e-09, 3.18925088177343322e-07]},
+    {"epsilon": 0.00562341325190349097, "energy": 1, "paired_envelope": 6.82585400966202875e-07, "outer_h1_weight": 1.46767564800841349e-06, "coercivity_ratio": 0.465079189596453613, "squared_coercivity_ratio": 0.21629865259569403, "signed_bracket": -6.65942965359041016e-07, "component_envelopes": [5.82192343759347226e-07, 0, 9.91313426649087397e-08, 3.95582202295689171e-12, 1.25775871992395593e-09]},
+    {"epsilon": 0.00215443469003188384, "energy": 1, "paired_envelope": 8.33530326889419394e-08, "outer_h1_weight": 2.04074414022281914e-07, "coercivity_ratio": 0.408444307378194926, "squared_coercivity_ratio": 0.166826752229653402, "signed_bracket": -8.28920543470128907e-08, "component_envelopes": [7.60293918632066585e-08, 0, 7.31928656271139573e-09, 1.38485979113967278e-14, 4.34041442597193057e-12]},
+    {"epsilon": 0.000825404185268018443, "energy": 1, "paired_envelope": 1.18540617229146843e-08, "outer_h1_weight": 2.97027979433178487e-08, "coercivity_ratio": 0.399089060415652119, "squared_coercivity_ratio": 0.159272078143448015, "signed_bracket": -1.183592777622619e-08, "component_envelopes": [1.09404853123867103e-08, 0, 9.13560622858758911e-10, 5.63898736393933819e-17, 1.57312793421555652e-14]},
+    {"epsilon": 0.000316227766016837939, "energy": 1, "paired_envelope": 1.7304982011498824e-09, "outer_h1_weight": 4.35393665905711995e-09, "coercivity_ratio": 0.397455989064534443, "squared_coercivity_ratio": 0.157971263243267324, "signed_bracket": -1.72963804534325422e-09, "component_envelopes": [1.6001806939097973e-09, 0, 1.30317440645950993e-10, 3.06886889937026673e-19, 6.62872472465480048e-17]},
+    {"epsilon": 0.000121152765862858844, "energy": 1, "paired_envelope": 2.53727961499864228e-10, "outer_h1_weight": 6.38920409671521687e-10, "coercivity_ratio": 0.397119825347744759, "squared_coercivity_ratio": 0.157704155684223302, "signed_bracket": -2.53683001956813583e-10, "component_envelopes": [2.34699073132804057e-10, 0, 1.90288880113215554e-11, 2.55026582518053863e-21, 3.53188346837266457e-19]},
+    {"epsilon": 4.64158883361277908e-05, "energy": 1, "paired_envelope": 3.72322563457986679e-11, "outer_h1_weight": 9.3776086194989826e-11, "coercivity_ratio": 0.397033592001069024, "squared_coercivity_ratio": 0.15763567317727134, "signed_bracket": -3.72298014622860914e-11, "component_envelopes": [3.44423338296004087e-11, 0, 2.78992251371102284e-12, 3.22636431803516143e-23, 2.45497415073469945e-21]},
+    {"epsilon": 1.7782794100389229e-05, "energy": 1, "paired_envelope": 5.46450910696293497e-12, "outer_h1_weight": 1.37642707295051264e-11, "coercivity_ratio": 0.39700680220196477, "squared_coercivity_ratio": 0.157614400994629977, "signed_bracket": -5.46437263915446379e-12, "component_envelopes": [5.05512837896204444e-12, 0, 4.09380727978245401e-13, 5.42167285269538786e-25, 2.21032792973922925e-23]},
+    {"epsilon": 6.81292069057961269e-06, "energy": 1, "paired_envelope": 8.02058133243941938e-13, "outer_h1_weight": 2.02031051314859542e-12, "coercivity_ratio": 0.396997455600999472, "squared_coercivity_ratio": 0.157606979753667553, "signed_bracket": -8.02050493142296074e-13, "component_envelopes": [7.41975096741155504e-13, 0, 6.00830365025166687e-14, 1.05266887345422251e-26, 2.59249336783544663e-25]},
+    {"epsilon": 2.61015721568253696e-06, "energy": 1, "paired_envelope": 1.17724845678325041e-13, "outer_h1_weight": 2.9654060994704741e-13, "coercivity_ratio": 0.396994009351187727, "squared_coercivity_ratio": 0.157604243460730931, "signed_bracket": -1.1772441677734605e-13, "component_envelopes": [1.08906165855647387e-13, 0, 8.81867982267353006e-15, 2.17608492882942445e-28, 3.91216782577289878e-27]},
+    {"epsilon": 9.99999999999999955e-07, "energy": 1, "paired_envelope": 1.7279578587314514e-14, "outer_h1_weight": 4.35261862620802834e-14, "coercivity_ratio": 0.396992708786167381, "squared_coercivity_ratio": 0.15760321082937867, "signed_bracket": -1.7279554484242896e-14, "component_envelopes": [1.59851899723282754e-14, 0, 1.29438861498616374e-15, 4.61352651817633443e-30, 7.0846194860318648e-29]}
+  ],
+  "finite_path_scan_is_not_a_proof": true,
+  "candidate_outer_coercivity_lemma_proved": false,
+  "interpretation": "a negative ratio slope indicates growth toward the selected-advection null state"
+}

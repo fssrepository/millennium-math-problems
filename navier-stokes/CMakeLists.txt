@@ -20,6 +20,7 @@ add_executable(navier_stokes_lab
     src/spectral/spectral_state.cpp
     src/spectral/state_analysis.cpp
     src/spectral/state_transform.cpp
+    src/spectral/spectral_state_blend.cpp
     src/spectral/trajectory_analyzer.cpp
 
     src/optimization/dynamic_adversary.cpp
@@ -32,6 +33,8 @@ add_executable(navier_stokes_lab
     src/triads/projective_triad_geometry.cpp
     src/triads/projective_advection_decomposition.cpp
     src/triads/projective_fan_geometry.cpp
+    src/triads/projective_height_shell_partition.cpp
+    src/triads/projective_height_envelope_kernel.cpp
     src/triads/projective_quartic_diagonal_kernel.cpp
     src/triads/triad_commutator.cpp
     src/triads/triad_ledger.cpp
@@ -61,12 +64,15 @@ add_executable(navier_stokes_lab
     src/proof/projective_fan_obstruction.cpp
     src/proof/remainder_quartet_closure.cpp
     src/proof/transition_block_scaling.cpp
+    src/proof/projective/finite_projective_family_closure.cpp
+    src/proof/projective/projective_core_family.cpp
 
     src/reporting/adversary_reporter.cpp
     src/reporting/family_reporter.cpp
     src/reporting/lemma_reporter.cpp
 
     src/local_sld/core/local_quartic_closure_objective.cpp
+    src/local_sld/core/local_sld_triad_selection.cpp
     src/local_sld/core/local_signature_density.cpp
     src/local_sld/core/local_signature_objective.cpp
     src/local_sld/core/local_sld_block_objective.cpp
@@ -80,6 +86,13 @@ add_executable(navier_stokes_lab
     src/local_sld/core/local_sld_projective_stretching_objective.cpp
     src/local_sld/core/local_sld_projective_cross_power_objective.cpp
     src/local_sld/core/local_sld_two_scale_state.cpp
+    src/local_sld/core/projective/local_sld_projective_open_power_objective.cpp
+    src/local_sld/core/projective/local_sld_projective_height_stretching_objective.cpp
+    src/local_sld/core/projective/local_sld_projective_height_power_objective.cpp
+    src/local_sld/core/projective/local_sld_projective_height_outer_power_objective.cpp
+    src/local_sld/core/projective/local_sld_projective_height_envelope_objective.cpp
+    src/local_sld/core/projective/local_sld_projective_height_commutator_ratio_objective.cpp
+    src/local_sld/core/projective/local_sld_projective_height_dynamic_ratio_objective.cpp
 
     src/local_sld/analysis/local_critical_derivative_ledger.cpp
     src/local_sld/analysis/local_quartic_closure_target.cpp
@@ -111,6 +124,16 @@ add_executable(navier_stokes_lab
     src/local_sld/analysis/shifted_critical_density.cpp
     src/local_sld/analysis/shifted_critical_density_budget.cpp
     src/local_sld/analysis/stretching_derivative_ledger.cpp
+    src/local_sld/analysis/projective/local_sld_projective_core_tail_ledger.cpp
+    src/local_sld/analysis/projective/local_sld_projective_core_tail_scan.cpp
+    src/local_sld/analysis/projective/local_sld_projective_core_height_scan.cpp
+    src/local_sld/analysis/projective/local_sld_projective_open_power_replay_scan.cpp
+    src/local_sld/analysis/projective/local_sld_projective_height_matrix.cpp
+    src/local_sld/analysis/projective/local_sld_projective_height_coercivity_path_scan.cpp
+    src/local_sld/analysis/projective/local_sld_projective_height_coercivity_line_scan.cpp
+    src/local_sld/analysis/projective/local_sld_projective_height_tail_summary.cpp
+    src/local_sld/analysis/projective/local_sld_projective_height_transfer_scan.cpp
+    src/local_sld/analysis/projective/local_sld_projective_height_schur_summary.cpp
 
     src/local_sld/optimization/local_quartic_closure_adversary.cpp
     src/local_sld/optimization/local_signature_adversary.cpp
@@ -137,9 +160,12 @@ target_include_directories(navier_stokes_lab PRIVATE
     src/triads
     src/helical
     src/proof
+    src/proof/projective
     src/reporting
     src/local_sld/core
+    src/local_sld/core/projective
     src/local_sld/analysis
+    src/local_sld/analysis/projective
     src/local_sld/optimization
     src/local_sld/states
     src/local_sld/cli

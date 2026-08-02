@@ -25,6 +25,7 @@
 #include "doubling_quartet_closure.hpp"
 #include "equal_low_quartet_closure.hpp"
 #include "projective_quartet_closure.hpp"
+#include "finite_projective_family_closure.hpp"
 #include "projective_square_function_closure.hpp"
 #include "projective_fan_obstruction.hpp"
 #include "remainder_quartet_closure.hpp"
@@ -48,12 +49,21 @@
 #include "local_sld_projective_fan_scan.hpp"
 #include "local_sld_projective_quartic_cross_ledger.hpp"
 #include "local_sld_projective_cross_attribution.hpp"
+#include "local_sld_projective_core_tail_ledger.hpp"
+#include "local_sld_projective_core_tail_scan.hpp"
+#include "local_sld_projective_core_height_scan.hpp"
+#include "local_sld_projective_open_power_replay_scan.hpp"
+#include "local_sld_projective_height_matrix.hpp"
+#include "local_sld_projective_height_coercivity_path_scan.hpp"
+#include "local_sld_projective_height_coercivity_line_scan.hpp"
+#include "local_sld_projective_height_transfer_scan.hpp"
 #include "local_sld_remainder_projective_ledger.hpp"
 #include "local_sld_remainder_signature_ledger.hpp"
 #include "local_sld_remainder_tradeoff_ledger.hpp"
 #include "local_sld_trajectory_evaluator.hpp"
 #include "local_sld_signature_block.hpp"
 #include "shifted_critical_density_cli.hpp"
+#include "spectral_state_blend.hpp"
 
 namespace ns {
 
@@ -906,6 +916,7 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab doubling-quartet-certificate [options]\n"
         << "  navier_stokes_lab equal-low-quartet-certificate [options]\n"
         << "  navier_stokes_lab projective-quartet-certificate [options]\n"
+        << "  navier_stokes_lab finite-projective-family-certificate [options]\n"
         << "  navier_stokes_lab projective-square-function-certificate [options]\n"
         << "  navier_stokes_lab projective-fan-certificate [options]\n"
         << "  navier_stokes_lab remainder-quartet-certificate [options]\n"
@@ -929,6 +940,14 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab local-sld-projective-fan-scan [options]\n"
         << "  navier_stokes_lab local-sld-projective-quartic-cross [options]\n"
         << "  navier_stokes_lab local-sld-projective-cross-attribution [options]\n"
+        << "  navier_stokes_lab local-sld-projective-core-tail [options]\n"
+        << "  navier_stokes_lab local-sld-projective-core-tail-scan [options]\n"
+        << "  navier_stokes_lab local-sld-projective-core-height-scan [options]\n"
+        << "  navier_stokes_lab local-sld-projective-open-power-replay [options]\n"
+        << "  navier_stokes_lab local-sld-projective-height-matrix [options]\n"
+        << "  navier_stokes_lab local-sld-projective-height-coercivity-path [options]\n"
+        << "  navier_stokes_lab local-sld-projective-height-coercivity-line [options]\n"
+        << "  navier_stokes_lab local-sld-projective-height-transfer [options]\n"
         << "  navier_stokes_lab local-sld-remainder-projective [options]\n"
         << "  navier_stokes_lab local-sld-remainder-signatures [options]\n"
         << "  navier_stokes_lab local-sld-remainder-tradeoff [options]\n"
@@ -936,6 +955,7 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab local-sld-block [options]\n"
         << "  navier_stokes_lab shifted-density [options]\n"
         << "  navier_stokes_lab state-transform [options]\n"
+        << "  navier_stokes_lab state-blend [options]\n"
         << "  navier_stokes_lab self-test\n\n"
         << "Simulation options:\n"
         << "  --n N                 grid N^3 (default 16)\n"
@@ -972,6 +992,8 @@ void print_help(std::ostream& out) {
     lemma::EqualLowQuartetClosureCli::print_help(out);
     out << '\n';
     lemma::ProjectiveQuartetClosureCli::print_help(out);
+    out << '\n';
+    lemma::FiniteProjectiveFamilyClosureCli::print_help(out);
     out << '\n';
     lemma::ProjectiveSquareFunctionClosureCli::print_help(out);
     out << '\n';
@@ -1019,6 +1041,22 @@ void print_help(std::ostream& out) {
     out << '\n';
     lemma::LocalSldProjectiveCrossAttributionCli::print_help(out);
     out << '\n';
+    lemma::LocalSldProjectiveCoreTailCli::print_help(out);
+    out << '\n';
+    lemma::LocalSldProjectiveCoreTailScanCli::print_help(out);
+    out << '\n';
+    lemma::LocalSldProjectiveCoreHeightScanCli::print_help(out);
+    out << '\n';
+    lemma::LocalSldProjectiveOpenPowerReplayCli::print_help(out);
+    out << '\n';
+    lemma::LocalSldProjectiveHeightMatrixCli::print_help(out);
+    out << '\n';
+    lemma::LocalSldProjectiveHeightCoercivityPathScanCli::print_help(out);
+    out << '\n';
+    lemma::LocalSldProjectiveHeightCoercivityLineScanCli::print_help(out);
+    out << '\n';
+    lemma::LocalSldProjectiveHeightTransferCli::print_help(out);
+    out << '\n';
     lemma::LocalSldRemainderProjectiveCli::print_help(out);
     out << '\n';
     lemma::LocalSldRemainderSignatureCli::print_help(out);
@@ -1036,6 +1074,8 @@ void print_help(std::ostream& out) {
     lemma::StateFamilyAnalysisCli::print_help(out);
     out << '\n';
     lemma::SpectralStateTransformCli::print_help(out);
+    out << '\n';
+    lemma::SpectralStateBlendCli::print_help(out);
 }
 
 }  // namespace ns
@@ -1093,6 +1133,12 @@ int main(int argc, char** argv) {
         if (command == "projective-quartet-certificate") {
             return lemma::ProjectiveQuartetClosureCli::run(
                 lemma::ProjectiveQuartetClosureCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command == "finite-projective-family-certificate") {
+            return lemma::FiniteProjectiveFamilyClosureCli::run(
+                lemma::FiniteProjectiveFamilyClosureCli::parse(
                     argc, argv, 2),
                 std::cout);
         }
@@ -1228,6 +1274,60 @@ int main(int argc, char** argv) {
                     argc, argv, 2),
                 std::cout);
         }
+        if (command == "local-sld-projective-core-tail") {
+            return lemma::LocalSldProjectiveCoreTailCli::run(
+                lemma::LocalSldProjectiveCoreTailCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command == "local-sld-projective-core-tail-scan") {
+            return lemma::LocalSldProjectiveCoreTailScanCli::run(
+                lemma::LocalSldProjectiveCoreTailScanCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command == "local-sld-projective-core-height-scan") {
+            return lemma::LocalSldProjectiveCoreHeightScanCli::run(
+                lemma::LocalSldProjectiveCoreHeightScanCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command == "local-sld-projective-open-power-replay") {
+            return lemma::LocalSldProjectiveOpenPowerReplayCli::run(
+                lemma::LocalSldProjectiveOpenPowerReplayCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command == "local-sld-projective-height-matrix") {
+            return lemma::LocalSldProjectiveHeightMatrixCli::run(
+                lemma::LocalSldProjectiveHeightMatrixCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command ==
+            "local-sld-projective-height-coercivity-path") {
+            return lemma::
+                LocalSldProjectiveHeightCoercivityPathScanCli::run(
+                    lemma::
+                        LocalSldProjectiveHeightCoercivityPathScanCli::parse(
+                            argc, argv, 2),
+                    std::cout);
+        }
+        if (command ==
+            "local-sld-projective-height-coercivity-line") {
+            return lemma::
+                LocalSldProjectiveHeightCoercivityLineScanCli::run(
+                    lemma::
+                        LocalSldProjectiveHeightCoercivityLineScanCli::parse(
+                            argc, argv, 2),
+                    std::cout);
+        }
+        if (command == "local-sld-projective-height-transfer") {
+            return lemma::LocalSldProjectiveHeightTransferCli::run(
+                lemma::LocalSldProjectiveHeightTransferCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
         if (command == "local-sld-remainder-signatures") {
             return lemma::LocalSldRemainderSignatureCli::run(
                 lemma::LocalSldRemainderSignatureCli::parse(
@@ -1265,6 +1365,11 @@ int main(int argc, char** argv) {
         if (command == "state-transform") {
             return lemma::SpectralStateTransformCli::run(
                 lemma::SpectralStateTransformCli::parse(argc, argv, 2),
+                std::cout);
+        }
+        if (command == "state-blend") {
+            return lemma::SpectralStateBlendCli::run(
+                lemma::SpectralStateBlendCli::parse(argc, argv, 2),
                 std::cout);
         }
         if (command == "state-analysis") {

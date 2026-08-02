@@ -24,6 +24,7 @@ struct LocalQuarticClosureAdversaryOptions {
     SpectralReal time_step = 0.002L;
     SpectralReal absorption_theta = 0.9L;
     int shape_power = 3;
+    SpectralInteger projective_core_maximum_height = 8;
     int sobolev_order = 0;
     SpectralReal sobolev_cap = 0.0L;
     std::uint64_t seed = 20260801;
@@ -35,6 +36,8 @@ struct LocalQuarticClosureAdversaryOptions {
     std::string certificate_path;
     std::string state_directory;
     std::string warm_state_path;
+    bool lean_diagnostics = false;
+    bool preserve_warm_layout = false;
 };
 
 struct LocalQuarticClosureRestartResult {
@@ -64,6 +67,25 @@ struct LocalQuarticClosureRestartResult {
     SpectralReal projective_cross_power_absolute = 0.0L;
     SpectralReal projective_cross_bracket = 0.0L;
     SpectralReal projective_diagonal_bracket = 0.0L;
+    SpectralReal projective_open_power_absolute = 0.0L;
+    SpectralReal projective_open_bracket = 0.0L;
+    SpectralReal projective_fixed_core_bracket = 0.0L;
+    SpectralReal projective_height_stretching_ratio = 0.0L;
+    SpectralReal projective_height_h1_synthesis_ratio = 0.0L;
+    SpectralReal projective_height_stretching_alignment_squared = 0.0L;
+    std::size_t projective_height_shape_count = 0;
+    SpectralReal projective_height_power_absolute = 0.0L;
+    SpectralReal projective_height_internal_bracket = 0.0L;
+    SpectralReal projective_height_outer_power_absolute = 0.0L;
+    SpectralReal projective_height_outer_h1_sum = 0.0L;
+    SpectralReal projective_height_component_envelope_absolute = 0.0L;
+    SpectralReal projective_height_commutator_envelope_absolute = 0.0L;
+    SpectralReal projective_height_dynamic_envelope_absolute = 0.0L;
+    SpectralReal projective_height_commutator_coercivity_ratio = 0.0L;
+    SpectralReal projective_height_dynamic_coercivity_ratio = 0.0L;
+    SpectralReal projective_height_component_bracket_envelope = 0.0L;
+    std::size_t projective_height_pair_count = 0;
+    std::size_t projective_height_active_shell_count = 0;
     SpectralReal final_projected_gradient_norm = 0.0L;
     SpectralReal sobolev_value = 0.0L;
     std::uint64_t seed = 0;
@@ -98,6 +120,7 @@ struct LocalQuarticClosureAdversaryReport {
     SpectralReal time_step = 0.0L;
     SpectralReal absorption_theta = 0.0L;
     int shape_power = 0;
+    SpectralInteger projective_core_maximum_height = 0;
     int sobolev_order = 0;
     SpectralReal sobolev_cap = 0.0L;
     SpectralReal fitted_cutoff_slope = 0.0L;

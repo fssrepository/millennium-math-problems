@@ -8,6 +8,13 @@
 #include "local_sld_projective_coherence_objective.hpp"
 #include "local_sld_projective_stretching_objective.hpp"
 #include "local_sld_projective_cross_power_objective.hpp"
+#include "local_sld_projective_open_power_objective.hpp"
+#include "local_sld_projective_height_stretching_objective.hpp"
+#include "local_sld_projective_height_power_objective.hpp"
+#include "local_sld_projective_height_outer_power_objective.hpp"
+#include "local_sld_projective_height_envelope_objective.hpp"
+#include "local_sld_projective_height_commutator_ratio_objective.hpp"
+#include "local_sld_projective_height_dynamic_ratio_objective.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
 
 #include <algorithm>
@@ -217,6 +224,70 @@ SpectralReal GradientAdversary::objective_value(
             dynamics_, options.closure_selection,
             options.objective_threads)
             .evaluate(initial).squared_cross_power_one;
+    }
+    if (options.objective == "local-projective-open-power-ratio") {
+        return LocalSldProjectiveOpenPowerObjective(
+            dynamics_, options.closure_selection,
+            options.projective_core_maximum_height,
+            options.objective_threads)
+            .evaluate(initial).squared_open_power_one;
+    }
+    if (options.objective ==
+        "local-projective-height-stretching-ratio") {
+        return LocalSldProjectiveHeightStretchingObjective(
+            dynamics_, options.closure_selection,
+            options.projective_core_maximum_height,
+            options.objective_threads)
+            .evaluate(initial).stretching_aware_h1_ratio;
+    }
+    if (options.objective == "local-projective-height-power-ratio") {
+        return LocalSldProjectiveHeightPowerObjective(
+            dynamics_, options.closure_selection,
+            options.projective_core_maximum_height,
+            options.objective_threads)
+            .evaluate(initial).squared_shell_power_one;
+    }
+    if (options.objective ==
+        "local-projective-height-outer-power-ratio") {
+        return LocalSldProjectiveHeightOuterPowerObjective(
+            dynamics_, options.closure_selection,
+            options.objective_threads)
+            .evaluate(initial).squared_outer_power_one;
+    }
+    if (options.objective ==
+        "local-projective-height-envelope-ratio") {
+        return LocalSldProjectiveHeightEnvelopeObjective(
+            dynamics_, options.closure_selection,
+            options.objective_threads)
+            .evaluate(initial).squared_component_power_one_envelope;
+    }
+    if (options.objective ==
+        "local-projective-height-commutator-envelope-ratio") {
+        return LocalSldProjectiveHeightEnvelopeObjective(
+            dynamics_, options.closure_selection,
+            options.objective_threads, true)
+            .evaluate(initial).squared_component_power_one_envelope;
+    }
+    if (options.objective ==
+        "local-projective-height-dynamic-envelope-ratio") {
+        return LocalSldProjectiveHeightEnvelopeObjective(
+            dynamics_, options.closure_selection,
+            options.objective_threads, true, true)
+            .evaluate(initial).squared_component_power_one_envelope;
+    }
+    if (options.objective ==
+        "local-projective-height-commutator-coercivity-ratio") {
+        return LocalSldProjectiveHeightCommutatorRatioObjective(
+            dynamics_, options.closure_selection,
+            options.objective_threads)
+            .evaluate(initial).squared_coercivity_ratio;
+    }
+    if (options.objective ==
+        "local-projective-height-dynamic-coercivity-ratio") {
+        return LocalSldProjectiveHeightDynamicRatioObjective(
+            dynamics_, options.closure_selection,
+            options.objective_threads)
+            .evaluate(initial).squared_coercivity_ratio;
     }
     if (options.objective == "local-sld-ratio") {
         return LocalQuarticClosureObjective(
@@ -458,6 +529,92 @@ GradientSearchResult GradientAdversary::maximize_q(
                 .squared_cross_power_one;
             trajectory.objective_step = 0;
             trajectory.initial_gradient = cross_power.gradient(result.state);
+        } else if (options.objective ==
+                   "local-projective-open-power-ratio") {
+            const LocalSldProjectiveOpenPowerObjective open_power(
+                dynamics_, options.closure_selection,
+                options.projective_core_maximum_height,
+                options.objective_threads);
+            trajectory.objective_value = open_power.evaluate(result.state)
+                .squared_open_power_one;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = open_power.gradient(result.state);
+        } else if (options.objective ==
+                   "local-projective-height-stretching-ratio") {
+            const LocalSldProjectiveHeightStretchingObjective
+                height_stretching(
+                    dynamics_, options.closure_selection,
+                    options.projective_core_maximum_height,
+                    options.objective_threads);
+            trajectory.objective_value = height_stretching
+                .evaluate(result.state).stretching_aware_h1_ratio;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient =
+                height_stretching.gradient(result.state);
+        } else if (options.objective ==
+                   "local-projective-height-power-ratio") {
+            const LocalSldProjectiveHeightPowerObjective height_power(
+                dynamics_, options.closure_selection,
+                options.projective_core_maximum_height,
+                options.objective_threads);
+            trajectory.objective_value = height_power.evaluate(result.state)
+                .squared_shell_power_one;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = height_power.gradient(result.state);
+        } else if (options.objective ==
+                   "local-projective-height-outer-power-ratio") {
+            const LocalSldProjectiveHeightOuterPowerObjective outer_power(
+                dynamics_, options.closure_selection,
+                options.objective_threads);
+            trajectory.objective_value = outer_power.evaluate(result.state)
+                .squared_outer_power_one;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = outer_power.gradient(result.state);
+        } else if (options.objective ==
+                   "local-projective-height-envelope-ratio") {
+            const LocalSldProjectiveHeightEnvelopeObjective envelope(
+                dynamics_, options.closure_selection,
+                options.objective_threads);
+            trajectory.objective_value = envelope.evaluate(result.state)
+                .squared_component_power_one_envelope;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = envelope.gradient(result.state);
+        } else if (options.objective ==
+                   "local-projective-height-commutator-envelope-ratio") {
+            const LocalSldProjectiveHeightEnvelopeObjective envelope(
+                dynamics_, options.closure_selection,
+                options.objective_threads, true);
+            trajectory.objective_value = envelope.evaluate(result.state)
+                .squared_component_power_one_envelope;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = envelope.gradient(result.state);
+        } else if (options.objective ==
+                   "local-projective-height-dynamic-envelope-ratio") {
+            const LocalSldProjectiveHeightEnvelopeObjective envelope(
+                dynamics_, options.closure_selection,
+                options.objective_threads, true, true);
+            trajectory.objective_value = envelope.evaluate(result.state)
+                .squared_component_power_one_envelope;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = envelope.gradient(result.state);
+        } else if (options.objective ==
+                   "local-projective-height-commutator-coercivity-ratio") {
+            const LocalSldProjectiveHeightCommutatorRatioObjective ratio(
+                dynamics_, options.closure_selection,
+                options.objective_threads);
+            trajectory.objective_value = ratio.evaluate(result.state)
+                .squared_coercivity_ratio;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = ratio.gradient(result.state);
+        } else if (options.objective ==
+                   "local-projective-height-dynamic-coercivity-ratio") {
+            const LocalSldProjectiveHeightDynamicRatioObjective ratio(
+                dynamics_, options.closure_selection,
+                options.objective_threads);
+            trajectory.objective_value = ratio.evaluate(result.state)
+                .squared_coercivity_ratio;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = ratio.gradient(result.state);
         } else if (options.objective == "local-sld-ratio") {
             const LocalQuarticClosureObjective closure(
                 dynamics_, options.closure_selection);

@@ -1,0 +1,31 @@
+{
+  "schema": "navier-stokes-local-sld-projective-core-tail-scan-v1",
+  "state_paths": [
+    "proof/l4/states/local-shape-power/remainder-p1-K1-K5/K1.tsv",
+    "proof/l4/states/local-shape-power/remainder-p1-K1-K5/K2.tsv",
+    "proof/l4/states/local-shape-power/remainder-p1-K1-K5/K3.tsv",
+    "proof/l4/states/local-shape-power/remainder-p1-K1-K5/K4.tsv",
+    "proof/l4/states/local-shape-power/remainder-p1-K1-K5/K5.tsv",
+    "proof/l4/states/local-shape-power/remainder-p1-K6/K6.tsv",
+    "proof/l4/states/local-shape-power/remainder-p1-K7/K7.tsv"
+  ],
+  "fitted_open_signed_cutoff_slope": 1.02309164312293333,
+  "fitted_open_absolute_cutoff_slope": 1.02309164312293333,
+  "full_active_core_start_cutoff": 3,
+  "fitted_full_active_core_open_signed_cutoff_slope": 0.162585025049031773,
+  "fitted_full_active_core_open_absolute_cutoff_slope": 0.162585025049031773,
+  "rows": [
+    {"cutoff": 1, "active_core_shape_count": 2, "tail_shape_count": 0, "selected_power_one": 0.0060065225718260477, "core_power_one": 0.0060065225718260477, "core_tail_power_one": -0, "tail_power_one": -0, "open_signed_power_one": -0, "open_absolute_power_one": 0, "open_signed_fraction": 0, "open_absolute_fraction": 0, "decomposition_error": 0},
+    {"cutoff": 2, "active_core_shape_count": 11, "tail_shape_count": 9, "selected_power_one": 0.0062904844171418773, "core_power_one": 0.00629020127122892694, "core_tail_power_one": 2.35791385572337824e-07, "tail_power_one": 4.73545273786786002e-08, "open_signed_power_one": 2.83145912951016444e-07, "open_absolute_power_one": 2.83145912951016444e-07, "open_signed_fraction": 4.5011781951073587e-05, "open_absolute_fraction": 4.5011781951073587e-05, "decomposition_error": 1.94380299903865935e-19},
+    {"cutoff": 3, "active_core_shape_count": 13, "tail_shape_count": 100, "selected_power_one": 0.00634032038735523121, "core_power_one": 0.00633922853410365944, "core_tail_power_one": 3.38221773561229677e-07, "tail_power_one": 7.53631478010041808e-07, "open_signed_power_one": 1.09185325157127143e-06, "open_absolute_power_one": 1.09185325157127143e-06, "open_signed_fraction": 0.000172207898791487023, "open_absolute_fraction": 0.000172207898791487023, "decomposition_error": 1.38753015679813805e-18},
+    {"cutoff": 4, "active_core_shape_count": 13, "tail_shape_count": 401, "selected_power_one": 0.00635501781447653669, "core_power_one": 0.0063538258212315589, "core_tail_power_one": 2.7569339565557892e-07, "tail_power_one": 9.16299849321601364e-07, "open_signed_power_one": 1.19199324497718023e-06, "open_absolute_power_one": 1.19199324497718023e-06, "open_signed_fraction": 0.000187567254691537773, "open_absolute_fraction": 0.000187567254691537773, "decomposition_error": 2.13733096538655232e-18},
+    {"cutoff": 5, "active_core_shape_count": 13, "tail_shape_count": 1202, "selected_power_one": 0.00636095293892445686, "core_power_one": 0.00635987713210476712, "core_tail_power_one": 2.30543231650651898e-07, "tail_power_one": 8.45263588038991817e-07, "open_signed_power_one": 1.07580681968964364e-06, "open_absolute_power_one": 1.07580681968964364e-06, "open_signed_fraction": 0.000169126674889619091, "open_absolute_fraction": 0.000169126674889619091, "decomposition_error": 1.47338060622146353e-18},
+    {"cutoff": 6, "active_core_shape_count": 13, "tail_shape_count": 3192, "selected_power_one": 0.00636380607826496879, "core_power_one": 0.00636254373619195724, "core_tail_power_one": 2.6736237032726325e-07, "tail_power_one": 9.94979702684283042e-07, "open_signed_power_one": 1.26234207301154634e-06, "open_absolute_power_one": 1.26234207301154634e-06, "open_signed_fraction": 0.000198362749820892086, "open_absolute_fraction": 0.000198362749820892086, "decomposition_error": 2.84156513081230004e-18},
+    {"cutoff": 7, "active_core_shape_count": 13, "tail_shape_count": 7309, "selected_power_one": 0.00636477238638494345, "core_power_one": 0.00636350502018971035, "core_tail_power_one": 3.16391336652134867e-07, "tail_power_one": 9.50974858580398773e-07, "open_signed_power_one": 1.26736619523253364e-06, "open_absolute_power_one": 1.26736619523253364e-06, "open_signed_fraction": 0.000199121998132029197, "open_absolute_fraction": 0.000199121998132029197, "decomposition_error": 1.00840535545920147e-18}
+  ],
+  "every_decomposition_exact": true,
+  "fixed_core_internal_bound_proved": true,
+  "uniform_open_bound_proved": false,
+  "full_local_lemma_proved": false,
+  "interpretation": "the fitted slopes describe only the supplied finite states; the open signed core-tail plus tail-tail estimate remains unproved"
+}

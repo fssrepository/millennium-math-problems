@@ -75,9 +75,14 @@ source file:
   objectives, adjoints, and trajectory evaluation;
 - `src/optimization/`, `src/triads/`, `src/helical/`, and `src/proof/` isolate
   their respective algorithms;
+- `src/proof/projective/` contains projective-family proof certificates,
+  beginning with the complete fixed finite-family self+cross closure;
 - `src/local_sld/core/`, `analysis/`, `optimization/`, and `cli/` separate the
   active shifted-local-density lemma work into numerical primitives,
   diagnostic ledgers, searches, and artifact/report handling;
+- `src/local_sld/core/projective/` and `analysis/projective/` contain the
+  projective open-tail objective, fixed-core ledgers, and cutoff/height replay
+  scans without enlarging the older monolithic analysis files;
 - `src/reporting/` contains the remaining shared certificate writers.
 
 - `ScalingCertificate` stores exact rational scaling results, while
@@ -432,10 +437,34 @@ shape algebra reduces this further to the energy-independent estimate
 `|(K_rem+G_rem)S_full| <= C Z^2P^2`; its direct power-one search is nearly
 flat through K7. On its K7 winner, one projective ray carries `95.42%` of the
 absolute power-one total; after removing the proved equal-low families, the K5
-tail has `3.027` effective projective shapes. See
+tail has `3.027` effective projective shapes. Cross attribution uses `2.103`
+effective rays on the K7 winner and `3.583` on the K6 cross-only winner. The
+complete self+cross block internal to every fixed finite ray family is now
+proved cutoff-independently with a half-derivative gain. The remaining
+projective target is core--growing-tail and tail--tail coupling. Its own
+exact-gradient objective reaches `0.0010076`, `0.0008591`, `0.0006330`, and
+`0.0003079` on separately optimized K8 branches for fixed shape-height cores
+H=8,16,32,64. The fitted finite lower-branch height exponent is `-0.557`, not
+a uniform upper bound. An exact dyadic height matrix now reduces the growing
+tail to a weighted Schur row bound and a summable diagonal component envelope.
+The finite Schur inequality is proved algebraically; the required joint
+uniform bound on the row-sum--diagonal-envelope product is not. Separate
+uniform bounds on its two factors would suffice but appear stronger than the
+target. The optimized finite diagonal envelope has fitted height slope
+`-0.435`, but direct optimization of the complete five-component envelope
+removes that apparent decay: it gives `0.0094401` at K8 and `0.0095014` after
+embedding the K12 continuation in the complete K12 Galerkin cube. These are
+finite stress values, not a uniform bound. Pairing the dominant outer-square
+and advected terms into their exact commutator sharpens the majorant to
+`0.00179960` at K8 and `0.00182423` at complete K12. A coercive outer-weight
+Schur reduction is proved for this paired matrix; its finite row sums are
+`0.881010` and `0.883351`. The required cutoff-uniform joint estimate remains
+open. See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_CROSS_QUARTET.md` and
+`proof/l4/lemmas/shifted-local-density/FINITE_PROJECTIVE_FAMILY.md` and
+`proof/l4/lemmas/shifted-local-density/DYADIC_PROJECTIVE_HEIGHT_SCHUR.md` and
 `proof/l4/lemmas/shifted-local-density/REMAINDER_QUARTET.md`.
 
 The helical local target has its own replayable optimizer and same-state

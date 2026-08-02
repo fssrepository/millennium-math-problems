@@ -910,9 +910,56 @@ uniform summation.
 The exact self/cross quartet ledger shows that the K7 power-one winner splits
 as `0.00614715` same-ray and `0.00021762` unequal-ray. A new cross-only exact
 gradient objective stays near `0.0011166` from K4 through a K8 lift, while its
-K5 winner exhibits opposite-sign self/cross cancellation. The active analytic
-subtask is now the explicit unequal-ray formula PCQ-3 in
-`PROJECTIVE_CROSS_QUARTET.md`, followed by uniform summation of PCQ-1.
+K5 winner exhibits opposite-sign self/cross cancellation. A per-ray cross
+attribution has only `2.103` effective rays on that K7 state and `3.583` on
+the K6 cross-only winner. The plane--sphere incidence proof now applies to
+the union of any fixed finite ray set, so its complete internal self+cross
+quartet closes cutoff-independently with gain `-1/2`; the replayable 13-ray
+certificate is documented in `FINITE_PROJECTIVE_FAMILY.md`. The active
+analytic subtask is no longer the internal cross term of a fixed core. It is
+the core--growing-tail and tail--tail part of PCQ-3, with a constant uniform
+under movement of the core boundary.
+
+That boundary is now a first-class exact-gradient objective rather than a
+residual inferred from unrelated winners. For the canonical finite core
+`F_H={primitive feasible (a,b,c): max(a,b,c)<=H}`, the engine subtracts its
+complete internal quartet and maximizes only
+`|(J_FT+J_T)S_full|^2/(Z^4P^4)`. The gradient error is `8.94e-12`. The H=8
+branch stabilizes near `0.0010076` by K8. Separately adapted K8 branches at
+H=16,32,64 reach `0.0008591`, `0.0006330`, and `0.0003079`, giving a finite
+lower-branch height slope `-0.557`. Because the optimizer relocates toward
+higher primitive shapes, this decay cannot yet be used as an upper bound.
+The growing boundary now has an exact dyadic primitive-height matrix. Its
+absolute five-component envelope obeys the proved finite Schur reduction
+`sum_(i<=j)e_ij <= R sum_i e_i`. On the principal K8 stress states the
+normalized row sum is `2.89`--`3.85`. Separately optimized diagonal states
+give signed and absolute-envelope finite height slopes `-0.374` and `-0.435`.
+Perturbed coherent fans give row sums `2.987`, `3.993`, and `4.089` at K8,
+K12, and K16 while the products `R sum_i e_i` collapse from `1.55e-10` to
+`3.79e-13`. The lowest open analytical subtask is therefore the weaker and
+more precise joint estimate `sup R sum_i e_i < infinity`; separate uniform
+bounds for the two factors are only a sufficient route. The finite slopes
+and fan sequence are diagnostics, not upper bounds. See
+`proof/l4/lemmas/shifted-local-density/DYADIC_PROJECTIVE_HEIGHT_SCHUR.md`.
+The complete five-component envelope itself is now an exact-gradient
+objective with directional error `6.61e-12`. Its optimized values are
+`0.0094401` at K8 and `0.0094648` on a restricted-support K12 continuation;
+zero-padding the latter to the complete K12 Galerkin cube gives `0.0095014`
+before any full-K12 optimization. The corresponding full-cube Schur data are
+`R=2.9681`, diagonal envelope `0.0052331`, and bound `0.0155326`. Hence the
+current finite evidence is bounded-looking but nondecaying. The proof still
+requires a cutoff-uniform analytic estimate, not extrapolation of these two
+cutoffs.
+The separate five-component envelope discards a large exact cancellation:
+outer-square plus advected-commutator contributes about 95% of that envelope.
+Pairing those terms before taking absolute values gives a sharper exact
+majorant. With the coercive weights
+`w_j=|S_full| ||A^(1/2)B_j(u,u)||^2/(Z^2P^2)`, an AM--GM Schur argument proves
+`sum g_ij <= R_comm sum w_j`. Exact-gradient paired-envelope winners give
+`0.00179960` at K8 and `0.00182423` at complete K12, while `R_comm` is
+`0.881010` and `0.883351`. The lowest analytic target is now DHS-10: prove
+the cutoff-uniform joint bound `R_comm sum w_j <= C`, preferably from dyadic
+off-diagonal commutator decay. This is still open.
 
 The absolute closure ratio was subsequently reverse-differentiated and
 optimized directly. A K1 branch reaches `C_state=1/3`, but its stretching is

@@ -45,6 +45,37 @@ std::string objective_formula(const std::string& objective) {
     if (objective == "projective-cross-power-ratio") {
         return "maximize |(K_cross+G_cross) S_full|^2 / (Z^4 P^4) after subtracting every same-projective-ray quartet";
     }
+    if (objective == "projective-open-power-ratio") {
+        return "maximize |(K_open+G_open) S_full|^2 / (Z^4 P^4) after subtracting the complete quartet internal to a fixed primitive-shape-height core";
+    }
+    if (objective == "projective-height-stretching-ratio") {
+        return "maximize |<Au,B_(H,2H](u,u)>|^2 / (Z sum_sigma ||A^(1/2)B_sigma(u,u)||_2^2)";
+    }
+    if (objective == "projective-height-power-ratio") {
+        return "maximize |J_(H,2H] S_full|^2 / (Z^4 P^4), where J_(H,2H] is the complete quartet internal to one dyadic primitive-height shell";
+    }
+    if (objective == "projective-height-outer-power-ratio") {
+        return "maximize |S_full|^2 (sum_j ||A^(1/2)B_j(u,u)||_2^2)^2 / (Z^4 P^4) over dyadic primitive-height shells";
+    }
+    if (objective == "projective-height-envelope-ratio") {
+        return "maximize the square of the exact five-component absolute dyadic height-matrix envelope times |S_full| / (Z^2 P^2)";
+    }
+    if (objective ==
+        "projective-height-commutator-envelope-ratio") {
+        return "maximize the squared dyadic height envelope after pairing the outer-square and advected terms into their exact commutator";
+    }
+    if (objective ==
+        "projective-height-dynamic-envelope-ratio") {
+        return "maximize the squared dyadic height envelope after jointly pairing the outer-square, advected, and nested dynamical terms";
+    }
+    if (objective ==
+        "projective-height-commutator-coercivity-ratio") {
+        return "maximize the squared commutator-paired height envelope divided by the squared outer H1 shell weight";
+    }
+    if (objective ==
+        "projective-height-dynamic-coercivity-ratio") {
+        return "maximize the squared height envelope after jointly pairing the outer, advected, and nested dynamical terms, divided by the squared outer H1 shell weight";
+    }
     if (objective == "signed-closure-ratio") {
         return "maximize (K+G) E^(1/4) / (Z^(7/4) P)";
     }
@@ -90,6 +121,12 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
         << options.initial_profile << "\",\n"
         << "  \"warm_state_path\": \"" << options.warm_state_path
         << "\",\n"
+        << "  \"lean_diagnostics\": "
+        << (options.lean_diagnostics ? "true" : "false") << ",\n"
+        << "  \"preserves_sparse_warm_layout\": "
+        << (options.preserve_warm_layout ? "true" : "false") << ",\n"
+        << "  \"complete_galerkin_cutoff\": "
+        << (options.preserve_warm_layout ? "false" : "true") << ",\n"
         << "  \"gradient\": \"exact discrete reverse mode; selected local objectives use direct triads and RK4 follows the requested backend\",\n"
         << "  \"workers\": " << report.workers << ",\n"
         << "  \"restarts_per_cutoff\": " << report.restarts << ",\n"
@@ -102,6 +139,8 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
         << "  \"absorption_theta\": "
         << static_cast<double>(report.absorption_theta) << ",\n"
         << "  \"shape_power\": " << report.shape_power << ",\n"
+        << "  \"projective_core_maximum_height\": "
+        << report.projective_core_maximum_height << ",\n"
         << "  \"sobolev_order\": " << report.sobolev_order << ",\n"
         << "  \"sobolev_cap\": "
         << static_cast<double>(report.sobolev_cap) << ",\n"
@@ -164,6 +203,59 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
             << static_cast<double>(winner.projective_cross_bracket)
             << ", \"projective_diagonal_bracket\": "
             << static_cast<double>(winner.projective_diagonal_bracket)
+            << ", \"projective_open_power_absolute\": "
+            << static_cast<double>(
+                   winner.projective_open_power_absolute)
+            << ", \"projective_open_bracket\": "
+            << static_cast<double>(winner.projective_open_bracket)
+            << ", \"projective_fixed_core_bracket\": "
+            << static_cast<double>(
+                   winner.projective_fixed_core_bracket)
+            << ", \"projective_height_stretching_ratio\": "
+            << static_cast<double>(
+                   winner.projective_height_stretching_ratio)
+            << ", \"projective_height_h1_synthesis_ratio\": "
+            << static_cast<double>(
+                   winner.projective_height_h1_synthesis_ratio)
+            << ", \"projective_height_stretching_alignment_squared\": "
+            << static_cast<double>(
+                   winner.projective_height_stretching_alignment_squared)
+            << ", \"projective_height_shape_count\": "
+            << winner.projective_height_shape_count
+            << ", \"projective_height_power_absolute\": "
+            << static_cast<double>(
+                   winner.projective_height_power_absolute)
+            << ", \"projective_height_internal_bracket\": "
+            << static_cast<double>(
+                   winner.projective_height_internal_bracket)
+            << ", \"projective_height_outer_power_absolute\": "
+            << static_cast<double>(
+                   winner.projective_height_outer_power_absolute)
+            << ", \"projective_height_outer_h1_sum\": "
+            << static_cast<double>(
+                   winner.projective_height_outer_h1_sum)
+            << ", \"projective_height_component_envelope_absolute\": "
+            << static_cast<double>(
+                   winner.projective_height_component_envelope_absolute)
+            << ", \"projective_height_commutator_envelope_absolute\": "
+            << static_cast<double>(
+                   winner.projective_height_commutator_envelope_absolute)
+            << ", \"projective_height_dynamic_envelope_absolute\": "
+            << static_cast<double>(
+                   winner.projective_height_dynamic_envelope_absolute)
+            << ", \"projective_height_commutator_coercivity_ratio\": "
+            << static_cast<double>(
+                   winner.projective_height_commutator_coercivity_ratio)
+            << ", \"projective_height_dynamic_coercivity_ratio\": "
+            << static_cast<double>(
+                   winner.projective_height_dynamic_coercivity_ratio)
+            << ", \"projective_height_component_bracket_envelope\": "
+            << static_cast<double>(
+                   winner.projective_height_component_bracket_envelope)
+            << ", \"projective_height_pair_count\": "
+            << winner.projective_height_pair_count
+            << ", \"projective_height_active_shell_count\": "
+            << winner.projective_height_active_shell_count
             << ", \"squared_lqc3_target_ratio\": "
             << static_cast<double>(value.squared_lqc3_target_ratio)
             << ", \"signed_constant_ratio\": "
@@ -306,7 +398,7 @@ void LocalQuarticClosureReporter::print_summary(
         << static_cast<double>(report.absorption_theta) << '\n'
         << "cutoff,initial_objective,optimized_objective,gain,"
            "closure_C,lqc3_C,signed_lqc3_C,envelope_C,absorption_C,projective_coherence,projective_amplification,projective_stretching,projective_alignment_squared,projective_cross_power,signed_S,warm_lift_objective,projection_residual,"
-           "gradient_norm,time_refinement_error,accepted,evaluations,seed\n";
+           "projective_open_power,gradient_norm,time_refinement_error,accepted,evaluations,seed\n";
     for (const auto& row : report.rows) {
         out << row.cutoff << ','
             << static_cast<double>(row.winner.initial_objective) << ','
@@ -333,6 +425,8 @@ void LocalQuarticClosureReporter::print_summary(
             << static_cast<double>(row.winner.value.signed_stretching) << ','
             << static_cast<double>(row.warm_lift_objective) << ','
             << static_cast<double>(row.projection_residual) << ','
+            << static_cast<double>(
+                   row.winner.projective_open_power_absolute) << ','
             << static_cast<double>(
                    row.winner.final_projected_gradient_norm) << ','
             << static_cast<double>(

@@ -7,6 +7,10 @@
 #include <numeric>
 #include <stdexcept>
 
+#ifdef NS_HAVE_OPENMP
+#include <omp.h>
+#endif
+
 namespace lemma {
 namespace {
 
@@ -23,6 +27,13 @@ struct GroupCacheKey {
     SpectralInteger maximum_low_squared_exclusive = 0;
 
     auto operator<=>(const GroupCacheKey&) const = default;
+};
+
+struct FamilyGroupCacheKey {
+    GroupCacheKey group;
+    std::vector<Shape> primitive_squared_lengths;
+
+    auto operator<=>(const FamilyGroupCacheKey&) const = default;
 };
 
 GroupCacheKey cache_key(
@@ -107,6 +118,62 @@ ProjectiveAdvectionDecomposition::group(
     return cache.emplace(key, std::move(result)).first->second;
 }
 
+const std::vector<ProjectiveInteractionGroup>&
+ProjectiveAdvectionDecomposition::aggregate_family(
+    const SpectralState& state,
+    TriadSelection selection,
+    std::vector<Shape> primitive_squared_lengths) {
+    for (Shape& shape : primitive_squared_lengths) {
+        std::sort(shape.begin(), shape.end());
+    }
+    std::sort(
+        primitive_squared_lengths.begin(),
+        primitive_squared_lengths.end());
+    if (std::adjacent_find(
+            primitive_squared_lengths.begin(),
+            primitive_squared_lengths.end()) !=
+        primitive_squared_lengths.end()) {
+        throw std::invalid_argument(
+            "projective aggregate family contains duplicate shapes");
+    }
+    const auto& groups = group(state, selection);
+    static std::map<
+        FamilyGroupCacheKey,
+        std::vector<ProjectiveInteractionGroup>> cache;
+    static std::mutex cache_mutex;
+    const FamilyGroupCacheKey key{
+        cache_key(state, selection), primitive_squared_lengths};
+    const std::lock_guard<std::mutex> lock(cache_mutex);
+    const auto existing = cache.find(key);
+    if (existing != cache.end()) {
+        return existing->second;
+    }
+    std::vector<ProjectiveInteractionGroup> result(1);
+    ProjectiveInteractionGroup& aggregate = result.front();
+    std::size_t interaction_count = 0;
+    for (const ProjectiveInteractionGroup& source : groups) {
+        if (std::binary_search(
+                primitive_squared_lengths.begin(),
+                primitive_squared_lengths.end(),
+                source.primitive_squared_lengths)) {
+            interaction_count += source.interactions.size();
+        }
+    }
+    aggregate.interactions.reserve(interaction_count);
+    for (const ProjectiveInteractionGroup& source : groups) {
+        if (std::binary_search(
+                primitive_squared_lengths.begin(),
+                primitive_squared_lengths.end(),
+                source.primitive_squared_lengths)) {
+            aggregate.interactions.insert(
+                aggregate.interactions.end(),
+                source.interactions.begin(),
+                source.interactions.end());
+        }
+    }
+    return cache.emplace(key, std::move(result)).first->second;
+}
+
 SpectralIncrement ProjectiveAdvectionDecomposition::evaluate(
     const SpectralState& state,
     const ProjectiveInteractionGroup& group) {
@@ -118,18 +185,137 @@ SpectralIncrement ProjectiveAdvectionDecomposition::evaluate_bilinear(
     const SpectralState& state,
     const ProjectiveInteractionGroup& group,
     const SpectralIncrement& advecting,
-    const SpectralIncrement& advected) {
+    const SpectralIncrement& advected,
+    int threads) {
     require_layout(state, advecting);
     require_layout(state, advected);
-    SpectralIncrement result(state.waves.size());
+    if (threads < 1 || threads > 256) {
+        throw std::invalid_argument(
+            "projective bilinear threads must be 1..256");
+    }
+    int worker_count = 1;
+#ifdef NS_HAVE_OPENMP
+    worker_count = std::max(
+        1, std::min(threads,
+            static_cast<int>(group.interactions.size())));
+#endif
+    std::vector<SpectralIncrement> partials(
+        static_cast<std::size_t>(worker_count),
+        SpectralIncrement(state.waves.size()));
     const SpectralComplex imaginary_unit{0.0L, 1.0L};
-    for (const InteractionIndex interaction : group.interactions) {
+#ifdef NS_HAVE_OPENMP
+#pragma omp parallel for schedule(static) num_threads(worker_count) \
+    if(worker_count > 1)
+#endif
+    for (std::ptrdiff_t position = 0;
+         position < static_cast<std::ptrdiff_t>(group.interactions.size());
+         ++position) {
+        int worker = 0;
+#ifdef NS_HAVE_OPENMP
+        worker = omp_get_thread_num();
+#endif
+        SpectralIncrement& partial = partials[
+            static_cast<std::size_t>(worker)];
+        const InteractionIndex interaction = group.interactions[
+            static_cast<std::size_t>(position)];
         const auto [p, q, target] = interaction;
         const SpectralComplex coefficient = imaginary_unit *
             wave_dot(state.waves[q], advecting[p]);
         for (std::size_t component = 0; component < 3; ++component) {
-            result[target][component] +=
+            partial[target][component] +=
                 coefficient * advected[q][component];
+        }
+    }
+    SpectralIncrement result(state.waves.size());
+    for (const SpectralIncrement& partial : partials) {
+        for (std::size_t mode = 0; mode < result.size(); ++mode) {
+            for (std::size_t component = 0; component < 3; ++component) {
+                result[mode][component] += partial[mode][component];
+            }
+        }
+    }
+    project(result, state);
+    return result;
+}
+
+SpectralIncrement
+ProjectiveAdvectionDecomposition::evaluate_bilinear_sum(
+    const SpectralState& state,
+    const std::vector<ProjectiveInteractionGroup>& groups,
+    const std::vector<std::size_t>& group_indices,
+    const SpectralIncrement& advecting,
+    const SpectralIncrement& advected,
+    int threads) {
+    require_layout(state, advecting);
+    require_layout(state, advected);
+    if (threads < 1 || threads > 256) {
+        throw std::invalid_argument(
+            "projective bilinear-sum threads must be 1..256");
+    }
+    for (const std::size_t index : group_indices) {
+        if (index >= groups.size()) {
+            throw std::invalid_argument(
+                "projective bilinear-sum group index out of range");
+        }
+    }
+    int worker_count = 1;
+#ifdef NS_HAVE_OPENMP
+    worker_count = std::min(
+        threads,
+        std::max(1, static_cast<int>(group_indices.size())));
+#else
+    static_cast<void>(threads);
+#endif
+    std::vector<SpectralIncrement> partials(
+        static_cast<std::size_t>(worker_count),
+        SpectralIncrement(state.waves.size()));
+    const SpectralComplex imaginary_unit{0.0L, 1.0L};
+#ifdef NS_HAVE_OPENMP
+#pragma omp parallel num_threads(worker_count) if(worker_count > 1)
+    {
+        const int worker = omp_get_thread_num();
+        SpectralIncrement& partial = partials[
+            static_cast<std::size_t>(worker)];
+#pragma omp for schedule(dynamic, 1)
+        for (std::ptrdiff_t position = 0;
+             position < static_cast<std::ptrdiff_t>(group_indices.size());
+             ++position) {
+            const auto& group = groups[group_indices[
+                static_cast<std::size_t>(position)]];
+            for (const InteractionIndex interaction : group.interactions) {
+                const auto [p, q, target] = interaction;
+                const SpectralComplex coefficient = imaginary_unit *
+                    wave_dot(state.waves[q], advecting[p]);
+                for (std::size_t component = 0; component < 3;
+                     ++component) {
+                    partial[target][component] +=
+                        coefficient * advected[q][component];
+                }
+            }
+        }
+    }
+#else
+    SpectralIncrement& partial = partials.front();
+    for (const std::size_t index : group_indices) {
+        for (const InteractionIndex interaction :
+             groups[index].interactions) {
+            const auto [p, q, target] = interaction;
+            const SpectralComplex coefficient = imaginary_unit *
+                wave_dot(state.waves[q], advecting[p]);
+            for (std::size_t component = 0; component < 3;
+                 ++component) {
+                partial[target][component] +=
+                    coefficient * advected[q][component];
+            }
+        }
+    }
+#endif
+    SpectralIncrement result(state.waves.size());
+    for (const SpectralIncrement& partial : partials) {
+        for (std::size_t mode = 0; mode < result.size(); ++mode) {
+            for (std::size_t component = 0; component < 3; ++component) {
+                result[mode][component] += partial[mode][component];
+            }
         }
     }
     project(result, state);
@@ -139,10 +325,11 @@ SpectralIncrement ProjectiveAdvectionDecomposition::evaluate_bilinear(
 SpectralIncrement ProjectiveAdvectionDecomposition::vjp(
     const SpectralState& state,
     const ProjectiveInteractionGroup& group,
-    const SpectralIncrement& output_cotangent) {
+    const SpectralIncrement& output_cotangent,
+    int threads) {
     ProjectiveBilinearCotangents cotangents = bilinear_vjp(
         state, group, state.velocity, state.velocity,
-        output_cotangent);
+        output_cotangent, threads);
     for (std::size_t mode = 0; mode < cotangents.advecting.size();
          ++mode) {
         for (std::size_t coordinate = 0; coordinate < 3; ++coordinate) {
@@ -159,17 +346,46 @@ ProjectiveAdvectionDecomposition::bilinear_vjp(
     const ProjectiveInteractionGroup& group,
     const SpectralIncrement& advecting,
     const SpectralIncrement& advected,
-    const SpectralIncrement& output_cotangent) {
+    const SpectralIncrement& output_cotangent,
+    int threads) {
     require_layout(state, advecting);
     require_layout(state, advected);
     require_layout(state, output_cotangent);
+    if (threads < 1 || threads > 256) {
+        throw std::invalid_argument(
+            "projective bilinear VJP threads must be 1..256");
+    }
     SpectralIncrement cotangent = output_cotangent;
     project(cotangent, state);
-    ProjectiveBilinearCotangents result{
-        SpectralIncrement(state.waves.size()),
-        SpectralIncrement(state.waves.size())};
+    int worker_count = 1;
+#ifdef NS_HAVE_OPENMP
+    worker_count = std::max(
+        1, std::min(threads,
+            static_cast<int>(group.interactions.size())));
+#endif
+    std::vector<ProjectiveBilinearCotangents> partials;
+    partials.reserve(static_cast<std::size_t>(worker_count));
+    for (int worker = 0; worker < worker_count; ++worker) {
+        partials.push_back(ProjectiveBilinearCotangents{
+            SpectralIncrement(state.waves.size()),
+            SpectralIncrement(state.waves.size())});
+    }
     const SpectralComplex minus_imaginary_unit{0.0L, -1.0L};
-    for (const InteractionIndex interaction : group.interactions) {
+#ifdef NS_HAVE_OPENMP
+#pragma omp parallel for schedule(static) num_threads(worker_count) \
+    if(worker_count > 1)
+#endif
+    for (std::ptrdiff_t position = 0;
+         position < static_cast<std::ptrdiff_t>(group.interactions.size());
+         ++position) {
+        int worker = 0;
+#ifdef NS_HAVE_OPENMP
+        worker = omp_get_thread_num();
+#endif
+        ProjectiveBilinearCotangents& partial = partials[
+            static_cast<std::size_t>(worker)];
+        const InteractionIndex interaction = group.interactions[
+            static_cast<std::size_t>(position)];
         const auto [p, q, target] = interaction;
         const ComplexVector& target_cotangent = cotangent[target];
         const SpectralComplex first_coefficient =
@@ -181,15 +397,28 @@ ProjectiveAdvectionDecomposition::bilinear_vjp(
                     component == 0   ? state.waves[q].x
                     : component == 1 ? state.waves[q].y
                                      : state.waves[q].z);
-            result.advecting[p][component] +=
+            partial.advecting[p][component] +=
                 wave_component * first_coefficient;
         }
         const SpectralComplex second_coefficient =
                 minus_imaginary_unit * std::conj(
                 wave_dot(state.waves[q], advecting[p]));
         for (std::size_t component = 0; component < 3; ++component) {
-            result.advected[q][component] +=
+            partial.advected[q][component] +=
                 second_coefficient * target_cotangent[component];
+        }
+    }
+    ProjectiveBilinearCotangents result{
+        SpectralIncrement(state.waves.size()),
+        SpectralIncrement(state.waves.size())};
+    for (const ProjectiveBilinearCotangents& partial : partials) {
+        for (std::size_t mode = 0; mode < state.waves.size(); ++mode) {
+            for (std::size_t component = 0; component < 3; ++component) {
+                result.advecting[mode][component] +=
+                    partial.advecting[mode][component];
+                result.advected[mode][component] +=
+                    partial.advected[mode][component];
+            }
         }
     }
     project(result.advecting, state);
@@ -250,6 +479,196 @@ ProjectiveAdvectionDecomposition::square_function(
             const SpectralComplex first_coefficient =
                 minus_imaginary_unit *
                 dot_hermitian(
+                    state.velocity[q], target_cotangent);
+            for (std::size_t coordinate = 0; coordinate < 3;
+                 ++coordinate) {
+                const SpectralReal wave_component =
+                    static_cast<SpectralReal>(
+                        coordinate == 0   ? state.waves[q].x
+                        : coordinate == 1 ? state.waves[q].y
+                                          : state.waves[q].z);
+                result.gradient[p][coordinate] +=
+                    wave_component * first_coefficient;
+            }
+            const SpectralComplex second_coefficient =
+                minus_imaginary_unit * std::conj(
+                    wave_dot(state.waves[q], state.velocity[p]));
+            for (std::size_t coordinate = 0; coordinate < 3;
+                 ++coordinate) {
+                result.gradient[q][coordinate] +=
+                    second_coefficient * target_cotangent[coordinate];
+            }
+        }
+    }
+    if (compute_gradient) {
+        project(result.gradient, state);
+    }
+    return result;
+}
+
+ProjectiveSquareFunctionNorms
+ProjectiveAdvectionDecomposition::square_function_norms(
+    const SpectralState& state,
+    const std::vector<ProjectiveInteractionGroup>& groups,
+    const std::vector<std::size_t>& group_indices,
+    int threads) {
+    if (threads < 1 || threads > 256) {
+        throw std::invalid_argument(
+            "projective square-function workers must be 1..256");
+    }
+    for (const std::size_t index : group_indices) {
+        if (index >= groups.size()) {
+            throw std::invalid_argument(
+                "projective square-function group index out of range");
+        }
+    }
+    int worker_count = 1;
+#ifdef NS_HAVE_OPENMP
+    worker_count = std::min(
+        threads,
+        std::max(1, static_cast<int>(group_indices.size())));
+#else
+    static_cast<void>(threads);
+#endif
+    std::vector<ProjectiveSquareFunctionNorms> partials(
+        static_cast<std::size_t>(worker_count));
+    const SpectralComplex imaginary_unit{0.0L, 1.0L};
+#ifdef NS_HAVE_OPENMP
+#pragma omp parallel num_threads(worker_count) if(worker_count > 1)
+    {
+        const int worker = omp_get_thread_num();
+        auto& partial = partials[static_cast<std::size_t>(worker)];
+        SpectralIncrement component(state.waves.size());
+        std::vector<std::size_t> touched_targets;
+        touched_targets.reserve(state.waves.size());
+        std::vector<std::size_t> target_generation(
+            state.waves.size(), 0);
+        std::size_t generation = 0;
+#pragma omp for schedule(dynamic, 1)
+        for (std::ptrdiff_t position = 0;
+             position < static_cast<std::ptrdiff_t>(group_indices.size());
+             ++position) {
+            ++generation;
+            touched_targets.clear();
+            const auto& group = groups[group_indices[
+                static_cast<std::size_t>(position)]];
+            for (const InteractionIndex interaction : group.interactions) {
+                const auto [p, q, target] = interaction;
+                if (target_generation[target] != generation) {
+                    target_generation[target] = generation;
+                    component[target] = {};
+                    touched_targets.push_back(target);
+                }
+                const SpectralComplex coefficient = imaginary_unit *
+                    wave_dot(state.waves[q], state.velocity[p]);
+                for (std::size_t coordinate = 0; coordinate < 3;
+                     ++coordinate) {
+                    component[target][coordinate] +=
+                        coefficient * state.velocity[q][coordinate];
+                }
+            }
+            for (const std::size_t target : touched_targets) {
+                component[target] = project_divergence_free(
+                    state.waves[target], component[target]);
+                const SpectralReal norm2 = std::real(dot_hermitian(
+                    component[target], component[target]));
+                const SpectralReal weight = static_cast<SpectralReal>(
+                    norm_squared(state.waves[target]));
+                partial.l2_norm2 += norm2;
+                partial.h1_norm2 += weight * norm2;
+                partial.h2_norm2 += weight * weight * norm2;
+            }
+        }
+    }
+#else
+    auto& partial = partials.front();
+    for (const std::size_t index : group_indices) {
+        const SpectralIncrement component = evaluate(state, groups[index]);
+        for (std::size_t target = 0; target < component.size(); ++target) {
+            const SpectralReal norm2 = std::real(dot_hermitian(
+                component[target], component[target]));
+            const SpectralReal weight = static_cast<SpectralReal>(
+                norm_squared(state.waves[target]));
+            partial.l2_norm2 += norm2;
+            partial.h1_norm2 += weight * norm2;
+            partial.h2_norm2 += weight * weight * norm2;
+        }
+    }
+#endif
+    ProjectiveSquareFunctionNorms result;
+    for (const auto& partial : partials) {
+        result.l2_norm2 += partial.l2_norm2;
+        result.h1_norm2 += partial.h1_norm2;
+        result.h2_norm2 += partial.h2_norm2;
+    }
+    return result;
+}
+
+ProjectiveSquareFunctionMoment
+ProjectiveAdvectionDecomposition::h1_square_function(
+    const SpectralState& state,
+    const std::vector<ProjectiveInteractionGroup>& groups,
+    const std::vector<std::size_t>& group_indices,
+    bool compute_gradient) {
+    for (const std::size_t index : group_indices) {
+        if (index >= groups.size()) {
+            throw std::invalid_argument(
+                "projective H1 square-function group index out of range");
+        }
+    }
+    ProjectiveSquareFunctionMoment result;
+    if (compute_gradient) {
+        result.gradient.resize(state.waves.size());
+    }
+    SpectralIncrement component(state.waves.size());
+    std::vector<std::size_t> touched_targets;
+    touched_targets.reserve(state.waves.size());
+    std::vector<std::size_t> target_generation(
+        state.waves.size(), 0);
+    std::size_t generation = 0;
+    const SpectralComplex imaginary_unit{0.0L, 1.0L};
+    const SpectralComplex minus_imaginary_unit{0.0L, -1.0L};
+    for (const std::size_t index : group_indices) {
+        ++generation;
+        touched_targets.clear();
+        const ProjectiveInteractionGroup& group = groups[index];
+        for (const InteractionIndex interaction : group.interactions) {
+            const auto [p, q, target] = interaction;
+            if (target_generation[target] != generation) {
+                target_generation[target] = generation;
+                component[target] = {};
+                touched_targets.push_back(target);
+            }
+            const SpectralComplex coefficient = imaginary_unit *
+                wave_dot(state.waves[q], state.velocity[p]);
+            for (std::size_t coordinate = 0; coordinate < 3;
+                 ++coordinate) {
+                component[target][coordinate] +=
+                    coefficient * state.velocity[q][coordinate];
+            }
+        }
+        for (const std::size_t target : touched_targets) {
+            component[target] = project_divergence_free(
+                state.waves[target], component[target]);
+            const SpectralReal weight = static_cast<SpectralReal>(
+                norm_squared(state.waves[target]));
+            result.norm2 += weight * std::real(dot_hermitian(
+                component[target], component[target]));
+        }
+        if (!compute_gradient) {
+            continue;
+        }
+        for (const InteractionIndex interaction : group.interactions) {
+            const auto [p, q, target] = interaction;
+            ComplexVector target_cotangent = component[target];
+            const SpectralReal cotangent_scale =
+                2.0L * static_cast<SpectralReal>(
+                    norm_squared(state.waves[target]));
+            for (SpectralComplex& value : target_cotangent) {
+                value *= cotangent_scale;
+            }
+            const SpectralComplex first_coefficient =
+                minus_imaginary_unit * dot_hermitian(
                     state.velocity[q], target_cotangent);
             for (std::size_t coordinate = 0; coordinate < 3;
                  ++coordinate) {

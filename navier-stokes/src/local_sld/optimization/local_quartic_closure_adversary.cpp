@@ -9,6 +9,14 @@
 #include "local_sld_projective_coherence_objective.hpp"
 #include "local_sld_projective_stretching_objective.hpp"
 #include "local_sld_projective_cross_power_objective.hpp"
+#include "local_sld_projective_open_power_objective.hpp"
+#include "local_sld_projective_height_stretching_objective.hpp"
+#include "local_sld_projective_height_power_objective.hpp"
+#include "local_sld_projective_height_outer_power_objective.hpp"
+#include "local_sld_projective_height_envelope_objective.hpp"
+#include "local_sld_projective_height_commutator_ratio_objective.hpp"
+#include "local_sld_projective_height_dynamic_ratio_objective.hpp"
+#include "local_sld_triad_selection.hpp"
 #include "parallel_executor.hpp"
 #include "spectral_adjoint.hpp"
 #include "spectral_galerkin.hpp"
@@ -29,31 +37,7 @@ namespace lemma {
 namespace {
 
 TriadSelection closure_selection(const std::string& name) {
-    if (name == "local") {
-        return TriadPartition::local;
-    }
-    if (name == "doubling-family") {
-        return TriadSelection::local_equal_low_doubling();
-    }
-    if (name == "doubling-remainder") {
-        return TriadSelection::local_without_equal_low_doubling();
-    }
-    if (name == "remainder-without-123") {
-        return TriadSelection::
-            local_without_equal_low_doubling_and_signature(1, 2, 3);
-    }
-    if (name == "double-triple-family") {
-        return TriadSelection::local_equal_low_double_triple();
-    }
-    if (name == "double-triple-remainder") {
-        return TriadSelection::local_without_equal_low_double_triple();
-    }
-    if (name == "double-triple-remainder-without-123") {
-        return TriadSelection::
-            local_without_equal_low_double_triple_and_signature(1, 2, 3);
-    }
-    throw std::invalid_argument(
-        "unsupported closure selection");
+    return LocalSldTriadSelection::parse(name);
 }
 
 bool is_common_block_objective(const std::string& objective) {
@@ -99,20 +83,27 @@ SpectralState make_start(
     int cutoff, int restart, std::uint64_t seed,
     const SpectralState* previous_winner,
     const InitialSobolevConstraint& sobolev,
-    const std::string& initial_profile) {
+    const std::string& initial_profile,
+    bool preserve_warm_layout) {
     std::mt19937_64 generator(seed);
     SpectralState state;
     if (previous_winner != nullptr && restart == 0) {
-        state = SpectralStateFactory::lift(
-            *previous_winner, cutoff, generator);
+        state = preserve_warm_layout &&
+                SpectralStateOps::cutoff(*previous_winner) == cutoff
+            ? *previous_winner
+            : SpectralStateFactory::lift(
+                  *previous_winner, cutoff, generator);
     } else if (initial_profile != "mixed") {
         state = LocalSignatureStateFactory::make(
             cutoff,
             LocalSignatureStateFactory::parse(initial_profile),
             seed);
     } else if (previous_winner != nullptr && restart % 3 == 0) {
-        state = SpectralStateFactory::lift(
-            *previous_winner, cutoff, generator);
+        state = preserve_warm_layout &&
+                SpectralStateOps::cutoff(*previous_winner) == cutoff
+            ? *previous_winner
+            : SpectralStateFactory::lift(
+                  *previous_winner, cutoff, generator);
         state = SpectralStateFactory::mutate(
             state, 0.08L + 0.02L * static_cast<SpectralReal>(restart % 5),
             generator, restart % 2 == 0);
@@ -196,7 +187,9 @@ LocalQuarticClosureAdversary::maximize(
     const LocalQuarticClosureAdversaryOptions& options,
     int restart, std::uint64_t seed, bool warm_continuation) {
     SpectralGalerkin galerkin;
-    galerkin.configure(options.backend, 1);
+    galerkin.configure(
+        options.backend,
+        options.restarts == 1 ? options.workers : 1);
     const SpectralDynamics dynamics(galerkin);
     const SpectralObjective spectral_objective(dynamics);
     const SpectralAdjoint adjoint(dynamics, spectral_objective);
@@ -214,6 +207,8 @@ LocalQuarticClosureAdversary::maximize(
     search.initial_step = options.initial_step;
     search.absorption_theta = options.absorption_theta;
     search.shape_power = options.shape_power;
+    search.projective_core_maximum_height =
+        options.projective_core_maximum_height;
     search.objective = options.objective == "closure-ratio"
         ? "local-closure-ratio"
         : (options.objective == "lqc3-ratio"
@@ -232,6 +227,22 @@ LocalQuarticClosureAdversary::maximize(
                ? "local-projective-stretching-ratio"
         : (options.objective == "projective-cross-power-ratio"
                ? "local-projective-cross-power-ratio"
+        : (options.objective == "projective-open-power-ratio"
+               ? "local-projective-open-power-ratio"
+        : (options.objective == "projective-height-stretching-ratio"
+               ? "local-projective-height-stretching-ratio"
+        : (options.objective == "projective-height-power-ratio"
+               ? "local-projective-height-power-ratio"
+        : (options.objective == "projective-height-outer-power-ratio"
+               ? "local-projective-height-outer-power-ratio"
+        : (options.objective == "projective-height-envelope-ratio"
+               ? "local-projective-height-envelope-ratio"
+        : (options.objective ==
+               "projective-height-commutator-envelope-ratio"
+               ? "local-projective-height-commutator-envelope-ratio"
+        : (options.objective ==
+               "projective-height-commutator-coercivity-ratio"
+               ? "local-projective-height-commutator-coercivity-ratio"
         : (options.objective == "signed-closure-ratio"
                ? "local-signed-closure-ratio"
                : (options.objective == "block-ratio"
@@ -243,8 +254,18 @@ LocalQuarticClosureAdversary::maximize(
                                     : (options.objective ==
                                                "maximum-sld-ratio"
                                            ? "local-frozen-maximum-sld-ratio"
-                                           : "local-sld-ratio")))))))))))));
+                                           : "local-sld-ratio"))))))))))))))))))));
     search.method = options.method;
+    if (options.objective ==
+        "projective-height-dynamic-coercivity-ratio") {
+        search.objective =
+            "local-projective-height-dynamic-coercivity-ratio";
+    }
+    if (options.objective ==
+        "projective-height-dynamic-envelope-ratio") {
+        search.objective =
+            "local-projective-height-dynamic-envelope-ratio";
+    }
     search.lbfgs_history = options.lbfgs_history;
     search.sobolev_order = options.sobolev_order;
     search.sobolev_cap = options.sobolev_cap;
@@ -253,12 +274,52 @@ LocalQuarticClosureAdversary::maximize(
         ? options.workers : 1;
     const GradientSearchResult optimized = adversary.maximize_q(
         initial, search);
+    LocalQuarticClosureRestartResult result;
+    result.state = optimized.state;
+    if (options.lean_diagnostics) {
+        result.value.finite = std::isfinite(optimized.objective);
+        if (options.objective ==
+            "projective-height-envelope-ratio") {
+            result.projective_height_component_envelope_absolute =
+                std::sqrt(std::max(0.0L, optimized.objective));
+        }
+        if (options.objective ==
+            "projective-height-commutator-envelope-ratio") {
+            result.projective_height_commutator_envelope_absolute =
+                std::sqrt(std::max(0.0L, optimized.objective));
+        }
+        if (options.objective ==
+            "projective-height-dynamic-envelope-ratio") {
+            result.projective_height_dynamic_envelope_absolute =
+                std::sqrt(std::max(0.0L, optimized.objective));
+        }
+        if (options.objective ==
+            "projective-height-commutator-coercivity-ratio") {
+            result.projective_height_commutator_coercivity_ratio =
+                std::sqrt(std::max(0.0L, optimized.objective));
+        }
+        if (options.objective ==
+            "projective-height-dynamic-coercivity-ratio") {
+            result.projective_height_dynamic_coercivity_ratio =
+                std::sqrt(std::max(0.0L, optimized.objective));
+        }
+        result.initial_objective = optimized.initial_objective;
+        result.objective = optimized.objective;
+        result.objective_step = optimized.objective_step;
+        result.final_projected_gradient_norm =
+            optimized.final_projected_gradient_norm;
+        result.sobolev_value = optimized.final_sobolev_value;
+        result.seed = seed;
+        result.restart = restart;
+        result.accepted_steps = optimized.accepted_steps;
+        result.evaluations = optimized.trajectory_evaluations;
+        result.warm_continuation = warm_continuation;
+        return result;
+    }
     const LocalQuarticClosureObjective closure(
         dynamics, search.closure_selection);
     const LocalQuarticClosureObjectiveValue initial_value =
         closure.evaluate(initial);
-    LocalQuarticClosureRestartResult result;
-    result.state = optimized.state;
     result.value = closure.evaluate(result.state);
     result.remainder_envelope_ratio =
         LocalSldRemainderEnvelopeObjective(
@@ -303,6 +364,83 @@ LocalQuarticClosureAdversary::maximize(
     result.projective_cross_bracket = cross_power_value.cross_bracket;
     result.projective_diagonal_bracket =
         cross_power_value.diagonal_bracket;
+    const LocalSldProjectiveOpenPowerObjectiveValue open_power_value =
+        LocalSldProjectiveOpenPowerObjective(
+            dynamics, search.closure_selection,
+            options.projective_core_maximum_height,
+            search.objective_threads).evaluate(result.state);
+    result.projective_open_power_absolute =
+        open_power_value.absolute_open_power_one;
+    result.projective_open_bracket = open_power_value.open_bracket;
+    result.projective_fixed_core_bracket =
+        open_power_value.fixed_core_bracket;
+    const LocalSldProjectiveHeightStretchingObjectiveValue
+        height_stretching_value =
+            LocalSldProjectiveHeightStretchingObjective(
+                dynamics, search.closure_selection,
+                options.projective_core_maximum_height,
+                search.objective_threads).evaluate(result.state);
+    result.projective_height_stretching_ratio =
+        height_stretching_value.stretching_aware_h1_ratio;
+    result.projective_height_h1_synthesis_ratio =
+        height_stretching_value.h1_synthesis_ratio;
+    result.projective_height_stretching_alignment_squared =
+        height_stretching_value.stretching_h1_alignment_squared;
+    result.projective_height_shape_count =
+        height_stretching_value.shell_shape_count;
+    const LocalSldProjectiveHeightPowerObjectiveValue
+        height_power_value = LocalSldProjectiveHeightPowerObjective(
+            dynamics, search.closure_selection,
+            options.projective_core_maximum_height,
+            search.objective_threads).evaluate(result.state);
+    result.projective_height_power_absolute =
+        height_power_value.absolute_shell_power_one;
+    result.projective_height_internal_bracket =
+        height_power_value.shell_internal_bracket;
+    const LocalSldProjectiveHeightOuterPowerObjectiveValue
+        height_outer_power_value =
+            LocalSldProjectiveHeightOuterPowerObjective(
+                dynamics, search.closure_selection,
+                search.objective_threads).evaluate(result.state);
+    result.projective_height_outer_power_absolute =
+        height_outer_power_value.absolute_outer_power_one;
+    result.projective_height_outer_h1_sum =
+        height_outer_power_value.diagonal_outer_h1_sum;
+    result.projective_height_active_shell_count =
+        height_outer_power_value.active_height_shell_count;
+    const LocalSldProjectiveHeightEnvelopeObjectiveValue
+        height_envelope_value =
+            LocalSldProjectiveHeightEnvelopeObjective(
+                dynamics, search.closure_selection,
+                search.objective_threads).evaluate(result.state);
+    result.projective_height_component_envelope_absolute =
+        height_envelope_value.absolute_component_power_one_envelope;
+    result.projective_height_commutator_envelope_absolute =
+        LocalSldProjectiveHeightEnvelopeObjective(
+            dynamics, search.closure_selection,
+            search.objective_threads, true)
+            .evaluate(result.state)
+            .absolute_component_power_one_envelope;
+    result.projective_height_dynamic_envelope_absolute =
+        LocalSldProjectiveHeightEnvelopeObjective(
+            dynamics, search.closure_selection,
+            search.objective_threads, true, true)
+            .evaluate(result.state)
+            .absolute_component_power_one_envelope;
+    result.projective_height_commutator_coercivity_ratio =
+        LocalSldProjectiveHeightCommutatorRatioObjective(
+            dynamics, search.closure_selection,
+            search.objective_threads)
+            .evaluate(result.state).coercivity_ratio;
+    result.projective_height_dynamic_coercivity_ratio =
+        LocalSldProjectiveHeightDynamicRatioObjective(
+            dynamics, search.closure_selection,
+            search.objective_threads)
+            .evaluate(result.state).coercivity_ratio;
+    result.projective_height_component_bracket_envelope =
+        height_envelope_value.absolute_component_bracket_envelope;
+    result.projective_height_pair_count =
+        height_envelope_value.height_pair_count;
     result.common_block_objective =
         is_common_block_objective(options.objective);
     if (result.common_block_objective) {
@@ -363,7 +501,7 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
     const LocalQuarticClosureAdversaryOptions& options) {
     if (options.minimum_cutoff < 1 ||
         options.maximum_cutoff < options.minimum_cutoff ||
-        options.maximum_cutoff > 8 || options.restarts < 1 ||
+        options.maximum_cutoff > 16 || options.restarts < 1 ||
         options.restarts > 1000 || options.workers < 1 ||
         options.workers > 256 || options.iterations < 0 ||
         options.line_search_steps < 1 ||
@@ -372,6 +510,8 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
         !(options.absorption_theta <= 1.0L) ||
         !std::isfinite(options.absorption_theta) ||
         options.shape_power < 0 || options.shape_power > 3 ||
+        options.projective_core_maximum_height < 1 ||
+        options.projective_core_maximum_height > 256 ||
         (options.method != "steepest" && options.method != "lbfgs") ||
         (options.backend != "auto" && options.backend != "direct" &&
          options.backend != "fft") ||
@@ -384,19 +524,26 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
          options.objective != "projective-coherence-ratio" &&
          options.objective != "projective-stretching-ratio" &&
          options.objective != "projective-cross-power-ratio" &&
+         options.objective != "projective-open-power-ratio" &&
+         options.objective != "projective-height-stretching-ratio" &&
+         options.objective != "projective-height-power-ratio" &&
+         options.objective != "projective-height-outer-power-ratio" &&
+         options.objective != "projective-height-envelope-ratio" &&
+         options.objective !=
+             "projective-height-commutator-envelope-ratio" &&
+         options.objective !=
+             "projective-height-dynamic-envelope-ratio" &&
+         options.objective !=
+             "projective-height-commutator-coercivity-ratio" &&
+         options.objective !=
+             "projective-height-dynamic-coercivity-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "sld-ratio" &&
          options.objective != "block-ratio" &&
          options.objective != "mixed-ratio" &&
          options.objective != "terminal-sld-ratio" &&
          options.objective != "maximum-sld-ratio") ||
-        (options.selection != "local" &&
-         options.selection != "doubling-family" &&
-         options.selection != "doubling-remainder" &&
-         options.selection != "remainder-without-123" &&
-         options.selection != "double-triple-family" &&
-         options.selection != "double-triple-remainder" &&
-         options.selection != "double-triple-remainder-without-123") ||
+        !LocalSldTriadSelection::supports(options.selection) ||
         (options.initial_profile != "mixed" &&
          options.initial_profile != "decaying" &&
          options.initial_profile != "flat" &&
@@ -430,6 +577,8 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
     report.time_step = options.time_step;
     report.absorption_theta = options.absorption_theta;
     report.shape_power = options.shape_power;
+    report.projective_core_maximum_height =
+        options.projective_core_maximum_height;
     report.sobolev_order = options.sobolev_order;
     report.sobolev_cap = options.sobolev_cap;
     SpectralState previous_winner;
@@ -462,7 +611,8 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
             starts[static_cast<std::size_t>(restart)] = make_start(
                 cutoff, restart, seed,
                 has_previous_winner ? &previous_winner : nullptr,
-                sobolev, options.initial_profile);
+                sobolev, options.initial_profile,
+                options.preserve_warm_layout);
         }
 
         LocalQuarticClosureCutoffResult row;
@@ -471,6 +621,51 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
             SpectralGalerkin galerkin;
             galerkin.configure(options.backend, 1);
             const SpectralDynamics dynamics(galerkin);
+            if (options.lean_diagnostics &&
+                (options.objective ==
+                     "projective-height-envelope-ratio" ||
+                 options.objective ==
+                     "projective-height-commutator-envelope-ratio" ||
+                 options.objective ==
+                     "projective-height-dynamic-envelope-ratio" ||
+                 options.objective ==
+                     "projective-height-commutator-coercivity-ratio" ||
+                 options.objective ==
+                     "projective-height-dynamic-coercivity-ratio")) {
+                if (options.objective ==
+                    "projective-height-commutator-coercivity-ratio") {
+                    row.warm_lift_objective =
+                        LocalSldProjectiveHeightCommutatorRatioObjective(
+                            dynamics,
+                            closure_selection(options.selection),
+                            options.workers)
+                            .evaluate(starts.front())
+                            .squared_coercivity_ratio;
+                } else if (options.objective ==
+                           "projective-height-dynamic-coercivity-ratio") {
+                    row.warm_lift_objective =
+                        LocalSldProjectiveHeightDynamicRatioObjective(
+                            dynamics,
+                            closure_selection(options.selection),
+                            options.workers)
+                            .evaluate(starts.front())
+                            .squared_coercivity_ratio;
+                } else {
+                    row.warm_lift_objective =
+                        LocalSldProjectiveHeightEnvelopeObjective(
+                            dynamics,
+                            closure_selection(options.selection),
+                            options.workers,
+                            options.objective ==
+                                "projective-height-commutator-envelope-ratio" ||
+                            options.objective ==
+                                "projective-height-dynamic-envelope-ratio",
+                            options.objective ==
+                                "projective-height-dynamic-envelope-ratio")
+                            .evaluate(starts.front())
+                            .squared_component_power_one_envelope;
+                }
+            } else {
             const LocalQuarticClosureObjectiveValue warm_value =
                 LocalQuarticClosureObjective(
                     dynamics, closure_selection(options.selection))
@@ -520,6 +715,94 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                                     .evaluate(starts.front())
                                     .block_sld_ratio
                               : warm_value.signed_local_sld_ratio))))))));
+            if (options.objective == "projective-open-power-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveOpenPowerObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.projective_core_maximum_height)
+                        .evaluate(starts.front())
+                        .squared_open_power_one;
+            }
+            if (options.objective ==
+                "projective-height-stretching-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveHeightStretchingObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.projective_core_maximum_height)
+                        .evaluate(starts.front())
+                        .stretching_aware_h1_ratio;
+            }
+            if (options.objective ==
+                "projective-height-power-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveHeightPowerObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.projective_core_maximum_height)
+                        .evaluate(starts.front())
+                        .squared_shell_power_one;
+            }
+            if (options.objective ==
+                "projective-height-outer-power-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveHeightOuterPowerObjective(
+                        dynamics,
+                        closure_selection(options.selection))
+                        .evaluate(starts.front())
+                        .squared_outer_power_one;
+            }
+            if (options.objective ==
+                "projective-height-envelope-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveHeightEnvelopeObjective(
+                        dynamics,
+                        closure_selection(options.selection))
+                        .evaluate(starts.front())
+                        .squared_component_power_one_envelope;
+            }
+            if (options.objective ==
+                "projective-height-commutator-envelope-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveHeightEnvelopeObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.workers, true)
+                        .evaluate(starts.front())
+                        .squared_component_power_one_envelope;
+            }
+            if (options.objective ==
+                "projective-height-dynamic-envelope-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveHeightEnvelopeObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.workers, true, true)
+                        .evaluate(starts.front())
+                        .squared_component_power_one_envelope;
+            }
+            if (options.objective ==
+                "projective-height-commutator-coercivity-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveHeightCommutatorRatioObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.workers)
+                        .evaluate(starts.front())
+                        .squared_coercivity_ratio;
+            }
+            if (options.objective ==
+                "projective-height-dynamic-coercivity-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveHeightDynamicRatioObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.workers)
+                        .evaluate(starts.front())
+                        .squared_coercivity_ratio;
+            }
+            }
         }
         std::vector<LocalQuarticClosureRestartResult> results(
             static_cast<std::size_t>(options.restarts));

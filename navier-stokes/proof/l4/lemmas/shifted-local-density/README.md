@@ -15,6 +15,18 @@ Companion response-space proof targets:
 - [`PROJECTIVE_QUARTET.md`](PROJECTIVE_QUARTET.md) proves the complete scale
   ray `(am,bm,cm)` for every fixed primitive squared-length shape and isolates
   the still-open sum over shapes.
+- [`PROJECTIVE_CROSS_QUARTET.md`](PROJECTIVE_CROSS_QUARTET.md) gives the exact
+  self/cross expansion and its cross-only adversary and attribution ledgers.
+- [`FINITE_PROJECTIVE_FAMILY.md`](FINITE_PROJECTIVE_FAMILY.md) proves that the
+  complete self+cross block internal to every fixed finite ray family closes
+  cutoff-independently; only its coupling to a growing tail remains open.
+- [`DYADIC_PROJECTIVE_HEIGHT_SCHUR.md`](DYADIC_PROJECTIVE_HEIGHT_SCHUR.md)
+  gives the exact dyadic height-matrix/Schur reduction of that growing tail;
+  its finite-matrix inequality is proved, while the joint uniform estimate
+  remains open.
+- [`DYADIC_COMMUTATOR_LEMMA.md`](DYADIC_COMMUTATOR_LEMMA.md) preserves the
+  dominant outer/advected commutator and states the current dyadic decay
+  target with coercive outer weights.
 - [`REMAINDER_QUARTET.md`](REMAINDER_QUARTET.md) computes the exact dense
   signature loss, rejects the absolute dense-count route, and gives the exact
   double-square reduction to the open signed commutator-absorption estimate.
