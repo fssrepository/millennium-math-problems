@@ -23,6 +23,7 @@ struct LocalSldProjectiveHeightMatrixEntry {
     SpectralReal palinstrophy_normalization = 0.0L;
     SpectralReal bracket = 0.0L;
     SpectralReal power_one = 0.0L;
+    SpectralReal absolute_component_power_one_envelope = 0.0L;
     SpectralReal absolute_fraction = 0.0L;
 };
 

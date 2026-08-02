@@ -1,7 +1,9 @@
 #include "local_sld_projective_height_matrix.hpp"
 
 #include "local_sld_projective_height_tail_summary.hpp"
+#include "local_sld_projective_height_schur_summary.hpp"
 #include "projective_advection_decomposition.hpp"
+#include "projective_height_shell_partition.hpp"
 #include "spectral_galerkin.hpp"
 #include "state_analysis.hpp"
 
@@ -64,39 +66,6 @@ SpectralReal relative_error(
         std::max({std::abs(computed), std::abs(expected), 1e-30L});
 }
 
-int height_shell(SpectralInteger height) {
-    if (height < 1) {
-        throw std::invalid_argument(
-            "projective primitive height must be positive");
-    }
-    int shell = 0;
-    SpectralInteger upper = 1;
-    while (upper < height) {
-        upper *= 2;
-        ++shell;
-    }
-    return shell;
-}
-
-SpectralInteger shell_minimum(int shell) {
-    if (shell == 0) {
-        return 1;
-    }
-    SpectralInteger previous_upper = 1;
-    for (int index = 1; index < shell; ++index) {
-        previous_upper *= 2;
-    }
-    return previous_upper + 1;
-}
-
-SpectralInteger shell_maximum(int shell) {
-    SpectralInteger result = 1;
-    for (int index = 0; index < shell; ++index) {
-        result *= 2;
-    }
-    return result;
-}
-
 TriadSelection selection_for(
     bool exclude_signature_123,
     bool exclude_triple_family) {
@@ -121,11 +90,19 @@ void finalize_entry(
         entry.enstrophy_normalization +
         entry.palinstrophy_normalization;
     entry.power_one = entry.bracket * power_one_scale;
+    entry.absolute_component_power_one_envelope =
+        (std::abs(entry.outer_square) +
+         std::abs(entry.advected_commutator) +
+         std::abs(entry.advecting_nested) +
+         std::abs(entry.enstrophy_normalization) +
+         std::abs(entry.palinstrophy_normalization)) *
+        std::abs(power_one_scale);
 }
 
 void write_json(
     const LocalSldProjectiveHeightMatrixReport& report,
     const LocalSldProjectiveHeightTailReport& tail,
+    const LocalSldProjectiveHeightSchurReport& schur,
     const LocalSldProjectiveHeightMatrixCliOptions& options,
     std::ostream& output) {
     output << std::setprecision(18)
@@ -225,6 +202,9 @@ void write_json(
             << static_cast<double>(entry.palinstrophy_normalization)
             << ", \"power_one\": "
             << static_cast<double>(entry.power_one)
+            << ", \"absolute_component_power_one_envelope\": "
+            << static_cast<double>(
+                   entry.absolute_component_power_one_envelope)
             << ", \"absolute_fraction\": "
             << static_cast<double>(entry.absolute_fraction) << '}'
             << (index + 1 == report.entries.size() ? "\n" : ",\n");
@@ -272,6 +252,77 @@ void write_json(
             << (index + 1 == tail.rows.size() ? "\n" : ",\n");
     }
     output << "  ],\n"
+        << "  \"height_schur_gaps\": [\n";
+    for (std::size_t index = 0; index < schur.gaps.size(); ++index) {
+        const auto& gap = schur.gaps[index];
+        output << "    {\"shell_gap\": " << gap.shell_gap
+            << ", \"pair_count\": " << gap.pair_count
+            << ", \"unscaled_pair_count\": "
+            << gap.unscaled_pair_count
+            << ", \"signed_power_one_sum\": "
+            << static_cast<double>(gap.signed_power_one_sum)
+            << ", \"absolute_power_one_sum\": "
+            << static_cast<double>(gap.absolute_power_one_sum)
+            << ", \"absolute_component_envelope_sum\": "
+            << static_cast<double>(
+                   gap.absolute_component_envelope_sum)
+            << ", \"maximum_symmetric_geometric_ratio\": "
+            << static_cast<double>(
+                   gap.maximum_symmetric_geometric_ratio) << '}'
+            << (index + 1 == schur.gaps.size() ? "\n" : ",\n");
+    }
+    output << "  ],\n"
+        << "  \"component_schur_diagnostics\": [\n";
+    for (std::size_t index = 0; index < schur.components.size(); ++index) {
+        const auto& component = schur.components[index];
+        output << "    {\"component\": \"" << component.component
+            << "\", \"maximum_off_diagonal_geometric_ratio\": "
+            << static_cast<double>(
+                   component.maximum_off_diagonal_geometric_ratio)
+            << ", \"maximum_weighted_row_sum\": "
+            << static_cast<double>(component.maximum_weighted_row_sum)
+            << ", \"unscaled_off_diagonal_pair_count\": "
+            << component.unscaled_off_diagonal_pair_count
+            << ", \"maximum_outer_weighted_diagonal_ratio\": "
+            << static_cast<double>(
+                   component.maximum_outer_weighted_diagonal_ratio)
+            << ", \"maximum_outer_weighted_off_diagonal_ratio\": "
+            << static_cast<double>(
+                   component.maximum_outer_weighted_off_diagonal_ratio)
+            << ", \"maximum_outer_weighted_row_sum\": "
+            << static_cast<double>(
+                   component.maximum_outer_weighted_row_sum)
+            << ", \"outer_unscaled_pair_count\": "
+            << component.outer_unscaled_pair_count << '}'
+            << (index + 1 == schur.components.size() ? "\n" : ",\n");
+    }
+    output << "  ],\n"
+        << "  \"maximum_symmetric_geometric_ratio\": "
+        << static_cast<double>(
+               schur.maximum_symmetric_geometric_ratio)
+        << ",\n"
+        << "  \"maximum_weighted_schur_row_sum\": "
+        << static_cast<double>(schur.maximum_weighted_row_sum)
+        << ",\n"
+        << "  \"total_component_power_one_envelope\": "
+        << static_cast<double>(schur.total_component_envelope)
+        << ",\n"
+        << "  \"diagonal_component_power_one_envelope\": "
+        << static_cast<double>(schur.diagonal_component_envelope)
+        << ",\n"
+        << "  \"weighted_schur_upper_bound\": "
+        << static_cast<double>(schur.weighted_schur_upper_bound)
+        << ",\n"
+        << "  \"weighted_schur_upper_bound_ratio\": "
+        << static_cast<double>(schur.upper_bound_ratio)
+        << ",\n"
+        << "  \"finite_weighted_schur_inequality_verified\": "
+        << (schur.finite_schur_inequality_verified
+                ? "true" : "false")
+        << ",\n"
+        << "  \"unscaled_off_diagonal_pair_count\": "
+        << schur.unscaled_off_diagonal_pair_count << ",\n"
+        << "  \"cutoff_uniform_weighted_schur_bound_proved\": false,\n"
         << "  \"maximum_cumulative_reconstruction_error\": "
         << static_cast<double>(tail.maximum_reconstruction_error)
         << ",\n"
@@ -311,27 +362,18 @@ LocalSldProjectiveHeightMatrix::analyze(
         exclude_signature_123, exclude_triple_family);
     const auto& groups = ProjectiveAdvectionDecomposition::group(
         state, selection);
-    int maximum_shell = 0;
-    for (const auto& group : groups) {
-        maximum_shell = std::max(
-            maximum_shell,
-            height_shell(group.primitive_squared_lengths[2]));
-    }
-    std::vector<HeightShellData> shells(
-        static_cast<std::size_t>(maximum_shell + 1));
-    for (int shell = 0; shell <= maximum_shell; ++shell) {
-        HeightShellData& data = shells[static_cast<std::size_t>(shell)];
-        data.summary.shell = shell;
-        data.summary.minimum_height = shell_minimum(shell);
-        data.summary.maximum_height = shell_maximum(shell);
-    }
-    for (std::size_t index = 0; index < groups.size(); ++index) {
-        const int shell = height_shell(
-            groups[index].primitive_squared_lengths[2]);
-        HeightShellData& data = shells[static_cast<std::size_t>(shell)];
-        data.group_indices.push_back(index);
-        ++data.summary.shape_count;
-        data.summary.interaction_count += groups[index].interactions.size();
+    const auto partition = ProjectiveHeightShellPartition::build(groups);
+    std::vector<HeightShellData> shells(partition.size());
+    for (std::size_t index = 0; index < partition.size(); ++index) {
+        HeightShellData& data = shells[index];
+        data.summary.shell = partition[index].shell;
+        data.summary.minimum_height = partition[index].minimum_height;
+        data.summary.maximum_height = partition[index].maximum_height;
+        data.summary.shape_count =
+            partition[index].group_indices.size();
+        data.summary.interaction_count =
+            partition[index].interaction_count;
+        data.group_indices = partition[index].group_indices;
     }
     const LocalQuarticClosureObjectiveValue selected =
         LocalQuarticClosureObjective(dynamics, selection).evaluate(state);
@@ -576,6 +618,8 @@ int LocalSldProjectiveHeightMatrixCli::run(
             options.exclude_triple_family);
     const LocalSldProjectiveHeightTailReport tail =
         LocalSldProjectiveHeightTailSummary::summarize(report);
+    const LocalSldProjectiveHeightSchurReport schur =
+        LocalSldProjectiveHeightSchurSummary::summarize(report);
     const std::filesystem::path path(options.certificate_path);
     if (!path.parent_path().empty()) {
         std::filesystem::create_directories(path.parent_path());
@@ -585,7 +629,7 @@ int LocalSldProjectiveHeightMatrixCli::run(
         throw std::runtime_error(
             "cannot write projective height-matrix certificate");
     }
-    write_json(report, tail, options, certificate);
+    write_json(report, tail, schur, options, certificate);
     out << std::setprecision(12)
         << "projective height matrix cutoff=" << report.cutoff
         << " shells=" << report.shells.size()
@@ -600,7 +644,8 @@ int LocalSldProjectiveHeightMatrixCli::run(
         << '\n'
         << "Certificate written to " << options.certificate_path << '\n';
     return report.exact_height_matrix_decomposition &&
-            tail.exact_cumulative_decomposition
+            tail.exact_cumulative_decomposition &&
+            schur.finite_schur_inequality_verified
         ? 0 : 2;
 }
 

@@ -329,6 +329,16 @@ open boundary because the adversary can relocate to higher projective
 shapes. The exact core--tail ledger and replay are documented in
 [FINITE_PROJECTIVE_FAMILY.md](FINITE_PROJECTIVE_FAMILY.md).
 
+The growing boundary is now decomposed further by dyadic primitive height.
+The exact five-component matrix satisfies a finite weighted Schur reduction:
+its full absolute component envelope is at most the maximum normalized row
+sum times the sum of its diagonal component envelopes. On the H=64 K8
+open-power winner those values are `0.0038521`, `2.9859`, and `0.0021600`,
+respectively. Separate diagonal-quartet adversaries give an absolute-envelope
+height slope `-0.435` on H=8,16,32,64. The exact algebra is proved, but the
+uniform row-sum and diagonal-envelope estimates are still open. See
+[DYADIC_PROJECTIVE_HEIGHT_SCHUR.md](DYADIC_PROJECTIVE_HEIGHT_SCHUR.md).
+
 ## Reproduction
 
 ```bash

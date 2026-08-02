@@ -24,16 +24,18 @@ bool is_power_of_two(SpectralInteger value) {
 
 SpectralReal fit_slope(
     const std::vector<LocalSldProjectiveHeightTransferRow>& rows,
-    bool next_shell) {
+    int series) {
     SpectralReal sx = 0.0L;
     SpectralReal sy = 0.0L;
     SpectralReal sxx = 0.0L;
     SpectralReal sxy = 0.0L;
     SpectralReal count = 0.0L;
     for (const auto& row : rows) {
-        const SpectralReal value = std::abs(next_shell
-            ? row.next_shell_diagonal_power_one
-            : row.open_power_one);
+        const SpectralReal value = series == 2
+            ? row.next_shell_diagonal_absolute_component_envelope
+            : std::abs(series == 1
+                  ? row.next_shell_diagonal_power_one
+                  : row.open_power_one);
         if (value <= 1e-30L) {
             continue;
         }
@@ -73,6 +75,10 @@ void write_json(
         << static_cast<double>(
                report.fitted_next_shell_diagonal_height_slope)
         << ",\n"
+        << "  \"fitted_next_shell_component_envelope_height_slope\": "
+        << static_cast<double>(
+               report.fitted_next_shell_component_envelope_height_slope)
+        << ",\n"
         << "  \"minimum_next_shell_fraction\": "
         << static_cast<double>(report.minimum_next_shell_fraction)
         << ",\n"
@@ -93,6 +99,9 @@ void write_json(
             << static_cast<double>(row.tail_internal_power_one)
             << ", \"next_shell_diagonal_power_one\": "
             << static_cast<double>(row.next_shell_diagonal_power_one)
+            << ", \"next_shell_diagonal_absolute_component_envelope\": "
+            << static_cast<double>(
+                   row.next_shell_diagonal_absolute_component_envelope)
             << ", \"next_shell_fraction_of_open_absolute_sum\": "
             << static_cast<double>(
                    row.next_shell_fraction_of_open_absolute_sum)
@@ -228,6 +237,8 @@ int LocalSldProjectiveHeightTransferCli::run(
         row.core_tail_power_one = cut->core_tail_power_one;
         row.tail_internal_power_one = cut->tail_internal_power_one;
         row.next_shell_diagonal_power_one = diagonal->power_one;
+        row.next_shell_diagonal_absolute_component_envelope =
+            diagonal->absolute_component_power_one_envelope;
         if (cut->open_absolute_power_one_sum > 0.0L) {
             row.next_shell_fraction_of_open_absolute_sum =
                 std::abs(diagonal->power_one) /
@@ -266,9 +277,11 @@ int LocalSldProjectiveHeightTransferCli::run(
                 "projective height transfer has duplicate heights");
         }
     }
-    report.fitted_open_height_slope = fit_slope(report.rows, false);
+    report.fitted_open_height_slope = fit_slope(report.rows, 0);
     report.fitted_next_shell_diagonal_height_slope =
-        fit_slope(report.rows, true);
+        fit_slope(report.rows, 1);
+    report.fitted_next_shell_component_envelope_height_slope =
+        fit_slope(report.rows, 2);
 
     const std::filesystem::path path(options.certificate_path);
     if (!path.parent_path().empty()) {
@@ -287,6 +300,9 @@ int LocalSldProjectiveHeightTransferCli::run(
         << " next_shell_slope="
         << static_cast<double>(
                report.fitted_next_shell_diagonal_height_slope)
+        << " next_shell_envelope_slope="
+        << static_cast<double>(
+               report.fitted_next_shell_component_envelope_height_slope)
         << " next_shell_fraction=["
         << static_cast<double>(report.minimum_next_shell_fraction)
         << ','

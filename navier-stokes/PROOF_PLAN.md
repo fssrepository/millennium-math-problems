@@ -929,9 +929,15 @@ branch stabilizes near `0.0010076` by K8. Separately adapted K8 branches at
 H=16,32,64 reach `0.0008591`, `0.0006330`, and `0.0003079`, giving a finite
 lower-branch height slope `-0.557`. Because the optimizer relocates toward
 higher primitive shapes, this decay cannot yet be used as an upper bound.
-The next analytic step is a uniform weighted estimate for `J_FT+J_T` in the
-height parameter; the next numerical step is higher-cutoff continuation of
-the H-adapted branches, not another optimization of the already closed core.
+The growing boundary now has an exact dyadic primitive-height matrix. Its
+absolute five-component envelope obeys the proved finite Schur reduction
+`sum_(i<=j)e_ij <= R sum_i e_i`. On the principal K8 stress states the
+normalized row sum is `2.89`--`3.85`. Separately optimized diagonal states
+give signed and absolute-envelope finite height slopes `-0.374` and `-0.435`.
+The lowest open analytical subtask is now precise: prove a cutoff-uniform
+bound for `R` and a cutoff-uniform summation of the diagonal envelopes. The
+finite slopes are only lower-branch evidence, not either upper bound. See
+`proof/l4/lemmas/shifted-local-density/DYADIC_PROJECTIVE_HEIGHT_SCHUR.md`.
 
 The absolute closure ratio was subsequently reverse-differentiated and
 optimized directly. A K1 branch reaches `C_state=1/3`, but its stretching is

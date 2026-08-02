@@ -1,0 +1,220 @@
+#include "local_sld_projective_height_schur_summary.hpp"
+
+#include <algorithm>
+#include <cmath>
+#include <stdexcept>
+#include <vector>
+
+namespace lemma {
+
+LocalSldProjectiveHeightSchurReport
+LocalSldProjectiveHeightSchurSummary::summarize(
+    const LocalSldProjectiveHeightMatrixReport& matrix) {
+    if (matrix.shells.empty()) {
+        throw std::invalid_argument(
+            "projective height Schur summary requires height shells");
+    }
+    const std::size_t shell_count = matrix.shells.size();
+    std::vector<SpectralReal> diagonal_envelope(shell_count, 0.0L);
+    for (const auto& entry : matrix.entries) {
+        if (entry.first_shell == entry.second_shell) {
+            diagonal_envelope[
+                static_cast<std::size_t>(entry.first_shell)] =
+                entry.absolute_component_power_one_envelope;
+        }
+    }
+    LocalSldProjectiveHeightSchurReport report;
+    report.gaps.resize(shell_count);
+    for (std::size_t gap = 0; gap < shell_count; ++gap) {
+        report.gaps[gap].shell_gap = static_cast<int>(gap);
+    }
+    std::vector<SpectralReal> row_sums(shell_count, 0.0L);
+    for (const auto& source : matrix.entries) {
+        LocalSldProjectiveHeightSchurEntry entry;
+        entry.first_shell = source.first_shell;
+        entry.second_shell = source.second_shell;
+        entry.shell_gap = source.second_shell - source.first_shell;
+        entry.power_one = source.power_one;
+        entry.absolute_component_power_one_envelope =
+            source.absolute_component_power_one_envelope;
+        report.total_component_envelope +=
+            entry.absolute_component_power_one_envelope;
+        if (entry.first_shell == entry.second_shell) {
+            report.diagonal_component_envelope +=
+                entry.absolute_component_power_one_envelope;
+        }
+        const SpectralReal first_diagonal = diagonal_envelope[
+            static_cast<std::size_t>(entry.first_shell)];
+        const SpectralReal second_diagonal = diagonal_envelope[
+            static_cast<std::size_t>(entry.second_shell)];
+        entry.geometric_diagonal_scale = std::sqrt(
+            first_diagonal * second_diagonal);
+        entry.has_nonzero_diagonal_scale =
+            entry.geometric_diagonal_scale > 1e-30L;
+        if (entry.has_nonzero_diagonal_scale) {
+            const SpectralReal symmetry_factor =
+                entry.first_shell == entry.second_shell
+                ? 1.0L : 2.0L;
+            entry.symmetric_geometric_ratio =
+                entry.absolute_component_power_one_envelope /
+                (symmetry_factor * entry.geometric_diagonal_scale);
+            report.maximum_symmetric_geometric_ratio = std::max(
+                report.maximum_symmetric_geometric_ratio,
+                entry.symmetric_geometric_ratio);
+            row_sums[static_cast<std::size_t>(entry.first_shell)] +=
+                entry.symmetric_geometric_ratio;
+            if (entry.first_shell != entry.second_shell) {
+                row_sums[static_cast<std::size_t>(entry.second_shell)] +=
+                    entry.symmetric_geometric_ratio;
+            }
+        } else if (entry.first_shell != entry.second_shell &&
+                   entry.absolute_component_power_one_envelope > 1e-30L) {
+            ++report.unscaled_off_diagonal_pair_count;
+        }
+        auto& gap = report.gaps[static_cast<std::size_t>(entry.shell_gap)];
+        ++gap.pair_count;
+        gap.signed_power_one_sum += entry.power_one;
+        gap.absolute_power_one_sum += std::abs(entry.power_one);
+        gap.absolute_component_envelope_sum +=
+            entry.absolute_component_power_one_envelope;
+        if (entry.has_nonzero_diagonal_scale) {
+            gap.maximum_symmetric_geometric_ratio = std::max(
+                gap.maximum_symmetric_geometric_ratio,
+                entry.symmetric_geometric_ratio);
+        } else if (entry.first_shell != entry.second_shell &&
+                   entry.absolute_component_power_one_envelope > 1e-30L) {
+            ++gap.unscaled_pair_count;
+        }
+        report.entries.push_back(entry);
+    }
+    report.maximum_weighted_row_sum = *std::max_element(
+        row_sums.begin(), row_sums.end());
+    report.weighted_schur_upper_bound =
+        report.maximum_weighted_row_sum *
+        report.diagonal_component_envelope;
+    if (report.weighted_schur_upper_bound > 0.0L) {
+        report.upper_bound_ratio =
+            report.total_component_envelope /
+            report.weighted_schur_upper_bound;
+    }
+    std::vector<SpectralReal> outer_diagonal(shell_count, 0.0L);
+    for (const auto& entry : matrix.entries) {
+        if (entry.first_shell == entry.second_shell) {
+            outer_diagonal[
+                static_cast<std::size_t>(entry.first_shell)] =
+                std::abs(entry.outer_square);
+        }
+    }
+    auto analyze_component = [&](const char* name, auto value) {
+        LocalSldProjectiveHeightComponentSchurRow component;
+        component.component = name;
+        std::vector<SpectralReal> component_diagonal(
+            shell_count, 0.0L);
+        for (const auto& entry : matrix.entries) {
+            if (entry.first_shell == entry.second_shell) {
+                component_diagonal[
+                    static_cast<std::size_t>(entry.first_shell)] =
+                    std::abs(value(entry));
+            }
+        }
+        std::vector<SpectralReal> component_row_sums(
+            shell_count, 0.0L);
+        for (const auto& entry : matrix.entries) {
+            const SpectralReal first = component_diagonal[
+                static_cast<std::size_t>(entry.first_shell)];
+            const SpectralReal second = component_diagonal[
+                static_cast<std::size_t>(entry.second_shell)];
+            const SpectralReal scale = std::sqrt(first * second);
+            const SpectralReal magnitude = std::abs(value(entry));
+            if (scale > 1e-30L) {
+                const SpectralReal symmetry_factor =
+                    entry.first_shell == entry.second_shell
+                    ? 1.0L : 2.0L;
+                const SpectralReal ratio =
+                    magnitude / (symmetry_factor * scale);
+                component_row_sums[
+                    static_cast<std::size_t>(entry.first_shell)] += ratio;
+                if (entry.first_shell != entry.second_shell) {
+                    component_row_sums[
+                        static_cast<std::size_t>(entry.second_shell)] +=
+                        ratio;
+                    component.maximum_off_diagonal_geometric_ratio =
+                        std::max(
+                            component
+                                .maximum_off_diagonal_geometric_ratio,
+                            ratio);
+                }
+            } else if (entry.first_shell != entry.second_shell &&
+                       magnitude > 1e-30L) {
+                ++component.unscaled_off_diagonal_pair_count;
+            }
+        }
+        component.maximum_weighted_row_sum = *std::max_element(
+            component_row_sums.begin(), component_row_sums.end());
+        std::vector<SpectralReal> outer_row_sums(
+            shell_count, 0.0L);
+        for (const auto& entry : matrix.entries) {
+            const SpectralReal first = outer_diagonal[
+                static_cast<std::size_t>(entry.first_shell)];
+            const SpectralReal second = outer_diagonal[
+                static_cast<std::size_t>(entry.second_shell)];
+            const SpectralReal scale = std::sqrt(first * second);
+            const SpectralReal magnitude = std::abs(value(entry));
+            if (scale > 1e-30L) {
+                const SpectralReal symmetry_factor =
+                    entry.first_shell == entry.second_shell
+                    ? 1.0L : 2.0L;
+                const SpectralReal ratio =
+                    magnitude / (symmetry_factor * scale);
+                outer_row_sums[
+                    static_cast<std::size_t>(entry.first_shell)] += ratio;
+                if (entry.first_shell == entry.second_shell) {
+                    component.maximum_outer_weighted_diagonal_ratio =
+                        std::max(
+                            component
+                                .maximum_outer_weighted_diagonal_ratio,
+                            ratio);
+                } else {
+                    outer_row_sums[
+                        static_cast<std::size_t>(entry.second_shell)] +=
+                        ratio;
+                    component
+                        .maximum_outer_weighted_off_diagonal_ratio =
+                        std::max(
+                            component
+                                .maximum_outer_weighted_off_diagonal_ratio,
+                            ratio);
+                }
+            } else if (magnitude > 1e-30L) {
+                ++component.outer_unscaled_pair_count;
+            }
+        }
+        component.maximum_outer_weighted_row_sum = *std::max_element(
+            outer_row_sums.begin(), outer_row_sums.end());
+        report.components.push_back(component);
+    };
+    analyze_component("outer_square", [](const auto& entry) {
+        return entry.outer_square;
+    });
+    analyze_component("advected_commutator", [](const auto& entry) {
+        return entry.advected_commutator;
+    });
+    analyze_component("advecting_nested", [](const auto& entry) {
+        return entry.advecting_nested;
+    });
+    analyze_component("enstrophy_normalization", [](const auto& entry) {
+        return entry.enstrophy_normalization;
+    });
+    analyze_component("palinstrophy_normalization", [](const auto& entry) {
+        return entry.palinstrophy_normalization;
+    });
+    report.finite_matrix_exact =
+        matrix.exact_height_matrix_decomposition;
+    report.finite_schur_inequality_verified =
+        report.unscaled_off_diagonal_pair_count == 0 &&
+        report.total_component_envelope <=
+            report.weighted_schur_upper_bound * (1.0L + 1e-14L);
+    return report;
+}
+
+}  // namespace lemma

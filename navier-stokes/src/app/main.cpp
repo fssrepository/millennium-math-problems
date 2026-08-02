@@ -61,6 +61,7 @@
 #include "local_sld_trajectory_evaluator.hpp"
 #include "local_sld_signature_block.hpp"
 #include "shifted_critical_density_cli.hpp"
+#include "spectral_state_blend.hpp"
 
 namespace ns {
 
@@ -950,6 +951,7 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab local-sld-block [options]\n"
         << "  navier_stokes_lab shifted-density [options]\n"
         << "  navier_stokes_lab state-transform [options]\n"
+        << "  navier_stokes_lab state-blend [options]\n"
         << "  navier_stokes_lab self-test\n\n"
         << "Simulation options:\n"
         << "  --n N                 grid N^3 (default 16)\n"
@@ -1064,6 +1066,8 @@ void print_help(std::ostream& out) {
     lemma::StateFamilyAnalysisCli::print_help(out);
     out << '\n';
     lemma::SpectralStateTransformCli::print_help(out);
+    out << '\n';
+    lemma::SpectralStateBlendCli::print_help(out);
 }
 
 }  // namespace ns
@@ -1335,6 +1339,11 @@ int main(int argc, char** argv) {
         if (command == "state-transform") {
             return lemma::SpectralStateTransformCli::run(
                 lemma::SpectralStateTransformCli::parse(argc, argv, 2),
+                std::cout);
+        }
+        if (command == "state-blend") {
+            return lemma::SpectralStateBlendCli::run(
+                lemma::SpectralStateBlendCli::parse(argc, argv, 2),
                 std::cout);
         }
         if (command == "state-analysis") {

@@ -20,6 +20,10 @@ Companion response-space proof targets:
 - [`FINITE_PROJECTIVE_FAMILY.md`](FINITE_PROJECTIVE_FAMILY.md) proves that the
   complete self+cross block internal to every fixed finite ray family closes
   cutoff-independently; only its coupling to a growing tail remains open.
+- [`DYADIC_PROJECTIVE_HEIGHT_SCHUR.md`](DYADIC_PROJECTIVE_HEIGHT_SCHUR.md)
+  gives the exact dyadic height-matrix/Schur reduction of that growing tail;
+  its finite-matrix inequality is proved, while the two required uniform
+  diagonal-envelope and row-sum estimates remain open.
 - [`REMAINDER_QUARTET.md`](REMAINDER_QUARTET.md) computes the exact dense
   signature loss, rejects the absolute dense-count route, and gives the exact
   double-square reduction to the open signed commutator-absorption estimate.

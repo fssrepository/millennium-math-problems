@@ -74,6 +74,9 @@ struct LocalQuarticClosureRestartResult {
     std::size_t projective_height_shape_count = 0;
     SpectralReal projective_height_power_absolute = 0.0L;
     SpectralReal projective_height_internal_bracket = 0.0L;
+    SpectralReal projective_height_outer_power_absolute = 0.0L;
+    SpectralReal projective_height_outer_h1_sum = 0.0L;
+    std::size_t projective_height_active_shell_count = 0;
     SpectralReal final_projected_gradient_norm = 0.0L;
     SpectralReal sobolev_value = 0.0L;
     std::uint64_t seed = 0;

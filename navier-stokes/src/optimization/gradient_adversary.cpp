@@ -11,6 +11,7 @@
 #include "local_sld_projective_open_power_objective.hpp"
 #include "local_sld_projective_height_stretching_objective.hpp"
 #include "local_sld_projective_height_power_objective.hpp"
+#include "local_sld_projective_height_outer_power_objective.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
 
 #include <algorithm>
@@ -242,6 +243,13 @@ SpectralReal GradientAdversary::objective_value(
             options.projective_core_maximum_height,
             options.objective_threads)
             .evaluate(initial).squared_shell_power_one;
+    }
+    if (options.objective ==
+        "local-projective-height-outer-power-ratio") {
+        return LocalSldProjectiveHeightOuterPowerObjective(
+            dynamics_, options.closure_selection,
+            options.objective_threads)
+            .evaluate(initial).squared_outer_power_one;
     }
     if (options.objective == "local-sld-ratio") {
         return LocalQuarticClosureObjective(
@@ -515,6 +523,15 @@ GradientSearchResult GradientAdversary::maximize_q(
                 .squared_shell_power_one;
             trajectory.objective_step = 0;
             trajectory.initial_gradient = height_power.gradient(result.state);
+        } else if (options.objective ==
+                   "local-projective-height-outer-power-ratio") {
+            const LocalSldProjectiveHeightOuterPowerObjective outer_power(
+                dynamics_, options.closure_selection,
+                options.objective_threads);
+            trajectory.objective_value = outer_power.evaluate(result.state)
+                .squared_outer_power_one;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = outer_power.gradient(result.state);
         } else if (options.objective == "local-sld-ratio") {
             const LocalQuarticClosureObjective closure(
                 dynamics_, options.closure_selection);

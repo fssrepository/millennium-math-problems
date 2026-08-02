@@ -54,6 +54,9 @@ std::string objective_formula(const std::string& objective) {
     if (objective == "projective-height-power-ratio") {
         return "maximize |J_(H,2H] S_full|^2 / (Z^4 P^4), where J_(H,2H] is the complete quartet internal to one dyadic primitive-height shell";
     }
+    if (objective == "projective-height-outer-power-ratio") {
+        return "maximize |S_full|^2 (sum_j ||A^(1/2)B_j(u,u)||_2^2)^2 / (Z^4 P^4) over dyadic primitive-height shells";
+    }
     if (objective == "signed-closure-ratio") {
         return "maximize (K+G) E^(1/4) / (Z^(7/4) P)";
     }
@@ -200,6 +203,14 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
             << ", \"projective_height_internal_bracket\": "
             << static_cast<double>(
                    winner.projective_height_internal_bracket)
+            << ", \"projective_height_outer_power_absolute\": "
+            << static_cast<double>(
+                   winner.projective_height_outer_power_absolute)
+            << ", \"projective_height_outer_h1_sum\": "
+            << static_cast<double>(
+                   winner.projective_height_outer_h1_sum)
+            << ", \"projective_height_active_shell_count\": "
+            << winner.projective_height_active_shell_count
             << ", \"squared_lqc3_target_ratio\": "
             << static_cast<double>(value.squared_lqc3_target_ratio)
             << ", \"signed_constant_ratio\": "

@@ -15,6 +15,7 @@ struct LocalSldProjectiveHeightTransferRow {
     SpectralReal core_tail_power_one = 0.0L;
     SpectralReal tail_internal_power_one = 0.0L;
     SpectralReal next_shell_diagonal_power_one = 0.0L;
+    SpectralReal next_shell_diagonal_absolute_component_envelope = 0.0L;
     SpectralReal next_shell_fraction_of_open_absolute_sum = 0.0L;
     SpectralReal open_without_next_shell_diagonal = 0.0L;
     SpectralReal open_effective_height_pairs = 0.0L;
@@ -27,6 +28,7 @@ struct LocalSldProjectiveHeightTransferReport {
     std::vector<LocalSldProjectiveHeightTransferRow> rows;
     SpectralReal fitted_open_height_slope = 0.0L;
     SpectralReal fitted_next_shell_diagonal_height_slope = 0.0L;
+    SpectralReal fitted_next_shell_component_envelope_height_slope = 0.0L;
     SpectralReal minimum_next_shell_fraction = 0.0L;
     SpectralReal maximum_next_shell_fraction = 0.0L;
     bool every_matrix_exact = false;

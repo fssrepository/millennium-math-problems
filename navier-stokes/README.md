@@ -445,11 +445,16 @@ projective target is core--growing-tail and tail--tail coupling. Its own
 exact-gradient objective reaches `0.0010076`, `0.0008591`, `0.0006330`, and
 `0.0003079` on separately optimized K8 branches for fixed shape-height cores
 H=8,16,32,64. The fitted finite lower-branch height exponent is `-0.557`, not
-a uniform upper bound. See
+a uniform upper bound. An exact dyadic height matrix now reduces the growing
+tail to a weighted Schur row bound and a summable diagonal component envelope.
+The finite Schur inequality is proved algebraically; the required uniform
+row-sum and diagonal-envelope bounds are not. The optimized finite diagonal
+envelope has fitted height slope `-0.435`. See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_CROSS_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/FINITE_PROJECTIVE_FAMILY.md` and
+`proof/l4/lemmas/shifted-local-density/DYADIC_PROJECTIVE_HEIGHT_SCHUR.md` and
 `proof/l4/lemmas/shifted-local-density/REMAINDER_QUARTET.md`.
 
 The helical local target has its own replayable optimizer and same-state
