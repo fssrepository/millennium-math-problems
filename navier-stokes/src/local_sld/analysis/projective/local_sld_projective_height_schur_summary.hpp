@@ -27,13 +27,20 @@ struct LocalSldProjectiveHeightSchurGapRow {
     SpectralReal absolute_component_envelope_sum = 0.0L;
     SpectralReal maximum_symmetric_geometric_ratio = 0.0L;
     SpectralReal commutator_paired_envelope_sum = 0.0L;
+    SpectralReal dynamic_paired_envelope_sum = 0.0L;
     SpectralReal
         commutator_paired_outer_maximum_symmetric_geometric_ratio = 0.0L;
     SpectralReal commutator_term_envelope_sum = 0.0L;
     SpectralReal remainder_terms_envelope_sum = 0.0L;
     SpectralReal commutator_outer_maximum_symmetric_geometric_ratio = 0.0L;
     SpectralReal remainder_outer_maximum_symmetric_geometric_ratio = 0.0L;
+    SpectralReal
+        dynamic_paired_outer_maximum_symmetric_geometric_ratio = 0.0L;
+    SpectralReal
+        dynamic_paired_response_maximum_symmetric_geometric_ratio = 0.0L;
     std::size_t commutator_paired_outer_unscaled_pair_count = 0;
+    std::size_t dynamic_paired_outer_unscaled_pair_count = 0;
+    std::size_t dynamic_paired_response_unscaled_pair_count = 0;
 };
 
 struct LocalSldProjectiveHeightComponentSchurRow {
@@ -72,16 +79,26 @@ struct LocalSldProjectiveHeightSchurReport {
     SpectralReal dynamic_paired_outer_maximum_weighted_row_sum = 0.0L;
     SpectralReal dynamic_paired_outer_weighted_schur_upper_bound = 0.0L;
     SpectralReal dynamic_paired_outer_upper_bound_ratio = 0.0L;
+    SpectralReal dynamic_paired_outer_gap_one_decay_constant = 0.0L;
+    SpectralReal dynamic_paired_outer_gap_ratio_sum = 0.0L;
+    SpectralReal dynamic_paired_response_weight = 0.0L;
+    SpectralReal dynamic_paired_response_maximum_weighted_row_sum = 0.0L;
+    SpectralReal dynamic_paired_response_weighted_schur_upper_bound = 0.0L;
+    SpectralReal dynamic_paired_response_upper_bound_ratio = 0.0L;
+    SpectralReal dynamic_paired_response_gap_one_decay_constant = 0.0L;
+    SpectralReal dynamic_paired_response_gap_ratio_sum = 0.0L;
     std::size_t unscaled_off_diagonal_pair_count = 0;
     std::size_t commutator_paired_unscaled_off_diagonal_pair_count = 0;
     std::size_t
         commutator_paired_outer_unscaled_off_diagonal_pair_count = 0;
     std::size_t dynamic_paired_outer_unscaled_off_diagonal_pair_count = 0;
+    std::size_t dynamic_paired_response_unscaled_off_diagonal_pair_count = 0;
     bool finite_matrix_exact = false;
     bool finite_schur_inequality_verified = false;
     bool finite_commutator_paired_schur_inequality_verified = false;
     bool finite_commutator_paired_outer_schur_inequality_verified = false;
     bool finite_dynamic_paired_outer_schur_inequality_verified = false;
+    bool finite_dynamic_paired_response_schur_inequality_verified = false;
     bool cutoff_uniform_weighted_schur_bound_proved = false;
 };
 

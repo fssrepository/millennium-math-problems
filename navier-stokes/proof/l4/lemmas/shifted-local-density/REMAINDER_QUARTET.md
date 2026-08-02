@@ -347,8 +347,14 @@ for the missing theorem but do not show divergence or prove boundedness.
 Keeping the dominant outer-square and advected terms paired as a commutator
 gives a much sharper exact majorant: `0.00179960` at K8 and `0.00182423` at
 complete K12. Its outer-coercive Schur row sums are `0.881010` and `0.883351`.
-The finite Schur inequality is proved; uniform dyadic commutator control is
-the remaining analytic step.
+The finite Schur inequality is proved. A separate uniform bound on that row
+constant is now numerically rejected as an overly strong route: a K8 exact
+gradient branch raises the envelope/outer-weight ratio to `4.8496` while the
+joint envelope shrinks. Pairing the nested term with the commutator gives the
+sharper dynamic majorant. Its refined K8 value is `0.00186662`, and the
+complete K12 value is `0.00187877` after one full gradient step. The remaining
+analytic step is a cutoff-uniform bound on this joint quantity, not on the
+isolated row constant.
 
 ## Reproduction
 

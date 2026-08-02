@@ -459,7 +459,17 @@ and advected terms into their exact commutator sharpens the majorant to
 `0.00179960` at K8 and `0.00182423` at complete K12. A coercive outer-weight
 Schur reduction is proved for this paired matrix; its finite row sums are
 `0.881010` and `0.883351`. The required cutoff-uniform joint estimate remains
-open. See
+open. Exact-gradient stress testing shows that bounding the row constant
+separately is too strong: its envelope/outer-weight ratio reaches `4.8496` at
+K8 while the joint quantity shrinks. Pairing the nested dynamical term with
+the commutator gives the sharper active majorant. Direct K8 optimization of
+that joint majorant reaches `0.00186662`; its complete K12 value is
+`0.00187877` after one full gradient step. This is finite evidence only, and
+the cutoff-uniform analytic bound remains open. An exact mixed-Gram identity
+for the dynamic entry supplies a nondegenerate response weight; it lowers the
+K8/K12 finite Schur rows to `0.672016`/`0.684904` and removes the observed
+outer-null singularity. Uniform control of the response-weighted product is
+the current analytic target. See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_CROSS_QUARTET.md` and

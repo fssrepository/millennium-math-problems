@@ -957,9 +957,23 @@ majorant. With the coercive weights
 `w_j=|S_full| ||A^(1/2)B_j(u,u)||^2/(Z^2P^2)`, an AM--GM Schur argument proves
 `sum g_ij <= R_comm sum w_j`. Exact-gradient paired-envelope winners give
 `0.00179960` at K8 and `0.00182423` at complete K12, while `R_comm` is
-`0.881010` and `0.883351`. The lowest analytic target is now DHS-10: prove
-the cutoff-uniform joint bound `R_comm sum w_j <= C`, preferably from dyadic
-off-diagonal commutator decay. This is still open.
+`0.881010` and `0.883351`. Directly maximizing the quotient by the outer
+weight drives it to `4.8496` already at K8 while the joint envelope decreases,
+so a uniform row constant is no longer the preferred sufficient condition.
+The nested term cancels the commutator on that stress branch. Pairing all
+three dynamical terms before absolute values gives the sharper DCL-9
+majorant. Its refined K8 value is `0.00186662`, and zero-padding to the
+complete K12 cube followed by one full gradient step gives `0.00187877`. The
+lowest analytic target is now DCL-10: prove this joint majorant
+cutoff-uniformly. This is still open.
+
+The dynamic matrix has the exact response form `D_ij=<b_i,R_j>+<b_j,R_i>`
+(with one term on the diagonal), where
+`R_j=C_j-B_j(.,u)^*Au`. The combined H1/H-1 response weight removes the
+outer-null degeneration: finite Schur rows are `0.672016` at K8 and
+`0.684904` at K12, versus `1.14162` on the deliberately outer-degenerate K8
+stress state. The remaining task is a cutoff-uniform analytic bound on this
+response-weighted Schur product.
 
 The absolute closure ratio was subsequently reverse-differentiated and
 optimized directly. A K1 branch reaches `C_state=1/3`, but its stretching is

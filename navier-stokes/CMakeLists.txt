@@ -71,21 +71,20 @@ add_executable(navier_stokes_lab
     src/reporting/family_reporter.cpp
     src/reporting/lemma_reporter.cpp
 
-    src/local_sld/core/local_quartic_closure_objective.cpp
-    src/local_sld/core/local_sld_triad_selection.cpp
-    src/local_sld/core/local_signature_density.cpp
-    src/local_sld/core/local_signature_objective.cpp
-    src/local_sld/core/local_sld_block_objective.cpp
-    src/local_sld/core/local_sld_cyclic_basis.cpp
-    src/local_sld/core/local_sld_cyclic_orbit_basis.cpp
-    src/local_sld/core/local_sld_response_basis.cpp
-    src/local_sld/core/local_sld_remainder_absorption_objective.cpp
-    src/local_sld/core/local_sld_remainder_envelope_objective.cpp
-    src/local_sld/core/local_sld_shape_power_objective.cpp
-    src/local_sld/core/local_sld_projective_coherence_objective.cpp
-    src/local_sld/core/local_sld_projective_stretching_objective.cpp
-    src/local_sld/core/local_sld_projective_cross_power_objective.cpp
-    src/local_sld/core/local_sld_two_scale_state.cpp
+    src/local_sld/core/closure/local_quartic_closure_objective.cpp
+    src/local_sld/core/triads/local_sld_triad_selection.cpp
+    src/local_sld/core/signature/local_signature_density.cpp
+    src/local_sld/core/signature/local_signature_objective.cpp
+    src/local_sld/core/closure/local_sld_block_objective.cpp
+    src/local_sld/core/cyclic/local_sld_cyclic_basis.cpp
+    src/local_sld/core/cyclic/local_sld_cyclic_orbit_basis.cpp
+    src/local_sld/core/response/local_sld_response_basis.cpp
+    src/local_sld/core/remainder/local_sld_remainder_absorption_objective.cpp
+    src/local_sld/core/remainder/local_sld_remainder_envelope_objective.cpp
+    src/local_sld/core/closure/local_sld_shape_power_objective.cpp
+    src/local_sld/core/projective/local_sld_projective_coherence_objective.cpp
+    src/local_sld/core/projective/local_sld_projective_stretching_objective.cpp
+    src/local_sld/core/projective/local_sld_projective_cross_power_objective.cpp
     src/local_sld/core/projective/local_sld_projective_open_power_objective.cpp
     src/local_sld/core/projective/local_sld_projective_height_stretching_objective.cpp
     src/local_sld/core/projective/local_sld_projective_height_power_objective.cpp
@@ -94,36 +93,36 @@ add_executable(navier_stokes_lab
     src/local_sld/core/projective/local_sld_projective_height_commutator_ratio_objective.cpp
     src/local_sld/core/projective/local_sld_projective_height_dynamic_ratio_objective.cpp
 
-    src/local_sld/analysis/local_critical_derivative_ledger.cpp
-    src/local_sld/analysis/local_quartic_closure_target.cpp
-    src/local_sld/analysis/local_quartic_commutator.cpp
-    src/local_sld/analysis/local_quartic_identity_ledger.cpp
-    src/local_sld/analysis/local_quartic_projected_residual.cpp
-    src/local_sld/analysis/local_quartic_reduced_ledger.cpp
-    src/local_sld/analysis/local_quartic_shell_envelope.cpp
-    src/local_sld/analysis/local_quartic_shell_ledger.cpp
-    src/local_sld/analysis/local_signature_geometry.cpp
-    src/local_sld/analysis/local_sld_response_diagonal.cpp
-    src/local_sld/analysis/local_sld_doubling_shell_ledger.cpp
-    src/local_sld/analysis/local_sld_doubling_scale_scan.cpp
-    src/local_sld/analysis/local_sld_response_family.cpp
-    src/local_sld/analysis/local_sld_response_hierarchy.cpp
-    src/local_sld/analysis/local_sld_response_tensor.cpp
-    src/local_sld/analysis/local_sld_projected_square.cpp
-    src/local_sld/analysis/local_sld_projective_shape_envelope.cpp
-    src/local_sld/analysis/local_sld_projective_coherence_ledger.cpp
-    src/local_sld/analysis/local_sld_projective_cross_attribution.cpp
-    src/local_sld/analysis/local_sld_projective_fan_scan.cpp
-    src/local_sld/analysis/local_sld_projective_quartic_cross_ledger.cpp
-    src/local_sld/analysis/local_sld_remainder_double_square.cpp
-    src/local_sld/analysis/local_sld_remainder_projective_ledger.cpp
-    src/local_sld/analysis/local_sld_remainder_signature_ledger.cpp
-    src/local_sld/analysis/local_sld_remainder_tradeoff_ledger.cpp
-    src/local_sld/analysis/local_sld_signature_block.cpp
-    src/local_sld/analysis/local_sld_trajectory_evaluator.cpp
-    src/local_sld/analysis/shifted_critical_density.cpp
-    src/local_sld/analysis/shifted_critical_density_budget.cpp
-    src/local_sld/analysis/stretching_derivative_ledger.cpp
+    src/local_sld/analysis/closure/local_critical_derivative_ledger.cpp
+    src/local_sld/analysis/closure/local_quartic_closure_target.cpp
+    src/local_sld/analysis/closure/local_quartic_commutator.cpp
+    src/local_sld/analysis/closure/local_quartic_identity_ledger.cpp
+    src/local_sld/analysis/closure/local_quartic_projected_residual.cpp
+    src/local_sld/analysis/closure/local_quartic_reduced_ledger.cpp
+    src/local_sld/analysis/closure/local_quartic_shell_envelope.cpp
+    src/local_sld/analysis/closure/local_quartic_shell_ledger.cpp
+    src/local_sld/analysis/signature/local_signature_geometry.cpp
+    src/local_sld/analysis/response/local_sld_response_diagonal.cpp
+    src/local_sld/analysis/doubling/local_sld_doubling_shell_ledger.cpp
+    src/local_sld/analysis/doubling/local_sld_doubling_scale_scan.cpp
+    src/local_sld/analysis/response/local_sld_response_family.cpp
+    src/local_sld/analysis/response/local_sld_response_hierarchy.cpp
+    src/local_sld/analysis/response/local_sld_response_tensor.cpp
+    src/local_sld/analysis/response/local_sld_projected_square.cpp
+    src/local_sld/analysis/projective/local_sld_projective_shape_envelope.cpp
+    src/local_sld/analysis/projective/local_sld_projective_coherence_ledger.cpp
+    src/local_sld/analysis/projective/local_sld_projective_cross_attribution.cpp
+    src/local_sld/analysis/projective/local_sld_projective_fan_scan.cpp
+    src/local_sld/analysis/projective/local_sld_projective_quartic_cross_ledger.cpp
+    src/local_sld/analysis/remainder/local_sld_remainder_double_square.cpp
+    src/local_sld/analysis/remainder/local_sld_remainder_projective_ledger.cpp
+    src/local_sld/analysis/remainder/local_sld_remainder_signature_ledger.cpp
+    src/local_sld/analysis/remainder/local_sld_remainder_tradeoff_ledger.cpp
+    src/local_sld/analysis/signature/local_sld_signature_block.cpp
+    src/local_sld/analysis/trajectory/local_sld_trajectory_evaluator.cpp
+    src/local_sld/analysis/density/shifted_critical_density.cpp
+    src/local_sld/analysis/density/shifted_critical_density_budget.cpp
+    src/local_sld/analysis/closure/stretching_derivative_ledger.cpp
     src/local_sld/analysis/projective/local_sld_projective_core_tail_ledger.cpp
     src/local_sld/analysis/projective/local_sld_projective_core_tail_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_core_height_scan.cpp
@@ -135,18 +134,19 @@ add_executable(navier_stokes_lab
     src/local_sld/analysis/projective/local_sld_projective_height_transfer_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_schur_summary.cpp
 
-    src/local_sld/optimization/local_quartic_closure_adversary.cpp
-    src/local_sld/optimization/local_signature_adversary.cpp
-    src/local_sld/optimization/local_signature_factor_adversary.cpp
-    src/local_sld/optimization/local_signature_gradient_adversary.cpp
-    src/local_sld/optimization/local_signature_state_factory.cpp
-    src/local_sld/optimization/local_signature_trajectory.cpp
-    src/local_sld/optimization/local_sld_cyclic_ansatz.cpp
-    src/local_sld/optimization/local_sld_cyclic_krylov_ansatz.cpp
-    src/local_sld/optimization/local_sld_cyclic_trajectory_ansatz.cpp
-    src/local_sld/optimization/local_sld_trajectory_adjoint.cpp
+    src/local_sld/optimization/closure/local_quartic_closure_adversary.cpp
+    src/local_sld/optimization/signature/local_signature_adversary.cpp
+    src/local_sld/optimization/signature/local_signature_factor_adversary.cpp
+    src/local_sld/optimization/signature/local_signature_gradient_adversary.cpp
+    src/local_sld/optimization/signature/local_signature_state_factory.cpp
+    src/local_sld/optimization/signature/local_signature_trajectory.cpp
+    src/local_sld/optimization/cyclic/local_sld_cyclic_ansatz.cpp
+    src/local_sld/optimization/cyclic/local_sld_cyclic_krylov_ansatz.cpp
+    src/local_sld/optimization/cyclic/local_sld_cyclic_trajectory_ansatz.cpp
+    src/local_sld/optimization/trajectory/local_sld_trajectory_adjoint.cpp
 
     src/local_sld/states/local_sld_projective_fan_state.cpp
+    src/local_sld/states/local_sld_two_scale_state.cpp
 
     src/local_sld/cli/local_quartic_closure_cli.cpp
     src/local_sld/cli/local_quartic_closure_reporter.cpp
@@ -163,10 +163,27 @@ target_include_directories(navier_stokes_lab PRIVATE
     src/proof/projective
     src/reporting
     src/local_sld/core
+    src/local_sld/core/closure
+    src/local_sld/core/cyclic
     src/local_sld/core/projective
+    src/local_sld/core/remainder
+    src/local_sld/core/response
+    src/local_sld/core/signature
+    src/local_sld/core/triads
     src/local_sld/analysis
+    src/local_sld/analysis/closure
+    src/local_sld/analysis/density
+    src/local_sld/analysis/doubling
+    src/local_sld/analysis/response
+    src/local_sld/analysis/remainder
+    src/local_sld/analysis/signature
+    src/local_sld/analysis/trajectory
     src/local_sld/analysis/projective
     src/local_sld/optimization
+    src/local_sld/optimization/closure
+    src/local_sld/optimization/cyclic
+    src/local_sld/optimization/signature
+    src/local_sld/optimization/trajectory
     src/local_sld/states
     src/local_sld/cli
 )

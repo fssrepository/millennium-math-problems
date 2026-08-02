@@ -23,10 +23,12 @@ struct HeightShellData {
     LocalSldProjectiveHeightShellSummary summary;
     std::vector<std::size_t> group_indices;
     std::vector<std::size_t> target_multiplicity;
+    const ProjectiveInteractionGroup* aggregate_group = nullptr;
     SpectralIncrement b;
     SpectralIncrement ab;
     SpectralIncrement transported_au;
     SpectralIncrement commutator;
+    SpectralIncrement dynamic_response;
 };
 
 SpectralIncrement laplacian_weight(
@@ -222,6 +224,12 @@ void write_json(
             << ", \"diagonal_commutator_alignment_squared\": "
             << static_cast<double>(
                    shell.diagonal_commutator_alignment_squared)
+            << ", \"dynamic_response_hminus1_norm2\": "
+            << static_cast<double>(
+                   shell.dynamic_response_hminus1_norm2)
+            << ", \"dynamic_response_to_outer_ratio_squared\": "
+            << static_cast<double>(
+                   shell.dynamic_response_to_outer_ratio_squared)
             << '}'
             << (index + 1 == report.shells.size() ? "\n" : ",\n");
     }
@@ -258,6 +266,11 @@ void write_json(
             << ", \"dynamic_paired_power_one_envelope\": "
             << static_cast<double>(
                    entry.dynamic_paired_power_one_envelope)
+            << ", \"dynamic_response_pairing\": "
+            << static_cast<double>(entry.dynamic_response_pairing)
+            << ", \"dynamic_response_reconstruction_error\": "
+            << static_cast<double>(
+                   entry.dynamic_response_reconstruction_error)
             << ", \"shared_target_mode_count\": "
             << entry.shared_target_mode_count
             << ", \"target_incidence_cosine\": "
@@ -329,6 +342,9 @@ void write_json(
             << ", \"commutator_paired_envelope_sum\": "
             << static_cast<double>(
                    gap.commutator_paired_envelope_sum)
+            << ", \"dynamic_paired_envelope_sum\": "
+            << static_cast<double>(
+                   gap.dynamic_paired_envelope_sum)
             << ", \"commutator_paired_outer_maximum_symmetric_geometric_ratio\": "
             << static_cast<double>(
                    gap
@@ -344,8 +360,20 @@ void write_json(
             << ", \"remainder_outer_maximum_symmetric_geometric_ratio\": "
             << static_cast<double>(
                    gap.remainder_outer_maximum_symmetric_geometric_ratio)
+            << ", \"dynamic_paired_outer_maximum_symmetric_geometric_ratio\": "
+            << static_cast<double>(
+                   gap
+                       .dynamic_paired_outer_maximum_symmetric_geometric_ratio)
+            << ", \"dynamic_paired_response_maximum_symmetric_geometric_ratio\": "
+            << static_cast<double>(
+                   gap
+                       .dynamic_paired_response_maximum_symmetric_geometric_ratio)
             << ", \"commutator_paired_outer_unscaled_pair_count\": "
-            << gap.commutator_paired_outer_unscaled_pair_count << '}'
+            << gap.commutator_paired_outer_unscaled_pair_count
+            << ", \"dynamic_paired_outer_unscaled_pair_count\": "
+            << gap.dynamic_paired_outer_unscaled_pair_count
+            << ", \"dynamic_paired_response_unscaled_pair_count\": "
+            << gap.dynamic_paired_response_unscaled_pair_count << '}'
             << (index + 1 == schur.gaps.size() ? "\n" : ",\n");
     }
     output << "  ],\n"
@@ -468,6 +496,48 @@ void write_json(
         << static_cast<double>(
                schur.dynamic_paired_outer_upper_bound_ratio)
         << ",\n"
+        << "  \"dynamic_paired_outer_gap_one_decay_constant\": "
+        << static_cast<double>(
+               schur.dynamic_paired_outer_gap_one_decay_constant)
+        << ",\n"
+        << "  \"dynamic_paired_outer_gap_ratio_sum\": "
+        << static_cast<double>(
+               schur.dynamic_paired_outer_gap_ratio_sum)
+        << ",\n"
+        << "  \"uniform_dynamic_paired_gap_decay_proved\": false,\n"
+        << "  \"dynamic_paired_response_power_one_weight\": "
+        << static_cast<double>(
+               schur.dynamic_paired_response_weight)
+        << ",\n"
+        << "  \"dynamic_paired_response_maximum_weighted_schur_row_sum\": "
+        << static_cast<double>(
+               schur.dynamic_paired_response_maximum_weighted_row_sum)
+        << ",\n"
+        << "  \"dynamic_paired_response_weighted_schur_upper_bound\": "
+        << static_cast<double>(
+               schur.dynamic_paired_response_weighted_schur_upper_bound)
+        << ",\n"
+        << "  \"dynamic_paired_response_weighted_schur_upper_bound_ratio\": "
+        << static_cast<double>(
+               schur.dynamic_paired_response_upper_bound_ratio)
+        << ",\n"
+        << "  \"dynamic_paired_response_gap_one_decay_constant\": "
+        << static_cast<double>(
+               schur.dynamic_paired_response_gap_one_decay_constant)
+        << ",\n"
+        << "  \"dynamic_paired_response_gap_ratio_sum\": "
+        << static_cast<double>(
+               schur.dynamic_paired_response_gap_ratio_sum)
+        << ",\n"
+        << "  \"uniform_dynamic_paired_response_gap_decay_proved\": false,\n"
+        << "  \"dynamic_paired_response_unscaled_off_diagonal_pair_count\": "
+        << schur
+               .dynamic_paired_response_unscaled_off_diagonal_pair_count
+        << ",\n"
+        << "  \"finite_dynamic_paired_response_schur_inequality_verified\": "
+        << (schur.finite_dynamic_paired_response_schur_inequality_verified
+                ? "true" : "false")
+        << ",\n"
         << "  \"dynamic_paired_outer_unscaled_off_diagonal_pair_count\": "
         << schur.dynamic_paired_outer_unscaled_off_diagonal_pair_count
         << ",\n"
@@ -495,12 +565,108 @@ void write_json(
         << "  \"bracket_reconstruction_error\": "
         << static_cast<double>(report.bracket_reconstruction_error)
         << ",\n"
+        << "  \"maximum_dynamic_response_reconstruction_error\": "
+        << static_cast<double>(
+               report.maximum_dynamic_response_reconstruction_error)
+        << ",\n"
+        << "  \"global_dynamic_response_pairing\": "
+        << static_cast<double>(report.global_dynamic_response_pairing)
+        << ",\n"
+        << "  \"reconstructed_global_dynamic_pairing\": "
+        << static_cast<double>(
+               report.reconstructed_global_dynamic_pairing)
+        << ",\n"
+        << "  \"global_dynamic_response_reconstruction_error\": "
+        << static_cast<double>(
+               report.global_dynamic_response_reconstruction_error)
+        << ",\n"
+        << "  \"global_aggregate_h1_norm2\": "
+        << static_cast<double>(report.global_aggregate_h1_norm2)
+        << ",\n"
+        << "  \"global_aggregate_h2_norm2\": "
+        << static_cast<double>(report.global_aggregate_h2_norm2)
+        << ",\n"
+        << "  \"global_dynamic_response_hminus1_norm2\": "
+        << static_cast<double>(
+               report.global_dynamic_response_hminus1_norm2)
+        << ",\n"
+        << "  \"global_dynamic_paired_power_one\": "
+        << static_cast<double>(report.global_dynamic_paired_power_one)
+        << ",\n"
+        << "  \"global_dynamic_response_young_upper_bound\": "
+        << static_cast<double>(
+               report.global_dynamic_response_young_upper_bound)
+        << ",\n"
+        << "  \"global_dynamic_response_young_upper_bound_ratio\": "
+        << static_cast<double>(
+               report.global_dynamic_response_young_upper_bound_ratio)
+        << ",\n"
+        << "  \"finite_global_dynamic_response_young_inequality_verified\": "
+        << (report.finite_global_dynamic_response_young_inequality_verified
+                ? "true" : "false")
+        << ",\n"
+        << "  \"global_selected_stretching\": "
+        << static_cast<double>(report.global_selected_stretching)
+        << ",\n"
+        << "  \"global_selected_palinstrophy_cross\": "
+        << static_cast<double>(
+               report.global_selected_palinstrophy_cross)
+        << ",\n"
+        << "  \"global_enstrophy_normalization\": "
+        << static_cast<double>(report.global_enstrophy_normalization)
+        << ",\n"
+        << "  \"reconstructed_global_enstrophy_normalization\": "
+        << static_cast<double>(
+               report.reconstructed_global_enstrophy_normalization)
+        << ",\n"
+        << "  \"global_enstrophy_normalization_reconstruction_error\": "
+        << static_cast<double>(
+               report
+                   .global_enstrophy_normalization_reconstruction_error)
+        << ",\n"
+        << "  \"global_palinstrophy_normalization\": "
+        << static_cast<double>(report.global_palinstrophy_normalization)
+        << ",\n"
+        << "  \"reconstructed_global_palinstrophy_normalization\": "
+        << static_cast<double>(
+               report.reconstructed_global_palinstrophy_normalization)
+        << ",\n"
+        << "  \"global_palinstrophy_normalization_reconstruction_error\": "
+        << static_cast<double>(
+               report
+                   .global_palinstrophy_normalization_reconstruction_error)
+        << ",\n"
+        << "  \"global_response_bracket_reconstruction_error\": "
+        << static_cast<double>(
+               report.global_response_bracket_reconstruction_error)
+        << ",\n"
+        << "  \"global_enstrophy_normalization_power_one_bound\": "
+        << static_cast<double>(
+               report.global_enstrophy_normalization_power_one_bound)
+        << ",\n"
+        << "  \"global_palinstrophy_normalization_power_one_bound\": "
+        << static_cast<double>(
+               report.global_palinstrophy_normalization_power_one_bound)
+        << ",\n"
+        << "  \"global_response_bracket_power_one_upper_bound\": "
+        << static_cast<double>(
+               report.global_response_bracket_power_one_upper_bound)
+        << ",\n"
+        << "  \"global_response_bracket_upper_bound_ratio\": "
+        << static_cast<double>(
+               report.global_response_bracket_upper_bound_ratio)
+        << ",\n"
+        << "  \"finite_global_response_bracket_inequality_verified\": "
+        << (report.finite_global_response_bracket_inequality_verified
+                ? "true" : "false")
+        << ",\n"
+        << "  \"cutoff_uniform_global_dynamic_response_weight_bound_proved\": false,\n"
         << "  \"exact_height_matrix_decomposition\": "
         << (report.exact_height_matrix_decomposition
                 ? "true" : "false") << ",\n"
         << "  \"uniform_height_matrix_bound_proved\": false,\n"
         << "  \"finite_height_matrix_is_not_a_proof\": true,\n"
-        << "  \"remaining_requirement\": \"derive a cutoff-uniform weighted Schur or signed summability estimate for this dyadic primitive-height matrix\"\n"
+        << "  \"remaining_requirement\": \"derive cutoff-uniform estimates for the global dynamic-response weight and the two normalization terms\"\n"
         << "}\n";
 }
 
@@ -533,6 +699,10 @@ LocalSldProjectiveHeightMatrix::analyze(
         data.summary.interaction_count =
             partition[index].interaction_count;
         data.group_indices = partition[index].group_indices;
+        const auto& aggregate =
+            ProjectiveAdvectionDecomposition::aggregate_family(
+                state, selection, partition[index].primitive_shapes);
+        data.aggregate_group = &aggregate.front();
         data.target_multiplicity.assign(state.waves.size(), 0);
         for (const std::size_t group_index : data.group_indices) {
             for (const InteractionIndex interaction :
@@ -582,6 +752,19 @@ LocalSldProjectiveHeightMatrix::analyze(
                     shell.ab[mode][coordinate];
             }
         }
+        shell.dynamic_response = shell.commutator;
+        const ProjectiveBilinearCotangents nested_cotangents =
+            ProjectiveAdvectionDecomposition::bilinear_vjp(
+                state, *shell.aggregate_group, shell.b,
+                state.velocity, au, threads);
+        for (std::size_t mode = 0;
+             mode < shell.dynamic_response.size(); ++mode) {
+            for (std::size_t coordinate = 0; coordinate < 3;
+                 ++coordinate) {
+                shell.dynamic_response[mode][coordinate] -=
+                    nested_cotangents.advecting[mode][coordinate];
+            }
+        }
         shell.summary.stretching = pairing(au, shell.b);
         shell.summary.palinstrophy_cross = pairing(shell.ab, au);
         shell.summary.aggregate_l2_norm2 = pairing(shell.b, shell.b);
@@ -589,9 +772,14 @@ LocalSldProjectiveHeightMatrix::analyze(
         shell.summary.aggregate_h2_norm2 = pairing(shell.ab, shell.ab);
         shell.summary.commutator_hminus1_norm2 =
             hminus1_norm_squared(state, shell.commutator);
+        shell.summary.dynamic_response_hminus1_norm2 =
+            hminus1_norm_squared(state, shell.dynamic_response);
         if (shell.summary.aggregate_h1_norm2 > 0.0L) {
             shell.summary.commutator_to_outer_ratio_squared =
                 shell.summary.commutator_hminus1_norm2 /
+                shell.summary.aggregate_h1_norm2;
+            shell.summary.dynamic_response_to_outer_ratio_squared =
+                shell.summary.dynamic_response_hminus1_norm2 /
                 shell.summary.aggregate_h1_norm2;
         }
         const SpectralReal diagonal_commutator = pairing(
@@ -670,6 +858,69 @@ LocalSldProjectiveHeightMatrix::analyze(
          selected.palinstrophy * selected.palinstrophy);
     report.selected_power_one =
         report.selected_bracket * report.power_one_scale;
+    SpectralIncrement global_b(state.waves.size(), ComplexVector{});
+    SpectralIncrement global_dynamic_response(
+        state.waves.size(), ComplexVector{});
+    for (const HeightShellData& shell : shells) {
+        for (std::size_t mode = 0; mode < state.waves.size(); ++mode) {
+            for (std::size_t coordinate = 0; coordinate < 3;
+                 ++coordinate) {
+                global_b[mode][coordinate] += shell.b[mode][coordinate];
+                global_dynamic_response[mode][coordinate] +=
+                    shell.dynamic_response[mode][coordinate];
+            }
+        }
+    }
+    report.global_dynamic_response_pairing = pairing(
+        global_b, global_dynamic_response);
+    report.global_aggregate_h1_norm2 = pairing(
+        global_b, laplacian_weight(state, global_b));
+    const SpectralIncrement global_ab = laplacian_weight(
+        state, global_b);
+    report.global_aggregate_h2_norm2 = pairing(global_ab, global_ab);
+    report.global_dynamic_response_hminus1_norm2 =
+        hminus1_norm_squared(state, global_dynamic_response);
+    report.global_dynamic_paired_power_one =
+        std::abs(
+            report.global_dynamic_response_pairing *
+            report.power_one_scale);
+    report.global_dynamic_response_young_upper_bound =
+        0.5L * std::abs(report.power_one_scale) *
+        (report.global_aggregate_h1_norm2 +
+         report.global_dynamic_response_hminus1_norm2);
+    if (report.global_dynamic_response_young_upper_bound > 0.0L) {
+        report.global_dynamic_response_young_upper_bound_ratio =
+            report.global_dynamic_paired_power_one /
+            report.global_dynamic_response_young_upper_bound;
+    }
+    report.global_selected_stretching = pairing(au, global_b);
+    report.global_selected_palinstrophy_cross = pairing(global_ab, au);
+    report.global_enstrophy_normalization =
+        report.global_selected_stretching *
+        report.global_selected_stretching /
+        (2.0L * selected.enstrophy);
+    report.global_palinstrophy_normalization =
+        3.0L * report.global_selected_stretching *
+        report.global_selected_palinstrophy_cross /
+        (2.0L * selected.palinstrophy);
+    report.global_enstrophy_normalization_power_one_bound =
+        0.5L * std::abs(report.power_one_scale) *
+        report.global_aggregate_h1_norm2;
+    report.global_palinstrophy_normalization_power_one_bound =
+        1.5L * std::abs(report.power_one_scale) *
+        std::sqrt(
+            selected.enstrophy / selected.palinstrophy *
+            report.global_aggregate_h1_norm2 *
+            report.global_aggregate_h2_norm2);
+    report.global_response_bracket_power_one_upper_bound =
+        report.global_dynamic_response_young_upper_bound +
+        report.global_enstrophy_normalization_power_one_bound +
+        report.global_palinstrophy_normalization_power_one_bound;
+    if (report.global_response_bracket_power_one_upper_bound > 0.0L) {
+        report.global_response_bracket_upper_bound_ratio =
+            std::abs(report.selected_power_one) /
+            report.global_response_bracket_power_one_upper_bound;
+    }
     SpectralReal square_sum = 0.0L;
     for (std::size_t first = 0; first < shells.size(); ++first) {
         for (std::size_t second = first;
@@ -720,6 +971,8 @@ LocalSldProjectiveHeightMatrix::analyze(
                     3.0L * left.summary.stretching *
                     left.summary.palinstrophy_cross /
                     (2.0L * selected.palinstrophy);
+                entry.dynamic_response_pairing = pairing(
+                    left.b, left.dynamic_response);
             } else {
                 const SpectralIncrement left_advects_right = evaluate(
                     left, right.b, state.velocity);
@@ -745,8 +998,31 @@ LocalSldProjectiveHeightMatrix::analyze(
                      right.summary.stretching *
                          left.summary.palinstrophy_cross) /
                     (2.0L * selected.palinstrophy);
+                entry.dynamic_response_pairing =
+                    pairing(left.b, right.dynamic_response) +
+                    pairing(right.b, left.dynamic_response);
             }
             finalize_entry(entry, report.power_one_scale);
+            const SpectralReal dynamic_entry =
+                entry.outer_square + entry.advected_commutator +
+                entry.advecting_nested;
+            report.reconstructed_global_dynamic_pairing += dynamic_entry;
+            report.reconstructed_global_enstrophy_normalization +=
+                entry.enstrophy_normalization;
+            report.reconstructed_global_palinstrophy_normalization +=
+                entry.palinstrophy_normalization;
+            const SpectralReal dynamic_scale = std::max(
+                std::abs(entry.dynamic_response_pairing),
+                std::abs(dynamic_entry));
+            entry.dynamic_response_reconstruction_error =
+                dynamic_scale > 1e-18L
+                ? relative_error(
+                      entry.dynamic_response_pairing, dynamic_entry)
+                : std::abs(
+                      entry.dynamic_response_pairing - dynamic_entry);
+            report.maximum_dynamic_response_reconstruction_error = std::max(
+                report.maximum_dynamic_response_reconstruction_error,
+                entry.dynamic_response_reconstruction_error);
             report.reconstructed_bracket += entry.bracket;
             report.reconstructed_power_one += entry.power_one;
             report.absolute_power_one_sum += std::abs(entry.power_one);
@@ -776,8 +1052,50 @@ LocalSldProjectiveHeightMatrix::analyze(
     }
     report.bracket_reconstruction_error = relative_error(
         report.reconstructed_bracket, report.selected_bracket);
+    const SpectralReal global_dynamic_scale = std::max(
+        std::abs(report.global_dynamic_response_pairing),
+        std::abs(report.reconstructed_global_dynamic_pairing));
+    report.global_dynamic_response_reconstruction_error =
+        global_dynamic_scale > 1e-18L
+        ? relative_error(
+              report.global_dynamic_response_pairing,
+              report.reconstructed_global_dynamic_pairing)
+        : std::abs(
+              report.global_dynamic_response_pairing -
+              report.reconstructed_global_dynamic_pairing);
+    report.global_enstrophy_normalization_reconstruction_error =
+        relative_error(
+            report.global_enstrophy_normalization,
+            report.reconstructed_global_enstrophy_normalization);
+    report.global_palinstrophy_normalization_reconstruction_error =
+        relative_error(
+            report.global_palinstrophy_normalization,
+            report.reconstructed_global_palinstrophy_normalization);
+    report.global_response_bracket_reconstruction_error =
+        relative_error(
+            report.global_dynamic_response_pairing +
+                report.global_enstrophy_normalization +
+                report.global_palinstrophy_normalization,
+            report.selected_bracket);
+    report.finite_global_dynamic_response_young_inequality_verified =
+        report.global_dynamic_paired_power_one <=
+        report.global_dynamic_response_young_upper_bound *
+            (1.0L + 1e-14L);
+    report.finite_global_response_bracket_inequality_verified =
+        std::abs(report.selected_power_one) <=
+        report.global_response_bracket_power_one_upper_bound *
+            (1.0L + 1e-14L);
     report.exact_height_matrix_decomposition =
-        report.bracket_reconstruction_error < 1e-13L;
+        report.bracket_reconstruction_error < 1e-13L &&
+        report.maximum_dynamic_response_reconstruction_error < 1e-13L &&
+        report.global_dynamic_response_reconstruction_error < 1e-13L &&
+        report.global_enstrophy_normalization_reconstruction_error <
+            1e-13L &&
+        report.global_palinstrophy_normalization_reconstruction_error <
+            1e-13L &&
+        report.global_response_bracket_reconstruction_error < 1e-13L &&
+        report.finite_global_dynamic_response_young_inequality_verified &&
+        report.finite_global_response_bracket_inequality_verified;
     return report;
 }
 
@@ -869,7 +1187,8 @@ int LocalSldProjectiveHeightMatrixCli::run(
     return report.exact_height_matrix_decomposition &&
             tail.exact_cumulative_decomposition &&
             schur.finite_schur_inequality_verified &&
-            schur.finite_dynamic_paired_outer_schur_inequality_verified
+            schur.finite_dynamic_paired_outer_schur_inequality_verified &&
+            schur.finite_dynamic_paired_response_schur_inequality_verified
         ? 0 : 2;
 }
 
