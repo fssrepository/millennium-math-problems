@@ -2898,6 +2898,10 @@ bool self_test(std::ostream& out) {
                 .maximum_component_reconstruction_error < 1e-13L &&
         remainder_projective_height_tail
                 .maximum_palinstrophy_factorization_error < 1e-13L &&
+        remainder_projective_height_tail
+                .maximum_alignment_product_reconstruction_error < 1e-13L &&
+        remainder_projective_height_tail
+                .finite_normalization_cauchy_inequalities_verified &&
         !remainder_projective_height_tail
              .uniform_weighted_tail_bound_proved;
     const LocalSldProjectiveHeightSchurReport

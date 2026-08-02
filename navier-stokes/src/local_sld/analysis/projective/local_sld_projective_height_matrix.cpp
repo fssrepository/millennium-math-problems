@@ -272,6 +272,10 @@ void write_json(
             << ", \"dynamic_paired_power_one_envelope\": "
             << static_cast<double>(
                    entry.dynamic_paired_power_one_envelope)
+            << ", \"aggregate_h1_pairing\": "
+            << static_cast<double>(entry.aggregate_h1_pairing)
+            << ", \"aggregate_h2_pairing\": "
+            << static_cast<double>(entry.aggregate_h2_pairing)
             << ", \"dynamic_response_pairing\": "
             << static_cast<double>(entry.dynamic_response_pairing)
             << ", \"dynamic_response_reconstruction_error\": "
@@ -320,6 +324,24 @@ void write_json(
             << static_cast<double>(row.core_palinstrophy_cross)
             << ", \"tail_palinstrophy_cross\": "
             << static_cast<double>(row.tail_palinstrophy_cross)
+            << ", \"core_aggregate_h1_norm2\": "
+            << static_cast<double>(row.core_aggregate_h1_norm2)
+            << ", \"core_aggregate_h2_norm2\": "
+            << static_cast<double>(row.core_aggregate_h2_norm2)
+            << ", \"tail_aggregate_h1_norm2\": "
+            << static_cast<double>(row.tail_aggregate_h1_norm2)
+            << ", \"tail_aggregate_h2_norm2\": "
+            << static_cast<double>(row.tail_aggregate_h2_norm2)
+            << ", \"core_stretching_h1_alignment\": "
+            << static_cast<double>(row.core_stretching_h1_alignment)
+            << ", \"tail_stretching_h1_alignment\": "
+            << static_cast<double>(row.tail_stretching_h1_alignment)
+            << ", \"core_palinstrophy_cross_h2_alignment\": "
+            << static_cast<double>(
+                   row.core_palinstrophy_cross_h2_alignment)
+            << ", \"tail_palinstrophy_cross_h2_alignment\": "
+            << static_cast<double>(
+                   row.tail_palinstrophy_cross_h2_alignment)
             << ", \"core_stretching_tail_cross_power_one\": "
             << static_cast<double>(
                    row.core_stretching_tail_cross_power_one)
@@ -329,6 +351,31 @@ void write_json(
             << ", \"tail_stretching_tail_cross_power_one\": "
             << static_cast<double>(
                    row.tail_stretching_tail_cross_power_one)
+            << ", \"core_stretching_tail_cross_cauchy_bound\": "
+            << static_cast<double>(
+                   row.core_stretching_tail_cross_cauchy_bound)
+            << ", \"tail_stretching_core_cross_cauchy_bound\": "
+            << static_cast<double>(
+                   row.tail_stretching_core_cross_cauchy_bound)
+            << ", \"tail_stretching_tail_cross_cauchy_bound\": "
+            << static_cast<double>(
+                   row.tail_stretching_tail_cross_cauchy_bound)
+            << ", \"core_stretching_tail_cross_cauchy_ratio\": "
+            << static_cast<double>(
+                   row.core_stretching_tail_cross_cauchy_ratio)
+            << ", \"tail_stretching_core_cross_cauchy_ratio\": "
+            << static_cast<double>(
+                   row.tail_stretching_core_cross_cauchy_ratio)
+            << ", \"tail_stretching_tail_cross_cauchy_ratio\": "
+            << static_cast<double>(
+                   row.tail_stretching_tail_cross_cauchy_ratio)
+            << ", \"joint_cross_tail_cauchy_bound\": "
+            << static_cast<double>(row.joint_cross_tail_cauchy_bound)
+            << ", \"joint_cross_tail_cauchy_ratio\": "
+            << static_cast<double>(row.joint_cross_tail_cauchy_ratio)
+            << ", \"maximum_alignment_product_reconstruction_error\": "
+            << static_cast<double>(
+                   row.maximum_alignment_product_reconstruction_error)
             << ", \"palinstrophy_factorization_error\": "
             << static_cast<double>(
                    row.palinstrophy_factorization_error)
@@ -588,6 +635,17 @@ void write_json(
         << "  \"maximum_cumulative_palinstrophy_factorization_error\": "
         << static_cast<double>(
                tail.maximum_palinstrophy_factorization_error)
+        << ",\n"
+        << "  \"maximum_cumulative_normalization_cauchy_ratio\": "
+        << static_cast<double>(tail.maximum_normalization_cauchy_ratio)
+        << ",\n"
+        << "  \"maximum_alignment_product_reconstruction_error\": "
+        << static_cast<double>(
+               tail.maximum_alignment_product_reconstruction_error)
+        << ",\n"
+        << "  \"finite_normalization_cauchy_inequalities_verified\": "
+        << (tail.finite_normalization_cauchy_inequalities_verified
+                ? "true" : "false")
         << ",\n"
         << "  \"exact_cumulative_height_decomposition\": "
         << (tail.exact_cumulative_decomposition ? "true" : "false")
@@ -1027,6 +1085,10 @@ LocalSldProjectiveHeightMatrix::analyze(
                     target_dot / incidence_denominator;
             }
             if (first == second) {
+                entry.aggregate_h1_pairing = pairing(
+                    left.b, left.ab);
+                entry.aggregate_h2_pairing = pairing(
+                    left.ab, left.ab);
                 const SpectralIncrement nested = evaluate(
                     left, left.b, state.velocity);
                 entry.outer_square = -pairing(left.b, left.ab);
@@ -1044,6 +1106,11 @@ LocalSldProjectiveHeightMatrix::analyze(
                 entry.dynamic_response_pairing = pairing(
                     left.b, left.dynamic_response);
             } else {
+                entry.aggregate_h1_pairing =
+                    pairing(left.b, right.ab) +
+                    pairing(right.b, left.ab);
+                entry.aggregate_h2_pairing =
+                    2.0L * pairing(left.ab, right.ab);
                 const SpectralIncrement left_advects_right = evaluate(
                     left, right.b, state.velocity);
                 const SpectralIncrement right_advects_left = evaluate(

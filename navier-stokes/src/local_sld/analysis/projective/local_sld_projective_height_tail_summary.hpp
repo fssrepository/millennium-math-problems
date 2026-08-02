@@ -22,9 +22,26 @@ struct LocalSldProjectiveHeightTailRow {
     SpectralReal tail_stretching = 0.0L;
     SpectralReal core_palinstrophy_cross = 0.0L;
     SpectralReal tail_palinstrophy_cross = 0.0L;
+    SpectralReal core_aggregate_h1_norm2 = 0.0L;
+    SpectralReal core_aggregate_h2_norm2 = 0.0L;
+    SpectralReal tail_aggregate_h1_norm2 = 0.0L;
+    SpectralReal tail_aggregate_h2_norm2 = 0.0L;
+    SpectralReal core_stretching_h1_alignment = 0.0L;
+    SpectralReal tail_stretching_h1_alignment = 0.0L;
+    SpectralReal core_palinstrophy_cross_h2_alignment = 0.0L;
+    SpectralReal tail_palinstrophy_cross_h2_alignment = 0.0L;
     SpectralReal core_stretching_tail_cross_power_one = 0.0L;
     SpectralReal tail_stretching_core_cross_power_one = 0.0L;
     SpectralReal tail_stretching_tail_cross_power_one = 0.0L;
+    SpectralReal core_stretching_tail_cross_cauchy_bound = 0.0L;
+    SpectralReal tail_stretching_core_cross_cauchy_bound = 0.0L;
+    SpectralReal tail_stretching_tail_cross_cauchy_bound = 0.0L;
+    SpectralReal core_stretching_tail_cross_cauchy_ratio = 0.0L;
+    SpectralReal tail_stretching_core_cross_cauchy_ratio = 0.0L;
+    SpectralReal tail_stretching_tail_cross_cauchy_ratio = 0.0L;
+    SpectralReal joint_cross_tail_cauchy_bound = 0.0L;
+    SpectralReal joint_cross_tail_cauchy_ratio = 0.0L;
+    SpectralReal maximum_alignment_product_reconstruction_error = 0.0L;
     SpectralReal palinstrophy_factorization_error = 0.0L;
     SpectralReal reconstructed_power_one = 0.0L;
     SpectralReal open_absolute_power_one_sum = 0.0L;
@@ -40,7 +57,10 @@ struct LocalSldProjectiveHeightTailReport {
     SpectralReal maximum_reconstruction_error = 0.0L;
     SpectralReal maximum_component_reconstruction_error = 0.0L;
     SpectralReal maximum_palinstrophy_factorization_error = 0.0L;
+    SpectralReal maximum_alignment_product_reconstruction_error = 0.0L;
+    SpectralReal maximum_normalization_cauchy_ratio = 0.0L;
     bool exact_cumulative_decomposition = false;
+    bool finite_normalization_cauchy_inequalities_verified = false;
     bool uniform_weighted_tail_bound_proved = false;
 };
 

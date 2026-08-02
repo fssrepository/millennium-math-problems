@@ -26,6 +26,8 @@ struct LocalSldProjectiveHeightMatrixEntry {
     SpectralReal absolute_component_power_one_envelope = 0.0L;
     SpectralReal commutator_paired_power_one_envelope = 0.0L;
     SpectralReal dynamic_paired_power_one_envelope = 0.0L;
+    SpectralReal aggregate_h1_pairing = 0.0L;
+    SpectralReal aggregate_h2_pairing = 0.0L;
     SpectralReal dynamic_response_pairing = 0.0L;
     SpectralReal dynamic_response_reconstruction_error = 0.0L;
     std::size_t shared_target_mode_count = 0;

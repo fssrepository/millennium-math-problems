@@ -129,6 +129,7 @@ add_executable(navier_stokes_lab
     src/local_sld/analysis/projective/local_sld_projective_core_height_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_open_power_replay_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_matrix.cpp
+    src/local_sld/analysis/projective/local_sld_projective_normalization_tail_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_coercivity_path_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_coercivity_line_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_tail_summary.cpp

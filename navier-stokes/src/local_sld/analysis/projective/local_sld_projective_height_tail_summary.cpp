@@ -57,6 +57,10 @@ LocalSldProjectiveHeightTailSummary::summarize(
             const bool second_core =
                 entry.second_shell <= row.last_core_shell;
             if (first_core && second_core) {
+                row.core_aggregate_h1_norm2 +=
+                    entry.aggregate_h1_pairing;
+                row.core_aggregate_h2_norm2 +=
+                    entry.aggregate_h2_pairing;
                 row.core_internal_power_one += entry.power_one;
             } else if (first_core) {
                 row.core_tail_power_one += entry.power_one;
@@ -64,6 +68,10 @@ LocalSldProjectiveHeightTailSummary::summarize(
                     std::abs(entry.power_one);
                 open_square_sum += entry.power_one * entry.power_one;
             } else {
+                row.tail_aggregate_h1_norm2 +=
+                    entry.aggregate_h1_pairing;
+                row.tail_aggregate_h2_norm2 +=
+                    entry.aggregate_h2_pairing;
                 row.tail_internal_power_one += entry.power_one;
                 row.open_absolute_power_one_sum +=
                     std::abs(entry.power_one);
@@ -84,6 +92,74 @@ LocalSldProjectiveHeightTailSummary::summarize(
                     matrix.power_one_scale;
             }
         }
+        if (matrix.selected_enstrophy > 0.0L &&
+            matrix.selected_palinstrophy > 0.0L) {
+            const SpectralReal cauchy_factor =
+                1.5L * std::abs(matrix.power_one_scale) /
+                matrix.selected_palinstrophy;
+            const SpectralReal z = matrix.selected_enstrophy;
+            const SpectralReal p = matrix.selected_palinstrophy;
+            const SpectralReal core_h1 = std::max(
+                row.core_aggregate_h1_norm2, 0.0L);
+            const SpectralReal core_h2 = std::max(
+                row.core_aggregate_h2_norm2, 0.0L);
+            const SpectralReal tail_h1 = std::max(
+                row.tail_aggregate_h1_norm2, 0.0L);
+            const SpectralReal tail_h2 = std::max(
+                row.tail_aggregate_h2_norm2, 0.0L);
+            row.core_stretching_tail_cross_cauchy_bound =
+                cauchy_factor * std::sqrt(z * core_h1 * p * tail_h2);
+            row.tail_stretching_core_cross_cauchy_bound =
+                cauchy_factor * std::sqrt(z * tail_h1 * p * core_h2);
+            row.tail_stretching_tail_cross_cauchy_bound =
+                cauchy_factor * std::sqrt(z * tail_h1 * p * tail_h2);
+            auto alignment = [](SpectralReal value,
+                                SpectralReal norm_product) {
+                return norm_product > 0.0L
+                    ? std::abs(value) / std::sqrt(norm_product)
+                    : 0.0L;
+            };
+            row.core_stretching_h1_alignment = alignment(
+                row.core_stretching, z * core_h1);
+            row.tail_stretching_h1_alignment = alignment(
+                row.tail_stretching, z * tail_h1);
+            row.core_palinstrophy_cross_h2_alignment = alignment(
+                row.core_palinstrophy_cross, p * core_h2);
+            row.tail_palinstrophy_cross_h2_alignment = alignment(
+                row.tail_palinstrophy_cross, p * tail_h2);
+        }
+        auto cauchy_ratio = [](SpectralReal actual, SpectralReal bound) {
+            return bound > 0.0L ? std::abs(actual) / bound : 0.0L;
+        };
+        row.core_stretching_tail_cross_cauchy_ratio = cauchy_ratio(
+            row.core_stretching_tail_cross_power_one,
+            row.core_stretching_tail_cross_cauchy_bound);
+        row.tail_stretching_core_cross_cauchy_ratio = cauchy_ratio(
+            row.tail_stretching_core_cross_power_one,
+            row.tail_stretching_core_cross_cauchy_bound);
+        row.tail_stretching_tail_cross_cauchy_ratio = cauchy_ratio(
+            row.tail_stretching_tail_cross_power_one,
+            row.tail_stretching_tail_cross_cauchy_bound);
+        row.joint_cross_tail_cauchy_bound =
+            row.core_stretching_tail_cross_cauchy_bound +
+            row.tail_stretching_core_cross_cauchy_bound +
+            row.tail_stretching_tail_cross_cauchy_bound;
+        row.joint_cross_tail_cauchy_ratio = cauchy_ratio(
+            row.open_palinstrophy_normalization_power_one,
+            row.joint_cross_tail_cauchy_bound);
+        row.maximum_alignment_product_reconstruction_error = std::max({
+            relative_error(
+                row.core_stretching_tail_cross_cauchy_ratio,
+                row.core_stretching_h1_alignment *
+                    row.tail_palinstrophy_cross_h2_alignment),
+            relative_error(
+                row.tail_stretching_core_cross_cauchy_ratio,
+                row.tail_stretching_h1_alignment *
+                    row.core_palinstrophy_cross_h2_alignment),
+            relative_error(
+                row.tail_stretching_tail_cross_cauchy_ratio,
+                row.tail_stretching_h1_alignment *
+                    row.tail_palinstrophy_cross_h2_alignment)});
         row.open_power_one = row.core_tail_power_one +
             row.tail_internal_power_one;
         row.reconstructed_power_one = row.core_internal_power_one +
@@ -129,12 +205,24 @@ LocalSldProjectiveHeightTailSummary::summarize(
         report.maximum_palinstrophy_factorization_error = std::max(
             report.maximum_palinstrophy_factorization_error,
             row.palinstrophy_factorization_error);
+        report.maximum_alignment_product_reconstruction_error = std::max(
+            report.maximum_alignment_product_reconstruction_error,
+            row.maximum_alignment_product_reconstruction_error);
+        report.maximum_normalization_cauchy_ratio = std::max({
+            report.maximum_normalization_cauchy_ratio,
+            row.core_stretching_tail_cross_cauchy_ratio,
+            row.tail_stretching_core_cross_cauchy_ratio,
+            row.tail_stretching_tail_cross_cauchy_ratio,
+            row.joint_cross_tail_cauchy_ratio});
         report.rows.push_back(row);
     }
     report.exact_cumulative_decomposition =
         report.maximum_reconstruction_error < 1e-13L &&
         report.maximum_component_reconstruction_error < 1e-13L &&
-        report.maximum_palinstrophy_factorization_error < 1e-13L;
+        report.maximum_palinstrophy_factorization_error < 1e-13L &&
+        report.maximum_alignment_product_reconstruction_error < 1e-13L;
+    report.finite_normalization_cauchy_inequalities_verified =
+        report.maximum_normalization_cauchy_ratio <= 1.0L + 1e-13L;
     return report;
 }
 
