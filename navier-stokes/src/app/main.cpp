@@ -23,6 +23,7 @@
 #include "state_transform.hpp"
 #include "orthogonal_triad_geometry.hpp"
 #include "doubling_quartet_closure.hpp"
+#include "equal_low_quartet_closure.hpp"
 #include "remainder_quartet_closure.hpp"
 #include "local_signature_geometry.hpp"
 #include "local_signature_adversary.hpp"
@@ -895,6 +896,7 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab helical-cutoff-scan [options]\n"
         << "  navier_stokes_lab orthogonal-triad-certificate [options]\n"
         << "  navier_stokes_lab doubling-quartet-certificate [options]\n"
+        << "  navier_stokes_lab equal-low-quartet-certificate [options]\n"
         << "  navier_stokes_lab remainder-quartet-certificate [options]\n"
         << "  navier_stokes_lab local-signature-certificate [options]\n"
         << "  navier_stokes_lab local-signature-adversary [options]\n"
@@ -950,6 +952,8 @@ void print_help(std::ostream& out) {
     lemma::OrthogonalTriadCli::print_help(out);
     out << '\n';
     lemma::DoublingQuartetClosureCli::print_help(out);
+    out << '\n';
+    lemma::EqualLowQuartetClosureCli::print_help(out);
     out << '\n';
     lemma::RemainderQuartetClosureCli::print_help(out);
     out << '\n';
@@ -1045,6 +1049,12 @@ int main(int argc, char** argv) {
         if (command == "doubling-quartet-certificate") {
             return lemma::DoublingQuartetClosureCli::run(
                 lemma::DoublingQuartetClosureCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command == "equal-low-quartet-certificate") {
+            return lemma::EqualLowQuartetClosureCli::run(
+                lemma::EqualLowQuartetClosureCli::parse(
                     argc, argv, 2),
                 std::cout);
         }

@@ -4,6 +4,7 @@
 #include "local_sld_block_objective.hpp"
 #include "local_sld_remainder_envelope_objective.hpp"
 #include "local_sld_remainder_absorption_objective.hpp"
+#include "local_sld_shape_power_objective.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
 
 #include <algorithm>
@@ -192,6 +193,11 @@ SpectralReal GradientAdversary::objective_value(
             dynamics_, options.absorption_theta,
             options.closure_selection)
             .evaluate(initial).absorption_ratio;
+    }
+    if (options.objective == "local-shape-power-ratio") {
+        return LocalSldShapePowerObjective(
+            dynamics_, options.closure_selection,
+            options.shape_power).evaluate(initial).squared_power_product;
     }
     if (options.objective == "local-sld-ratio") {
         return LocalQuarticClosureObjective(
@@ -398,6 +404,16 @@ GradientSearchResult GradientAdversary::maximize_q(
             trajectory.objective_step = 0;
             trajectory.initial_gradient =
                 absorption.absorption_ratio_gradient(result.state);
+        } else if (options.objective ==
+                   "local-shape-power-ratio") {
+            const LocalSldShapePowerObjective shape_power(
+                dynamics_, options.closure_selection,
+                options.shape_power);
+            trajectory.objective_value =
+                shape_power.evaluate(result.state).squared_power_product;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient =
+                shape_power.gradient(result.state);
         } else if (options.objective == "local-sld-ratio") {
             const LocalQuarticClosureObjective closure(
                 dynamics_, options.closure_selection);

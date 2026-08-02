@@ -22,7 +22,8 @@ public:
         include,
         exclude,
         include_equal_low_doubling,
-        exclude_equal_low_doubling
+        exclude_equal_low_doubling,
+        exclude_equal_low_doubling_and_signature
     };
 
     constexpr TriadSelection() = default;
@@ -84,6 +85,16 @@ public:
     local_without_equal_low_doubling() {
         return TriadSelection(
             0, 0, SignatureMode::exclude_equal_low_doubling, {});
+    }
+
+    [[nodiscard]] static constexpr TriadSelection
+    local_without_equal_low_doubling_and_signature(
+        SpectralInteger first, SpectralInteger second,
+        SpectralInteger third) {
+        return TriadSelection(
+            0, 0,
+            SignatureMode::exclude_equal_low_doubling_and_signature,
+            {first, second, third});
     }
 
     [[nodiscard]] constexpr int minimum_gap() const {

@@ -421,7 +421,10 @@ nearly zero, however, so its actual local SLD ratio is below `6e-20`. Two exact
 square completions explain the negative dense branches, while fixed-fraction
 absorption and the positive commutator envelope are both too strong. The
 active target is the exact joint bracket--shape factorization; its direct
-remainder objective remains near `0.00022068` from K3 through K6. See
+remainder objective remains near `0.00022068` from K3 through K6. The scalar
+shape algebra reduces this further to the energy-independent estimate
+`|(K_rem+G_rem)S_full| <= C Z^2P^2`; its direct power-one search is nearly
+flat through K5. See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/REMAINDER_QUARTET.md`.
 

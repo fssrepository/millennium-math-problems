@@ -33,6 +33,9 @@ std::string objective_formula(const std::string& objective) {
     if (objective == "remainder-absorption-ratio") {
         return "maximize [K+G+(1-theta)||A^(1/2)(B-cAu)||^2] / (Z^(5/4) P^(3/4))";
     }
+    if (objective == "shape-power-ratio") {
+        return "maximize c_selected^2 x_full^(2p), p=shape_power";
+    }
     if (objective == "signed-closure-ratio") {
         return "maximize (K+G) E^(1/4) / (Z^(7/4) P)";
     }
@@ -89,6 +92,7 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
         << static_cast<double>(report.time_step) << ",\n"
         << "  \"absorption_theta\": "
         << static_cast<double>(report.absorption_theta) << ",\n"
+        << "  \"shape_power\": " << report.shape_power << ",\n"
         << "  \"sobolev_order\": " << report.sobolev_order << ",\n"
         << "  \"sobolev_cap\": "
         << static_cast<double>(report.sobolev_cap) << ",\n"
@@ -125,6 +129,11 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
             << static_cast<double>(winner.remainder_envelope_ratio)
             << ", \"remainder_absorption_ratio\": "
             << static_cast<double>(winner.remainder_absorption_ratio)
+            << ", \"shape_power_absolute_product\": "
+            << static_cast<double>(winner.shape_power_absolute_product)
+            << ", \"shape_power_normalized_stretching\": "
+            << static_cast<double>(
+                   winner.shape_power_normalized_stretching)
             << ", \"squared_lqc3_target_ratio\": "
             << static_cast<double>(value.squared_lqc3_target_ratio)
             << ", \"signed_constant_ratio\": "

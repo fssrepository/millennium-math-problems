@@ -64,6 +64,14 @@ bool TriadPartitioner::includes(
         selection.squared_length_signature();
     std::sort(requested.begin(), requested.end());
     matches = signature == requested;
+    if (selection.signature_mode() ==
+        TriadSelection::SignatureMode::
+            exclude_equal_low_doubling_and_signature) {
+        const bool equal_low_doubling =
+            signature[0] == signature[1] &&
+            signature[2] == 2 * signature[0];
+        return !equal_low_doubling && !matches;
+    }
     return selection.signature_mode() ==
             TriadSelection::SignatureMode::include
         ? matches

@@ -234,6 +234,30 @@ current analytic task is a cutoff-independent joint tradeoff between
 `c_rem` and `x`; bounding either factor through the stronger standalone
 targets above has already failed.
 
+The joint target has a sharper exact reduction:
+
+```text
+R_rem = (c_rem x) Psi(x),
+c_rem x = (K_rem+G_rem) S_full/(Z^2P^2),
+Psi(x) = 4x^2/(1+x^4) <= 2.                        (RQ-10)
+```
+
+The last scalar inequality is proved by `(x^2-1)^2>=0`. Hence it is enough to
+prove the energy-independent power-one tradeoff
+
+```text
+|(K_rem+G_rem) S_full| <= C Z^2P^2.                (RQ-11)
+```
+
+This is strictly closer to the required polynomial lemma than signed LQC-3:
+it retains one stretching factor analytically, while the remaining two are
+closed by the bounded scalar multiplier. The exact-gradient
+`shape-power-ratio` objective tests `|c_rem|^2|x|^(2p)`. For `p=1`, twelve
+starts give `|c_rem x|=0.0060065`, `0.0062905`, `0.0063403`, `0.0063550`,
+and `0.0063610` at K1--K5, with fitted root slope `0.0123`. The `p=2` roots
+are also flat at `0.0004265`--`0.0005381`. This is direct evidence for RQ-11,
+not its proof.
+
 ## Reproduction
 
 ```bash
@@ -266,6 +290,16 @@ targets above has already failed.
   --threads 12 \
   --certificate proof/l4/analysis/shifted-local-density/remainder-quartet/positive-K5-double-square.json
 
+./build/navier_stokes_lab local-sld-remainder-tradeoff \
+  --state proof/l4/states/local-sld-block/doubling-remainder-K1-K5/K1.tsv \
+  --state proof/l4/states/local-sld-block/doubling-remainder-K1-K5/K2.tsv \
+  --state proof/l4/states/local-sld-block/doubling-remainder-K1-K5/K3.tsv \
+  --state proof/l4/states/local-sld-block/doubling-remainder-K1-K5/K4.tsv \
+  --state proof/l4/states/local-sld-block/doubling-remainder-K1-K5/K5.tsv \
+  --state proof/l4/states/local-sld-block/doubling-remainder-K6/K6.tsv \
+  --threads 12 \
+  --certificate proof/l4/analysis/shifted-local-density/remainder-quartet/block-winners-K1-K6-tradeoff.json
+
 ./build/navier_stokes_lab local-closure-adversary \
   --objective remainder-envelope-ratio --selection doubling-remainder \
   --min-cutoff 1 --max-cutoff 5 --restarts 12 --workers 12 \
@@ -286,6 +320,11 @@ Artifacts:
 - [`../../adversary/shifted-local-density/remainder-envelope/K1-K5.json`](../../adversary/shifted-local-density/remainder-envelope/K1-K5.json)
 - [`../../analysis/shifted-local-density/remainder-quartet/positive-K5-double-square.json`](../../analysis/shifted-local-density/remainder-quartet/positive-K5-double-square.json)
 - [`../../analysis/shifted-local-density/remainder-quartet/K5-envelope-winner-double-square.json`](../../analysis/shifted-local-density/remainder-quartet/K5-envelope-winner-double-square.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/block-winners-K1-K6-tradeoff.json`](../../analysis/shifted-local-density/remainder-quartet/block-winners-K1-K6-tradeoff.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/strong-signed-lqc3-K4-K6-tradeoff.json`](../../analysis/shifted-local-density/remainder-quartet/strong-signed-lqc3-K4-K6-tradeoff.json)
+- [`../../adversary/shifted-local-density/remainder-shape-power/p1-K1-K5.json`](../../adversary/shifted-local-density/remainder-shape-power/p1-K1-K5.json)
+- [`../../adversary/shifted-local-density/remainder-shape-power/p2-K1-K5.json`](../../adversary/shifted-local-density/remainder-shape-power/p2-K1-K5.json)
 
-The exact remaining statement is the joint bracket--shape estimate RQ-9,
-followed by the mixed block. No finite scan is treated as that proof.
+The exact remaining remainder statement is the power-one estimate RQ-11,
+which implies RQ-9 with constant `2C`, followed by the mixed block. No finite
+scan is treated as that proof.

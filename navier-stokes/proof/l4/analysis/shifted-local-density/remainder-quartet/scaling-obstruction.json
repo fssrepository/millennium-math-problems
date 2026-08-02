@@ -1,5 +1,5 @@
 {
-  "schema": "navier-stokes-remainder-quartet-closure-v2",
+  "schema": "navier-stokes-remainder-quartet-closure-v3",
   "family": "local squared-length signatures excluding (m,m,2m)",
   "dense_incidence_degree_power": "3",
   "dense_bilinear_frequency_power": "5/2",
@@ -20,7 +20,13 @@
   "stretching_vjp_commutator_identity": true,
   "standalone_commutator_envelope_bound_proved": false,
   "commutator_absorption_bound_proved": false,
+  "linear_shape_reduction": "R_rem=[(K_rem+G_rem)S_full/(Z^2P^2)]*[4x^2/(1+x^4)]",
+  "exact_linear_shape_reduction": true,
+  "scalar_shape_multiplier_proof": "0 <= 4x^2/(1+x^4) <= 2 follows from (x^2-1)^2 >= 0",
+  "scalar_shape_multiplier_bound_proved": true,
+  "power_one_tradeoff_bound": "|(K_rem+G_rem)S_full| <= C Z^2P^2",
+  "power_one_tradeoff_bound_proved": false,
   "cutoff_independent_remainder_bound_proved": false,
   "full_local_lemma_proved": false,
-  "remaining_requirement": "prove a cutoff-independent one-sided absorption estimate retaining the negative double square; an independent unsigned bound on the positive commutator envelope is too strong"
+  "remaining_requirement": "prove the cutoff-independent power-one tradeoff |(K_rem+G_rem)S_full| <= C Z^2P^2; the proved scalar multiplier then closes the exact remainder block with constant 2C"
 }

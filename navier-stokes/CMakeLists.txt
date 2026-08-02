@@ -26,6 +26,7 @@ add_executable(navier_stokes_lab
     src/optimization/gradient_adversary.cpp
     src/optimization/initial_sobolev_constraint.cpp
 
+    src/triads/equal_low_triad_geometry.cpp
     src/triads/local_triad_symmetrizer.cpp
     src/triads/orthogonal_triad_geometry.cpp
     src/triads/triad_commutator.cpp
@@ -45,6 +46,7 @@ add_executable(navier_stokes_lab
 
     src/proof/dyadic_shell_bounds.cpp
     src/proof/doubling_quartet_closure.cpp
+    src/proof/equal_low_quartet_closure.cpp
     src/proof/far_tail_closure.cpp
     src/proof/moving_gap_controller.cpp
     src/proof/periodic_shell_geometry.cpp
@@ -66,6 +68,7 @@ add_executable(navier_stokes_lab
     src/local_sld/core/local_sld_response_basis.cpp
     src/local_sld/core/local_sld_remainder_absorption_objective.cpp
     src/local_sld/core/local_sld_remainder_envelope_objective.cpp
+    src/local_sld/core/local_sld_shape_power_objective.cpp
     src/local_sld/core/local_sld_two_scale_state.cpp
 
     src/local_sld/analysis/local_critical_derivative_ledger.cpp

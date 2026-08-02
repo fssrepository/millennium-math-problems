@@ -2,6 +2,7 @@
 #include "adversary_reporter.hpp"
 #include "dyadic_shell_bounds.hpp"
 #include "doubling_quartet_closure.hpp"
+#include "equal_low_quartet_closure.hpp"
 #include "dynamic_adversary.hpp"
 #include "family_reporter.hpp"
 #include "far_tail_closure.hpp"
@@ -41,6 +42,7 @@
 #include "local_sld_response_tensor.hpp"
 #include "local_sld_remainder_envelope_objective.hpp"
 #include "local_sld_remainder_absorption_objective.hpp"
+#include "local_sld_shape_power_objective.hpp"
 #include "local_sld_doubling_shell_ledger.hpp"
 #include "local_sld_doubling_scale_scan.hpp"
 #include "local_sld_remainder_double_square.hpp"
@@ -678,8 +680,27 @@ bool self_test(std::ostream& out) {
              .standalone_commutator_envelope_bound_proved &&
         !remainder_quartet_closure
              .commutator_absorption_bound_proved &&
+        remainder_quartet_closure.exact_linear_shape_reduction &&
+        remainder_quartet_closure
+            .scalar_shape_multiplier_bound_proved &&
+        !remainder_quartet_closure.power_one_tradeoff_bound_proved &&
         !remainder_quartet_closure
              .cutoff_independent_remainder_bound_proved;
+    const EqualLowQuartetClosureReport triple_quartet_closure =
+        EqualLowQuartetClosure::certify(4, 3);
+    const bool triple_quartet_closure_ok =
+        triple_quartet_closure.target_length_multiplier == 3 &&
+        triple_quartet_closure.geometry.all_degree_bounds_hold &&
+        triple_quartet_closure.fixed_angle_plane_sphere_bound_proved &&
+        triple_quartet_closure.bilinear_l2_frequency_power ==
+            Rational(3, 2) &&
+        triple_quartet_closure.bracket_frequency_power == Rational(5) &&
+        triple_quartet_closure.frequency_gain == Rational(-1, 2) &&
+        triple_quartet_closure.closed_single_shell_power_bound &&
+        triple_quartet_closure.structural_entries_neighbor_shell_local &&
+        triple_quartet_closure.direct_normalization_target_bound_proved &&
+        triple_quartet_closure.cutoff_independent_closed_family_bound &&
+        !triple_quartet_closure.full_local_lemma_proved;
     const bool local_signature_geometry_ok =
         local_signature_geometry.all_fixed_signature_degree_bounds_hold &&
         local_signature_geometry.maximum_input_degree_ratio <= 1.0L &&
@@ -1286,6 +1307,9 @@ bool self_test(std::ostream& out) {
         remainder_absorption_objective(
             active_dynamics, 0.9L,
             TriadSelection::local_without_equal_low_doubling());
+    const LocalSldShapePowerObjective remainder_shape_power_objective(
+        active_dynamics,
+        TriadSelection::local_without_equal_low_doubling(), 2);
     const Real local_closure_value_error = std::abs(
         local_closure_value.constant_ratio -
         local_quartic_closure.required_constant_ratio) /
@@ -1479,6 +1503,26 @@ bool self_test(std::ostream& out) {
                 std::abs(remainder_absorption_directional_adjoint),
                 std::abs(
                     remainder_absorption_directional_finite_difference)));
+    const SpectralIncrement remainder_shape_power_gradient =
+        remainder_shape_power_objective.gradient(partition_state);
+    const Real remainder_shape_power_directional_adjoint =
+        increment_inner_product(
+            remainder_shape_power_gradient, partition_tangent);
+    const Real remainder_shape_power_directional_finite_difference =
+        (remainder_shape_power_objective.evaluate(partition_plus_state)
+             .squared_power_product -
+         remainder_shape_power_objective.evaluate(partition_minus_state)
+             .squared_power_product) /
+        (2.0L * finite_difference_step);
+    const Real remainder_shape_power_gradient_error = std::abs(
+        remainder_shape_power_directional_adjoint -
+        remainder_shape_power_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(remainder_shape_power_directional_adjoint),
+                std::abs(
+                    remainder_shape_power_directional_finite_difference)));
     const SpectralIncrement signed_closure_gradient =
         local_closure_objective.signed_constant_ratio_gradient(
             partition_state);
@@ -1882,6 +1926,7 @@ bool self_test(std::ostream& out) {
         signed_lqc3_target_gradient_error < 1e-9L &&
         remainder_envelope_gradient_error < 1e-9L &&
         remainder_absorption_gradient_error < 1e-9L &&
+        remainder_shape_power_gradient_error < 1e-9L &&
         signed_closure_gradient_error < 1e-9L &&
         local_sld_gradient_error < 1e-9L &&
         selected_block_gradient_error < 1e-9L &&
@@ -2158,7 +2203,17 @@ bool self_test(std::ostream& out) {
         !TriadPartitioner::includes(
             WaveVector{1, 0, 0}, WaveVector{0, 1, 0},
             WaveVector{1, 1, 0},
-            TriadSelection::local_without_equal_low_doubling());
+            TriadSelection::local_without_equal_low_doubling()) &&
+        !TriadPartitioner::includes(
+            WaveVector{1, 0, 0}, WaveVector{0, 1, 1},
+            WaveVector{1, 1, 1},
+            TriadSelection::
+                local_without_equal_low_doubling_and_signature(1, 2, 3)) &&
+        TriadPartitioner::includes(
+            WaveVector{1, 1, 0}, WaveVector{-1, 0, 1},
+            WaveVector{0, 1, 1},
+            TriadSelection::
+                local_without_equal_low_doubling_and_signature(1, 2, 3));
     const LocalSldRemainderSignatureReport remainder_signature_ledger =
         LocalSldRemainderSignatureLedger::analyze(
             active_dynamics, cyclic_ansatz.state, 2);
@@ -2190,7 +2245,9 @@ bool self_test(std::ostream& out) {
     const bool remainder_tradeoff_ok =
         remainder_tradeoff.exact_factorization &&
         remainder_tradeoff.shape_reconstruction_error < 1e-13L &&
+        remainder_tradeoff.linear_reconstruction_error < 1e-13L &&
         remainder_tradeoff.product_reconstruction_error < 1e-13L &&
+        remainder_tradeoff.scalar_multiplier_bound_satisfied &&
         !remainder_tradeoff.cutoff_independent_tradeoff_proved;
     const AdversaryResult adversary =
         optimize_static_depletion(1, 1, 2, 0.1L, 11);
@@ -2378,6 +2435,15 @@ bool self_test(std::ostream& out) {
         << ", required degree="
         << remainder_quartet_closure
                .required_effective_incidence_degree_power.str()
+        << ")\n"
+        << "equal-low triple quartet closure test: "
+        << (triple_quartet_closure_ok ? "PASS" : "FAIL")
+        << " (bracket=R^"
+        << triple_quartet_closure.bracket_frequency_power.str()
+        << ", target=R^"
+        << triple_quartet_closure.target_frequency_power.str()
+        << ", gain=R^"
+        << triple_quartet_closure.frequency_gain.str()
         << ")\n"
         << "local signature closure test: "
         << (local_signature_geometry_ok ? "PASS" : "FAIL")
@@ -2582,6 +2648,8 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(remainder_envelope_gradient_error)
         << ", remainder absorption gradient error="
         << static_cast<double>(remainder_absorption_gradient_error)
+        << ", remainder shape-power gradient error="
+        << static_cast<double>(remainder_shape_power_gradient_error)
         << ", signed closure gradient error="
         << static_cast<double>(signed_closure_gradient_error)
         << ", direct SLD gradient error="
@@ -2830,7 +2898,7 @@ bool self_test(std::ostream& out) {
            moving_gap_controller_ok &&
            triad_ok && helical_ok && helical_gap_ok && local_symmetry_ok &&
            orthogonal_geometry_ok && doubling_quartet_closure_ok &&
-           remainder_quartet_closure_ok &&
+           remainder_quartet_closure_ok && triple_quartet_closure_ok &&
            local_signature_geometry_ok &&
            local_signature_objective_ok && pure_helical_ok && fft_ok &&
            helical_sector_objective_ok && helical_adversary_ok &&

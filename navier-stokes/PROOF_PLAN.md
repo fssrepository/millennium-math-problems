@@ -175,7 +175,10 @@ cross-objective warm start finds a dense positive branch growing from
 positive envelope and retaining a fixed fraction of the negative square also
 produce growing branches. Therefore the lowest universal analytical subtask
 is the exact joint bracket--shape tradeoff, not an independent bound on D or
-the signed LQC3 quotient. The mixed block follows. See
+the signed LQC3 quotient. Since
+`R_rem=[(K_rem+G_rem)S_full/(Z^2P^2)] 4x^2/(1+x^4)` and the last factor is at
+most `2`, the current remainder lemma is the power-one estimate
+`|(K_rem+G_rem)S_full| <= C Z^2P^2`. The mixed block follows. See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/REMAINDER_QUARTET.md`.
 
@@ -888,7 +891,10 @@ has nearly zero stretching, so its actual local SLD ratio is below `6e-20`.
 Direct optimization of the exact remainder block product instead stays near
 `0.00022068` from K3 through K6. The bracket--shape factorization in
 `proof/l4/lemmas/shifted-local-density/REMAINDER_QUARTET.md` is therefore the
-current remainder restart point.
+current remainder restart point. Its exact scalar reduction leaves the
+energy-independent power-one tradeoff
+`|(K_rem+G_rem)S_full| <= C Z^2P^2`; the corresponding exact-gradient roots
+remain between `0.00601` and `0.00636` through K5.
 
 The absolute closure ratio was subsequently reverse-differentiated and
 optimized directly. A K1 branch reaches `C_state=1/3`, but its stretching is

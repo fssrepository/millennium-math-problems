@@ -62,6 +62,9 @@ RemainderQuartetClosureReport RemainderQuartetClosure::certify() {
         report.remainder_requires_collective_cancellation;
     report.stretching_vjp_commutator_identity =
         report.one_sided_double_square_reduction;
+    report.exact_linear_shape_reduction = true;
+    report.scalar_shape_multiplier_bound_proved = true;
+    report.power_one_tradeoff_bound_proved = false;
     report.cutoff_independent_remainder_bound_proved = false;
     report.full_local_lemma_proved = false;
     return report;
@@ -111,7 +114,7 @@ int RemainderQuartetClosureCli::run(
     }
     certificate
         << "{\n"
-        << "  \"schema\": \"navier-stokes-remainder-quartet-closure-v2\",\n"
+        << "  \"schema\": \"navier-stokes-remainder-quartet-closure-v3\",\n"
         << "  \"family\": \"local squared-length signatures excluding (m,m,2m)\",\n"
         << "  \"dense_incidence_degree_power\": \""
         << report.dense_incidence_degree_power.str() << "\",\n"
@@ -155,9 +158,19 @@ int RemainderQuartetClosureCli::run(
             ? "true" : "false") << ",\n"
         << "  \"standalone_commutator_envelope_bound_proved\": false,\n"
         << "  \"commutator_absorption_bound_proved\": false,\n"
+        << "  \"linear_shape_reduction\": \"R_rem=[(K_rem+G_rem)S_full/(Z^2P^2)]*[4x^2/(1+x^4)]\",\n"
+        << "  \"exact_linear_shape_reduction\": "
+        << (report.exact_linear_shape_reduction ? "true" : "false")
+        << ",\n"
+        << "  \"scalar_shape_multiplier_proof\": \"0 <= 4x^2/(1+x^4) <= 2 follows from (x^2-1)^2 >= 0\",\n"
+        << "  \"scalar_shape_multiplier_bound_proved\": "
+        << (report.scalar_shape_multiplier_bound_proved
+            ? "true" : "false") << ",\n"
+        << "  \"power_one_tradeoff_bound\": \"|(K_rem+G_rem)S_full| <= C Z^2P^2\",\n"
+        << "  \"power_one_tradeoff_bound_proved\": false,\n"
         << "  \"cutoff_independent_remainder_bound_proved\": false,\n"
         << "  \"full_local_lemma_proved\": false,\n"
-        << "  \"remaining_requirement\": \"prove a cutoff-independent one-sided absorption estimate retaining the negative double square; an independent unsigned bound on the positive commutator envelope is too strong\"\n"
+        << "  \"remaining_requirement\": \"prove the cutoff-independent power-one tradeoff |(K_rem+G_rem)S_full| <= C Z^2P^2; the proved scalar multiplier then closes the exact remainder block with constant 2C\"\n"
         << "}\n";
     out << "remainder quartet dense=R^"
         << report.dense_normalization_bracket_frequency_power.str()

@@ -116,10 +116,13 @@ void write_json(
         report.signatures.size(), static_cast<std::size_t>(options.top));
     output << std::setprecision(18)
         << "{\n"
-        << "  \"schema\": \"navier-stokes-local-sld-remainder-signature-ledger-v1\",\n"
+        << "  \"schema\": \"navier-stokes-local-sld-remainder-signature-ledger-v2\",\n"
         << "  \"state_path\": \"" << options.state_path << "\",\n"
         << "  \"cutoff\": " << report.cutoff << ",\n"
         << "  \"threads\": " << report.threads << ",\n"
+        << "  \"excludes_signature_123\": "
+        << (report.excludes_signature_123 ? "true" : "false")
+        << ",\n"
         << "  \"selected_interactions\": "
         << report.selected_interactions << ",\n"
         << "  \"signature_count\": " << report.signature_count << ",\n"
@@ -134,6 +137,15 @@ void write_json(
         << static_cast<double>(report.full_bracket) << ",\n"
         << "  \"full_target_ratio\": "
         << static_cast<double>(report.full_target_ratio) << ",\n"
+        << "  \"common_full_stretching\": "
+        << static_cast<double>(report.common_full_stretching) << ",\n"
+        << "  \"power_one_scale\": "
+        << static_cast<double>(report.power_one_scale) << ",\n"
+        << "  \"power_one_total\": "
+        << static_cast<double>(report.power_one_total) << ",\n"
+        << "  \"power_one_reconstruction_error\": "
+        << static_cast<double>(report.power_one_reconstruction_error)
+        << ",\n"
         << "  \"reconstructed_stretching\": "
         << static_cast<double>(report.reconstructed_stretching) << ",\n"
         << "  \"reconstructed_palinstrophy_cross\": "
@@ -206,7 +218,9 @@ void write_json(
             << ", \"absolute_fraction\": "
             << static_cast<double>(row.absolute_fraction)
             << ", \"target_ratio\": "
-            << static_cast<double>(row.target_ratio) << '}'
+            << static_cast<double>(row.target_ratio)
+            << ", \"power_one_ratio\": "
+            << static_cast<double>(row.power_one_ratio) << '}'
             << (index + 1 == count ? "\n" : ",\n");
     }
     output << "  ],\n"
@@ -223,15 +237,21 @@ LocalSldRemainderSignatureReport
 LocalSldRemainderSignatureLedger::analyze(
     const SpectralDynamics& dynamics,
     const SpectralState& state,
-    int threads) {
+    int threads,
+    bool exclude_signature_123) {
     if (threads < 1) {
         throw std::invalid_argument(
             "remainder signature threads must be positive");
     }
-    const TriadSelection selection =
-        TriadSelection::local_without_equal_low_doubling();
+    const TriadSelection selection = exclude_signature_123
+        ? TriadSelection::
+              local_without_equal_low_doubling_and_signature(1, 2, 3)
+        : TriadSelection::local_without_equal_low_doubling();
     const LocalQuarticClosureObjectiveValue full =
         LocalQuarticClosureObjective(dynamics, selection).evaluate(state);
+    const LocalQuarticClosureObjectiveValue common =
+        LocalQuarticClosureObjective(
+            dynamics, TriadPartition::local).evaluate(state);
     const SpectralIncrement au = laplacian_weight(
         state, state.velocity);
     const SpectralIncrement aau = laplacian_weight(state, au);
@@ -328,11 +348,16 @@ LocalSldRemainderSignatureLedger::analyze(
     report.selected_interactions = selected.size();
     report.signature_count = entries.size();
     report.threads = worker_count;
+    report.excludes_signature_123 = exclude_signature_123;
     report.enstrophy = full.enstrophy;
     report.palinstrophy = full.palinstrophy;
     report.target_scale = full.lqc3_target_scale;
     report.full_bracket = full.signed_two_entry_bracket;
     report.full_target_ratio = full.lqc3_target_ratio;
+    report.common_full_stretching = common.signed_stretching;
+    report.power_one_scale = common.signed_stretching /
+        (common.enstrophy * common.enstrophy *
+         common.palinstrophy * common.palinstrophy);
     for (std::size_t index = 0; index < entries.size(); ++index) {
         LocalSldRemainderSignatureEntry& entry = entries[index];
         const Accumulator& value = totals[index];
@@ -353,6 +378,7 @@ LocalSldRemainderSignatureLedger::analyze(
         if (report.target_scale > 0.0L) {
             entry.target_ratio = entry.total / report.target_scale;
         }
+        entry.power_one_ratio = entry.total * report.power_one_scale;
         report.reconstructed_stretching += entry.stretching;
         report.reconstructed_palinstrophy_cross +=
             entry.palinstrophy_cross;
@@ -366,6 +392,7 @@ LocalSldRemainderSignatureLedger::analyze(
         report.reconstructed_advecting_nested +=
             entry.advecting_nested;
         report.reconstructed_bracket += entry.total;
+        report.power_one_total += entry.power_one_ratio;
         report.absolute_contribution_sum += std::abs(entry.total);
         report.squared_contribution_sum += entry.total * entry.total;
     }
@@ -397,10 +424,15 @@ LocalSldRemainderSignatureLedger::analyze(
         full.palinstrophy_cross);
     report.bracket_reconstruction_error = relative_error(
         report.reconstructed_bracket, report.full_bracket);
+    report.power_one_reconstruction_error = relative_error(
+        report.power_one_total,
+        report.full_bracket * report.power_one_scale);
     report.exact_reconstruction =
         report.stretching_reconstruction_error < 1e-13L &&
         report.palinstrophy_cross_reconstruction_error < 1e-13L &&
         report.bracket_reconstruction_error < 1e-13L;
+    report.exact_reconstruction = report.exact_reconstruction &&
+        report.power_one_reconstruction_error < 1e-13L;
     std::sort(entries.begin(), entries.end(),
               [](const LocalSldRemainderSignatureEntry& left,
                  const LocalSldRemainderSignatureEntry& right) {
@@ -430,6 +462,8 @@ LocalSldRemainderSignatureCli::parse(
             options.top = std::stoi(next(index, name));
         } else if (name == "--threads") {
             options.threads = std::stoi(next(index, name));
+        } else if (name == "--exclude-123") {
+            options.exclude_signature_123 = true;
         } else {
             throw std::invalid_argument(
                 "unknown remainder-signature option: " + name);
@@ -449,6 +483,7 @@ void LocalSldRemainderSignatureCli::print_help(std::ostream& out) {
         << "  --state PATH          replayable Fourier-state TSV\n"
         << "  --certificate PATH    write English JSON ledger\n"
         << "  --top N               store N strongest signature rows\n"
+        << "  --exclude-123         also remove the fixed (1,2,3) signature\n"
         << "  --threads N           parallel interaction workers\n";
 }
 
@@ -462,7 +497,8 @@ int LocalSldRemainderSignatureCli::run(
     const SpectralDynamics dynamics(configuration);
     const LocalSldRemainderSignatureReport report =
         LocalSldRemainderSignatureLedger::analyze(
-            dynamics, state, options.threads);
+            dynamics, state, options.threads,
+            options.exclude_signature_123);
     const std::filesystem::path path(options.certificate_path);
     if (!path.parent_path().empty()) {
         std::filesystem::create_directories(path.parent_path());

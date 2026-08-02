@@ -30,6 +30,9 @@ struct RemainderQuartetClosureReport {
     bool stretching_vjp_commutator_identity = false;
     bool standalone_commutator_envelope_bound_proved = false;
     bool commutator_absorption_bound_proved = false;
+    bool exact_linear_shape_reduction = false;
+    bool scalar_shape_multiplier_bound_proved = false;
+    bool power_one_tradeoff_bound_proved = false;
     bool cutoff_independent_remainder_bound_proved = false;
     bool full_local_lemma_proved = false;
 };

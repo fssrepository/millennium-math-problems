@@ -427,7 +427,9 @@ the actual local source vanishes at cubic order. The exact double-square
 identity in [REMAINDER_QUARTET.md](REMAINDER_QUARTET.md) explains the negative
 dense branch and reduces the active numerical/analytic target to a joint
 tradeoff between the remainder bracket coefficient and the full stretching
-shape factor.
+shape factor. The scalar shape multiplier is at most two, so the remaining
+remainder statement is the energy-independent power-one bound
+`|(K_rem+G_rem)S_full| <= C Z^2P^2`.
 
 ## Reduced proof obligation
 

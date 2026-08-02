@@ -42,6 +42,8 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
             options.time_step = std::stold(next(index, name));
         } else if (name == "--absorption-theta") {
             options.absorption_theta = std::stold(next(index, name));
+        } else if (name == "--shape-power") {
+            options.shape_power = std::stoi(next(index, name));
         } else if (name == "--step") {
             options.initial_step = std::stold(next(index, name));
         } else if (name == "--sobolev-order") {
@@ -82,6 +84,7 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
         !(options.absorption_theta >= 0.0L) ||
         !(options.absorption_theta <= 1.0L) ||
         !std::isfinite(options.absorption_theta) ||
+        options.shape_power < 0 || options.shape_power > 3 ||
         (options.backend != "auto" && options.backend != "direct" &&
          options.backend != "fft") ||
         (options.objective != "sld-ratio" &&
@@ -90,6 +93,7 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
          options.objective != "signed-lqc3-ratio" &&
          options.objective != "remainder-envelope-ratio" &&
          options.objective != "remainder-absorption-ratio" &&
+         options.objective != "shape-power-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "block-ratio" &&
          options.objective != "mixed-ratio" &&
@@ -97,14 +101,16 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
          options.objective != "maximum-sld-ratio") ||
         (options.selection != "local" &&
          options.selection != "doubling-family" &&
-         options.selection != "doubling-remainder") ||
+         options.selection != "doubling-remainder" &&
+         options.selection != "remainder-without-123") ||
         (options.initial_profile != "mixed" &&
          options.initial_profile != "decaying" &&
          options.initial_profile != "flat" &&
          options.initial_profile != "outer-half-flat") ||
         ((options.objective == "block-ratio" ||
           options.objective == "mixed-ratio") &&
-         options.selection == "local") ||
+         (options.selection == "local" ||
+          options.selection == "remainder-without-123")) ||
         ((options.objective == "terminal-sld-ratio" ||
           options.objective == "maximum-sld-ratio") &&
          (options.trajectory_steps < 1 || !(options.viscosity > 0.0L) ||
@@ -132,11 +138,12 @@ void LocalQuarticClosureCli::print_help(std::ostream& out) {
         << "  --nu X               viscosity for trajectory objectives\n"
         << "  --dt X               RK4 step for trajectory objectives\n"
         << "  --absorption-theta X retained first-square fraction in [0,1]\n"
+        << "  --shape-power P      integer P=0..3 in |c|^2|x|^(2P)\n"
         << "  --step X             initial Riemannian step\n"
         << "  --method NAME        lbfgs or steepest\n"
         << "  --backend NAME       direct oracle, fft, or auto (default direct)\n"
-        << "  --objective NAME     sld-ratio, terminal-sld-ratio, maximum-sld-ratio, lqc3-ratio, signed-lqc3-ratio, remainder-envelope-ratio, remainder-absorption-ratio, closure-ratio, signed-closure-ratio, block-ratio, or mixed-ratio\n"
-        << "  --selection NAME     local, doubling-family, or doubling-remainder\n"
+        << "  --objective NAME     sld-ratio, terminal-sld-ratio, maximum-sld-ratio, lqc3-ratio, signed-lqc3-ratio, remainder-envelope-ratio, remainder-absorption-ratio, shape-power-ratio, closure-ratio, signed-closure-ratio, block-ratio, or mixed-ratio\n"
+        << "  --selection NAME     local, doubling-family, doubling-remainder, or remainder-without-123\n"
         << "  --initial-profile NAME  mixed, decaying, flat, or outer-half-flat\n"
         << "  --sobolev-order M    optional homogeneous Sobolev cap\n"
         << "  --sobolev-cap X      cutoff-independent squared cap\n"

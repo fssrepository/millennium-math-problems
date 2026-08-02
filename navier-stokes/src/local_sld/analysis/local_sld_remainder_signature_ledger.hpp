@@ -23,6 +23,7 @@ struct LocalSldRemainderSignatureEntry {
     SpectralReal total = 0.0L;
     SpectralReal absolute_fraction = 0.0L;
     SpectralReal target_ratio = 0.0L;
+    SpectralReal power_one_ratio = 0.0L;
 };
 
 struct LocalSldRemainderSignatureReport {
@@ -30,11 +31,16 @@ struct LocalSldRemainderSignatureReport {
     std::size_t selected_interactions = 0;
     std::size_t signature_count = 0;
     int threads = 1;
+    bool excludes_signature_123 = false;
     SpectralReal enstrophy = 0.0L;
     SpectralReal palinstrophy = 0.0L;
     SpectralReal target_scale = 0.0L;
     SpectralReal full_bracket = 0.0L;
     SpectralReal full_target_ratio = 0.0L;
+    SpectralReal common_full_stretching = 0.0L;
+    SpectralReal power_one_scale = 0.0L;
+    SpectralReal power_one_total = 0.0L;
+    SpectralReal power_one_reconstruction_error = 0.0L;
     SpectralReal reconstructed_stretching = 0.0L;
     SpectralReal reconstructed_palinstrophy_cross = 0.0L;
     SpectralReal reconstructed_outer_square = 0.0L;
@@ -62,7 +68,8 @@ public:
     [[nodiscard]] static LocalSldRemainderSignatureReport analyze(
         const SpectralDynamics& dynamics,
         const SpectralState& state,
-        int threads = 12);
+        int threads = 12,
+        bool exclude_signature_123 = false);
 };
 
 struct LocalSldRemainderSignatureCliOptions {
@@ -70,6 +77,7 @@ struct LocalSldRemainderSignatureCliOptions {
     std::string certificate_path;
     int top = 64;
     int threads = 12;
+    bool exclude_signature_123 = false;
 };
 
 class LocalSldRemainderSignatureCli {

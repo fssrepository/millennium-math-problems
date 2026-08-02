@@ -24,6 +24,8 @@ TriadSelection complementary_selection(TriadSelection selection) {
             return TriadSelection::local_without_equal_low_doubling();
         case Mode::exclude_equal_low_doubling:
             return TriadSelection::local_equal_low_doubling();
+        case Mode::exclude_equal_low_doubling_and_signature:
+            break;
         case Mode::none:
             break;
     }
