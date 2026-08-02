@@ -84,6 +84,7 @@ add_executable(navier_stokes_lab
     src/local_sld/core/local_sld_two_scale_state.cpp
     src/local_sld/core/projective/local_sld_projective_open_power_objective.cpp
     src/local_sld/core/projective/local_sld_projective_height_stretching_objective.cpp
+    src/local_sld/core/projective/local_sld_projective_height_power_objective.cpp
 
     src/local_sld/analysis/local_critical_derivative_ledger.cpp
     src/local_sld/analysis/local_quartic_closure_target.cpp

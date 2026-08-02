@@ -113,17 +113,46 @@ SparseField bilinear_full_full(
     const SpectralState& state,
     const ProjectiveInteractionGroup& group,
     const SpectralIncrement& advecting,
-    const SpectralIncrement& advected) {
-    SparseField result;
+    const SpectralIncrement& advected,
+    int threads) {
+    int worker_count = 1;
+#ifdef NS_HAVE_OPENMP
+    worker_count = std::max(
+        1, std::min(threads,
+            static_cast<int>(group.interactions.size())));
+#else
+    static_cast<void>(threads);
+#endif
+    std::vector<SparseField> partials(
+        static_cast<std::size_t>(worker_count));
     const SpectralComplex imaginary_unit{0.0L, 1.0L};
-    for (const InteractionIndex interaction : group.interactions) {
+#ifdef NS_HAVE_OPENMP
+#pragma omp parallel for schedule(static) num_threads(worker_count) \
+    if(worker_count > 1)
+#endif
+    for (std::ptrdiff_t position = 0;
+         position < static_cast<std::ptrdiff_t>(group.interactions.size());
+         ++position) {
+        int worker = 0;
+#ifdef NS_HAVE_OPENMP
+        worker = omp_get_thread_num();
+#endif
+        const InteractionIndex interaction = group.interactions[
+            static_cast<std::size_t>(position)];
         const auto [p, q, target] = interaction;
         const SpectralComplex coefficient = imaginary_unit *
             wave_dot(state.waves[q], advecting[p]);
-        ComplexVector& destination = result[target];
+        ComplexVector& destination = partials[
+            static_cast<std::size_t>(worker)][target];
         for (std::size_t coordinate = 0; coordinate < 3; ++coordinate) {
             destination[coordinate] +=
                 coefficient * advected[q][coordinate];
+        }
+    }
+    SparseField result;
+    for (const SparseField& partial : partials) {
+        for (const auto& [mode, value] : partial) {
+            add_sparse(result, mode, value);
         }
     }
     for (auto& [mode, value] : result) {
@@ -136,19 +165,48 @@ SparseField bilinear_sparse_full(
     const SpectralState& state,
     const ProjectiveInteractionGroup& group,
     const SparseField& advecting,
-    const SpectralIncrement& advected) {
-    SparseField result;
+    const SpectralIncrement& advected,
+    int threads) {
+    int worker_count = 1;
+#ifdef NS_HAVE_OPENMP
+    worker_count = std::max(
+        1, std::min(threads,
+            static_cast<int>(group.interactions.size())));
+#else
+    static_cast<void>(threads);
+#endif
+    std::vector<SparseField> partials(
+        static_cast<std::size_t>(worker_count));
     const SpectralComplex imaginary_unit{0.0L, 1.0L};
-    for (const InteractionIndex interaction : group.interactions) {
+#ifdef NS_HAVE_OPENMP
+#pragma omp parallel for schedule(static) num_threads(worker_count) \
+    if(worker_count > 1)
+#endif
+    for (std::ptrdiff_t position = 0;
+         position < static_cast<std::ptrdiff_t>(group.interactions.size());
+         ++position) {
+        int worker = 0;
+#ifdef NS_HAVE_OPENMP
+        worker = omp_get_thread_num();
+#endif
+        const InteractionIndex interaction = group.interactions[
+            static_cast<std::size_t>(position)];
         const auto [p, q, target] = interaction;
         const ComplexVector advecting_value = sparse_value(
             advecting, p);
         const SpectralComplex coefficient = imaginary_unit *
             wave_dot(state.waves[q], advecting_value);
-        ComplexVector& destination = result[target];
+        ComplexVector& destination = partials[
+            static_cast<std::size_t>(worker)][target];
         for (std::size_t coordinate = 0; coordinate < 3; ++coordinate) {
             destination[coordinate] +=
                 coefficient * advected[q][coordinate];
+        }
+    }
+    SparseField result;
+    for (const SparseField& partial : partials) {
+        for (const auto& [mode, value] : partial) {
+            add_sparse(result, mode, value);
         }
     }
     for (auto& [mode, value] : result) {
@@ -219,14 +277,16 @@ SparseGroupMoment accumulate_group(
     const SpectralIncrement& au,
     SpectralReal enstrophy,
     SpectralReal palinstrophy,
-    SpectralIncrement* gradient) {
+    SpectralIncrement* gradient,
+    int internal_threads) {
     const SparseField b = bilinear_full_full(
-        state, group, state.velocity, state.velocity);
+        state, group, state.velocity, state.velocity,
+        internal_threads);
     const SparseField ab = laplacian_weight(state, b);
     const SparseField transported = bilinear_full_full(
-        state, group, state.velocity, au);
+        state, group, state.velocity, au, internal_threads);
     const SparseField nested = bilinear_sparse_full(
-        state, group, b, state.velocity);
+        state, group, b, state.velocity, internal_threads);
     const SpectralReal stretching = sparse_pairing_au(state, b);
     const SpectralReal cross = sparse_pairing_au(state, ab);
     SparseGroupMoment moment;
@@ -373,7 +433,8 @@ ProjectiveQuarticDiagonalKernel::evaluate(
             state, groups[static_cast<std::size_t>(group_index)], au,
             enstrophy, palinstrophy,
             compute_gradient
-                ? &partial_gradients[worker_index] : nullptr);
+                ? &partial_gradients[worker_index] : nullptr,
+            groups.size() == 1 ? threads : 1);
         partial_bracket[worker_index] += group_moment.bracket;
         partial_d_enstrophy[worker_index] += group_moment.d_enstrophy;
         partial_d_palinstrophy[worker_index] +=
