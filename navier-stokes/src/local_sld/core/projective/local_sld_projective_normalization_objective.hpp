@@ -7,6 +7,7 @@ namespace lemma {
 
 enum class LocalSldProjectiveNormalizationComponent {
     open_sum,
+    selected_stretching_tail_cross,
     core_stretching_tail_cross,
     tail_stretching_core_cross,
     tail_stretching_tail_cross,
@@ -24,10 +25,12 @@ struct LocalSldProjectiveNormalizationObjectiveValue {
     SpectralReal fixed_core_palinstrophy_cross = 0.0L;
     SpectralReal tail_stretching = 0.0L;
     SpectralReal tail_palinstrophy_cross = 0.0L;
+    SpectralReal selected_stretching_tail_cross_product = 0.0L;
     SpectralReal core_stretching_tail_cross_product = 0.0L;
     SpectralReal tail_stretching_core_cross_product = 0.0L;
     SpectralReal tail_stretching_tail_cross_product = 0.0L;
     SpectralReal selected_normalization_product = 0.0L;
+    SpectralReal selected_stretching_tail_cross_power_one = 0.0L;
     SpectralReal core_stretching_tail_cross_power_one = 0.0L;
     SpectralReal tail_stretching_core_cross_power_one = 0.0L;
     SpectralReal tail_stretching_tail_cross_power_one = 0.0L;

@@ -173,6 +173,8 @@ TriadSelection objective_selection(
 bool is_normalization_component_objective(
     const std::string& objective) {
     return objective ==
+            "local-projective-selected-stretching-tail-cross-ratio" ||
+        objective ==
             "local-projective-core-stretching-tail-cross-ratio" ||
         objective ==
             "local-projective-tail-stretching-core-cross-ratio" ||
@@ -182,6 +184,11 @@ bool is_normalization_component_objective(
 
 LocalSldProjectiveNormalizationComponent normalization_component(
     const std::string& objective) {
+    if (objective ==
+        "local-projective-selected-stretching-tail-cross-ratio") {
+        return LocalSldProjectiveNormalizationComponent::
+            selected_stretching_tail_cross;
+    }
     if (objective ==
         "local-projective-core-stretching-tail-cross-ratio") {
         return LocalSldProjectiveNormalizationComponent::

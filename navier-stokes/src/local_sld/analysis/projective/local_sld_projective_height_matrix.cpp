@@ -336,12 +336,17 @@ void write_json(
             << static_cast<double>(row.core_stretching_h1_alignment)
             << ", \"tail_stretching_h1_alignment\": "
             << static_cast<double>(row.tail_stretching_h1_alignment)
+            << ", \"selected_stretching_h1_alignment\": "
+            << static_cast<double>(row.selected_stretching_h1_alignment)
             << ", \"core_palinstrophy_cross_h2_alignment\": "
             << static_cast<double>(
                    row.core_palinstrophy_cross_h2_alignment)
             << ", \"tail_palinstrophy_cross_h2_alignment\": "
             << static_cast<double>(
                    row.tail_palinstrophy_cross_h2_alignment)
+            << ", \"selected_stretching_tail_cross_power_one\": "
+            << static_cast<double>(
+                   row.selected_stretching_tail_cross_power_one)
             << ", \"core_stretching_tail_cross_power_one\": "
             << static_cast<double>(
                    row.core_stretching_tail_cross_power_one)
@@ -351,6 +356,9 @@ void write_json(
             << ", \"tail_stretching_tail_cross_power_one\": "
             << static_cast<double>(
                    row.tail_stretching_tail_cross_power_one)
+            << ", \"selected_stretching_tail_cross_cauchy_bound\": "
+            << static_cast<double>(
+                   row.selected_stretching_tail_cross_cauchy_bound)
             << ", \"core_stretching_tail_cross_cauchy_bound\": "
             << static_cast<double>(
                    row.core_stretching_tail_cross_cauchy_bound)
@@ -369,6 +377,9 @@ void write_json(
             << ", \"tail_stretching_tail_cross_cauchy_ratio\": "
             << static_cast<double>(
                    row.tail_stretching_tail_cross_cauchy_ratio)
+            << ", \"selected_stretching_tail_cross_cauchy_ratio\": "
+            << static_cast<double>(
+                   row.selected_stretching_tail_cross_cauchy_ratio)
             << ", \"joint_cross_tail_cauchy_bound\": "
             << static_cast<double>(row.joint_cross_tail_cauchy_bound)
             << ", \"joint_cross_tail_cauchy_ratio\": "
@@ -379,6 +390,9 @@ void write_json(
             << ", \"palinstrophy_factorization_error\": "
             << static_cast<double>(
                    row.palinstrophy_factorization_error)
+            << ", \"two_term_palinstrophy_factorization_error\": "
+            << static_cast<double>(
+                   row.two_term_palinstrophy_factorization_error)
             << ", \"open_absolute_power_one_sum\": "
             << static_cast<double>(row.open_absolute_power_one_sum)
             << ", \"open_effective_height_pairs\": "

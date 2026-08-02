@@ -1000,6 +1000,20 @@ relocates into the growing tail; no monotone core-height decay is available.
 The restart point is a structural bound for
 `s t-s_core t_core`, not another fixed-core extrapolation.
 
+That difference is now factored exactly as
+`s_core t_tail+s_tail t_core+s_tail t_tail`.  All three squared objectives
+have analytic gradients, and a dominant-component/open-sum alternating
+search raises the H8 K8 value from `0.000345645` to `0.000573211`.  The final
+tail--tail share is `75.6%`.  Zero padding that state into the complete K12
+cube leaves every pairing and the normalized objective exactly unchanged,
+although the joint aggregate-norm Cauchy bound increases by `0.60%`; one full
+K12 component/open step reaches `0.000575812`.  The zero-padding invariance is
+algebraic and is covered by the C++ self-test.  For a fixed finite core, the
+next precise palinstrophy target is PNT-4: a cutoff-uniform joint bound for
+`|S_full <Au,b_tail><Au,A b_tail>|/(Z^2 P^3)`.  Separate H2-tail or
+alignment estimates are intentionally not substituted for this joint target.
+See `proof/l4/lemmas/shifted-local-density/PALINSTROPHY_NORMALIZATION_TAIL.md`.
+
 The absolute closure ratio was subsequently reverse-differentiated and
 optimized directly. A K1 branch reaches `C_state=1/3`, but its stretching is
 only `1.23e-11`; the `S^3` factor makes it irrelevant to the actual local

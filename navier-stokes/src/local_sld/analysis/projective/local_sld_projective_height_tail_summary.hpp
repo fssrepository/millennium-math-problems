@@ -28,14 +28,18 @@ struct LocalSldProjectiveHeightTailRow {
     SpectralReal tail_aggregate_h2_norm2 = 0.0L;
     SpectralReal core_stretching_h1_alignment = 0.0L;
     SpectralReal tail_stretching_h1_alignment = 0.0L;
+    SpectralReal selected_stretching_h1_alignment = 0.0L;
     SpectralReal core_palinstrophy_cross_h2_alignment = 0.0L;
     SpectralReal tail_palinstrophy_cross_h2_alignment = 0.0L;
+    SpectralReal selected_stretching_tail_cross_power_one = 0.0L;
     SpectralReal core_stretching_tail_cross_power_one = 0.0L;
     SpectralReal tail_stretching_core_cross_power_one = 0.0L;
     SpectralReal tail_stretching_tail_cross_power_one = 0.0L;
+    SpectralReal selected_stretching_tail_cross_cauchy_bound = 0.0L;
     SpectralReal core_stretching_tail_cross_cauchy_bound = 0.0L;
     SpectralReal tail_stretching_core_cross_cauchy_bound = 0.0L;
     SpectralReal tail_stretching_tail_cross_cauchy_bound = 0.0L;
+    SpectralReal selected_stretching_tail_cross_cauchy_ratio = 0.0L;
     SpectralReal core_stretching_tail_cross_cauchy_ratio = 0.0L;
     SpectralReal tail_stretching_core_cross_cauchy_ratio = 0.0L;
     SpectralReal tail_stretching_tail_cross_cauchy_ratio = 0.0L;
@@ -43,6 +47,7 @@ struct LocalSldProjectiveHeightTailRow {
     SpectralReal joint_cross_tail_cauchy_ratio = 0.0L;
     SpectralReal maximum_alignment_product_reconstruction_error = 0.0L;
     SpectralReal palinstrophy_factorization_error = 0.0L;
+    SpectralReal two_term_palinstrophy_factorization_error = 0.0L;
     SpectralReal reconstructed_power_one = 0.0L;
     SpectralReal open_absolute_power_one_sum = 0.0L;
     SpectralReal open_effective_height_pairs = 0.0L;

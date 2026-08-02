@@ -89,6 +89,10 @@ std::string objective_formula(const std::string& objective) {
         return "maximize |<Au,B_tail(u,u)>|^2 / (Z ||A^(1/2)B_tail(u,u)||_2^2) above a fixed primitive-height core";
     }
     if (objective ==
+        "projective-selected-stretching-tail-cross-ratio") {
+        return "maximize the squared normalized |S_full s_selected t_tail| channel in the two-term open palinstrophy-normalization factorization";
+    }
+    if (objective ==
         "projective-core-stretching-tail-cross-ratio") {
         return "maximize the squared normalized |S_full s_core t_tail| channel in the open palinstrophy-normalization factorization";
     }

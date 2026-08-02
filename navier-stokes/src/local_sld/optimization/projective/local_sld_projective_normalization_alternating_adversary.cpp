@@ -21,6 +21,9 @@ namespace lemma {
 namespace {
 
 std::string local_component_objective(const std::string& component) {
+    if (component == "selected-stretching-tail-cross") {
+        return "local-projective-selected-stretching-tail-cross-ratio";
+    }
     if (component == "core-stretching-tail-cross") {
         return "local-projective-core-stretching-tail-cross-ratio";
     }
@@ -36,19 +39,13 @@ std::string local_component_objective(const std::string& component) {
 
 std::string dominant_component(
     const LocalSldProjectiveNormalizationObjectiveValue& value) {
-    const SpectralReal first =
-        value.core_stretching_tail_cross_power_one;
-    const SpectralReal second =
+    const SpectralReal tail_cross =
+        value.selected_stretching_tail_cross_power_one;
+    const SpectralReal core_cross =
         value.tail_stretching_core_cross_power_one;
-    const SpectralReal third =
-        value.tail_stretching_tail_cross_power_one;
-    if (first >= second && first >= third) {
-        return "core-stretching-tail-cross";
-    }
-    if (second >= third) {
-        return "tail-stretching-core-cross";
-    }
-    return "tail-stretching-tail-cross";
+    return tail_cross >= core_cross
+        ? "selected-stretching-tail-cross"
+        : "tail-stretching-core-cross";
 }
 
 std::string checkpoint_path(
@@ -215,6 +212,7 @@ LocalSldProjectiveNormalizationAlternatingAdversaryCli::parse(
     }
     const bool valid_component =
         options.component == "dominant" ||
+        options.component == "selected-stretching-tail-cross" ||
         options.component == "core-stretching-tail-cross" ||
         options.component == "tail-stretching-core-cross" ||
         options.component == "tail-stretching-tail-cross";
@@ -244,7 +242,7 @@ void LocalSldProjectiveNormalizationAlternatingAdversaryCli::print_help(
         << "  --output-state PATH          final Fourier TSV\n"
         << "  --certificate PATH           write English JSON trace\n"
         << "  --selection NAME             local SLD triad selection\n"
-        << "  --component NAME             dominant, core-stretching-tail-cross, tail-stretching-core-cross, or tail-stretching-tail-cross\n"
+        << "  --component NAME             dominant, selected-stretching-tail-cross, core-stretching-tail-cross, tail-stretching-core-cross, or tail-stretching-tail-cross\n"
         << "  --projective-core-height H   fixed primitive-height core\n"
         << "  --cycles N                   alternating phase pairs\n"
         << "  --component-iterations N     L-BFGS component steps per cycle\n"

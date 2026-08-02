@@ -49,6 +49,9 @@ LocalSldProjectiveHeightTailSummary::summarize(
                 row.tail_stretching * row.core_palinstrophy_cross;
             row.tail_stretching_tail_cross_power_one = factor *
                 row.tail_stretching * row.tail_palinstrophy_cross;
+            row.selected_stretching_tail_cross_power_one = factor *
+                (row.core_stretching + row.tail_stretching) *
+                row.tail_palinstrophy_cross;
         }
         SpectralReal open_square_sum = 0.0L;
         for (const auto& entry : matrix.entries) {
@@ -113,6 +116,11 @@ LocalSldProjectiveHeightTailSummary::summarize(
                 cauchy_factor * std::sqrt(z * tail_h1 * p * core_h2);
             row.tail_stretching_tail_cross_cauchy_bound =
                 cauchy_factor * std::sqrt(z * tail_h1 * p * tail_h2);
+            row.selected_stretching_tail_cross_cauchy_bound =
+                cauchy_factor * std::sqrt(
+                    z * std::max(
+                        matrix.global_aggregate_h1_norm2, 0.0L) *
+                    p * tail_h2);
             auto alignment = [](SpectralReal value,
                                 SpectralReal norm_product) {
                 return norm_product > 0.0L
@@ -123,6 +131,8 @@ LocalSldProjectiveHeightTailSummary::summarize(
                 row.core_stretching, z * core_h1);
             row.tail_stretching_h1_alignment = alignment(
                 row.tail_stretching, z * tail_h1);
+            row.selected_stretching_h1_alignment = std::sqrt(std::max(
+                matrix.global_stretching_h1_alignment_squared, 0.0L));
             row.core_palinstrophy_cross_h2_alignment = alignment(
                 row.core_palinstrophy_cross, p * core_h2);
             row.tail_palinstrophy_cross_h2_alignment = alignment(
@@ -140,6 +150,9 @@ LocalSldProjectiveHeightTailSummary::summarize(
         row.tail_stretching_tail_cross_cauchy_ratio = cauchy_ratio(
             row.tail_stretching_tail_cross_power_one,
             row.tail_stretching_tail_cross_cauchy_bound);
+        row.selected_stretching_tail_cross_cauchy_ratio = cauchy_ratio(
+            row.selected_stretching_tail_cross_power_one,
+            row.selected_stretching_tail_cross_cauchy_bound);
         row.joint_cross_tail_cauchy_bound =
             row.core_stretching_tail_cross_cauchy_bound +
             row.tail_stretching_core_cross_cauchy_bound +
@@ -159,6 +172,10 @@ LocalSldProjectiveHeightTailSummary::summarize(
             relative_error(
                 row.tail_stretching_tail_cross_cauchy_ratio,
                 row.tail_stretching_h1_alignment *
+                    row.tail_palinstrophy_cross_h2_alignment),
+            relative_error(
+                row.selected_stretching_tail_cross_cauchy_ratio,
+                row.selected_stretching_h1_alignment *
                     row.tail_palinstrophy_cross_h2_alignment)});
         row.open_power_one = row.core_tail_power_one +
             row.tail_internal_power_one;
@@ -196,6 +213,10 @@ LocalSldProjectiveHeightTailSummary::summarize(
                 row.tail_stretching_core_cross_power_one +
                 row.tail_stretching_tail_cross_power_one,
             row.open_palinstrophy_normalization_power_one);
+        row.two_term_palinstrophy_factorization_error = relative_error(
+            row.selected_stretching_tail_cross_power_one +
+                row.tail_stretching_core_cross_power_one,
+            row.open_palinstrophy_normalization_power_one);
         report.maximum_reconstruction_error = std::max(
             report.maximum_reconstruction_error,
             row.reconstruction_error);
@@ -204,7 +225,9 @@ LocalSldProjectiveHeightTailSummary::summarize(
             row.component_reconstruction_error);
         report.maximum_palinstrophy_factorization_error = std::max(
             report.maximum_palinstrophy_factorization_error,
-            row.palinstrophy_factorization_error);
+            std::max(
+                row.palinstrophy_factorization_error,
+                row.two_term_palinstrophy_factorization_error));
         report.maximum_alignment_product_reconstruction_error = std::max(
             report.maximum_alignment_product_reconstruction_error,
             row.maximum_alignment_product_reconstruction_error);
@@ -213,6 +236,7 @@ LocalSldProjectiveHeightTailSummary::summarize(
             row.core_stretching_tail_cross_cauchy_ratio,
             row.tail_stretching_core_cross_cauchy_ratio,
             row.tail_stretching_tail_cross_cauchy_ratio,
+            row.selected_stretching_tail_cross_cauchy_ratio,
             row.joint_cross_tail_cauchy_ratio});
         report.rows.push_back(row);
     }

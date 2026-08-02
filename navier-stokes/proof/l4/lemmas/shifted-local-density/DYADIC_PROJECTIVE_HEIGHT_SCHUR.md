@@ -283,6 +283,17 @@ the portion outside fixed cores of heights 8, 16, 32, and 64 gives
 monotone finite core-height-decay argument and focus the open lemma on the
 cross-tail product `s t-s_core t_core`.
 
+The cross-tail product is now reconstructed exactly as
+`s_core t_tail+s_tail t_core+s_tail t_tail`.  Exact gradients for all three
+factors support a dominant-component alternating search.  It raises the H8
+K8 stress value from `0.000345645` to `0.000573211`, with `75.6%` in the
+tail--tail factor.  Zero padding to complete K12 leaves the factorized value
+unchanged but raises the aggregate-norm Cauchy majorant from `0.00844764` to
+`0.00849852`; one K12 component/open step reaches `0.000575812`.  The active
+normalization target is consequently the joint tail--tail estimate PNT-4,
+not separate tail-norm or alignment decay.  See
+[PALINSTROPHY_NORMALIZATION_TAIL.md](PALINSTROPHY_NORMALIZATION_TAIL.md).
+
 ## Reproduction
 
 ```bash

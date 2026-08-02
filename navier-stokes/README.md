@@ -480,12 +480,23 @@ the already isolated `(1,2,3)` fixed-family contribution; removing that
 signature gives `0.0005621` at K8 and `0.0005624` after one full K12 step.
 Core-subtracted searches at heights 8, 16, 32, and 64 do not decay
 monotonically, so simply enlarging a fixed core is not the missing theorem.
+The open normalization is now factored exactly into core--tail, tail--core,
+and tail--tail products, each with an analytic gradient.  Alternating the
+dominant factor with the full open objective raises the H8 K8 stress value
+from `0.000345645` to `0.000573211`; the tail--tail factor supplies `75.6%` of
+the latter.  Energy-preserving zero padding to the complete K12 cube leaves
+all three pairings and the objective exactly unchanged, while the raw Cauchy
+bound grows from `0.00844764` to `0.00849852`.  One full K12 component/open
+step reaches `0.000575812`.  Thus the active palinstrophy sublemma is a joint
+tail--tail scale/alignment estimate, not a standalone aggregate-norm or angle
+bound.  These finite values do not prove a cutoff-uniform estimate.
 See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_CROSS_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/FINITE_PROJECTIVE_FAMILY.md` and
 `proof/l4/lemmas/shifted-local-density/DYADIC_PROJECTIVE_HEIGHT_SCHUR.md` and
+`proof/l4/lemmas/shifted-local-density/PALINSTROPHY_NORMALIZATION_TAIL.md` and
 `proof/l4/lemmas/shifted-local-density/REMAINDER_QUARTET.md`.
 
 The helical local target has its own replayable optimizer and same-state

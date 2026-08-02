@@ -54,6 +54,8 @@ bool is_frozen_trajectory_objective(const std::string& objective) {
 bool is_normalization_component_objective(
     const std::string& objective) {
     return objective ==
+            "projective-selected-stretching-tail-cross-ratio" ||
+        objective ==
             "projective-core-stretching-tail-cross-ratio" ||
         objective ==
             "projective-tail-stretching-core-cross-ratio" ||
@@ -61,8 +63,22 @@ bool is_normalization_component_objective(
             "projective-tail-stretching-tail-cross-ratio";
 }
 
+bool is_projective_normalization_objective(
+    const std::string& objective) {
+    return objective ==
+            "projective-palinstrophy-normalization-ratio" ||
+        objective ==
+            "projective-open-palinstrophy-normalization-ratio" ||
+        is_normalization_component_objective(objective);
+}
+
 LocalSldProjectiveNormalizationComponent normalization_component(
     const std::string& objective) {
+    if (objective ==
+        "projective-selected-stretching-tail-cross-ratio") {
+        return LocalSldProjectiveNormalizationComponent::
+            selected_stretching_tail_cross;
+    }
     if (objective ==
         "projective-core-stretching-tail-cross-ratio") {
         return LocalSldProjectiveNormalizationComponent::
@@ -631,6 +647,8 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
          options.objective !=
              "projective-tail-stretching-alignment-ratio" &&
          options.objective !=
+             "projective-selected-stretching-tail-cross-ratio" &&
+         options.objective !=
              "projective-core-stretching-tail-cross-ratio" &&
          options.objective !=
              "projective-tail-stretching-core-cross-ratio" &&
@@ -731,24 +749,35 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                      "projective-height-commutator-coercivity-ratio" ||
                  options.objective ==
                      "projective-height-dynamic-coercivity-ratio" ||
+                 is_projective_normalization_objective(
+                     options.objective) ||
                  options.objective ==
-                     "projective-palinstrophy-normalization-ratio" ||
-                 options.objective ==
-                     "projective-open-palinstrophy-normalization-ratio")) {
-                if (options.objective ==
-                        "projective-palinstrophy-normalization-ratio" ||
-                    options.objective ==
-                        "projective-open-palinstrophy-normalization-ratio") {
+                     "projective-tail-stretching-alignment-ratio")) {
+                if (is_projective_normalization_objective(
+                        options.objective)) {
                     row.warm_lift_objective =
                         LocalSldProjectiveNormalizationObjective(
                             dynamics,
                             closure_selection(options.selection),
                             options.objective ==
-                                "projective-open-palinstrophy-normalization-ratio"
-                                ? options.projective_core_maximum_height : 0,
-                            options.workers)
+                                    "projective-palinstrophy-normalization-ratio"
+                                ? 0
+                                : options.projective_core_maximum_height,
+                            options.workers,
+                            normalization_component(options.objective))
                             .evaluate(starts.front())
                             .squared_palinstrophy_normalization_power_one;
+                } else if (options.objective ==
+                           "projective-tail-stretching-alignment-ratio") {
+                    row.warm_lift_objective =
+                        LocalSldProjectiveCoreTailAlignmentObjective(
+                            dynamics,
+                            closure_selection(options.selection),
+                            options.projective_core_maximum_height,
+                            LocalSldProjectiveHeightRegion::tail,
+                            options.workers)
+                            .evaluate(starts.front())
+                            .stretching_h1_alignment_squared;
                 } else if (options.objective ==
                     "projective-height-commutator-coercivity-ratio") {
                     row.warm_lift_objective =
@@ -938,6 +967,30 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                         options.workers)
                         .evaluate(starts.front())
                         .squared_palinstrophy_normalization_power_one;
+            }
+            if (is_normalization_component_objective(
+                    options.objective)) {
+                row.warm_lift_objective =
+                    LocalSldProjectiveNormalizationObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.projective_core_maximum_height,
+                        options.workers,
+                        normalization_component(options.objective))
+                        .evaluate(starts.front())
+                        .squared_palinstrophy_normalization_power_one;
+            }
+            if (options.objective ==
+                "projective-tail-stretching-alignment-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveCoreTailAlignmentObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.projective_core_maximum_height,
+                        LocalSldProjectiveHeightRegion::tail,
+                        options.workers)
+                        .evaluate(starts.front())
+                        .stretching_h1_alignment_squared;
             }
             }
         }

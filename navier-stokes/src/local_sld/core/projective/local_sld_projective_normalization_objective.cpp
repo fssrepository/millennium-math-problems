@@ -131,6 +131,9 @@ LocalSldProjectiveNormalizationObjective::evaluate(
     result.tail_palinstrophy_cross =
         result.selected_palinstrophy_cross -
         result.fixed_core_palinstrophy_cross;
+    result.selected_stretching_tail_cross_product =
+        result.selected_stretching *
+        result.tail_palinstrophy_cross;
     result.core_stretching_tail_cross_product =
         result.fixed_core_stretching *
         result.tail_palinstrophy_cross;
@@ -147,6 +150,11 @@ LocalSldProjectiveNormalizationObjective::evaluate(
     switch (component_) {
         case LocalSldProjectiveNormalizationComponent::open_sum:
             result.selected_normalization_product = open_product;
+            break;
+        case LocalSldProjectiveNormalizationComponent::
+                selected_stretching_tail_cross:
+            result.selected_normalization_product =
+                result.selected_stretching_tail_cross_product;
             break;
         case LocalSldProjectiveNormalizationComponent::
                 core_stretching_tail_cross:
@@ -172,6 +180,8 @@ LocalSldProjectiveNormalizationObjective::evaluate(
         (result.enstrophy * result.enstrophy *
          result.palinstrophy * result.palinstrophy *
          result.palinstrophy);
+    result.selected_stretching_tail_cross_power_one = component_scale *
+        std::abs(result.selected_stretching_tail_cross_product);
     result.core_stretching_tail_cross_power_one = component_scale *
         std::abs(result.core_stretching_tail_cross_product);
     result.tail_stretching_core_cross_power_one = component_scale *
@@ -276,6 +286,14 @@ SpectralIncrement LocalSldProjectiveNormalizationObjective::gradient(
                     core_cross_gradient,
                     objective_value.fixed_core_palinstrophy_cross),
                 -1.0L);
+            break;
+        case LocalSldProjectiveNormalizationComponent::
+                selected_stretching_tail_cross:
+            selected_product_gradient = product_gradient(
+                selected_stretching_gradient,
+                selected.signed_stretching,
+                tail_cross_gradient,
+                objective_value.tail_palinstrophy_cross);
             break;
         case LocalSldProjectiveNormalizationComponent::
                 core_stretching_tail_cross:

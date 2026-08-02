@@ -367,6 +367,14 @@ On the signature-free open selection it reaches `0.0005621` at K8 and
 `0.0005624` after one full K12 step. Core-subtracted searches at H=8,16,32,64
 give `0.0003456`, `0.0003319`, `0.0003936`, and `0.0002500`; relocation makes
 finite core-height decay unavailable as a proof mechanism.
+The open product is now factored into the exact core--tail, tail--core, and
+tail--tail contributions.  Dominant-factor/open-sum alternating optimization
+raises the H8 K8 stress value to `0.000573211`, of which `75.6%` is tail--tail.
+The value is exactly invariant under zero padding to K12 even though its raw
+Cauchy norm bound increases; one full K12 step reaches `0.000575812`.  This
+narrows the palinstrophy-normalization restart point to the joint tail--tail
+estimate PNT-4 in
+[PALINSTROPHY_NORMALIZATION_TAIL.md](PALINSTROPHY_NORMALIZATION_TAIL.md).
 
 ## Reproduction
 

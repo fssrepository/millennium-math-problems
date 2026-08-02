@@ -24,10 +24,12 @@ bool is_power_of_two(SpectralInteger value) {
 
 enum class Series {
     open,
+    selected_stretching_tail_cross,
     core_stretching_tail_cross,
     tail_stretching_core_cross,
     tail_stretching_tail_cross,
     joint_cross_tail_cauchy_bound,
+    selected_stretching_tail_cross_cauchy_bound,
 };
 
 SpectralReal series_value(
@@ -36,6 +38,8 @@ SpectralReal series_value(
     switch (series) {
         case Series::open:
             return row.open_palinstrophy_normalization_power_one;
+        case Series::selected_stretching_tail_cross:
+            return row.selected_stretching_tail_cross_power_one;
         case Series::core_stretching_tail_cross:
             return row.core_stretching_tail_cross_power_one;
         case Series::tail_stretching_core_cross:
@@ -44,6 +48,8 @@ SpectralReal series_value(
             return row.tail_stretching_tail_cross_power_one;
         case Series::joint_cross_tail_cauchy_bound:
             return row.joint_cross_tail_cauchy_bound;
+        case Series::selected_stretching_tail_cross_cauchy_bound:
+            return row.selected_stretching_tail_cross_cauchy_bound;
     }
     return 0.0L;
 }
@@ -110,6 +116,10 @@ void write_json(
         << "  \"fitted_open_height_slope\": "
         << static_cast<double>(report.fitted_open_height_slope)
         << ",\n"
+        << "  \"fitted_selected_stretching_tail_cross_height_slope\": "
+        << static_cast<double>(
+               report.fitted_selected_stretching_tail_cross_height_slope)
+        << ",\n"
         << "  \"fitted_core_stretching_tail_cross_height_slope\": "
         << static_cast<double>(
                report.fitted_core_stretching_tail_cross_height_slope)
@@ -125,6 +135,10 @@ void write_json(
         << "  \"fitted_joint_cross_tail_cauchy_bound_height_slope\": "
         << static_cast<double>(
                report.fitted_joint_cross_tail_cauchy_bound_height_slope)
+        << ",\n"
+        << "  \"fitted_selected_stretching_tail_cross_cauchy_bound_height_slope\": "
+        << static_cast<double>(
+               report.fitted_selected_stretching_tail_cross_cauchy_bound_height_slope)
         << ",\n"
         << "  \"maximum_factorization_error\": "
         << static_cast<double>(report.maximum_factorization_error)
@@ -152,6 +166,14 @@ void write_json(
         << "    \"tail_stretching_times_tail_cross\": "
         << report.tail_stretching_tail_cross_dominance_count << "\n"
         << "  },\n"
+        << "  \"canonical_dominance_counts\": {\n"
+        << "    \"selected_stretching_times_tail_cross\": "
+        << report.selected_stretching_tail_cross_canonical_dominance_count
+        << ",\n"
+        << "    \"tail_stretching_times_core_cross\": "
+        << report.tail_stretching_core_cross_canonical_dominance_count
+        << "\n"
+        << "  },\n"
         << "  \"rows\": [\n";
     for (std::size_t index = 0; index < report.rows.size(); ++index) {
         const auto& row = report.rows[index];
@@ -161,6 +183,9 @@ void write_json(
             << ", \"open_palinstrophy_normalization_power_one\": "
             << static_cast<double>(
                    row.open_palinstrophy_normalization_power_one)
+            << ", \"selected_stretching_tail_cross_power_one\": "
+            << static_cast<double>(
+                   row.selected_stretching_tail_cross_power_one)
             << ", \"core_stretching_tail_cross_power_one\": "
             << static_cast<double>(
                    row.core_stretching_tail_cross_power_one)
@@ -175,6 +200,14 @@ void write_json(
                    row.joint_cross_tail_absolute_envelope)
             << ", \"joint_cross_tail_alignment\": "
             << static_cast<double>(row.joint_cross_tail_alignment)
+            << ", \"canonical_two_term_absolute_envelope\": "
+            << static_cast<double>(
+                   row.canonical_two_term_absolute_envelope)
+            << ", \"canonical_two_term_alignment\": "
+            << static_cast<double>(row.canonical_two_term_alignment)
+            << ", \"selected_stretching_tail_cross_fraction\": "
+            << static_cast<double>(
+                   row.selected_stretching_tail_cross_fraction)
             << ", \"core_stretching_tail_cross_fraction\": "
             << static_cast<double>(
                    row.core_stretching_tail_cross_fraction)
@@ -184,6 +217,9 @@ void write_json(
             << ", \"tail_stretching_tail_cross_fraction\": "
             << static_cast<double>(
                    row.tail_stretching_tail_cross_fraction)
+            << ", \"selected_stretching_tail_cross_cauchy_bound\": "
+            << static_cast<double>(
+                   row.selected_stretching_tail_cross_cauchy_bound)
             << ", \"core_stretching_tail_cross_cauchy_bound\": "
             << static_cast<double>(
                    row.core_stretching_tail_cross_cauchy_bound)
@@ -202,6 +238,9 @@ void write_json(
             << ", \"tail_stretching_tail_cross_cauchy_ratio\": "
             << static_cast<double>(
                    row.tail_stretching_tail_cross_cauchy_ratio)
+            << ", \"selected_stretching_tail_cross_cauchy_ratio\": "
+            << static_cast<double>(
+                   row.selected_stretching_tail_cross_cauchy_ratio)
             << ", \"joint_cross_tail_cauchy_bound\": "
             << static_cast<double>(row.joint_cross_tail_cauchy_bound)
             << ", \"joint_cross_tail_cauchy_ratio\": "
@@ -226,8 +265,12 @@ void write_json(
             << static_cast<double>(row.tail_palinstrophy_cross)
             << ", \"factorization_error\": "
             << static_cast<double>(row.factorization_error)
+            << ", \"two_term_factorization_error\": "
+            << static_cast<double>(row.two_term_factorization_error)
             << ", \"dominant_channel\": \""
             << row.dominant_channel
+            << "\", \"canonical_dominant_channel\": \""
+            << row.canonical_dominant_channel
             << "\", \"state_path\": \"" << row.state_path << "\"}"
             << (index + 1 == report.rows.size() ? "\n" : ",\n");
     }
@@ -343,6 +386,8 @@ int LocalSldProjectiveNormalizationTailScanCli::run(
         row.cutoff = matrix.cutoff;
         row.open_palinstrophy_normalization_power_one =
             cut->open_palinstrophy_normalization_power_one;
+        row.selected_stretching_tail_cross_power_one =
+            cut->selected_stretching_tail_cross_power_one;
         row.core_stretching_tail_cross_power_one =
             cut->core_stretching_tail_cross_power_one;
         row.tail_stretching_core_cross_power_one =
@@ -370,6 +415,19 @@ int LocalSldProjectiveNormalizationTailScanCli::run(
                 std::abs(
                     row.tail_stretching_tail_cross_power_one) * inverse;
         }
+        row.canonical_two_term_absolute_envelope =
+            std::abs(row.selected_stretching_tail_cross_power_one) +
+            std::abs(row.tail_stretching_core_cross_power_one);
+        if (row.canonical_two_term_absolute_envelope > 0.0L) {
+            const SpectralReal inverse =
+                1.0L / row.canonical_two_term_absolute_envelope;
+            row.canonical_two_term_alignment = std::abs(
+                row.open_palinstrophy_normalization_power_one) * inverse;
+            row.selected_stretching_tail_cross_fraction = std::abs(
+                row.selected_stretching_tail_cross_power_one) * inverse;
+        }
+        row.selected_stretching_tail_cross_cauchy_bound =
+            cut->selected_stretching_tail_cross_cauchy_bound;
         row.core_stretching_tail_cross_cauchy_bound =
             cut->core_stretching_tail_cross_cauchy_bound;
         row.tail_stretching_core_cross_cauchy_bound =
@@ -382,6 +440,8 @@ int LocalSldProjectiveNormalizationTailScanCli::run(
             cut->tail_stretching_core_cross_cauchy_ratio;
         row.tail_stretching_tail_cross_cauchy_ratio =
             cut->tail_stretching_tail_cross_cauchy_ratio;
+        row.selected_stretching_tail_cross_cauchy_ratio =
+            cut->selected_stretching_tail_cross_cauchy_ratio;
         row.joint_cross_tail_cauchy_bound =
             cut->joint_cross_tail_cauchy_bound;
         row.joint_cross_tail_cauchy_ratio =
@@ -399,11 +459,20 @@ int LocalSldProjectiveNormalizationTailScanCli::run(
         row.core_palinstrophy_cross = cut->core_palinstrophy_cross;
         row.tail_palinstrophy_cross = cut->tail_palinstrophy_cross;
         row.factorization_error = cut->palinstrophy_factorization_error;
+        row.two_term_factorization_error =
+            cut->two_term_palinstrophy_factorization_error;
         row.dominant_channel = dominant_channel(row);
+        row.canonical_dominant_channel =
+            std::abs(row.selected_stretching_tail_cross_power_one) >=
+                    std::abs(row.tail_stretching_core_cross_power_one)
+                ? "selected-stretching-times-tail-cross"
+                : "tail-stretching-times-core-cross";
         row.state_path = options.state_paths[index];
         report.maximum_factorization_error = std::max(
             report.maximum_factorization_error,
-            row.factorization_error);
+            std::max(
+                row.factorization_error,
+                row.two_term_factorization_error));
         report.minimum_joint_cross_tail_alignment = std::min(
             report.minimum_joint_cross_tail_alignment,
             row.joint_cross_tail_alignment);
@@ -420,7 +489,8 @@ int LocalSldProjectiveNormalizationTailScanCli::run(
             report.maximum_individual_cauchy_ratio,
             row.core_stretching_tail_cross_cauchy_ratio,
             row.tail_stretching_core_cross_cauchy_ratio,
-            row.tail_stretching_tail_cross_cauchy_ratio});
+            row.tail_stretching_tail_cross_cauchy_ratio,
+            row.selected_stretching_tail_cross_cauchy_ratio});
         if (row.dominant_channel ==
             "core-stretching-times-tail-cross") {
             ++report.core_stretching_tail_cross_dominance_count;
@@ -430,10 +500,19 @@ int LocalSldProjectiveNormalizationTailScanCli::run(
         } else {
             ++report.tail_stretching_tail_cross_dominance_count;
         }
+        if (row.canonical_dominant_channel ==
+            "selected-stretching-times-tail-cross") {
+            ++report
+                .selected_stretching_tail_cross_canonical_dominance_count;
+        } else {
+            ++report
+                .tail_stretching_core_cross_canonical_dominance_count;
+        }
         report.every_matrix_exact = report.every_matrix_exact &&
             matrix.exact_height_matrix_decomposition &&
             tail.exact_cumulative_decomposition &&
-            row.factorization_error < 1e-13L;
+            row.factorization_error < 1e-13L &&
+            row.two_term_factorization_error < 1e-13L;
         report.rows.push_back(row);
     }
     std::sort(report.rows.begin(), report.rows.end(),
@@ -451,9 +530,15 @@ int LocalSldProjectiveNormalizationTailScanCli::run(
             report.dominant_channel_switch_observed ||
             report.rows[index - 1].dominant_channel !=
                 report.rows[index].dominant_channel;
+        report.canonical_dominant_channel_switch_observed =
+            report.canonical_dominant_channel_switch_observed ||
+            report.rows[index - 1].canonical_dominant_channel !=
+                report.rows[index].canonical_dominant_channel;
     }
     report.fitted_open_height_slope = fit_slope(
         report.rows, Series::open);
+    report.fitted_selected_stretching_tail_cross_height_slope = fit_slope(
+        report.rows, Series::selected_stretching_tail_cross);
     report.fitted_core_stretching_tail_cross_height_slope = fit_slope(
         report.rows, Series::core_stretching_tail_cross);
     report.fitted_tail_stretching_core_cross_height_slope = fit_slope(
@@ -462,6 +547,10 @@ int LocalSldProjectiveNormalizationTailScanCli::run(
         report.rows, Series::tail_stretching_tail_cross);
     report.fitted_joint_cross_tail_cauchy_bound_height_slope = fit_slope(
         report.rows, Series::joint_cross_tail_cauchy_bound);
+    report.fitted_selected_stretching_tail_cross_cauchy_bound_height_slope =
+        fit_slope(
+            report.rows,
+            Series::selected_stretching_tail_cross_cauchy_bound);
 
     const std::filesystem::path path(options.certificate_path);
     if (!path.parent_path().empty()) {

@@ -1517,6 +1517,13 @@ bool self_test(std::ostream& out) {
             TriadSelection::local_without_equal_low_doubling(),
             2, 2);
     const LocalSldProjectiveNormalizationObjective
+        projective_selected_stretching_tail_cross_objective(
+            active_dynamics,
+            TriadSelection::local_without_equal_low_doubling(),
+            2, 2,
+            LocalSldProjectiveNormalizationComponent::
+                selected_stretching_tail_cross);
+    const LocalSldProjectiveNormalizationObjective
         projective_core_stretching_tail_cross_objective(
             active_dynamics,
             TriadSelection::local_without_equal_low_doubling(),
@@ -2088,12 +2095,71 @@ bool self_test(std::ostream& out) {
     const Real projective_core_stretching_tail_cross_gradient_error =
         projective_normalization_component_gradient_error(
             projective_core_stretching_tail_cross_objective);
+    const Real projective_selected_stretching_tail_cross_gradient_error =
+        projective_normalization_component_gradient_error(
+            projective_selected_stretching_tail_cross_objective);
     const Real projective_tail_stretching_core_cross_gradient_error =
         projective_normalization_component_gradient_error(
             projective_tail_stretching_core_cross_objective);
     const Real projective_tail_stretching_tail_cross_gradient_error =
         projective_normalization_component_gradient_error(
             projective_tail_stretching_tail_cross_objective);
+    std::mt19937_64 projective_zero_pad_generator(20260802);
+    SpectralState projective_zero_padded_state = SpectralStateFactory::lift(
+        partition_state, 3, projective_zero_pad_generator);
+    SpectralStateOps::normalize_energy(
+        projective_zero_padded_state,
+        SpectralStateOps::energy(partition_state));
+    const LocalSldProjectiveNormalizationObjectiveValue
+        projective_zero_pad_source =
+            projective_open_normalization_objective.evaluate(
+                partition_state);
+    const LocalSldProjectiveNormalizationObjectiveValue
+        projective_zero_pad_target =
+            projective_open_normalization_objective.evaluate(
+                projective_zero_padded_state);
+    auto scalar_relative_error = [](Real first, Real second) {
+        return std::abs(first - second) /
+            std::max({std::abs(first), std::abs(second), 1e-30L});
+    };
+    const Real projective_normalization_zero_pad_error = std::max({
+        scalar_relative_error(
+            projective_zero_pad_source.selected_stretching,
+            projective_zero_pad_target.selected_stretching),
+        scalar_relative_error(
+            projective_zero_pad_source.selected_palinstrophy_cross,
+            projective_zero_pad_target.selected_palinstrophy_cross),
+        scalar_relative_error(
+            projective_zero_pad_source.fixed_core_stretching,
+            projective_zero_pad_target.fixed_core_stretching),
+        scalar_relative_error(
+            projective_zero_pad_source.fixed_core_palinstrophy_cross,
+            projective_zero_pad_target.fixed_core_palinstrophy_cross),
+        scalar_relative_error(
+            projective_zero_pad_source
+                .selected_stretching_tail_cross_power_one,
+            projective_zero_pad_target
+                .selected_stretching_tail_cross_power_one),
+        scalar_relative_error(
+            projective_zero_pad_source
+                .core_stretching_tail_cross_power_one,
+            projective_zero_pad_target
+                .core_stretching_tail_cross_power_one),
+        scalar_relative_error(
+            projective_zero_pad_source
+                .tail_stretching_core_cross_power_one,
+            projective_zero_pad_target
+                .tail_stretching_core_cross_power_one),
+        scalar_relative_error(
+            projective_zero_pad_source
+                .tail_stretching_tail_cross_power_one,
+            projective_zero_pad_target
+                .tail_stretching_tail_cross_power_one),
+        scalar_relative_error(
+            projective_zero_pad_source
+                .palinstrophy_normalization_power_one,
+            projective_zero_pad_target
+                .palinstrophy_normalization_power_one)});
     const SpectralIncrement projective_cross_power_gradient =
         projective_cross_power_objective.gradient(partition_state);
     const Real projective_cross_power_directional_adjoint =
@@ -2552,9 +2618,11 @@ bool self_test(std::ostream& out) {
         projective_height_dynamic_ratio_gradient_error < 1e-9L &&
         projective_normalization_gradient_error < 1e-9L &&
         projective_open_normalization_gradient_error < 1e-9L &&
+        projective_selected_stretching_tail_cross_gradient_error < 1e-9L &&
         projective_core_stretching_tail_cross_gradient_error < 1e-9L &&
         projective_tail_stretching_core_cross_gradient_error < 1e-9L &&
         projective_tail_stretching_tail_cross_gradient_error < 1e-9L &&
+        projective_normalization_zero_pad_error < 1e-12L &&
         projective_cross_power_gradient_error < 1e-9L &&
         projective_open_power_gradient_error < 1e-9L &&
         signed_closure_gradient_error < 1e-9L &&
@@ -3511,6 +3579,9 @@ bool self_test(std::ostream& out) {
                projective_open_normalization_gradient_error)
         << ", projective normalization component gradient errors="
         << static_cast<double>(
+               projective_selected_stretching_tail_cross_gradient_error)
+        << '/'
+        << static_cast<double>(
                projective_core_stretching_tail_cross_gradient_error)
         << '/'
         << static_cast<double>(
@@ -3518,6 +3589,8 @@ bool self_test(std::ostream& out) {
         << '/'
         << static_cast<double>(
                projective_tail_stretching_tail_cross_gradient_error)
+        << ", projective normalization zero-pad error="
+        << static_cast<double>(projective_normalization_zero_pad_error)
         << ", projective cross-power gradient error="
         << static_cast<double>(projective_cross_power_gradient_error)
         << ", projective open-power gradient error="

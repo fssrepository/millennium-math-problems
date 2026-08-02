@@ -1,0 +1,24 @@
+{
+  "schema": "navier-stokes-local-sld-projective-normalization-alternating-adversary-v1",
+  "initial_state_path": "proof/l4/states/local-projective-normalization-alternating/H8-K8-tail-tail-eighth-cycle/K8.tsv",
+  "output_state_path": "proof/l4/states/local-projective-normalization-alternating/H8-K8-dominant-cycles-nine-ten/K8.tsv",
+  "triad_selection": "double-triple-remainder-without-123",
+  "cutoff": 8,
+  "core_maximum_height": 8,
+  "component": "dominant",
+  "threads": 12,
+  "cycles": 2,
+  "component_iterations": 12,
+  "open_iterations": 16,
+  "initial_open_power_one": 0.000499363724450294414,
+  "final_open_power_one": 0.000573210984707585433,
+  "improvement_factor": 1.14788270881827259,
+  "phases": [
+    {"cycle": 1, "component": "tail-stretching-tail-cross", "component_initial": 0.000344710940540393803, "component_final": 0.000397168549445226881, "open_initial": 0.000491095633771442323, "open_final": 0.000548078795357991077, "component_projected_gradient_norm": 1.59029713197953253e-06, "open_projected_gradient_norm": 3.53980018145214841e-06, "component_accepted_steps": 12, "open_accepted_steps": 16, "component_evaluations": 34, "open_evaluations": 46, "component_state_path": "proof/l4/states/local-projective-normalization-alternating/H8-K8-dominant-cycles-nine-ten/K8-cycle-1-component.tsv", "open_state_path": "proof/l4/states/local-projective-normalization-alternating/H8-K8-dominant-cycles-nine-ten/K8-cycle-1-open.tsv"},
+    {"cycle": 2, "component": "tail-stretching-tail-cross", "component_initial": 0.000405530535144083264, "component_final": 0.000438469677134673452, "open_initial": 0.000533472184391830151, "open_final": 0.000573210984707585433, "component_projected_gradient_norm": 1.62716672794580161e-06, "open_projected_gradient_norm": 1.11950366707028436e-06, "component_accepted_steps": 12, "open_accepted_steps": 16, "component_evaluations": 34, "open_evaluations": 46, "component_state_path": "proof/l4/states/local-projective-normalization-alternating/H8-K8-dominant-cycles-nine-ten/K8-cycle-2-component.tsv", "open_state_path": "proof/l4/states/local-projective-normalization-alternating/H8-K8-dominant-cycles-nine-ten/K8-cycle-2-open.tsv"}
+  ],
+  "every_phase_finite": true,
+  "finite_alternating_search_is_not_a_proof": true,
+  "candidate_lemma_proved": false,
+  "interpretation": "alternating an exact component gradient with the exact open-sum gradient exposes maxima missed by a single monolithic L-BFGS trajectory"
+}
