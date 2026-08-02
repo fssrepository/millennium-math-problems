@@ -60,6 +60,7 @@
 #include "local_sld_projective_height_dynamic_ratio_objective.hpp"
 #include "local_sld_projective_normalization_objective.hpp"
 #include "local_sld_projective_normalization_alignment_objective.hpp"
+#include "local_sld_projective_normalization_cauchy_objective.hpp"
 #include "local_sld_doubling_shell_ledger.hpp"
 #include "local_sld_doubling_scale_scan.hpp"
 #include "local_sld_projective_coherence_ledger.hpp"
@@ -1522,6 +1523,11 @@ bool self_test(std::ostream& out) {
             active_dynamics,
             TriadSelection::local_without_equal_low_doubling(),
             2, 2);
+    const LocalSldProjectiveNormalizationCauchyObjective
+        projective_normalization_cauchy_objective(
+            active_dynamics,
+            TriadSelection::local_without_equal_low_doubling(),
+            2, 2);
     const LocalSldProjectiveNormalizationObjective
         projective_selected_stretching_tail_cross_objective(
             active_dynamics,
@@ -2136,6 +2142,31 @@ bool self_test(std::ostream& out) {
                     projective_normalization_alignment_directional_adjoint),
                 std::abs(
                     projective_normalization_alignment_directional_finite_difference)));
+    const SpectralIncrement projective_normalization_cauchy_gradient =
+        projective_normalization_cauchy_objective.gradient(
+            partition_state);
+    const Real projective_normalization_cauchy_directional_adjoint =
+        increment_inner_product(
+            projective_normalization_cauchy_gradient,
+            partition_tangent);
+    const Real projective_normalization_cauchy_directional_finite_difference =
+        (projective_normalization_cauchy_objective
+             .evaluate(partition_plus_state)
+             .squared_cauchy_bound_power_one -
+         projective_normalization_cauchy_objective
+             .evaluate(partition_minus_state)
+             .squared_cauchy_bound_power_one) /
+        (2.0L * finite_difference_step);
+    const Real projective_normalization_cauchy_gradient_error = std::abs(
+        projective_normalization_cauchy_directional_adjoint -
+        projective_normalization_cauchy_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(
+                    projective_normalization_cauchy_directional_adjoint),
+                std::abs(
+                    projective_normalization_cauchy_directional_finite_difference)));
     std::mt19937_64 projective_zero_pad_generator(20260802);
     SpectralState projective_zero_padded_state = SpectralStateFactory::lift(
         partition_state, 3, projective_zero_pad_generator);
@@ -2655,6 +2686,7 @@ bool self_test(std::ostream& out) {
         projective_tail_stretching_core_cross_gradient_error < 1e-9L &&
         projective_tail_stretching_tail_cross_gradient_error < 1e-9L &&
         projective_normalization_alignment_gradient_error < 1e-9L &&
+        projective_normalization_cauchy_gradient_error < 1e-9L &&
         projective_normalization_zero_pad_error < 1e-12L &&
         projective_cross_power_gradient_error < 1e-9L &&
         projective_open_power_gradient_error < 1e-9L &&
@@ -3625,6 +3657,9 @@ bool self_test(std::ostream& out) {
         << ", projective normalization-alignment gradient error="
         << static_cast<double>(
                projective_normalization_alignment_gradient_error)
+        << ", projective normalization-Cauchy gradient error="
+        << static_cast<double>(
+               projective_normalization_cauchy_gradient_error)
         << ", projective normalization zero-pad error="
         << static_cast<double>(projective_normalization_zero_pad_error)
         << ", projective cross-power gradient error="

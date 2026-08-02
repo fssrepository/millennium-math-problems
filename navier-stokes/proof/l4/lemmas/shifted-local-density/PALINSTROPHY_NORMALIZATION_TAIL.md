@@ -128,6 +128,49 @@ uniform theorem.
 On the one-step K12 state the selected/tail channel is `0.000542046495`, or
 `91.4%` of the open value; its two-term reconstruction error is `8.93e-20`.
 
+## Exact alignment--majorant factorization
+
+For the canonical selected/tail channel define
+
+```text
+A_H = s^2 t_t^2/(Z P B1 T2),
+M_H = 3 |S_full| sqrt(Z B1 P T2)/(2 Z^2 P^3).
+```
+
+Then the selected-channel PNT value factors exactly as
+
+```text
+3 |S_full s t_t|/(2 Z^2 P^3) = M_H sqrt(A_H).       (PNT-6)
+```
+
+The engine now has independent exact-gradient objectives for both factors.
+`projective-normalization-alignment-ratio` maximizes `A_H`, while
+`projective-normalization-cauchy-ratio` maximizes
+
+```text
+M_H^2 = 9 S_full^2 B1 T2/(4 Z^3 P^5).              (PNT-7)
+```
+
+The PNT-2 K8 winner starts with `sqrt(A_H)=0.0832197` and
+`M_H=0.00647629`.  Successive alignment optimization raises
+`sqrt(A_H)` to `0.520422`, `0.689024`, and `0.771198`, but the selected PNT
+value falls from `0.000538955` to `1.777e-7`, `1.084e-8`, and `1.205e-9`.
+The last value is about 447,000 times below the selected-channel record.
+A 65-sample normalized affine scan also decreases monotonically in PNT value
+from the PNT endpoint toward the alignment endpoint.  These finite results
+rule out treating near-Cauchy equality as a useful standalone proof target;
+they do not prove a uniform tradeoff.
+
+Direct majorant optimization gives the complementary stress test.  After 24
+K8 L-BFGS steps, `M_H` rises from `0.00647629` to `0.0104101`, while
+`sqrt(A_H)` falls to `0.0258487` and the selected PNT value becomes
+`0.000269086`.  Exact zero padding of this state to complete K12 raises
+`M_H` slightly further to `0.0104580`.  The K8 objective agrees bit-for-bit
+with the square of the independent height-matrix Cauchy bound, and its
+analytic-gradient central-difference error is `7.14e-12` in the self-test.
+The cutoff behavior of `M_H`, not alignment alone, is therefore the sharper
+computational target for a PNT-5 lemma.
+
 ## Narrow candidate lemma
 
 Every fixed projective ray is already controlled by the finite-family
@@ -171,6 +214,16 @@ estimates.
   --state /tmp/K8-dominant.tsv --threads 12 \
   --exclude-triple-family --exclude-123 \
   --certificate /tmp/K8-dominant-matrix.json
+
+./build/navier_stokes_lab local-closure-adversary \
+  --objective projective-normalization-cauchy-ratio \
+  --selection double-triple-remainder-without-123 \
+  --min-cutoff 8 --max-cutoff 8 --restarts 1 --workers 12 \
+  --iterations 24 --method lbfgs --backend direct --lean \
+  --preserve-warm-layout --projective-core-height 8 \
+  --warm-state proof/l4/states/local-projective-normalization-alternating/H8-K8-two-term-eleventh-cycle/K8.tsv \
+  --certificate /tmp/K8-normalization-cauchy.json \
+  --state-dir /tmp/K8-normalization-cauchy
 ```
 
 Primary certificates:
@@ -184,3 +237,9 @@ Primary certificates:
 - [`../../analysis/shifted-local-density/remainder-quartet/K8-open-palinstrophy-H8-two-term-eleventh-cycle-matrix.json`](../../analysis/shifted-local-density/remainder-quartet/K8-open-palinstrophy-H8-two-term-eleventh-cycle-matrix.json)
 - [`../../adversary/shifted-local-density/projective-normalization-alternating/H8-K12-two-term-one-step.json`](../../adversary/shifted-local-density/projective-normalization-alternating/H8-K12-two-term-one-step.json)
 - [`../../analysis/shifted-local-density/remainder-quartet/K12-open-palinstrophy-H8-two-term-one-step-matrix.json`](../../analysis/shifted-local-density/remainder-quartet/K12-open-palinstrophy-H8-two-term-one-step-matrix.json)
+- [`../../adversary/shifted-local-density/projective-normalization-alignment/H8-K8-ninety-six-step-continuation.json`](../../adversary/shifted-local-density/projective-normalization-alignment/H8-K8-ninety-six-step-continuation.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K8-normalization-alignment-H8-ninety-six-step-continuation-matrix.json`](../../analysis/shifted-local-density/remainder-quartet/K8-normalization-alignment-H8-ninety-six-step-continuation-matrix.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K8-H8-normalization-joint-alignment-tradeoff-line.json`](../../analysis/shifted-local-density/remainder-quartet/K8-H8-normalization-joint-alignment-tradeoff-line.json)
+- [`../../adversary/shifted-local-density/projective-normalization-cauchy/H8-K8-twenty-four-step.json`](../../adversary/shifted-local-density/projective-normalization-cauchy/H8-K8-twenty-four-step.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K8-normalization-cauchy-H8-twenty-four-step-matrix.json`](../../analysis/shifted-local-density/remainder-quartet/K8-normalization-cauchy-H8-twenty-four-step-matrix.json)
+- [`../../adversary/shifted-local-density/projective-normalization-cauchy/H8-K12-zero-pad-evaluate.json`](../../adversary/shifted-local-density/projective-normalization-cauchy/H8-K12-zero-pad-evaluate.json)

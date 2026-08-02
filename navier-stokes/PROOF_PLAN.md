@@ -1013,7 +1013,14 @@ dominance is removed by the exact identity `s*t_tail+s_tail*t_core`.  Its new
 selected-stretching/tail-cross objective raises the K8 record to `0.000590223`
 and supplies `91.3%` of that value.  Zero padding followed by one canonical
 K12 component/open step reaches `0.000592977`, with a `91.4%` selected/tail
-share.  The next precise palinstrophy target is
+share.  The canonical selected/tail term now has the exact factorization
+`PNT_selected=M_H sqrt(A_H)`, where `A_H` is the squared actual/Cauchy ratio
+and `M_H^2=9 S_full^2 B1 T2/(4 Z^3 P^5)`.  Both factors have independent
+analytic gradients.  Alignment optimization raises `sqrt(A_H)` from
+`0.0832` to `0.7712` while shrinking the actual term by about `4.47e5`, so
+alignment alone is not the lemma.  Direct majorant optimization raises
+`M_H` from `0.006476` to `0.010410` at K8; exact zero padding gives
+`0.010458` at K12.  The next precise palinstrophy target is
 PNT-4: a cutoff-uniform joint bound for
 `|S_full(s*t_tail+s_tail*t_core)|/(Z^2 P^3)`.  Separate H2-tail or alignment
 estimates are intentionally not substituted for this joint target.

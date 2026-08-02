@@ -93,6 +93,10 @@ std::string objective_formula(const std::string& objective) {
         return "maximize the squared product of the selected-stretching H1 alignment and tail-palinstrophy-cross H2 alignment in the canonical normalization channel";
     }
     if (objective ==
+        "projective-normalization-cauchy-ratio") {
+        return "maximize the squared exact Cauchy majorant for the canonical selected-stretching times tail-palinstrophy-cross normalization channel";
+    }
+    if (objective ==
         "projective-selected-stretching-tail-cross-ratio") {
         return "maximize the squared normalized |S_full s_selected t_tail| channel in the two-term open palinstrophy-normalization factorization";
     }

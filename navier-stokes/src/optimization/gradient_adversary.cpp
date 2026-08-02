@@ -18,6 +18,7 @@
 #include "local_sld_projective_height_dynamic_ratio_objective.hpp"
 #include "local_sld_projective_normalization_objective.hpp"
 #include "local_sld_projective_normalization_alignment_objective.hpp"
+#include "local_sld_projective_normalization_cauchy_objective.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
 
 #include <algorithm>
@@ -344,6 +345,15 @@ SpectralReal GradientAdversary::objective_value(
             options.objective_threads)
             .evaluate(initial)
             .normalization_alignment_product_squared;
+    }
+    if (options.objective ==
+        "local-projective-normalization-cauchy-ratio") {
+        return LocalSldProjectiveNormalizationCauchyObjective(
+            dynamics_, options.closure_selection,
+            options.projective_core_maximum_height,
+            options.objective_threads)
+            .evaluate(initial)
+            .squared_cauchy_bound_power_one;
     }
     if (is_normalization_component_objective(options.objective)) {
         return LocalSldProjectiveNormalizationObjective(
@@ -718,6 +728,16 @@ GradientSearchResult GradientAdversary::maximize_q(
                 .normalization_alignment_product_squared;
             trajectory.objective_step = 0;
             trajectory.initial_gradient = alignment.gradient(result.state);
+        } else if (options.objective ==
+                   "local-projective-normalization-cauchy-ratio") {
+            const LocalSldProjectiveNormalizationCauchyObjective cauchy(
+                dynamics_, options.closure_selection,
+                options.projective_core_maximum_height,
+                options.objective_threads);
+            trajectory.objective_value = cauchy.evaluate(result.state)
+                .squared_cauchy_bound_power_one;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = cauchy.gradient(result.state);
         } else if (is_normalization_component_objective(
                        options.objective)) {
             const LocalSldProjectiveNormalizationObjective normalization(

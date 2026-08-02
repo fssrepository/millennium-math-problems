@@ -494,6 +494,12 @@ reaches `0.000592977` after one component/open step.  Thus the active
 palinstrophy sublemma is the joint two-channel PNT-4 estimate, led by the
 selected-stretching/tail-cross term, not a standalone aggregate-norm or angle
 bound.  These finite values do not prove a cutoff-uniform estimate.
+The selected/tail channel is now split exactly into its Cauchy majorant and
+its actual/majorant alignment factor.  Exact-gradient stress tests drive the
+alignment from `0.0832` to `0.7712` only by collapsing the actual channel by
+roughly `4.47e5`, whereas direct majorant optimization raises the K8 bound
+from `0.00648` to `0.01041`.  This narrows the next proof target to a
+cutoff-uniform, scale-aware bound for that majorant; it is not a Clay proof.
 See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_QUARTET.md` and
