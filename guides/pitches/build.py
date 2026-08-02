@@ -419,6 +419,7 @@ def overview_slide_1() -> Image.Image:
     add_glow(image, (-300, -150, 850, 850), BLUE, blur=185, alpha=58)
 
     pill(image, (92, 66), "PUBLIC RESEARCH GUIDE", fill=TEAL, color=INK, size=15)
+    pill(image, (360, 66), "AI-ASSISTED WITH OPENAI CODEX", fill=PURPLE, color=WHITE, size=15)
     text(image, (92, 150), "Fast falsification.\nShorter research loops.", size=64, weight="bold", max_width=770)
     text(
         image,
