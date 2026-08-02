@@ -76,6 +76,10 @@ std::string objective_formula(const std::string& objective) {
         "projective-height-dynamic-coercivity-ratio") {
         return "maximize the squared height envelope after jointly pairing the outer, advected, and nested dynamical terms, divided by the squared outer H1 shell weight";
     }
+    if (objective ==
+        "projective-palinstrophy-normalization-ratio") {
+        return "maximize the squared exact palinstrophy-normalization contribution |S_full 3 S_selected T_selected/(2P)|/(Z^2 P^2)";
+    }
     if (objective == "signed-closure-ratio") {
         return "maximize (K+G) E^(1/4) / (Z^(7/4) P)";
     }
@@ -249,6 +253,10 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
             << ", \"projective_height_dynamic_coercivity_ratio\": "
             << static_cast<double>(
                    winner.projective_height_dynamic_coercivity_ratio)
+            << ", \"projective_palinstrophy_normalization_power_one\": "
+            << static_cast<double>(
+                   winner
+                       .projective_palinstrophy_normalization_power_one)
             << ", \"projective_height_component_bracket_envelope\": "
             << static_cast<double>(
                    winner.projective_height_component_bracket_envelope)
