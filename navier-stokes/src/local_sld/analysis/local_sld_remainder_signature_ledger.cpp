@@ -123,6 +123,9 @@ void write_json(
         << "  \"excludes_signature_123\": "
         << (report.excludes_signature_123 ? "true" : "false")
         << ",\n"
+        << "  \"excludes_triple_family\": "
+        << (report.excludes_triple_family ? "true" : "false")
+        << ",\n"
         << "  \"selected_interactions\": "
         << report.selected_interactions << ",\n"
         << "  \"signature_count\": " << report.signature_count << ",\n"
@@ -238,15 +241,23 @@ LocalSldRemainderSignatureLedger::analyze(
     const SpectralDynamics& dynamics,
     const SpectralState& state,
     int threads,
-    bool exclude_signature_123) {
+    bool exclude_signature_123,
+    bool exclude_triple_family) {
     if (threads < 1) {
         throw std::invalid_argument(
             "remainder signature threads must be positive");
     }
-    const TriadSelection selection = exclude_signature_123
-        ? TriadSelection::
-              local_without_equal_low_doubling_and_signature(1, 2, 3)
-        : TriadSelection::local_without_equal_low_doubling();
+    const TriadSelection selection = exclude_triple_family
+        ? (exclude_signature_123
+               ? TriadSelection::
+                     local_without_equal_low_double_triple_and_signature(
+                         1, 2, 3)
+               : TriadSelection::local_without_equal_low_double_triple())
+        : (exclude_signature_123
+               ? TriadSelection::
+                     local_without_equal_low_doubling_and_signature(
+                         1, 2, 3)
+               : TriadSelection::local_without_equal_low_doubling());
     const LocalQuarticClosureObjectiveValue full =
         LocalQuarticClosureObjective(dynamics, selection).evaluate(state);
     const LocalQuarticClosureObjectiveValue common =
@@ -349,6 +360,7 @@ LocalSldRemainderSignatureLedger::analyze(
     report.signature_count = entries.size();
     report.threads = worker_count;
     report.excludes_signature_123 = exclude_signature_123;
+    report.excludes_triple_family = exclude_triple_family;
     report.enstrophy = full.enstrophy;
     report.palinstrophy = full.palinstrophy;
     report.target_scale = full.lqc3_target_scale;
@@ -464,6 +476,8 @@ LocalSldRemainderSignatureCli::parse(
             options.threads = std::stoi(next(index, name));
         } else if (name == "--exclude-123") {
             options.exclude_signature_123 = true;
+        } else if (name == "--exclude-triple-family") {
+            options.exclude_triple_family = true;
         } else {
             throw std::invalid_argument(
                 "unknown remainder-signature option: " + name);
@@ -484,6 +498,7 @@ void LocalSldRemainderSignatureCli::print_help(std::ostream& out) {
         << "  --certificate PATH    write English JSON ledger\n"
         << "  --top N               store N strongest signature rows\n"
         << "  --exclude-123         also remove the fixed (1,2,3) signature\n"
+        << "  --exclude-triple-family  also remove every (m,m,3m) signature\n"
         << "  --threads N           parallel interaction workers\n";
 }
 
@@ -498,7 +513,8 @@ int LocalSldRemainderSignatureCli::run(
     const LocalSldRemainderSignatureReport report =
         LocalSldRemainderSignatureLedger::analyze(
             dynamics, state, options.threads,
-            options.exclude_signature_123);
+            options.exclude_signature_123,
+            options.exclude_triple_family);
     const std::filesystem::path path(options.certificate_path);
     if (!path.parent_path().empty()) {
         std::filesystem::create_directories(path.parent_path());

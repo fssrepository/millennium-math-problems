@@ -72,6 +72,30 @@ bool TriadPartitioner::includes(
             signature[2] == 2 * signature[0];
         return !equal_low_doubling && !matches;
     }
+    if (selection.signature_mode() ==
+            TriadSelection::SignatureMode::
+                include_equal_low_double_triple ||
+        selection.signature_mode() ==
+            TriadSelection::SignatureMode::
+                exclude_equal_low_double_triple ||
+        selection.signature_mode() ==
+            TriadSelection::SignatureMode::
+                exclude_equal_low_double_triple_and_signature) {
+        const bool double_or_triple =
+            signature[0] == signature[1] &&
+            (signature[2] == 2 * signature[0] ||
+             signature[2] == 3 * signature[0]);
+        if (selection.signature_mode() ==
+            TriadSelection::SignatureMode::
+                include_equal_low_double_triple) {
+            return double_or_triple;
+        }
+        return !double_or_triple &&
+            (selection.signature_mode() !=
+                 TriadSelection::SignatureMode::
+                     exclude_equal_low_double_triple_and_signature ||
+             !matches);
+    }
     return selection.signature_mode() ==
             TriadSelection::SignatureMode::include
         ? matches

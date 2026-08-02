@@ -3,6 +3,9 @@
 #include "dyadic_shell_bounds.hpp"
 #include "doubling_quartet_closure.hpp"
 #include "equal_low_quartet_closure.hpp"
+#include "projective_quartet_closure.hpp"
+#include "projective_square_function_closure.hpp"
+#include "projective_fan_geometry.hpp"
 #include "dynamic_adversary.hpp"
 #include "family_reporter.hpp"
 #include "far_tail_closure.hpp"
@@ -43,9 +46,17 @@
 #include "local_sld_remainder_envelope_objective.hpp"
 #include "local_sld_remainder_absorption_objective.hpp"
 #include "local_sld_shape_power_objective.hpp"
+#include "local_sld_projective_coherence_objective.hpp"
+#include "local_sld_projective_stretching_objective.hpp"
+#include "local_sld_projective_cross_power_objective.hpp"
 #include "local_sld_doubling_shell_ledger.hpp"
 #include "local_sld_doubling_scale_scan.hpp"
+#include "local_sld_projective_coherence_ledger.hpp"
+#include "local_sld_projective_quartic_cross_ledger.hpp"
+#include "local_sld_projective_cross_attribution.hpp"
 #include "local_sld_remainder_double_square.hpp"
+#include "local_sld_projective_shape_envelope.hpp"
+#include "local_sld_remainder_projective_ledger.hpp"
 #include "local_sld_remainder_signature_ledger.hpp"
 #include "local_sld_remainder_tradeoff_ledger.hpp"
 #include "local_sld_block_objective.hpp"
@@ -672,6 +683,13 @@ bool self_test(std::ostream& out) {
         remainder_quartet_closure.fixed_signature_frequency_gain ==
             Rational(-1, 2) &&
         remainder_quartet_closure.every_fixed_signature_closes &&
+        remainder_quartet_closure.every_fixed_projective_ray_closes &&
+        !remainder_quartet_closure
+             .uniform_projective_shape_sum_proved &&
+        remainder_quartet_closure
+            .standalone_projective_synthesis_bound_rejected &&
+        remainder_quartet_closure
+            .coherent_fan_zero_power_one_proved &&
         remainder_quartet_closure
             .remainder_requires_collective_cancellation &&
         remainder_quartet_closure.one_sided_double_square_reduction &&
@@ -701,6 +719,79 @@ bool self_test(std::ostream& out) {
         triple_quartet_closure.direct_normalization_target_bound_proved &&
         triple_quartet_closure.cutoff_independent_closed_family_bound &&
         !triple_quartet_closure.full_local_lemma_proved;
+    const ProjectiveQuartetClosureReport projective_quartet_closure =
+        ProjectiveQuartetClosure::certify(4, {2, 3, 5});
+    const bool projective_quartet_closure_ok =
+        projective_quartet_closure.geometry.primitive_signature &&
+        projective_quartet_closure.geometry.triangle_feasible &&
+        projective_quartet_closure.geometry.fixed_plane_sphere_geometry &&
+        projective_quartet_closure.geometry.all_degree_bounds_hold &&
+        projective_quartet_closure.incidence_degree_power == Rational(1) &&
+        projective_quartet_closure.bilinear_l2_frequency_power ==
+            Rational(3, 2) &&
+        projective_quartet_closure.bracket_frequency_power == Rational(5) &&
+        projective_quartet_closure.target_frequency_power ==
+            Rational(11, 2) &&
+        projective_quartet_closure.frequency_gain == Rational(-1, 2) &&
+        projective_quartet_closure
+            .cutoff_independent_fixed_projective_ray_bound &&
+        !projective_quartet_closure
+             .uniform_sum_over_projective_shapes_proved &&
+        !projective_quartet_closure.full_local_lemma_proved;
+    const ProjectiveSquareFunctionClosureReport
+        projective_square_function =
+            ProjectiveSquareFunctionClosure::certify();
+    const bool projective_square_function_ok =
+        projective_square_function.primitive_ray_partition_is_disjoint &&
+        projective_square_function
+            .uniform_single_ray_incidence_constant_proved &&
+        projective_square_function
+            .bilinear_projective_square_function_bound_proved &&
+        projective_square_function.squared_function_frequency_power ==
+            Rational(3, 2) &&
+        projective_square_function
+                .candidate_diagonal_quartet_frequency_power ==
+            Rational(5) &&
+        projective_square_function.candidate_diagonal_frequency_gain ==
+            Rational(-1, 2) &&
+        projective_square_function
+            .square_function_has_target_power_gain &&
+        !projective_square_function
+             .diagonal_projective_quartet_sum_proved &&
+        !projective_square_function
+             .coherent_projective_synthesis_bound_proved &&
+        projective_square_function
+            .cutoff_independent_projective_synthesis_bound_rejected &&
+        projective_square_function
+            .coherent_fan_zero_stretching_proved &&
+        !projective_square_function.cross_ray_quartet_bound_proved &&
+        !projective_square_function.power_one_tradeoff_bound_proved &&
+        !projective_square_function.full_local_lemma_proved;
+    const ProjectiveFanGeometryCertificate projective_fan_geometry =
+        ProjectiveFanGeometry::certify(64);
+    const bool projective_fan_geometry_ok =
+        projective_fan_geometry.local_frequency_geometry_proved &&
+        projective_fan_geometry.target_is_unique_largest_role_proved &&
+        projective_fan_geometry.primitive_shape_injectivity_proved &&
+        projective_fan_geometry.aligned_target_coefficients_proved &&
+        projective_fan_geometry
+            .pair_count_quadratic_lower_bound_proved &&
+        projective_fan_geometry
+            .target_synthesis_quadratic_lower_bound_proved &&
+        projective_fan_geometry.target_synthesis_unbounded_proved &&
+        projective_fan_geometry
+            .stretching_support_disjointness_proved &&
+        projective_fan_geometry.exact_zero_stretching_proved &&
+        projective_fan_geometry
+            .exact_zero_power_one_product_proved &&
+        !projective_fan_geometry.rows.empty() &&
+        std::all_of(
+            projective_fan_geometry.rows.begin(),
+            projective_fan_geometry.rows.end(),
+            [](const auto& row) {
+                return row.every_shape_unique &&
+                    row.quadratic_lower_bound_verified;
+            });
     const bool local_signature_geometry_ok =
         local_signature_geometry.all_fixed_signature_degree_bounds_hold &&
         local_signature_geometry.maximum_input_degree_ratio <= 1.0L &&
@@ -1310,6 +1401,18 @@ bool self_test(std::ostream& out) {
     const LocalSldShapePowerObjective remainder_shape_power_objective(
         active_dynamics,
         TriadSelection::local_without_equal_low_doubling(), 2);
+    const LocalSldProjectiveCoherenceObjective
+        projective_coherence_objective(
+            active_dynamics,
+            TriadSelection::local_without_equal_low_doubling());
+    const LocalSldProjectiveStretchingObjective
+        projective_stretching_objective(
+            active_dynamics,
+            TriadSelection::local_without_equal_low_doubling());
+    const LocalSldProjectiveCrossPowerObjective
+        projective_cross_power_objective(
+            active_dynamics,
+            TriadSelection::local_without_equal_low_doubling());
     const Real local_closure_value_error = std::abs(
         local_closure_value.constant_ratio -
         local_quartic_closure.required_constant_ratio) /
@@ -1523,6 +1626,66 @@ bool self_test(std::ostream& out) {
                 std::abs(remainder_shape_power_directional_adjoint),
                 std::abs(
                     remainder_shape_power_directional_finite_difference)));
+    const SpectralIncrement projective_coherence_gradient =
+        projective_coherence_objective.gradient(partition_state);
+    const Real projective_coherence_directional_adjoint =
+        increment_inner_product(
+            projective_coherence_gradient, partition_tangent);
+    const Real projective_coherence_directional_finite_difference =
+        (projective_coherence_objective.evaluate(partition_plus_state)
+             .synthesis_ratio -
+         projective_coherence_objective.evaluate(partition_minus_state)
+             .synthesis_ratio) /
+        (2.0L * finite_difference_step);
+    const Real projective_coherence_gradient_error = std::abs(
+        projective_coherence_directional_adjoint -
+        projective_coherence_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(projective_coherence_directional_adjoint),
+                std::abs(
+                    projective_coherence_directional_finite_difference)));
+    const SpectralIncrement projective_stretching_gradient =
+        projective_stretching_objective.gradient(partition_state);
+    const Real projective_stretching_directional_adjoint =
+        increment_inner_product(
+            projective_stretching_gradient, partition_tangent);
+    const Real projective_stretching_directional_finite_difference =
+        (projective_stretching_objective.evaluate(partition_plus_state)
+             .stretching_aware_synthesis_ratio -
+         projective_stretching_objective.evaluate(partition_minus_state)
+             .stretching_aware_synthesis_ratio) /
+        (2.0L * finite_difference_step);
+    const Real projective_stretching_gradient_error = std::abs(
+        projective_stretching_directional_adjoint -
+        projective_stretching_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(projective_stretching_directional_adjoint),
+                std::abs(
+                    projective_stretching_directional_finite_difference)));
+    const SpectralIncrement projective_cross_power_gradient =
+        projective_cross_power_objective.gradient(partition_state);
+    const Real projective_cross_power_directional_adjoint =
+        increment_inner_product(
+            projective_cross_power_gradient, partition_tangent);
+    const Real projective_cross_power_directional_finite_difference =
+        (projective_cross_power_objective.evaluate(partition_plus_state)
+             .squared_cross_power_one -
+         projective_cross_power_objective.evaluate(partition_minus_state)
+             .squared_cross_power_one) /
+        (2.0L * finite_difference_step);
+    const Real projective_cross_power_gradient_error = std::abs(
+        projective_cross_power_directional_adjoint -
+        projective_cross_power_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(projective_cross_power_directional_adjoint),
+                std::abs(
+                    projective_cross_power_directional_finite_difference)));
     const SpectralIncrement signed_closure_gradient =
         local_closure_objective.signed_constant_ratio_gradient(
             partition_state);
@@ -1927,6 +2090,9 @@ bool self_test(std::ostream& out) {
         remainder_envelope_gradient_error < 1e-9L &&
         remainder_absorption_gradient_error < 1e-9L &&
         remainder_shape_power_gradient_error < 1e-9L &&
+        projective_coherence_gradient_error < 1e-9L &&
+        projective_stretching_gradient_error < 1e-9L &&
+        projective_cross_power_gradient_error < 1e-9L &&
         signed_closure_gradient_error < 1e-9L &&
         local_sld_gradient_error < 1e-9L &&
         selected_block_gradient_error < 1e-9L &&
@@ -2213,7 +2379,21 @@ bool self_test(std::ostream& out) {
             WaveVector{1, 1, 0}, WaveVector{-1, 0, 1},
             WaveVector{0, 1, 1},
             TriadSelection::
-                local_without_equal_low_doubling_and_signature(1, 2, 3));
+                local_without_equal_low_doubling_and_signature(1, 2, 3)) &&
+        TriadPartitioner::includes(
+            WaveVector{1, 1, 0}, WaveVector{0, 1, 1},
+            WaveVector{1, 2, 1},
+            TriadSelection::local_equal_low_double_triple()) &&
+        !TriadPartitioner::includes(
+            WaveVector{1, 1, 0}, WaveVector{0, 1, 1},
+            WaveVector{1, 2, 1},
+            TriadSelection::local_without_equal_low_double_triple()) &&
+        TriadPartitioner::includes(
+            WaveVector{1, 1, 0}, WaveVector{-1, 0, 1},
+            WaveVector{0, 1, 1},
+            TriadSelection::
+                local_without_equal_low_double_triple_and_signature(
+                    1, 2, 3));
     const LocalSldRemainderSignatureReport remainder_signature_ledger =
         LocalSldRemainderSignatureLedger::analyze(
             active_dynamics, cyclic_ansatz.state, 2);
@@ -2226,6 +2406,64 @@ bool self_test(std::ostream& out) {
         remainder_signature_ledger.dominant_absolute_fraction > 0.0L &&
         remainder_signature_ledger.dominant_absolute_fraction <= 1.0L &&
         !remainder_signature_ledger.cutoff_independent_bound_proved;
+    const LocalSldRemainderProjectiveReport
+        remainder_projective_ledger =
+            LocalSldRemainderProjectiveLedger::analyze(
+                remainder_signature_ledger);
+    const bool remainder_projective_ledger_ok =
+        remainder_projective_ledger.exact_reconstruction &&
+        remainder_projective_ledger.projective_shape_count > 0 &&
+        remainder_projective_ledger.effective_projective_shapes >= 1.0L &&
+        remainder_projective_ledger.dominant_projective_fraction > 0.0L &&
+        remainder_projective_ledger.dominant_projective_fraction <= 1.0L &&
+        !remainder_projective_ledger
+             .cutoff_independent_projective_sum_proved;
+    const LocalSldProjectiveShapeEnvelopeReport
+        remainder_projective_envelope =
+            LocalSldProjectiveShapeEnvelope::analyze(
+                remainder_projective_ledger);
+    const bool remainder_projective_envelope_ok =
+        remainder_projective_envelope.exact_reconstruction &&
+        remainder_projective_envelope.projective_shape_count ==
+            remainder_projective_ledger.projective_shape_count &&
+        !remainder_projective_envelope
+             .summable_projective_shape_envelope_proved;
+    const LocalSldProjectiveCoherenceReport
+        remainder_projective_coherence =
+            LocalSldProjectiveCoherenceLedger::analyze(
+                active_dynamics, cyclic_ansatz.state, 2);
+    const bool remainder_projective_coherence_ok =
+        remainder_projective_coherence.exact_projective_reconstruction &&
+        remainder_projective_coherence.projective_shape_count > 0 &&
+        remainder_projective_coherence
+                .projective_square_function_norm2 > 0.0L &&
+        remainder_projective_coherence.coherent_synthesis_ratio >= 0.0L &&
+        !remainder_projective_coherence
+             .cutoff_independent_synthesis_bound_proved;
+    const LocalSldProjectiveQuarticCrossReport
+        remainder_projective_quartic_cross =
+            LocalSldProjectiveQuarticCrossLedger::analyze(
+                active_dynamics, cyclic_ansatz.state, 2);
+    const bool remainder_projective_quartic_cross_ok =
+        remainder_projective_quartic_cross.exact_decomposition &&
+        remainder_projective_quartic_cross.projective_shape_count > 0 &&
+        remainder_projective_quartic_cross
+                .full_component_reconstruction_error < 1e-13L &&
+        remainder_projective_quartic_cross
+                .bracket_decomposition_error < 1e-13L &&
+        remainder_projective_quartic_cross
+                .finite_ledger_is_not_a_proof;
+    const LocalSldProjectiveCrossAttributionReport
+        remainder_projective_cross_attribution =
+            LocalSldProjectiveCrossAttribution::analyze(
+                remainder_projective_ledger,
+                remainder_projective_quartic_cross);
+    const bool remainder_projective_cross_attribution_ok =
+        remainder_projective_cross_attribution.exact_reconstruction &&
+        remainder_projective_cross_attribution.projective_shape_count ==
+            remainder_projective_ledger.projective_shape_count &&
+        remainder_projective_cross_attribution.reconstruction_error <
+            1e-13L;
     const LocalSldRemainderDoubleSquareReport remainder_double_square =
         LocalSldRemainderDoubleSquare::analyze(
             active_dynamics, cyclic_ansatz.state);
@@ -2445,6 +2683,34 @@ bool self_test(std::ostream& out) {
         << ", gain=R^"
         << triple_quartet_closure.frequency_gain.str()
         << ")\n"
+        << "projective quartet closure test: "
+        << (projective_quartet_closure_ok ? "PASS" : "FAIL")
+        << " (signature=2,3,5, bracket=R^"
+        << projective_quartet_closure.bracket_frequency_power.str()
+        << ", target=R^"
+        << projective_quartet_closure.target_frequency_power.str()
+        << ", gain=R^"
+        << projective_quartet_closure.frequency_gain.str()
+        << ")\n"
+        << "projective square-function closure test: "
+        << (projective_square_function_ok ? "PASS" : "FAIL")
+        << " (bilinear=R^"
+        << projective_square_function
+               .squared_function_frequency_power.str()
+        << ", diagonal=R^"
+        << projective_square_function
+               .candidate_diagonal_quartet_frequency_power.str()
+        << ", cross-ray=OPEN)\n"
+        << "projective coherent-fan obstruction test: "
+        << (projective_fan_geometry_ok ? "PASS" : "FAIL")
+        << " (K=" << projective_fan_geometry.rows.back().cutoff
+        << ", rays="
+        << projective_fan_geometry.rows.back().pair_count
+        << ", synthesis="
+        << static_cast<double>(
+               projective_fan_geometry.rows.back()
+                   .target_synthesis_ratio)
+        << ", stretching=0)\n"
         << "local signature closure test: "
         << (local_signature_geometry_ok ? "PASS" : "FAIL")
         << " (input degree="
@@ -2650,6 +2916,12 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(remainder_absorption_gradient_error)
         << ", remainder shape-power gradient error="
         << static_cast<double>(remainder_shape_power_gradient_error)
+        << ", projective coherence gradient error="
+        << static_cast<double>(projective_coherence_gradient_error)
+        << ", projective stretching gradient error="
+        << static_cast<double>(projective_stretching_gradient_error)
+        << ", projective cross-power gradient error="
+        << static_cast<double>(projective_cross_power_gradient_error)
         << ", signed closure gradient error="
         << static_cast<double>(signed_closure_gradient_error)
         << ", direct SLD gradient error="
@@ -2849,6 +3121,68 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(
                remainder_signature_ledger.bracket_reconstruction_error)
         << ")\n"
+        << "local SLD remainder projective-ledger test: "
+        << (remainder_projective_ledger_ok ? "PASS" : "FAIL")
+        << " (shapes="
+        << remainder_projective_ledger.projective_shape_count
+        << ", effective="
+        << static_cast<double>(
+               remainder_projective_ledger.effective_projective_shapes)
+        << ", reconstruction error="
+        << static_cast<double>(
+               remainder_projective_ledger.reconstruction_error)
+        << ")\n"
+        << "local SLD projective shape-envelope test: "
+        << (remainder_projective_envelope_ok ? "PASS" : "FAIL")
+        << " (height shells="
+        << remainder_projective_envelope.height_shells.size()
+        << ", fitted slope="
+        << static_cast<double>(
+               remainder_projective_envelope
+                   .fitted_absolute_height_shell_slope)
+        << ", reconstruction error="
+        << static_cast<double>(
+               remainder_projective_envelope.reconstruction_error)
+        << ")\n"
+        << "local SLD projective coherence test: "
+        << (remainder_projective_coherence_ok ? "PASS" : "FAIL")
+        << " (shapes="
+        << remainder_projective_coherence.projective_shape_count
+        << ", synthesis="
+        << static_cast<double>(
+               remainder_projective_coherence.coherent_synthesis_ratio)
+        << ", reconstruction error="
+        << static_cast<double>(
+               remainder_projective_coherence
+                   .reconstruction_relative_error)
+        << ")\n"
+        << "local SLD projective quartic cross test: "
+        << (remainder_projective_quartic_cross_ok ? "PASS" : "FAIL")
+        << " (shapes="
+        << remainder_projective_quartic_cross.projective_shape_count
+        << ", diagonal="
+        << static_cast<double>(
+               remainder_projective_quartic_cross.diagonal_power_one)
+        << ", cross="
+        << static_cast<double>(
+               remainder_projective_quartic_cross.cross_power_one)
+        << ", error="
+        << static_cast<double>(remainder_projective_quartic_cross
+                                   .full_component_reconstruction_error)
+        << ")\n"
+        << "local SLD projective cross attribution test: "
+        << (remainder_projective_cross_attribution_ok
+                ? "PASS" : "FAIL")
+        << " (effective="
+        << static_cast<double>(remainder_projective_cross_attribution
+                                   .effective_cross_attribution_shapes)
+        << ", dominant="
+        << static_cast<double>(remainder_projective_cross_attribution
+                                   .dominant_cross_attribution_fraction)
+        << ", error="
+        << static_cast<double>(remainder_projective_cross_attribution
+                                   .reconstruction_error)
+        << ")\n"
         << "local SLD remainder double-square test: "
         << (remainder_double_square_ok ? "PASS" : "FAIL")
         << " (signed LQC-3="
@@ -2899,6 +3233,9 @@ bool self_test(std::ostream& out) {
            triad_ok && helical_ok && helical_gap_ok && local_symmetry_ok &&
            orthogonal_geometry_ok && doubling_quartet_closure_ok &&
            remainder_quartet_closure_ok && triple_quartet_closure_ok &&
+           projective_quartet_closure_ok &&
+           projective_square_function_ok &&
+           projective_fan_geometry_ok &&
            local_signature_geometry_ok &&
            local_signature_objective_ok && pure_helical_ok && fft_ok &&
            helical_sector_objective_ok && helical_adversary_ok &&
@@ -2915,6 +3252,11 @@ bool self_test(std::ostream& out) {
            cyclic_ansatz_ok && cyclic_trajectory_ansatz_ok &&
            cyclic_krylov_ansatz_ok && signature_block_ok &&
            remainder_signature_ledger_ok &&
+           remainder_projective_ledger_ok &&
+           remainder_projective_envelope_ok &&
+           remainder_projective_coherence_ok &&
+           remainder_projective_quartic_cross_ok &&
+           remainder_projective_cross_attribution_ok &&
            remainder_double_square_ok &&
            remainder_tradeoff_ok &&
            response_hierarchy_ok && response_family_ok &&

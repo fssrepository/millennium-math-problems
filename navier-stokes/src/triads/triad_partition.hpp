@@ -23,7 +23,10 @@ public:
         exclude,
         include_equal_low_doubling,
         exclude_equal_low_doubling,
-        exclude_equal_low_doubling_and_signature
+        exclude_equal_low_doubling_and_signature,
+        include_equal_low_double_triple,
+        exclude_equal_low_double_triple,
+        exclude_equal_low_double_triple_and_signature
     };
 
     constexpr TriadSelection() = default;
@@ -94,6 +97,28 @@ public:
         return TriadSelection(
             0, 0,
             SignatureMode::exclude_equal_low_doubling_and_signature,
+            {first, second, third});
+    }
+
+    [[nodiscard]] static constexpr TriadSelection
+    local_equal_low_double_triple() {
+        return TriadSelection(
+            0, 0, SignatureMode::include_equal_low_double_triple, {});
+    }
+
+    [[nodiscard]] static constexpr TriadSelection
+    local_without_equal_low_double_triple() {
+        return TriadSelection(
+            0, 0, SignatureMode::exclude_equal_low_double_triple, {});
+    }
+
+    [[nodiscard]] static constexpr TriadSelection
+    local_without_equal_low_double_triple_and_signature(
+        SpectralInteger first, SpectralInteger second,
+        SpectralInteger third) {
+        return TriadSelection(
+            0, 0,
+            SignatureMode::exclude_equal_low_double_triple_and_signature,
             {first, second, third});
     }
 

@@ -1,0 +1,24 @@
+{
+  "schema": "navier-stokes-local-sld-projective-fan-scan-v1",
+  "construction": "planar x-invariant modes p=(0,-a,K-b), q=(0,a,b), p+q=(0,0,K), with phases chosen so the target contributions align",
+  "selection": "local signatures excluding (m,m,2m) and (m,m,3m)",
+  "threads": 12,
+  "synthesis_ratio_cutoff_slope": 1.82816564712800367,
+  "power_one_cutoff_slope": 0,
+  "every_projective_reconstruction_exact": true,
+  "rows": [
+    {"cutoff": 3, "coherent_pairs": 2, "active_positive_modes": 4, "projective_shapes": 9, "synthesis_ratio": 1.47067872433164171, "synthesis_amplification": 1.21271543419371119, "bracket_constant_ratio": -0.000347186588630346864, "normalized_full_stretching": 0, "power_one_product": 0, "projective_reconstruction_error": 0, "state_path": "proof/l4/states/projective-coherent-fan/K3-K12/K3.tsv"},
+    {"cutoff": 4, "coherent_pairs": 3, "active_positive_modes": 6, "projective_shapes": 27, "synthesis_ratio": 2.01609012612496796, "synthesis_amplification": 1.41989088528836183, "bracket_constant_ratio": -0.000386338173976708867, "normalized_full_stretching": 0, "power_one_product": 0, "projective_reconstruction_error": 0, "state_path": "proof/l4/states/projective-coherent-fan/K3-K12/K4.tsv"},
+    {"cutoff": 5, "coherent_pairs": 7, "active_positive_modes": 14, "projective_shapes": 52, "synthesis_ratio": 3.55617492509270905, "synthesis_amplification": 1.8857823111623222, "bracket_constant_ratio": -0.00019107853785554709, "normalized_full_stretching": 0, "power_one_product": 0, "projective_reconstruction_error": 5.07572167120368774e-20, "state_path": "proof/l4/states/projective-coherent-fan/K3-K12/K5.tsv"},
+    {"cutoff": 6, "coherent_pairs": 8, "active_positive_modes": 16, "projective_shapes": 101, "synthesis_ratio": 4.34879565513368593, "synthesis_amplification": 2.08537662189199891, "bracket_constant_ratio": -0.000106913754778430075, "normalized_full_stretching": 0, "power_one_product": 0, "projective_reconstruction_error": 5.15606550479600931e-20, "state_path": "proof/l4/states/projective-coherent-fan/K3-K12/K6.tsv"},
+    {"cutoff": 7, "coherent_pairs": 15, "active_positive_modes": 30, "projective_shapes": 173, "synthesis_ratio": 6.58386877680028881, "synthesis_amplification": 2.56590505997402207, "bracket_constant_ratio": -0.000126222825689484367, "normalized_full_stretching": 0, "power_one_product": 0, "projective_reconstruction_error": 4.93700184140759034e-20, "state_path": "proof/l4/states/projective-coherent-fan/K3-K12/K7.tsv"},
+    {"cutoff": 8, "coherent_pairs": 16, "active_positive_modes": 32, "projective_shapes": 280, "synthesis_ratio": 7.6177865052372411, "synthesis_amplification": 2.76003378697385537, "bracket_constant_ratio": -6.91096014308577853e-05, "normalized_full_stretching": 0, "power_one_product": 0, "projective_reconstruction_error": 5.9861415955066195e-20, "state_path": "proof/l4/states/projective-coherent-fan/K3-K12/K8.tsv"},
+    {"cutoff": 9, "coherent_pairs": 23, "active_positive_modes": 46, "projective_shapes": 425, "synthesis_ratio": 10.5052816036380321, "synthesis_amplification": 3.24118521587983777, "bracket_constant_ratio": -5.79689048249406856e-05, "normalized_full_stretching": 0, "power_one_product": 0, "projective_reconstruction_error": 3.48903446464222194e-20, "state_path": "proof/l4/states/projective-coherent-fan/K3-K12/K9.tsv"},
+    {"cutoff": 10, "coherent_pairs": 26, "active_positive_modes": 52, "projective_shapes": 635, "synthesis_ratio": 11.4971245644744968, "synthesis_amplification": 3.39074100521913913, "bracket_constant_ratio": -4.95893344192608135e-05, "normalized_full_stretching": 0, "power_one_product": 0, "projective_reconstruction_error": 7.20630985732039642e-20, "state_path": "proof/l4/states/projective-coherent-fan/K3-K12/K10.tsv"},
+    {"cutoff": 11, "coherent_pairs": 36, "active_positive_modes": 72, "projective_shapes": 913, "synthesis_ratio": 15.549738191448073, "synthesis_amplification": 3.94331563426617837, "bracket_constant_ratio": -4.61458079583532905e-05, "normalized_full_stretching": 0, "power_one_product": 0, "projective_reconstruction_error": 4.89047512319122022e-20, "state_path": "proof/l4/states/projective-coherent-fan/K3-K12/K11.tsv"},
+    {"cutoff": 12, "coherent_pairs": 37, "active_positive_modes": 74, "projective_shapes": 1255, "synthesis_ratio": 16.6614378571592532, "synthesis_amplification": 4.08184245864036921, "bracket_constant_ratio": -3.06952004659768364e-05, "normalized_full_stretching": 0, "power_one_product": 0, "projective_reconstruction_error": 7.48585794943156736e-20, "state_path": "proof/l4/states/projective-coherent-fan/K3-K12/K12.tsv"}
+  ],
+  "cutoff_independent_synthesis_bound_proved": false,
+  "power_one_tradeoff_bound_proved": false,
+  "finite_scan_is_not_a_proof": true
+}

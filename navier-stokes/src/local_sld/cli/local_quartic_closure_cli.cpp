@@ -76,7 +76,7 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
     if (options.minimum_cutoff < 1 ||
         options.maximum_cutoff < options.minimum_cutoff ||
         options.maximum_cutoff > 8 || options.restarts < 1 ||
-        options.workers < 1 || options.iterations < 1 ||
+        options.workers < 1 || options.iterations < 0 ||
         options.line_search_steps < 1 ||
         options.lbfgs_history < 1 || options.lbfgs_history > 64 ||
         !(options.initial_step > 0.0L) ||
@@ -94,6 +94,9 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
          options.objective != "remainder-envelope-ratio" &&
          options.objective != "remainder-absorption-ratio" &&
          options.objective != "shape-power-ratio" &&
+         options.objective != "projective-coherence-ratio" &&
+         options.objective != "projective-stretching-ratio" &&
+         options.objective != "projective-cross-power-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "block-ratio" &&
          options.objective != "mixed-ratio" &&
@@ -102,7 +105,10 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
         (options.selection != "local" &&
          options.selection != "doubling-family" &&
          options.selection != "doubling-remainder" &&
-         options.selection != "remainder-without-123") ||
+         options.selection != "remainder-without-123" &&
+         options.selection != "double-triple-family" &&
+         options.selection != "double-triple-remainder" &&
+         options.selection != "double-triple-remainder-without-123") ||
         (options.initial_profile != "mixed" &&
          options.initial_profile != "decaying" &&
          options.initial_profile != "flat" &&
@@ -110,7 +116,9 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
         ((options.objective == "block-ratio" ||
           options.objective == "mixed-ratio") &&
          (options.selection == "local" ||
-          options.selection == "remainder-without-123")) ||
+          options.selection == "remainder-without-123" ||
+          options.selection ==
+              "double-triple-remainder-without-123")) ||
         ((options.objective == "terminal-sld-ratio" ||
           options.objective == "maximum-sld-ratio") &&
          (options.trajectory_steps < 1 || !(options.viscosity > 0.0L) ||
@@ -131,7 +139,7 @@ void LocalQuarticClosureCli::print_help(std::ostream& out) {
         << "  --max-cutoff K       last Fourier cutoff (maximum 8)\n"
         << "  --restarts N         independent starts per cutoff\n"
         << "  --workers N          parallel restart workers (use 12)\n"
-        << "  --iterations N       exact-gradient iterations per start\n"
+        << "  --iterations N       exact-gradient iterations per start; 0 evaluates only\n"
         << "  --line-search N      backtracking trials per iteration\n"
         << "  --lbfgs-history N    limited-memory curvature pairs\n"
         << "  --trajectory-steps N RK4 steps for frozen-data trajectory objectives\n"
@@ -142,8 +150,8 @@ void LocalQuarticClosureCli::print_help(std::ostream& out) {
         << "  --step X             initial Riemannian step\n"
         << "  --method NAME        lbfgs or steepest\n"
         << "  --backend NAME       direct oracle, fft, or auto (default direct)\n"
-        << "  --objective NAME     sld-ratio, terminal-sld-ratio, maximum-sld-ratio, lqc3-ratio, signed-lqc3-ratio, remainder-envelope-ratio, remainder-absorption-ratio, shape-power-ratio, closure-ratio, signed-closure-ratio, block-ratio, or mixed-ratio\n"
-        << "  --selection NAME     local, doubling-family, doubling-remainder, or remainder-without-123\n"
+        << "  --objective NAME     sld-ratio, terminal-sld-ratio, maximum-sld-ratio, lqc3-ratio, signed-lqc3-ratio, remainder-envelope-ratio, remainder-absorption-ratio, shape-power-ratio, projective-coherence-ratio, projective-stretching-ratio, projective-cross-power-ratio, closure-ratio, signed-closure-ratio, block-ratio, or mixed-ratio\n"
+        << "  --selection NAME     local, doubling-family, doubling-remainder, remainder-without-123, double-triple-family, double-triple-remainder, or double-triple-remainder-without-123\n"
         << "  --initial-profile NAME  mixed, decaying, flat, or outer-half-flat\n"
         << "  --sobolev-order M    optional homogeneous Sobolev cap\n"
         << "  --sobolev-cap X      cutoff-independent squared cap\n"

@@ -29,6 +29,10 @@ add_executable(navier_stokes_lab
     src/triads/equal_low_triad_geometry.cpp
     src/triads/local_triad_symmetrizer.cpp
     src/triads/orthogonal_triad_geometry.cpp
+    src/triads/projective_triad_geometry.cpp
+    src/triads/projective_advection_decomposition.cpp
+    src/triads/projective_fan_geometry.cpp
+    src/triads/projective_quartic_diagonal_kernel.cpp
     src/triads/triad_commutator.cpp
     src/triads/triad_ledger.cpp
     src/triads/triad_partition.cpp
@@ -52,6 +56,9 @@ add_executable(navier_stokes_lab
     src/proof/periodic_shell_geometry.cpp
     src/proof/periodic_tail_bound.cpp
     src/proof/proof_scaling.cpp
+    src/proof/projective_quartet_closure.cpp
+    src/proof/projective_square_function_closure.cpp
+    src/proof/projective_fan_obstruction.cpp
     src/proof/remainder_quartet_closure.cpp
     src/proof/transition_block_scaling.cpp
 
@@ -69,6 +76,9 @@ add_executable(navier_stokes_lab
     src/local_sld/core/local_sld_remainder_absorption_objective.cpp
     src/local_sld/core/local_sld_remainder_envelope_objective.cpp
     src/local_sld/core/local_sld_shape_power_objective.cpp
+    src/local_sld/core/local_sld_projective_coherence_objective.cpp
+    src/local_sld/core/local_sld_projective_stretching_objective.cpp
+    src/local_sld/core/local_sld_projective_cross_power_objective.cpp
     src/local_sld/core/local_sld_two_scale_state.cpp
 
     src/local_sld/analysis/local_critical_derivative_ledger.cpp
@@ -87,7 +97,13 @@ add_executable(navier_stokes_lab
     src/local_sld/analysis/local_sld_response_hierarchy.cpp
     src/local_sld/analysis/local_sld_response_tensor.cpp
     src/local_sld/analysis/local_sld_projected_square.cpp
+    src/local_sld/analysis/local_sld_projective_shape_envelope.cpp
+    src/local_sld/analysis/local_sld_projective_coherence_ledger.cpp
+    src/local_sld/analysis/local_sld_projective_cross_attribution.cpp
+    src/local_sld/analysis/local_sld_projective_fan_scan.cpp
+    src/local_sld/analysis/local_sld_projective_quartic_cross_ledger.cpp
     src/local_sld/analysis/local_sld_remainder_double_square.cpp
+    src/local_sld/analysis/local_sld_remainder_projective_ledger.cpp
     src/local_sld/analysis/local_sld_remainder_signature_ledger.cpp
     src/local_sld/analysis/local_sld_remainder_tradeoff_ledger.cpp
     src/local_sld/analysis/local_sld_signature_block.cpp
@@ -107,6 +123,8 @@ add_executable(navier_stokes_lab
     src/local_sld/optimization/local_sld_cyclic_trajectory_ansatz.cpp
     src/local_sld/optimization/local_sld_trajectory_adjoint.cpp
 
+    src/local_sld/states/local_sld_projective_fan_state.cpp
+
     src/local_sld/cli/local_quartic_closure_cli.cpp
     src/local_sld/cli/local_quartic_closure_reporter.cpp
     src/local_sld/cli/shifted_critical_density_cli.cpp
@@ -123,6 +141,7 @@ target_include_directories(navier_stokes_lab PRIVATE
     src/local_sld/core
     src/local_sld/analysis
     src/local_sld/optimization
+    src/local_sld/states
     src/local_sld/cli
 )
 target_link_libraries(navier_stokes_lab PRIVATE Threads::Threads)

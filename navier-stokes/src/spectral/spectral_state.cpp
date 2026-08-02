@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <mutex>
 #include <stdexcept>
 #include <utility>
 
@@ -72,11 +73,15 @@ int SpectralStateOps::cutoff(const SpectralState& state) {
 
 const std::vector<InteractionIndex>& SpectralStateOps::interactions(
     const SpectralState& state) {
-    static std::map<int, std::vector<InteractionIndex>> cache;
-    const int state_cutoff = cutoff(state);
-    const auto existing = cache.find(state_cutoff);
-    if (existing != cache.end()) {
-        return existing->second;
+    static std::map<
+        std::vector<WaveVector>, std::vector<InteractionIndex>> cache;
+    static std::mutex cache_mutex;
+    {
+        const std::lock_guard<std::mutex> lock(cache_mutex);
+        const auto existing = cache.find(state.waves);
+        if (existing != cache.end()) {
+            return existing->second;
+        }
     }
     std::vector<InteractionIndex> result;
     result.reserve(state.waves.size() * state.waves.size() / 2);
@@ -88,7 +93,8 @@ const std::vector<InteractionIndex>& SpectralStateOps::interactions(
             }
         }
     }
-    return cache.emplace(state_cutoff, std::move(result)).first->second;
+    const std::lock_guard<std::mutex> lock(cache_mutex);
+    return cache.emplace(state.waves, std::move(result)).first->second;
 }
 
 void SpectralStateOps::scale(SpectralState& state, SpectralReal factor) {

@@ -6,6 +6,9 @@
 #include "local_sld_remainder_envelope_objective.hpp"
 #include "local_sld_remainder_absorption_objective.hpp"
 #include "local_sld_shape_power_objective.hpp"
+#include "local_sld_projective_coherence_objective.hpp"
+#include "local_sld_projective_stretching_objective.hpp"
+#include "local_sld_projective_cross_power_objective.hpp"
 #include "parallel_executor.hpp"
 #include "spectral_adjoint.hpp"
 #include "spectral_galerkin.hpp"
@@ -39,8 +42,18 @@ TriadSelection closure_selection(const std::string& name) {
         return TriadSelection::
             local_without_equal_low_doubling_and_signature(1, 2, 3);
     }
+    if (name == "double-triple-family") {
+        return TriadSelection::local_equal_low_double_triple();
+    }
+    if (name == "double-triple-remainder") {
+        return TriadSelection::local_without_equal_low_double_triple();
+    }
+    if (name == "double-triple-remainder-without-123") {
+        return TriadSelection::
+            local_without_equal_low_double_triple_and_signature(1, 2, 3);
+    }
     throw std::invalid_argument(
-        "closure selection must be local, doubling-family, doubling-remainder, or remainder-without-123");
+        "unsupported closure selection");
 }
 
 bool is_common_block_objective(const std::string& objective) {
@@ -213,6 +226,12 @@ LocalQuarticClosureAdversary::maximize(
                ? "local-remainder-absorption-ratio"
         : (options.objective == "shape-power-ratio"
                ? "local-shape-power-ratio"
+        : (options.objective == "projective-coherence-ratio"
+               ? "local-projective-coherence-ratio"
+        : (options.objective == "projective-stretching-ratio"
+               ? "local-projective-stretching-ratio"
+        : (options.objective == "projective-cross-power-ratio"
+               ? "local-projective-cross-power-ratio"
         : (options.objective == "signed-closure-ratio"
                ? "local-signed-closure-ratio"
                : (options.objective == "block-ratio"
@@ -224,12 +243,14 @@ LocalQuarticClosureAdversary::maximize(
                                     : (options.objective ==
                                                "maximum-sld-ratio"
                                            ? "local-frozen-maximum-sld-ratio"
-                                           : "local-sld-ratio"))))))))));
+                                           : "local-sld-ratio")))))))))))));
     search.method = options.method;
     search.lbfgs_history = options.lbfgs_history;
     search.sobolev_order = options.sobolev_order;
     search.sobolev_cap = options.sobolev_cap;
     search.closure_selection = closure_selection(options.selection);
+    search.objective_threads = options.restarts == 1
+        ? options.workers : 1;
     const GradientSearchResult optimized = adversary.maximize_q(
         initial, search);
     const LocalQuarticClosureObjective closure(
@@ -256,6 +277,32 @@ LocalQuarticClosureAdversary::maximize(
         shape_power_value.absolute_power_product;
     result.shape_power_normalized_stretching =
         shape_power_value.normalized_stretching;
+    const LocalSldProjectiveCoherenceObjectiveValue coherence_value =
+        LocalSldProjectiveCoherenceObjective(
+            dynamics, search.closure_selection).evaluate(result.state);
+    result.projective_coherence_ratio = coherence_value.synthesis_ratio;
+    result.projective_coherence_amplification =
+        coherence_value.synthesis_amplification;
+    result.projective_coherence_shape_count =
+        coherence_value.projective_shape_count;
+    const LocalSldProjectiveStretchingObjectiveValue stretching_value =
+        LocalSldProjectiveStretchingObjective(
+            dynamics, search.closure_selection).evaluate(result.state);
+    result.projective_stretching_ratio =
+        stretching_value.stretching_aware_synthesis_ratio;
+    result.projective_stretching_alignment_squared =
+        stretching_value.stretching_alignment_squared;
+    result.projective_stretching_reconstruction_error =
+        stretching_value.product_reconstruction_error;
+    const LocalSldProjectiveCrossPowerObjectiveValue cross_power_value =
+        LocalSldProjectiveCrossPowerObjective(
+            dynamics, search.closure_selection,
+            search.objective_threads).evaluate(result.state);
+    result.projective_cross_power_absolute =
+        cross_power_value.absolute_cross_power_one;
+    result.projective_cross_bracket = cross_power_value.cross_bracket;
+    result.projective_diagonal_bracket =
+        cross_power_value.diagonal_bracket;
     result.common_block_objective =
         is_common_block_objective(options.objective);
     if (result.common_block_objective) {
@@ -318,7 +365,7 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
         options.maximum_cutoff < options.minimum_cutoff ||
         options.maximum_cutoff > 8 || options.restarts < 1 ||
         options.restarts > 1000 || options.workers < 1 ||
-        options.workers > 256 || options.iterations < 1 ||
+        options.workers > 256 || options.iterations < 0 ||
         options.line_search_steps < 1 ||
         !(options.initial_step > 0.0L) ||
         !(options.absorption_theta >= 0.0L) ||
@@ -334,6 +381,9 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
          options.objective != "remainder-envelope-ratio" &&
          options.objective != "remainder-absorption-ratio" &&
          options.objective != "shape-power-ratio" &&
+         options.objective != "projective-coherence-ratio" &&
+         options.objective != "projective-stretching-ratio" &&
+         options.objective != "projective-cross-power-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "sld-ratio" &&
          options.objective != "block-ratio" &&
@@ -343,14 +393,19 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
         (options.selection != "local" &&
          options.selection != "doubling-family" &&
          options.selection != "doubling-remainder" &&
-         options.selection != "remainder-without-123") ||
+         options.selection != "remainder-without-123" &&
+         options.selection != "double-triple-family" &&
+         options.selection != "double-triple-remainder" &&
+         options.selection != "double-triple-remainder-without-123") ||
         (options.initial_profile != "mixed" &&
          options.initial_profile != "decaying" &&
          options.initial_profile != "flat" &&
          options.initial_profile != "outer-half-flat") ||
         (is_common_block_objective(options.objective) &&
          (options.selection == "local" ||
-          options.selection == "remainder-without-123")) ||
+          options.selection == "remainder-without-123" ||
+          options.selection ==
+              "double-triple-remainder-without-123")) ||
         (is_frozen_trajectory_objective(options.objective) &&
          (options.trajectory_steps < 1 || !(options.viscosity > 0.0L) ||
           !(options.time_step > 0.0L)))) {

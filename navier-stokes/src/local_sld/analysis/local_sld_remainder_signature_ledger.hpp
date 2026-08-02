@@ -32,6 +32,7 @@ struct LocalSldRemainderSignatureReport {
     std::size_t signature_count = 0;
     int threads = 1;
     bool excludes_signature_123 = false;
+    bool excludes_triple_family = false;
     SpectralReal enstrophy = 0.0L;
     SpectralReal palinstrophy = 0.0L;
     SpectralReal target_scale = 0.0L;
@@ -69,7 +70,8 @@ public:
         const SpectralDynamics& dynamics,
         const SpectralState& state,
         int threads = 12,
-        bool exclude_signature_123 = false);
+        bool exclude_signature_123 = false,
+        bool exclude_triple_family = false);
 };
 
 struct LocalSldRemainderSignatureCliOptions {
@@ -78,6 +80,7 @@ struct LocalSldRemainderSignatureCliOptions {
     int top = 64;
     int threads = 12;
     bool exclude_signature_123 = false;
+    bool exclude_triple_family = false;
 };
 
 class LocalSldRemainderSignatureCli {

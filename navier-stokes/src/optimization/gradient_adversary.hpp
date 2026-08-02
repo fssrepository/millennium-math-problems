@@ -24,6 +24,7 @@ struct GradientSearchOptions {
     SpectralReal absorption_theta = 1.0L;
     int shape_power = 3;
     int minimum_dyadic_gap = 2;
+    int objective_threads = 1;
     TriadSelection closure_selection = TriadPartition::local;
 };
 
