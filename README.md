@@ -13,10 +13,8 @@ counterexamples as reproducible public knowledge.
 
 | Guide | PDF | Slides | Purpose |
 |---|---|---|---|
-| Project overview · 5 pages | [Download PDF](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/pitches/output/Millennium_Math_Problems_Project_Overview_v1.0.0_EN.pdf) | [Download PPTX](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/pitches/output/Millennium_Math_Problems_Project_Overview_v1.0.0_EN.pptx) | What this repository does, the fast-falsification loop, optional empirical input, present evidence, and the proof roadmap. |
-| Navier–Stokes in plain language · 3 pages | [Download PDF](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/problems/navier-stokes/output/Navier_Stokes_Plain_Language_Brief_v1.0.0_EN.pdf) | [Download PPTX](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/problems/navier-stokes/output/Navier_Stokes_Plain_Language_Brief_v1.0.0_EN.pptx) | The problem, why it is difficult, what the C++ laboratory tests, and how far the project has reached. |
-
-[![Five-page project overview](guides/pitches/assets/project-overview-preview.png)](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/pitches/output/Millennium_Math_Problems_Project_Overview_v1.0.0_EN.pdf)
+| Project overview | [Download PDF](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/pitches/output/Millennium_Math_Problems_Project_Overview_v1.0.0_EN.pdf) | [Download PPTX](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/pitches/output/Millennium_Math_Problems_Project_Overview_v1.0.0_EN.pptx) | What this repository does, the fast-falsification loop, optional empirical input, present evidence, and the proof roadmap. |
+| Navier–Stokes in plain language | [Download PDF](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/problems/navier-stokes/output/Navier_Stokes_Plain_Language_Brief_v1.0.0_EN.pdf) | [Download PPTX](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/problems/navier-stokes/output/Navier_Stokes_Plain_Language_Brief_v1.0.0_EN.pptx) | The problem, why it is difficult, what the C++ laboratory tests, and how far the project has reached. |
 
 ## Problem portfolio
 
@@ -47,17 +45,6 @@ The principal engineering metric is **time to first obstruction**: find the
 cheapest reproducible reason a lemma cannot work before weeks or months are
 spent trying to prove it. Optional empirical data can seed the same loop, but
 the active Navier–Stokes campaign starts from the lowest open proof gap.
-
-## Rebuild the guides
-
-The guide generators use the same image-backed production pattern as the
-MyScoutee public manuals. They require the system Python packages Pillow and
-ReportLab; LibreOffice is used to package PPTX files.
-
-```bash
-/usr/bin/python3 guides/pitches/build.py
-/usr/bin/python3 guides/problems/navier-stokes/build.py
-```
 
 Technical source, build instructions, the proof roadmap, certificates, and
 detailed non-claims remain inside [`navier-stokes/`](navier-stokes/) for
