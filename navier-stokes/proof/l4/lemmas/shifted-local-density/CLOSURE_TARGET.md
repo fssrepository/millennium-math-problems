@@ -209,16 +209,18 @@ T          terminal frozen R_local       dt-halving error
 
 The observed increase proves that the static extremizer cannot replace a
 frozen-data trajectory estimate.
-The nonsmooth maximum-on-trajectory objective over `0<=t<=0.5` selects
-`t=0.2175` after time-step refinement and gives the current lower bound
-`8.48675785e-4`. The coarse and refined grids select steps 217 and 435;
-their values differ by `3.10e-6` relatively. The projected initial gradient
-is still `3.55e-4`, so this is not claimed as a converged global maximum.
-At the refined peak, the frozen-normalization exact block decomposition is
-`8.18560410e-4` from the doubling family, `1.52599847e-5` from the closed
-remainder, and `1.48553902e-5` from the mixed term. They reconstruct the full
-`8.48675785e-4` to `9.98e-19`; the family retains `96.45%` of the absolute
-three-block sum after evolution.
+The nonsmooth maximum-on-trajectory objective over `0<=t<=0.5`, warm-started
+from the K2 winner, selects `t=0.298` on both the coarse and refined grids and
+gives the current K3 lower bound `8.53498799310e-4`. The refined value differs
+by `8.16e-16` relatively. This supersedes the earlier `8.48675785e-4`
+secondary branch. The projected initial gradient is still `4.04e-4`, so the
+new value is not claimed as a converged global maximum. At the refined peak,
+the exact frozen-normalization decomposition is `8.24077287430e-4` from the
+doubling family, `1.51420260355e-5` from the closed remainder, and
+`1.42794858448e-5` from the mixed term. They reconstruct the full value to
+`6.20e-20`; the family retains `96.55%` of the absolute three-block sum.
+The initial state has `99.969%` of its energy in the first hard shell and the
+`(1,1,2)` signature carries `99.627%` of coherent local transfer.
 The next analytic task is to bound this evolving joint quotient uniformly,
 using the exact block split below. No finite horizon scan establishes that
 bound.

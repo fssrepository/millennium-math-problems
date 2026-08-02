@@ -42,6 +42,33 @@ SpectralState LocalSldCyclicBasis::response_state(
     return response;
 }
 
+SpectralState LocalSldCyclicBasis::cubic_response_state(
+    const SpectralDynamics& dynamics,
+    const SpectralState& axis,
+    const SpectralState& response) {
+    if (axis.waves != response.waves) {
+        throw std::invalid_argument("cyclic basis layouts do not match");
+    }
+    SpectralState cubic = axis;
+    cubic.velocity = dynamics.advection_jvp_direct(
+        axis, response.velocity);
+    dynamics.enforce_constraints(cubic);
+    const SpectralReal axis_weight = pairing(
+        axis.velocity, cubic.velocity);
+    const SpectralReal response_weight = pairing(
+        response.velocity, cubic.velocity);
+    for (std::size_t mode = 0; mode < cubic.velocity.size(); ++mode) {
+        for (std::size_t component = 0; component < 3; ++component) {
+            cubic.velocity[mode][component] -=
+                axis_weight * axis.velocity[mode][component] +
+                response_weight * response.velocity[mode][component];
+        }
+    }
+    dynamics.enforce_constraints(cubic);
+    SpectralStateOps::normalize_energy(cubic);
+    return cubic;
+}
+
 SpectralState LocalSldCyclicBasis::mix(
     const SpectralState& axis,
     const SpectralState& response,

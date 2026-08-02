@@ -117,22 +117,25 @@ that is evidence for the shape of a bound, not a proof of one.
 ## Frozen trajectory peak
 
 The decomposition can evolve an optimized initial state and retain the
-initial `k0,B0` in the common denominator. At the refined maximum-on-trajectory
-checkpoint `t=0.2175` of the current K3 `[0,0.5]` search, it gives
+initial `k0,B0` in the common denominator. Warm continuation from K2 moves the
+K3 `[0,0.5]` maximum to the stronger branch at `t=0.298`, where it gives
 
 ```text
-full frozen R_local             8.48675784955e-4
-closed doubling family          8.18560410034e-4
-closed local remainder          1.52599847298e-5
-mixed block                     1.48553901907e-5
-dominant absolute fraction      0.964514864858
-reconstruction error            9.98e-19
+full frozen R_local             8.53498799310e-4
+closed doubling family          8.24077287430e-4
+closed local remainder          1.51420260355e-5
+mixed block                     1.42794858448e-5
+dominant absolute fraction      0.965528350006
+reconstruction error            6.20e-20
 ```
 
 Thus the same family remains dominant after evolution with the correct frozen
-normalization. The two corrections remain comparable and cannot be dropped,
-but the trajectory evidence continues to route the main estimate through the
-complete `(m,m,2m)` family.
+normalization. The two corrections remain comparable and cannot be dropped.
+The winning initial state has `99.969%` of its energy in the first hard shell,
+while the `(1,1,2)` signature carries `99.627%` of coherent local transfer.
+This routes the main estimate through the complete `(m,m,2m)` family and a
+small, explicitly structured response hierarchy rather than an arbitrary
+high-dimensional state.
 
 ## Rejected sign shortcut
 
@@ -168,8 +171,8 @@ Reproduce the frozen peak decomposition with:
 
 ```bash
 ./build/navier_stokes_lab local-sld-block \
-  --state proof/l4/states/local-sld-trajectory/maximum-T050-K3/K3.tsv \
-  --doubling-family --threads 12 --evolve-steps 435 \
+  --state proof/l4/states/local-sld-trajectory/maximum-T050-K3-from-K2/K3.tsv \
+  --doubling-family --threads 12 --evolve-steps 596 \
   --nu 0.1 --dt 0.0005 \
-  --certificate proof/l4/analysis/shifted-local-density/frozen-maximum-sld-T050-K3-peak-blocks.json
+  --certificate proof/l4/analysis/shifted-local-density/frozen-maximum-sld-T050-K3-from-K2-peak-blocks.json
 ```

@@ -275,12 +275,15 @@ The canonical cyclic axis shear exactly attains the static absolute value
 This is a sharp conjecture, not a proof. With `k0,B0` frozen, K3 terminal
 optimization increases from `7.98918e-4` at `T=0.01` to `8.46863e-4` at
 `T=0.20`; this is now the active trajectory-level target.
-The maximum-on-trajectory version removes endpoint bias and currently finds
-the refined lower bound `8.48675785e-4` at `t=0.2175` inside `[0,0.5]`.
-At that checkpoint, the frozen-normalization block split is
-`8.18560410e-4 + 1.52599847e-5 + 1.48553902e-5`, with `9.98e-19`
-reconstruction error. The doubling family still supplies `96.45%` of the
-absolute three-block sum.
+The maximum-on-trajectory version removes endpoint bias. Warm continuation
+from the K2 winner corrects an earlier secondary branch and gives the refined
+K3 lower bound `8.53498799310e-4` at `t=0.298` inside `[0,0.5]`; dt halving
+changes it by `8.16e-16` relatively. At that checkpoint, the exact frozen
+block split is `8.24077287430e-4 + 1.51420260355e-5 + 1.42794858448e-5`,
+with `6.20e-20` reconstruction error. The doubling family supplies `96.55%`
+of the absolute three-block sum. The winning state retains `99.969%` of its
+energy in the first hard shell, but its projected gradient is still
+`4.04e-4`; this remains a lower bound, not a converged global maximum.
 
 The helical local target has its own replayable optimizer and same-state
 cutoff scan:

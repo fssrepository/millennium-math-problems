@@ -76,10 +76,12 @@ R_local(t)=4S(t)^3 Z(t)P(t)(K(t)+G(t))
  / [k0(S(t)^4 Z(t)^2P(t)+B0 Z(t)^3P(t)^4)].
 ```
 
-The exact maximum-on-trajectory adjoint is implemented and validated. Its
-current K3 lower bound on `[0,0.5]` is `8.48675785e-4` at `t=0.2175`; this is
-a pattern and falsification result, not the required analytic bound. Resume
-from the `(m,m,2m)`/remainder/mixed decomposition in
+The exact maximum-on-trajectory adjoint is implemented and validated. Warm
+continuation from K2 gives the current K3 lower bound `8.53498799310e-4` on
+`[0,0.5]`, attained at `t=0.298`; dt halving changes it by `8.16e-16`
+relatively. This corrects an earlier secondary branch but is still a pattern
+and falsification result, not the required analytic bound. Resume from the
+cyclic response hierarchy and the `(m,m,2m)`/remainder/mixed decomposition in
 `proof/l4/lemmas/shifted-local-density/SIGNATURE_BLOCK.md`.
 
 The first explicit L4 candidate in the reduction was

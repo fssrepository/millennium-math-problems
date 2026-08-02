@@ -10,6 +10,10 @@ public:
     [[nodiscard]] static SpectralState response_state(
         const SpectralDynamics& dynamics,
         const SpectralState& axis);
+    [[nodiscard]] static SpectralState cubic_response_state(
+        const SpectralDynamics& dynamics,
+        const SpectralState& axis,
+        const SpectralState& response);
     [[nodiscard]] static SpectralState mix(
         const SpectralState& axis,
         const SpectralState& response,
