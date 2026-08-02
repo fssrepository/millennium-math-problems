@@ -2,6 +2,8 @@
 
 #include "local_quartic_closure_objective.hpp"
 #include "local_sld_block_objective.hpp"
+#include "local_sld_remainder_envelope_objective.hpp"
+#include "local_sld_remainder_absorption_objective.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
 
 #include <algorithm>
@@ -174,6 +176,22 @@ SpectralReal GradientAdversary::objective_value(
         return LocalQuarticClosureObjective(
             dynamics_, options.closure_selection)
             .evaluate(initial).squared_lqc3_target_ratio;
+    }
+    if (options.objective == "local-signed-lqc3-ratio") {
+        return LocalQuarticClosureObjective(
+            dynamics_, options.closure_selection)
+            .evaluate(initial).signed_lqc3_target_ratio;
+    }
+    if (options.objective == "local-remainder-envelope-ratio") {
+        return LocalSldRemainderEnvelopeObjective(
+            dynamics_, options.closure_selection)
+            .evaluate(initial).target_ratio;
+    }
+    if (options.objective == "local-remainder-absorption-ratio") {
+        return LocalSldRemainderAbsorptionObjective(
+            dynamics_, options.absorption_theta,
+            options.closure_selection)
+            .evaluate(initial).absorption_ratio;
     }
     if (options.objective == "local-sld-ratio") {
         return LocalQuarticClosureObjective(
@@ -352,6 +370,34 @@ GradientSearchResult GradientAdversary::maximize_q(
             trajectory.objective_step = 0;
             trajectory.initial_gradient =
                 closure.squared_lqc3_target_ratio_gradient(result.state);
+        } else if (options.objective == "local-signed-lqc3-ratio") {
+            const LocalQuarticClosureObjective closure(
+                dynamics_, options.closure_selection);
+            trajectory.objective_value =
+                closure.evaluate(result.state)
+                    .signed_lqc3_target_ratio;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient =
+                closure.signed_lqc3_target_ratio_gradient(result.state);
+        } else if (options.objective ==
+                   "local-remainder-envelope-ratio") {
+            const LocalSldRemainderEnvelopeObjective envelope(
+                dynamics_, options.closure_selection);
+            trajectory.objective_value =
+                envelope.evaluate(result.state).target_ratio;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient =
+                envelope.target_ratio_gradient(result.state);
+        } else if (options.objective ==
+                   "local-remainder-absorption-ratio") {
+            const LocalSldRemainderAbsorptionObjective absorption(
+                dynamics_, options.absorption_theta,
+                options.closure_selection);
+            trajectory.objective_value =
+                absorption.evaluate(result.state).absorption_ratio;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient =
+                absorption.absorption_ratio_gradient(result.state);
         } else if (options.objective == "local-sld-ratio") {
             const LocalQuarticClosureObjective closure(
                 dynamics_, options.closure_selection);

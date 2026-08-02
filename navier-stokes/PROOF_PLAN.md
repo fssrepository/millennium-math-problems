@@ -156,9 +156,25 @@ avoid the obstruction: `S <= C Z^(5/4)P^(1/4)` and
 `T <= C Z^(1/4)P^(5/4)`, so both normalization entries are bounded by
 `C Z^(3/2)P^(1/2) <= C Z^(5/4)P^(3/4)`. Together with neighbor-shell locality
 of the structural terms, this proves the complete doubling-family block
-cutoff-independently. The lowest universal analytical subtask is now the
-closed signature remainder; the mixed block follows. See
-`proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md`.
+cutoff-independently. The closed signature remainder has now been reduced
+further. Writing `W=B_rem-cAu` and
+`D=B_rem(u,Au)-[x->B_rem(x,u)]^*Au`, two exact square completions give
+
+```text
+K_rem+G_rem
+=-||A^(1/2)(W-(1/2)A^(-1)D)||^2
+ +S^2/(2Z)+c^2H3+c<Au,D>+(1/4)||A^(-1/2)D||^2.
+```
+
+The direct VJP also certifies `D=-[dB_rem(u,u)]^*Au`. A growing dense
+absolute-value branch is negative because of the displayed square; the
+signed LQC-3 maximum instead stabilizes at `0.102959` through K8. However,
+maximizing only the positive envelope grows to `0.28335` at K5 and loses
+`0.35157` to the omitted negative square. Therefore the lowest universal
+analytical subtask is a commutator/negative-square absorption inequality, not
+an independent unsigned bound on D. The mixed block follows. See
+`proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
+`proof/l4/lemmas/shifted-local-density/REMAINDER_QUARTET.md`.
 
 The first explicit L4 candidate in the reduction was
 
@@ -840,8 +856,8 @@ The exact local polynomial numerator is `4S^3ZP(K+G)`. At K6 it equals
 cutoff-independent upper bound for this signed two-entry expression. This is
 the next restart point after any failed computational or analytical attempt.
 
-The exact Young reduction now identifies the required estimate rather than
-leaving it qualitative:
+The exact Young reduction first identified the following sufficient absolute
+estimate:
 
 ```text
 |K+G| <= C k0 B0^(1/4) Z^(5/4)P^(3/4).               (LQC-3)
@@ -853,7 +869,19 @@ Multiplication by `4|S|^3ZP` and weighted AM--GM imply SLD-1P-L with
 signed two-entry structure. The K6 finite-state ratio is `0.127982322632` and
 the algebraic identity error is `8.00e-20`; neither number proves uniformity.
 `proof/l4/lemmas/shifted-local-density/CLOSURE_TARGET.md` is the exact current
-restart point.
+algebraic target, but the absolute estimate is stronger than the signed local
+polynomial inequality.
+
+For the closed doubling remainder, an exact-gradient absolute LQC-3 search
+finds a dense negative branch: its magnitude grows from `0.05903` at K2 to
+`0.42906` at K5. A signature-row ledger reconstructs the K5 bracket at
+`8e-19` relative error and measures 549.49 effective contributors with
+`0.999840` same-sign alignment. This is not a counterexample to the required
+upper bound. The signed LQC-3 search gives `0.102867`, `0.102951`, `0.102958`,
+`0.102959`, and `0.102959` at K2--K8; the K6--K8 states are zero-padded
+low-mode winners. The double-square identity and its absorption target in
+`proof/l4/lemmas/shifted-local-density/REMAINDER_QUARTET.md` are therefore the
+current remainder restart point.
 
 The absolute closure ratio was subsequently reverse-differentiated and
 optimized directly. A K1 branch reaches `C_state=1/3`, but its stretching is

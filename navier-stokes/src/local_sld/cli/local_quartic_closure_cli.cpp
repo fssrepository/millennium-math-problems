@@ -40,6 +40,8 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
             options.viscosity = std::stold(next(index, name));
         } else if (name == "--dt") {
             options.time_step = std::stold(next(index, name));
+        } else if (name == "--absorption-theta") {
+            options.absorption_theta = std::stold(next(index, name));
         } else if (name == "--step") {
             options.initial_step = std::stold(next(index, name));
         } else if (name == "--sobolev-order") {
@@ -77,11 +79,17 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
         options.lbfgs_history < 1 || options.lbfgs_history > 64 ||
         !(options.initial_step > 0.0L) ||
         !std::isfinite(options.initial_step) ||
+        !(options.absorption_theta >= 0.0L) ||
+        !(options.absorption_theta <= 1.0L) ||
+        !std::isfinite(options.absorption_theta) ||
         (options.backend != "auto" && options.backend != "direct" &&
          options.backend != "fft") ||
         (options.objective != "sld-ratio" &&
          options.objective != "closure-ratio" &&
          options.objective != "lqc3-ratio" &&
+         options.objective != "signed-lqc3-ratio" &&
+         options.objective != "remainder-envelope-ratio" &&
+         options.objective != "remainder-absorption-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "block-ratio" &&
          options.objective != "mixed-ratio" &&
@@ -123,10 +131,11 @@ void LocalQuarticClosureCli::print_help(std::ostream& out) {
         << "  --trajectory-steps N RK4 steps for frozen-data trajectory objectives\n"
         << "  --nu X               viscosity for trajectory objectives\n"
         << "  --dt X               RK4 step for trajectory objectives\n"
+        << "  --absorption-theta X retained first-square fraction in [0,1]\n"
         << "  --step X             initial Riemannian step\n"
         << "  --method NAME        lbfgs or steepest\n"
         << "  --backend NAME       direct oracle, fft, or auto (default direct)\n"
-        << "  --objective NAME     sld-ratio, terminal-sld-ratio, maximum-sld-ratio, lqc3-ratio, closure-ratio, signed-closure-ratio, block-ratio, or mixed-ratio\n"
+        << "  --objective NAME     sld-ratio, terminal-sld-ratio, maximum-sld-ratio, lqc3-ratio, signed-lqc3-ratio, remainder-envelope-ratio, remainder-absorption-ratio, closure-ratio, signed-closure-ratio, block-ratio, or mixed-ratio\n"
         << "  --selection NAME     local, doubling-family, or doubling-remainder\n"
         << "  --initial-profile NAME  mixed, decaying, flat, or outer-half-flat\n"
         << "  --sobolev-order M    optional homogeneous Sobolev cap\n"

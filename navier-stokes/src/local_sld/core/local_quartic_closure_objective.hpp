@@ -19,6 +19,7 @@ struct LocalQuarticClosureObjectiveValue {
     SpectralReal squared_constant_ratio = 0.0L;
     SpectralReal lqc3_target_scale = 0.0L;
     SpectralReal lqc3_target_ratio = 0.0L;
+    SpectralReal signed_lqc3_target_ratio = 0.0L;
     SpectralReal squared_lqc3_target_ratio = 0.0L;
     SpectralReal normalized_stretching_ratio = 0.0L;
     SpectralReal signed_shape_factor = 0.0L;
@@ -47,6 +48,8 @@ public:
     [[nodiscard]] SpectralIncrement squared_constant_ratio_gradient(
         const SpectralState& state) const;
     [[nodiscard]] SpectralIncrement squared_lqc3_target_ratio_gradient(
+        const SpectralState& state) const;
+    [[nodiscard]] SpectralIncrement signed_lqc3_target_ratio_gradient(
         const SpectralState& state) const;
     [[nodiscard]] SpectralIncrement signed_constant_ratio_gradient(
         const SpectralState& state) const;

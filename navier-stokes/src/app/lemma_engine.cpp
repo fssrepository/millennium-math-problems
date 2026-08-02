@@ -39,8 +39,12 @@
 #include "local_sld_response_family.hpp"
 #include "local_sld_response_hierarchy.hpp"
 #include "local_sld_response_tensor.hpp"
+#include "local_sld_remainder_envelope_objective.hpp"
+#include "local_sld_remainder_absorption_objective.hpp"
 #include "local_sld_doubling_shell_ledger.hpp"
 #include "local_sld_doubling_scale_scan.hpp"
+#include "local_sld_remainder_double_square.hpp"
+#include "local_sld_remainder_signature_ledger.hpp"
 #include "local_sld_block_objective.hpp"
 #include "local_sld_signature_block.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
@@ -667,6 +671,12 @@ bool self_test(std::ostream& out) {
         remainder_quartet_closure.every_fixed_signature_closes &&
         remainder_quartet_closure
             .remainder_requires_collective_cancellation &&
+        remainder_quartet_closure.one_sided_double_square_reduction &&
+        remainder_quartet_closure.stretching_vjp_commutator_identity &&
+        !remainder_quartet_closure
+             .standalone_commutator_envelope_bound_proved &&
+        !remainder_quartet_closure
+             .commutator_absorption_bound_proved &&
         !remainder_quartet_closure
              .cutoff_independent_remainder_bound_proved;
     const bool local_signature_geometry_ok =
@@ -1268,6 +1278,13 @@ bool self_test(std::ostream& out) {
         active_dynamics);
     const LocalQuarticClosureObjectiveValue local_closure_value =
         local_closure_objective.evaluate(partition_state);
+    const LocalSldRemainderEnvelopeObjective remainder_envelope_objective(
+        active_dynamics,
+        TriadSelection::local_without_equal_low_doubling());
+    const LocalSldRemainderAbsorptionObjective
+        remainder_absorption_objective(
+            active_dynamics, 0.9L,
+            TriadSelection::local_without_equal_low_doubling());
     const Real local_closure_value_error = std::abs(
         local_closure_value.constant_ratio -
         local_quartic_closure.required_constant_ratio) /
@@ -1398,6 +1415,69 @@ bool self_test(std::ostream& out) {
             std::max(
                 std::abs(lqc3_target_directional_adjoint),
                 std::abs(lqc3_target_directional_finite_difference)));
+    const SpectralIncrement signed_lqc3_target_gradient =
+        local_closure_objective.signed_lqc3_target_ratio_gradient(
+            partition_state);
+    const Real signed_lqc3_target_directional_adjoint =
+        increment_inner_product(
+            signed_lqc3_target_gradient, partition_tangent);
+    const Real signed_lqc3_target_directional_finite_difference =
+        (local_closure_objective.evaluate(partition_plus_state)
+             .signed_lqc3_target_ratio -
+         local_closure_objective.evaluate(partition_minus_state)
+             .signed_lqc3_target_ratio) /
+        (2.0L * finite_difference_step);
+    const Real signed_lqc3_target_gradient_error = std::abs(
+        signed_lqc3_target_directional_adjoint -
+        signed_lqc3_target_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(signed_lqc3_target_directional_adjoint),
+                std::abs(
+                    signed_lqc3_target_directional_finite_difference)));
+    const SpectralIncrement remainder_envelope_gradient =
+        remainder_envelope_objective.target_ratio_gradient(
+            partition_state);
+    const Real remainder_envelope_directional_adjoint =
+        increment_inner_product(
+            remainder_envelope_gradient, partition_tangent);
+    const Real remainder_envelope_directional_finite_difference =
+        (remainder_envelope_objective.evaluate(partition_plus_state)
+             .target_ratio -
+         remainder_envelope_objective.evaluate(partition_minus_state)
+             .target_ratio) /
+        (2.0L * finite_difference_step);
+    const Real remainder_envelope_gradient_error = std::abs(
+        remainder_envelope_directional_adjoint -
+        remainder_envelope_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(remainder_envelope_directional_adjoint),
+                std::abs(
+                    remainder_envelope_directional_finite_difference)));
+    const SpectralIncrement remainder_absorption_gradient =
+        remainder_absorption_objective.absorption_ratio_gradient(
+            partition_state);
+    const Real remainder_absorption_directional_adjoint =
+        increment_inner_product(
+            remainder_absorption_gradient, partition_tangent);
+    const Real remainder_absorption_directional_finite_difference =
+        (remainder_absorption_objective.evaluate(partition_plus_state)
+             .absorption_ratio -
+         remainder_absorption_objective.evaluate(partition_minus_state)
+             .absorption_ratio) /
+        (2.0L * finite_difference_step);
+    const Real remainder_absorption_gradient_error = std::abs(
+        remainder_absorption_directional_adjoint -
+        remainder_absorption_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(remainder_absorption_directional_adjoint),
+                std::abs(
+                    remainder_absorption_directional_finite_difference)));
     const SpectralIncrement signed_closure_gradient =
         local_closure_objective.signed_constant_ratio_gradient(
             partition_state);
@@ -1798,6 +1878,9 @@ bool self_test(std::ostream& out) {
         local_closure_value_error < 1e-12L &&
         local_closure_gradient_error < 1e-9L &&
         lqc3_target_gradient_error < 1e-9L &&
+        signed_lqc3_target_gradient_error < 1e-9L &&
+        remainder_envelope_gradient_error < 1e-9L &&
+        remainder_absorption_gradient_error < 1e-9L &&
         signed_closure_gradient_error < 1e-9L &&
         local_sld_gradient_error < 1e-9L &&
         selected_block_gradient_error < 1e-9L &&
@@ -2075,6 +2158,31 @@ bool self_test(std::ostream& out) {
             WaveVector{1, 0, 0}, WaveVector{0, 1, 0},
             WaveVector{1, 1, 0},
             TriadSelection::local_without_equal_low_doubling());
+    const LocalSldRemainderSignatureReport remainder_signature_ledger =
+        LocalSldRemainderSignatureLedger::analyze(
+            active_dynamics, cyclic_ansatz.state, 2);
+    const bool remainder_signature_ledger_ok =
+        remainder_signature_ledger.exact_reconstruction &&
+        remainder_signature_ledger.signature_count > 0 &&
+        remainder_signature_ledger.selected_interactions > 0 &&
+        remainder_signature_ledger.effective_contributing_signatures >=
+            1.0L &&
+        remainder_signature_ledger.dominant_absolute_fraction > 0.0L &&
+        remainder_signature_ledger.dominant_absolute_fraction <= 1.0L &&
+        !remainder_signature_ledger.cutoff_independent_bound_proved;
+    const LocalSldRemainderDoubleSquareReport remainder_double_square =
+        LocalSldRemainderDoubleSquare::analyze(
+            active_dynamics, cyclic_ansatz.state);
+    const bool remainder_double_square_ok =
+        remainder_double_square.exact_identity &&
+        remainder_double_square.first_completion_error < 1e-13L &&
+        remainder_double_square.commutator_reconstruction_error <
+            1e-13L &&
+        remainder_double_square.stretching_vjp_reconstruction_error <
+            1e-13L &&
+        remainder_double_square.second_completion_error < 1e-13L &&
+        remainder_double_square.commutator_hminus1_norm2 >= -1e-14L &&
+        !remainder_double_square.cutoff_independent_upper_bound_proved;
     const AdversaryResult adversary =
         optimize_static_depletion(1, 1, 2, 0.1L, 11);
     const bool adversary_ok = adversary.modes == 26 &&
@@ -2459,6 +2567,12 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(local_closure_gradient_error)
         << ", LQC-3 gradient error="
         << static_cast<double>(lqc3_target_gradient_error)
+        << ", signed LQC-3 gradient error="
+        << static_cast<double>(signed_lqc3_target_gradient_error)
+        << ", remainder envelope gradient error="
+        << static_cast<double>(remainder_envelope_gradient_error)
+        << ", remainder absorption gradient error="
+        << static_cast<double>(remainder_absorption_gradient_error)
         << ", signed closure gradient error="
         << static_cast<double>(signed_closure_gradient_error)
         << ", direct SLD gradient error="
@@ -2646,6 +2760,30 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(
                signature_block.quotient_reconstruction_error)
         << ")\n"
+        << "local SLD remainder signature-ledger test: "
+        << (remainder_signature_ledger_ok ? "PASS" : "FAIL")
+        << " (signatures="
+        << remainder_signature_ledger.signature_count
+        << ", effective="
+        << static_cast<double>(
+               remainder_signature_ledger
+                   .effective_contributing_signatures)
+        << ", reconstruction error="
+        << static_cast<double>(
+               remainder_signature_ledger.bracket_reconstruction_error)
+        << ")\n"
+        << "local SLD remainder double-square test: "
+        << (remainder_double_square_ok ? "PASS" : "FAIL")
+        << " (signed LQC-3="
+        << static_cast<double>(
+               remainder_double_square.signed_target_ratio)
+        << ", upper envelope="
+        << static_cast<double>(
+               remainder_double_square.upper_envelope_target_ratio)
+        << ", reconstruction error="
+        << static_cast<double>(
+               remainder_double_square.second_completion_error)
+        << ")\n"
         << "static adversary test: " << (adversary_ok ? "PASS" : "FAIL")
         << " (Q=" << static_cast<double>(adversary.objective.energy_level_quantity)
         << ")\n"
@@ -2685,6 +2823,8 @@ bool self_test(std::ostream& out) {
            local_sld_gradient_search_ok &&
            cyclic_ansatz_ok && cyclic_trajectory_ansatz_ok &&
            cyclic_krylov_ansatz_ok && signature_block_ok &&
+           remainder_signature_ledger_ok &&
+           remainder_double_square_ok &&
            response_hierarchy_ok && response_family_ok &&
            response_diagonal_ok && response_tensor_ok &&
            augmented_response_tensor_ok &&

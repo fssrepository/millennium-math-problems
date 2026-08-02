@@ -58,6 +58,10 @@ RemainderQuartetClosureReport RemainderQuartetClosure::certify() {
         cross_normalization_frequency_power ==
             squared_normalization_frequency_power &&
         report.required_incidence_reduction_power == Rational(3, 2);
+    report.one_sided_double_square_reduction =
+        report.remainder_requires_collective_cancellation;
+    report.stretching_vjp_commutator_identity =
+        report.one_sided_double_square_reduction;
     report.cutoff_independent_remainder_bound_proved = false;
     report.full_local_lemma_proved = false;
     return report;
@@ -107,7 +111,7 @@ int RemainderQuartetClosureCli::run(
     }
     certificate
         << "{\n"
-        << "  \"schema\": \"navier-stokes-remainder-quartet-closure-v1\",\n"
+        << "  \"schema\": \"navier-stokes-remainder-quartet-closure-v2\",\n"
         << "  \"family\": \"local squared-length signatures excluding (m,m,2m)\",\n"
         << "  \"dense_incidence_degree_power\": \""
         << report.dense_incidence_degree_power.str() << "\",\n"
@@ -141,9 +145,19 @@ int RemainderQuartetClosureCli::run(
         << "  \"remainder_requires_collective_cancellation\": "
         << (report.remainder_requires_collective_cancellation
             ? "true" : "false") << ",\n"
+        << "  \"one_sided_double_square_reduction\": "
+        << (report.one_sided_double_square_reduction
+            ? "true" : "false") << ",\n"
+        << "  \"double_square_identity\": \"K+G=-||A^(1/2)(B-cAu-(1/2)A^(-1)D)||^2+S^2/(2Z)+c^2H3+c<Au,D>+(1/4)||A^(-1/2)D||^2\",\n"
+        << "  \"commutator_identity\": \"D=B(u,Au)-[x -> B(x,u)]^*Au=-[dB(u,u)]^*Au\",\n"
+        << "  \"stretching_vjp_commutator_identity\": "
+        << (report.stretching_vjp_commutator_identity
+            ? "true" : "false") << ",\n"
+        << "  \"standalone_commutator_envelope_bound_proved\": false,\n"
+        << "  \"commutator_absorption_bound_proved\": false,\n"
         << "  \"cutoff_independent_remainder_bound_proved\": false,\n"
         << "  \"full_local_lemma_proved\": false,\n"
-        << "  \"remaining_requirement\": \"replace the dense R^3 interaction degree by an effective R^(3/2) bound, or prove an equivalent signed quartet cancellation across signatures\"\n"
+        << "  \"remaining_requirement\": \"prove a cutoff-independent one-sided absorption estimate retaining the negative double square; an independent unsigned bound on the positive commutator envelope is too strong\"\n"
         << "}\n";
     out << "remainder quartet dense=R^"
         << report.dense_normalization_bracket_frequency_power.str()

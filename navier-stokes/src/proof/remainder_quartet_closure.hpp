@@ -26,6 +26,10 @@ struct RemainderQuartetClosureReport {
     bool dense_energy_only_count_closes = false;
     bool every_fixed_signature_closes = false;
     bool remainder_requires_collective_cancellation = false;
+    bool one_sided_double_square_reduction = false;
+    bool stretching_vjp_commutator_identity = false;
+    bool standalone_commutator_envelope_bound_proved = false;
+    bool commutator_absorption_bound_proved = false;
     bool cutoff_independent_remainder_bound_proved = false;
     bool full_local_lemma_proved = false;
 };

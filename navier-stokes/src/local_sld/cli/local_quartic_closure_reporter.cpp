@@ -24,6 +24,15 @@ std::string objective_formula(const std::string& objective) {
     if (objective == "lqc3-ratio") {
         return "maximize |K+G| / (Z^(5/4) P^(3/4))";
     }
+    if (objective == "signed-lqc3-ratio") {
+        return "maximize (K+G) / (Z^(5/4) P^(3/4))";
+    }
+    if (objective == "remainder-envelope-ratio") {
+        return "maximize the exact double-square upper envelope / (Z^(5/4) P^(3/4))";
+    }
+    if (objective == "remainder-absorption-ratio") {
+        return "maximize [K+G+(1-theta)||A^(1/2)(B-cAu)||^2] / (Z^(5/4) P^(3/4))";
+    }
     if (objective == "signed-closure-ratio") {
         return "maximize (K+G) E^(1/4) / (Z^(7/4) P)";
     }
@@ -78,6 +87,8 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
         << static_cast<double>(report.viscosity) << ",\n"
         << "  \"time_step\": "
         << static_cast<double>(report.time_step) << ",\n"
+        << "  \"absorption_theta\": "
+        << static_cast<double>(report.absorption_theta) << ",\n"
         << "  \"sobolev_order\": " << report.sobolev_order << ",\n"
         << "  \"sobolev_cap\": "
         << static_cast<double>(report.sobolev_cap) << ",\n"
@@ -108,6 +119,12 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
             << static_cast<double>(value.constant_ratio)
             << ", \"lqc3_target_ratio\": "
             << static_cast<double>(value.lqc3_target_ratio)
+            << ", \"signed_lqc3_target_ratio\": "
+            << static_cast<double>(value.signed_lqc3_target_ratio)
+            << ", \"remainder_upper_envelope_ratio\": "
+            << static_cast<double>(winner.remainder_envelope_ratio)
+            << ", \"remainder_absorption_ratio\": "
+            << static_cast<double>(winner.remainder_absorption_ratio)
             << ", \"squared_lqc3_target_ratio\": "
             << static_cast<double>(value.squared_lqc3_target_ratio)
             << ", \"signed_constant_ratio\": "
@@ -246,8 +263,10 @@ void LocalQuarticClosureReporter::print_summary(
         << " workers=" << report.workers
         << " restarts=" << report.restarts
         << " iterations=" << report.iterations << '\n'
+        << "absorption_theta="
+        << static_cast<double>(report.absorption_theta) << '\n'
         << "cutoff,initial_objective,optimized_objective,gain,"
-           "closure_C,lqc3_C,signed_S,warm_lift_objective,projection_residual,"
+           "closure_C,lqc3_C,signed_lqc3_C,envelope_C,absorption_C,signed_S,warm_lift_objective,projection_residual,"
            "gradient_norm,time_refinement_error,accepted,evaluations,seed\n";
     for (const auto& row : report.rows) {
         out << row.cutoff << ','
@@ -256,6 +275,12 @@ void LocalQuarticClosureReporter::print_summary(
             << static_cast<double>(row.objective_gain) << ','
             << static_cast<double>(row.winner.value.constant_ratio) << ','
             << static_cast<double>(row.winner.value.lqc3_target_ratio) << ','
+            << static_cast<double>(
+                   row.winner.value.signed_lqc3_target_ratio) << ','
+            << static_cast<double>(
+                   row.winner.remainder_envelope_ratio) << ','
+            << static_cast<double>(
+                   row.winner.remainder_absorption_ratio) << ','
             << static_cast<double>(row.winner.value.signed_stretching) << ','
             << static_cast<double>(row.warm_lift_objective) << ','
             << static_cast<double>(row.projection_residual) << ','

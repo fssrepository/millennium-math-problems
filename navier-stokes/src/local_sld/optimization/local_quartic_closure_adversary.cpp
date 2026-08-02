@@ -3,6 +3,8 @@
 #include "initial_sobolev_constraint.hpp"
 #include "local_signature_state_factory.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
+#include "local_sld_remainder_envelope_objective.hpp"
+#include "local_sld_remainder_absorption_objective.hpp"
 #include "parallel_executor.hpp"
 #include "spectral_adjoint.hpp"
 #include "spectral_galerkin.hpp"
@@ -192,10 +194,17 @@ LocalQuarticClosureAdversary::maximize(
     search.viscosity = options.viscosity;
     search.time_step = options.time_step;
     search.initial_step = options.initial_step;
+    search.absorption_theta = options.absorption_theta;
     search.objective = options.objective == "closure-ratio"
         ? "local-closure-ratio"
         : (options.objective == "lqc3-ratio"
                ? "local-lqc3-ratio"
+        : (options.objective == "signed-lqc3-ratio"
+               ? "local-signed-lqc3-ratio"
+        : (options.objective == "remainder-envelope-ratio"
+               ? "local-remainder-envelope-ratio"
+        : (options.objective == "remainder-absorption-ratio"
+               ? "local-remainder-absorption-ratio"
         : (options.objective == "signed-closure-ratio"
                ? "local-signed-closure-ratio"
                : (options.objective == "block-ratio"
@@ -207,7 +216,7 @@ LocalQuarticClosureAdversary::maximize(
                                     : (options.objective ==
                                                "maximum-sld-ratio"
                                            ? "local-frozen-maximum-sld-ratio"
-                                           : "local-sld-ratio"))))));
+                                           : "local-sld-ratio")))))))));
     search.method = options.method;
     search.lbfgs_history = options.lbfgs_history;
     search.sobolev_order = options.sobolev_order;
@@ -222,6 +231,15 @@ LocalQuarticClosureAdversary::maximize(
     LocalQuarticClosureRestartResult result;
     result.state = optimized.state;
     result.value = closure.evaluate(result.state);
+    result.remainder_envelope_ratio =
+        LocalSldRemainderEnvelopeObjective(
+            dynamics, search.closure_selection)
+            .evaluate(result.state).target_ratio;
+    result.remainder_absorption_ratio =
+        LocalSldRemainderAbsorptionObjective(
+            dynamics, options.absorption_theta,
+            search.closure_selection)
+            .evaluate(result.state).absorption_ratio;
     result.common_block_objective =
         is_common_block_objective(options.objective);
     if (result.common_block_objective) {
@@ -287,11 +305,17 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
         options.workers > 256 || options.iterations < 1 ||
         options.line_search_steps < 1 ||
         !(options.initial_step > 0.0L) ||
+        !(options.absorption_theta >= 0.0L) ||
+        !(options.absorption_theta <= 1.0L) ||
+        !std::isfinite(options.absorption_theta) ||
         (options.method != "steepest" && options.method != "lbfgs") ||
         (options.backend != "auto" && options.backend != "direct" &&
          options.backend != "fft") ||
         (options.objective != "closure-ratio" &&
          options.objective != "lqc3-ratio" &&
+         options.objective != "signed-lqc3-ratio" &&
+         options.objective != "remainder-envelope-ratio" &&
+         options.objective != "remainder-absorption-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "sld-ratio" &&
          options.objective != "block-ratio" &&
@@ -329,6 +353,7 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
     report.initial_profile = options.initial_profile;
     report.viscosity = options.viscosity;
     report.time_step = options.time_step;
+    report.absorption_theta = options.absorption_theta;
     report.sobolev_order = options.sobolev_order;
     report.sobolev_cap = options.sobolev_cap;
     SpectralState previous_winner;
@@ -379,6 +404,18 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                 ? warm_value.squared_constant_ratio
                 : (options.objective == "lqc3-ratio"
                        ? warm_value.squared_lqc3_target_ratio
+                : (options.objective == "signed-lqc3-ratio"
+                       ? warm_value.signed_lqc3_target_ratio
+                : (options.objective == "remainder-envelope-ratio"
+                       ? LocalSldRemainderEnvelopeObjective(
+                             dynamics,
+                             closure_selection(options.selection))
+                             .evaluate(starts.front()).target_ratio
+                : (options.objective == "remainder-absorption-ratio"
+                       ? LocalSldRemainderAbsorptionObjective(
+                             dynamics, options.absorption_theta,
+                             closure_selection(options.selection))
+                             .evaluate(starts.front()).absorption_ratio
                 : (options.objective == "signed-closure-ratio"
                        ? warm_value.signed_constant_ratio
                        : (options.objective == "terminal-sld-ratio"
@@ -406,7 +443,7 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                                     block_for_objective(options.objective))
                                     .evaluate(starts.front())
                                     .block_sld_ratio
-                              : warm_value.signed_local_sld_ratio)))));
+                              : warm_value.signed_local_sld_ratio))))))));
         }
         std::vector<LocalQuarticClosureRestartResult> results(
             static_cast<std::size_t>(options.restarts));

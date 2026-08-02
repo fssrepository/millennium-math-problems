@@ -1,5 +1,5 @@
 {
-  "schema": "navier-stokes-remainder-quartet-closure-v1",
+  "schema": "navier-stokes-remainder-quartet-closure-v2",
   "family": "local squared-length signatures excluding (m,m,2m)",
   "dense_incidence_degree_power": "3",
   "dense_bilinear_frequency_power": "5/2",
@@ -14,7 +14,13 @@
   "dense_energy_only_count_closes": false,
   "every_fixed_signature_closes": true,
   "remainder_requires_collective_cancellation": true,
+  "one_sided_double_square_reduction": true,
+  "double_square_identity": "K+G=-||A^(1/2)(B-cAu-(1/2)A^(-1)D)||^2+S^2/(2Z)+c^2H3+c<Au,D>+(1/4)||A^(-1/2)D||^2",
+  "commutator_identity": "D=B(u,Au)-[x -> B(x,u)]^*Au=-[dB(u,u)]^*Au",
+  "stretching_vjp_commutator_identity": true,
+  "standalone_commutator_envelope_bound_proved": false,
+  "commutator_absorption_bound_proved": false,
   "cutoff_independent_remainder_bound_proved": false,
   "full_local_lemma_proved": false,
-  "remaining_requirement": "replace the dense R^3 interaction degree by an effective R^(3/2) bound, or prove an equivalent signed quartet cancellation across signatures"
+  "remaining_requirement": "prove a cutoff-independent one-sided absorption estimate retaining the negative double square; an independent unsigned bound on the positive commutator envelope is too strong"
 }

@@ -64,6 +64,8 @@ add_executable(navier_stokes_lab
     src/local_sld/core/local_sld_cyclic_basis.cpp
     src/local_sld/core/local_sld_cyclic_orbit_basis.cpp
     src/local_sld/core/local_sld_response_basis.cpp
+    src/local_sld/core/local_sld_remainder_absorption_objective.cpp
+    src/local_sld/core/local_sld_remainder_envelope_objective.cpp
     src/local_sld/core/local_sld_two_scale_state.cpp
 
     src/local_sld/analysis/local_critical_derivative_ledger.cpp
@@ -82,6 +84,8 @@ add_executable(navier_stokes_lab
     src/local_sld/analysis/local_sld_response_hierarchy.cpp
     src/local_sld/analysis/local_sld_response_tensor.cpp
     src/local_sld/analysis/local_sld_projected_square.cpp
+    src/local_sld/analysis/local_sld_remainder_double_square.cpp
+    src/local_sld/analysis/local_sld_remainder_signature_ledger.cpp
     src/local_sld/analysis/local_sld_signature_block.cpp
     src/local_sld/analysis/local_sld_trajectory_evaluator.cpp
     src/local_sld/analysis/shifted_critical_density.cpp

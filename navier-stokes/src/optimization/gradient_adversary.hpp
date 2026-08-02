@@ -21,6 +21,7 @@ struct GradientSearchOptions {
     int sobolev_order = 0;
     SpectralReal sobolev_cap = 0.0L;
     SpectralReal critical_density_shift = 0.0L;
+    SpectralReal absorption_theta = 1.0L;
     int minimum_dyadic_gap = 2;
     TriadSelection closure_selection = TriadPartition::local;
 };

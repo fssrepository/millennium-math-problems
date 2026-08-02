@@ -39,6 +39,8 @@
 #include "local_sld_response_tensor.hpp"
 #include "local_sld_doubling_shell_ledger.hpp"
 #include "local_sld_doubling_scale_scan.hpp"
+#include "local_sld_remainder_double_square.hpp"
+#include "local_sld_remainder_signature_ledger.hpp"
 #include "local_sld_trajectory_evaluator.hpp"
 #include "local_sld_signature_block.hpp"
 #include "shifted_critical_density_cli.hpp"
@@ -908,6 +910,8 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab local-sld-response-tensor [options]\n"
         << "  navier_stokes_lab local-sld-doubling-shells [options]\n"
         << "  navier_stokes_lab local-sld-doubling-scale-scan [options]\n"
+        << "  navier_stokes_lab local-sld-remainder-square [options]\n"
+        << "  navier_stokes_lab local-sld-remainder-signatures [options]\n"
         << "  navier_stokes_lab local-sld-trajectory-evaluate [options]\n"
         << "  navier_stokes_lab local-sld-block [options]\n"
         << "  navier_stokes_lab shifted-density [options]\n"
@@ -976,6 +980,10 @@ void print_help(std::ostream& out) {
     lemma::LocalSldDoublingShellCli::print_help(out);
     out << '\n';
     lemma::LocalSldDoublingScaleScan::print_help(out);
+    out << '\n';
+    lemma::LocalSldRemainderDoubleSquareCli::print_help(out);
+    out << '\n';
+    lemma::LocalSldRemainderSignatureCli::print_help(out);
     out << '\n';
     lemma::LocalSldTrajectoryEvaluatorCli::print_help(out);
     out << '\n';
@@ -1123,6 +1131,18 @@ int main(int argc, char** argv) {
         if (command == "local-sld-doubling-scale-scan") {
             return lemma::LocalSldDoublingScaleScan::run(
                 lemma::LocalSldDoublingScaleScan::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command == "local-sld-remainder-square") {
+            return lemma::LocalSldRemainderDoubleSquareCli::run(
+                lemma::LocalSldRemainderDoubleSquareCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command == "local-sld-remainder-signatures") {
+            return lemma::LocalSldRemainderSignatureCli::run(
+                lemma::LocalSldRemainderSignatureCli::parse(
                     argc, argv, 2),
                 std::cout);
         }

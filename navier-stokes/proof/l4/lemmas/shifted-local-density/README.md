@@ -11,8 +11,8 @@ Companion response-space proof targets:
   one-shell gain and the direct sequence estimates that close the complete
   dominant orthogonal family at the cutoff-independent LQC-3 target scale.
 - [`REMAINDER_QUARTET.md`](REMAINDER_QUARTET.md) computes the exact dense
-  signature loss and reduces the next open block to an effective
-  `R^(3/2)` incidence or equivalent signed quartet estimate.
+  signature loss, rejects the absolute dense-count route, and gives the exact
+  double-square reduction to the open signed commutator-absorption estimate.
 
 This note records a scale-compatible replacement for the rejected pointwise
 monotonicity and unshifted multiplicative-growth routes.
@@ -421,7 +421,11 @@ fixed-width shell locality sums the structural entries, and the direct bounds
 `S <= C Z^(5/4)P^(1/4)` and `T <= C Z^(1/4)P^(5/4)` close both normalization
 terms at `Z^(5/4)P^(3/4)`. The full shifted-density lemma remains open because
 the closed signature remainder and the mixed doubling/remainder block have
-not yet been controlled uniformly.
+not yet been controlled uniformly. For the remainder, the signed target is
+numerically flat through K8, but this is not used as proof. The exact
+double-square identity in [REMAINDER_QUARTET.md](REMAINDER_QUARTET.md) shows
+that a growing dense absolute branch is coercively negative and identifies a
+specific commutator/negative-square absorption inequality as the next lemma.
 
 ## Reduced proof obligation
 

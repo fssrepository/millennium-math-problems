@@ -22,6 +22,7 @@ struct LocalQuarticClosureAdversaryOptions {
     SpectralReal initial_step = 0.1L;
     SpectralReal viscosity = 0.1L;
     SpectralReal time_step = 0.002L;
+    SpectralReal absorption_theta = 0.9L;
     int sobolev_order = 0;
     SpectralReal sobolev_cap = 0.0L;
     std::uint64_t seed = 20260801;
@@ -49,6 +50,8 @@ struct LocalQuarticClosureRestartResult {
     SpectralReal initial_objective = 0.0L;
     SpectralReal objective = 0.0L;
     SpectralReal initial_constant_ratio = 0.0L;
+    SpectralReal remainder_envelope_ratio = 0.0L;
+    SpectralReal remainder_absorption_ratio = 0.0L;
     SpectralReal final_projected_gradient_norm = 0.0L;
     SpectralReal sobolev_value = 0.0L;
     std::uint64_t seed = 0;
@@ -81,6 +84,7 @@ struct LocalQuarticClosureAdversaryReport {
     std::string initial_profile;
     SpectralReal viscosity = 0.0L;
     SpectralReal time_step = 0.0L;
+    SpectralReal absorption_theta = 0.0L;
     int sobolev_order = 0;
     SpectralReal sobolev_cap = 0.0L;
     SpectralReal fitted_cutoff_slope = 0.0L;
