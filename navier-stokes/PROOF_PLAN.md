@@ -156,8 +156,11 @@ avoid the obstruction: `S <= C Z^(5/4)P^(1/4)` and
 `T <= C Z^(1/4)P^(5/4)`, so both normalization entries are bounded by
 `C Z^(3/2)P^(1/2) <= C Z^(5/4)P^(3/4)`. Together with neighbor-shell locality
 of the structural terms, this proves the complete doubling-family block
-cutoff-independently. The closed signature remainder has now been reduced
-further. Writing `W=B_rem-cAu` and
+cutoff-independently. Fixed-angle incidence also proves the complete
+`(m,m,3m)` family, and the general plane--sphere argument proves every fixed
+primitive projective ray `(am,bm,cm)`. The unresolved issue is a uniform or
+summable estimate over all primitive shapes. The remainder has also been
+reduced algebraically. Writing `W=B_rem-cAu` and
 `D=B_rem(u,Au)-[x->B_rem(x,u)]^*Au`, two exact square completions give
 
 ```text
@@ -180,6 +183,7 @@ the signed LQC3 quotient. Since
 most `2`, the current remainder lemma is the power-one estimate
 `|(K_rem+G_rem)S_full| <= C Z^2P^2`. The mixed block follows. See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
+`proof/l4/lemmas/shifted-local-density/PROJECTIVE_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/REMAINDER_QUARTET.md`.
 
 The first explicit L4 candidate in the reduction was
@@ -894,7 +898,11 @@ Direct optimization of the exact remainder block product instead stays near
 current remainder restart point. Its exact scalar reduction leaves the
 energy-independent power-one tradeoff
 `|(K_rem+G_rem)S_full| <= C Z^2P^2`; the corresponding exact-gradient roots
-remain between `0.00601` and `0.00636` through K5.
+remain between `0.00601` and `0.006365` through K7. Projective grouping shows
+that `95.42%` of the K7 absolute total lies on one primitive ray. After the
+proved doubling and triple families are removed, the K5 tail has only `3.027`
+effective projective shapes. Every fixed ray is proved cutoff-independently;
+the remaining analytic gap is their uniform summation.
 
 The absolute closure ratio was subsequently reverse-differentiated and
 optimized directly. A K1 branch reaches `C_state=1/3`, but its stretching is

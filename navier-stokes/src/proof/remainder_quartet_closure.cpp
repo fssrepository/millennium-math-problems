@@ -52,6 +52,9 @@ RemainderQuartetClosureReport RemainderQuartetClosure::certify() {
             report.target_frequency_power;
     report.every_fixed_signature_closes =
         report.fixed_signature_frequency_gain < Rational(0);
+    report.every_fixed_projective_ray_closes =
+        report.every_fixed_signature_closes &&
+        report.fixed_signature_incidence_degree_power == Rational(1);
     report.remainder_requires_collective_cancellation =
         !report.dense_energy_only_count_closes &&
         report.every_fixed_signature_closes &&
@@ -114,7 +117,7 @@ int RemainderQuartetClosureCli::run(
     }
     certificate
         << "{\n"
-        << "  \"schema\": \"navier-stokes-remainder-quartet-closure-v3\",\n"
+        << "  \"schema\": \"navier-stokes-remainder-quartet-closure-v4\",\n"
         << "  \"family\": \"local squared-length signatures excluding (m,m,2m)\",\n"
         << "  \"dense_incidence_degree_power\": \""
         << report.dense_incidence_degree_power.str() << "\",\n"
@@ -145,6 +148,10 @@ int RemainderQuartetClosureCli::run(
         << "  \"every_fixed_signature_closes\": "
         << (report.every_fixed_signature_closes ? "true" : "false")
         << ",\n"
+        << "  \"every_fixed_projective_ray_closes\": "
+        << (report.every_fixed_projective_ray_closes
+            ? "true" : "false") << ",\n"
+        << "  \"uniform_projective_shape_sum_proved\": false,\n"
         << "  \"remainder_requires_collective_cancellation\": "
         << (report.remainder_requires_collective_cancellation
             ? "true" : "false") << ",\n"
@@ -170,7 +177,7 @@ int RemainderQuartetClosureCli::run(
         << "  \"power_one_tradeoff_bound_proved\": false,\n"
         << "  \"cutoff_independent_remainder_bound_proved\": false,\n"
         << "  \"full_local_lemma_proved\": false,\n"
-        << "  \"remaining_requirement\": \"prove the cutoff-independent power-one tradeoff |(K_rem+G_rem)S_full| <= C Z^2P^2; the proved scalar multiplier then closes the exact remainder block with constant 2C\"\n"
+        << "  \"remaining_requirement\": \"prove a shape-uniform or summable estimate across primitive projective rays for the power-one tradeoff |(K_rem+G_rem)S_full| <= C Z^2P^2; the proved scalar multiplier then closes the exact remainder block with constant 2C\"\n"
         << "}\n";
     out << "remainder quartet dense=R^"
         << report.dense_normalization_bracket_frequency_power.str()

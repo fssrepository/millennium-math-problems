@@ -55,6 +55,9 @@ struct LocalQuarticClosureRestartResult {
     SpectralReal remainder_absorption_ratio = 0.0L;
     SpectralReal shape_power_absolute_product = 0.0L;
     SpectralReal shape_power_normalized_stretching = 0.0L;
+    SpectralReal projective_coherence_ratio = 0.0L;
+    SpectralReal projective_coherence_amplification = 0.0L;
+    std::size_t projective_coherence_shape_count = 0;
     SpectralReal final_projected_gradient_norm = 0.0L;
     SpectralReal sobolev_value = 0.0L;
     std::uint64_t seed = 0;

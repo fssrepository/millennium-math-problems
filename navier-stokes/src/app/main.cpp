@@ -25,6 +25,7 @@
 #include "doubling_quartet_closure.hpp"
 #include "equal_low_quartet_closure.hpp"
 #include "projective_quartet_closure.hpp"
+#include "projective_square_function_closure.hpp"
 #include "remainder_quartet_closure.hpp"
 #include "local_signature_geometry.hpp"
 #include "local_signature_adversary.hpp"
@@ -42,6 +43,8 @@
 #include "local_sld_doubling_shell_ledger.hpp"
 #include "local_sld_doubling_scale_scan.hpp"
 #include "local_sld_remainder_double_square.hpp"
+#include "local_sld_projective_coherence_ledger.hpp"
+#include "local_sld_projective_fan_scan.hpp"
 #include "local_sld_remainder_projective_ledger.hpp"
 #include "local_sld_remainder_signature_ledger.hpp"
 #include "local_sld_remainder_tradeoff_ledger.hpp"
@@ -900,6 +903,7 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab doubling-quartet-certificate [options]\n"
         << "  navier_stokes_lab equal-low-quartet-certificate [options]\n"
         << "  navier_stokes_lab projective-quartet-certificate [options]\n"
+        << "  navier_stokes_lab projective-square-function-certificate [options]\n"
         << "  navier_stokes_lab remainder-quartet-certificate [options]\n"
         << "  navier_stokes_lab local-signature-certificate [options]\n"
         << "  navier_stokes_lab local-signature-adversary [options]\n"
@@ -917,6 +921,8 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab local-sld-doubling-shells [options]\n"
         << "  navier_stokes_lab local-sld-doubling-scale-scan [options]\n"
         << "  navier_stokes_lab local-sld-remainder-square [options]\n"
+        << "  navier_stokes_lab local-sld-projective-coherence [options]\n"
+        << "  navier_stokes_lab local-sld-projective-fan-scan [options]\n"
         << "  navier_stokes_lab local-sld-remainder-projective [options]\n"
         << "  navier_stokes_lab local-sld-remainder-signatures [options]\n"
         << "  navier_stokes_lab local-sld-remainder-tradeoff [options]\n"
@@ -961,6 +967,8 @@ void print_help(std::ostream& out) {
     out << '\n';
     lemma::ProjectiveQuartetClosureCli::print_help(out);
     out << '\n';
+    lemma::ProjectiveSquareFunctionClosureCli::print_help(out);
+    out << '\n';
     lemma::RemainderQuartetClosureCli::print_help(out);
     out << '\n';
     lemma::LocalSignatureCli::print_help(out);
@@ -994,6 +1002,10 @@ void print_help(std::ostream& out) {
     lemma::LocalSldDoublingScaleScan::print_help(out);
     out << '\n';
     lemma::LocalSldRemainderDoubleSquareCli::print_help(out);
+    out << '\n';
+    lemma::LocalSldProjectiveCoherenceCli::print_help(out);
+    out << '\n';
+    lemma::LocalSldProjectiveFanScan::print_help(out);
     out << '\n';
     lemma::LocalSldRemainderProjectiveCli::print_help(out);
     out << '\n';
@@ -1069,6 +1081,12 @@ int main(int argc, char** argv) {
         if (command == "projective-quartet-certificate") {
             return lemma::ProjectiveQuartetClosureCli::run(
                 lemma::ProjectiveQuartetClosureCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command == "projective-square-function-certificate") {
+            return lemma::ProjectiveSquareFunctionClosureCli::run(
+                lemma::ProjectiveSquareFunctionClosureCli::parse(
                     argc, argv, 2),
                 std::cout);
         }
@@ -1165,6 +1183,18 @@ int main(int argc, char** argv) {
         if (command == "local-sld-remainder-square") {
             return lemma::LocalSldRemainderDoubleSquareCli::run(
                 lemma::LocalSldRemainderDoubleSquareCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command == "local-sld-projective-coherence") {
+            return lemma::LocalSldProjectiveCoherenceCli::run(
+                lemma::LocalSldProjectiveCoherenceCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command == "local-sld-projective-fan-scan") {
+            return lemma::LocalSldProjectiveFanScan::run(
+                lemma::LocalSldProjectiveFanScan::parse(
                     argc, argv, 2),
                 std::cout);
         }

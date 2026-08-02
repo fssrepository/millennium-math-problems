@@ -1,5 +1,5 @@
 {
-  "schema": "navier-stokes-remainder-quartet-closure-v3",
+  "schema": "navier-stokes-remainder-quartet-closure-v4",
   "family": "local squared-length signatures excluding (m,m,2m)",
   "dense_incidence_degree_power": "3",
   "dense_bilinear_frequency_power": "5/2",
@@ -13,6 +13,8 @@
   "fixed_signature_frequency_gain": "-1/2",
   "dense_energy_only_count_closes": false,
   "every_fixed_signature_closes": true,
+  "every_fixed_projective_ray_closes": true,
+  "uniform_projective_shape_sum_proved": false,
   "remainder_requires_collective_cancellation": true,
   "one_sided_double_square_reduction": true,
   "double_square_identity": "K+G=-||A^(1/2)(B-cAu-(1/2)A^(-1)D)||^2+S^2/(2Z)+c^2H3+c<Au,D>+(1/4)||A^(-1/2)D||^2",
@@ -28,5 +30,5 @@
   "power_one_tradeoff_bound_proved": false,
   "cutoff_independent_remainder_bound_proved": false,
   "full_local_lemma_proved": false,
-  "remaining_requirement": "prove the cutoff-independent power-one tradeoff |(K_rem+G_rem)S_full| <= C Z^2P^2; the proved scalar multiplier then closes the exact remainder block with constant 2C"
+  "remaining_requirement": "prove a shape-uniform or summable estimate across primitive projective rays for the power-one tradeoff |(K_rem+G_rem)S_full| <= C Z^2P^2; the proved scalar multiplier then closes the exact remainder block with constant 2C"
 }

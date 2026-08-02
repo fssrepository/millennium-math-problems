@@ -1,5 +1,5 @@
 {
-  "schema": "navier-stokes-local-sld-remainder-projective-ledger-v1",
+  "schema": "navier-stokes-local-sld-remainder-projective-ledger-v2",
   "state_path": "proof/l4/states/local-shape-power/remainder-p1-without-double-triple-123-K1-K5/K5.tsv",
   "cutoff": 5,
   "threads": 12,
@@ -15,6 +15,25 @@
   "effective_projective_shapes": 3.02684933316484317,
   "dominant_projective_fraction": 0.511927441561190522,
   "signed_projective_alignment": 0.999082770063296821,
+  "shape_height_envelope": {
+    "contribution_weighted_angle_sine_squared": 0.962478154598976676,
+    "contribution_weighted_length_aspect_ratio": 1.62593356682766221,
+    "contribution_weighted_dyadic_span": 0.693521771204683612,
+    "primitive_height_half_moment": 0.00606242591145417405,
+    "primitive_height_first_moment": 0.0146183755265555104,
+    "fitted_absolute_height_shell_slope": -3.23072414054935741,
+    "height_shells": [
+      {"dyadic_height_level": 0, "minimum_primitive_height": 1, "maximum_primitive_height": 1, "shape_count": 1, "signed_power_one_total": 4.67328115877607271e-07, "absolute_power_one_sum": 4.67328115877607271e-07, "effective_shapes": 1, "signed_alignment": 1, "absolute_fraction": 0.000182230635873659305, "weighted_angle_sine_squared": 0.75, "weighted_length_aspect_ratio": 1},
+      {"dyadic_height_level": 1, "minimum_primitive_height": 3, "maximum_primitive_height": 3, "shape_count": 3, "signed_power_one_total": 6.79870031380377742e-05, "absolute_power_one_sum": 6.81239317795589175e-05, "effective_shapes": 1.03046534112568011, "signed_alignment": 0.997990006772300875, "absolute_fraction": 0.0265643495108137083, "weighted_angle_sine_squared": 0.997584907076213279, "weighted_length_aspect_ratio": 1.7249545820829586},
+      {"dyadic_height_level": 2, "minimum_primitive_height": 4, "maximum_primitive_height": 7, "shape_count": 25, "signed_power_one_total": 0.00183589201903068436, "absolute_power_one_sum": 0.00183597085179121431, "effective_shapes": 1.85170711391810006, "signed_alignment": 0.999957062084916526, "absolute_fraction": 0.715921264739484364, "weighted_angle_sine_squared": 0.987903297725129081, "weighted_length_aspect_ratio": 1.61280410671013774},
+      {"dyadic_height_level": 3, "minimum_primitive_height": 8, "maximum_primitive_height": 15, "shape_count": 131, "signed_power_one_total": 0.000656856031635596961, "absolute_power_one_sum": 0.000658107726339325063, "effective_shapes": 1.24498797481139634, "signed_alignment": 0.998098039798604675, "absolute_fraction": 0.256623527174196897, "weighted_angle_sine_squared": 0.888739277425951602, "weighted_length_aspect_ratio": 1.6521245476414026},
+      {"dyadic_height_level": 4, "minimum_primitive_height": 16, "maximum_primitive_height": 30, "shape_count": 433, "signed_power_one_total": 9.29684345345802719e-07, "absolute_power_one_sum": 1.81431683787401722e-06, "effective_shapes": 4.73313177584940714, "signed_alignment": 0.512415651962525809, "absolute_fraction": 0.000707477465637139391, "weighted_angle_sine_squared": 0.718231187506301771, "weighted_length_aspect_ratio": 1.85468772898510892},
+      {"dyadic_height_level": 5, "minimum_primitive_height": 32, "maximum_primitive_height": 59, "shape_count": 599, "signed_power_one_total": 2.81704736560133431e-09, "absolute_power_one_sum": 2.94718774578661177e-09, "effective_shapes": 7.4544717928164852, "signed_alignment": 0.955842521274279155, "absolute_fraction": 1.14923086950413305e-06, "weighted_angle_sine_squared": 0.668374020966647664, "weighted_length_aspect_ratio": 1.82987430046519872},
+      {"dyadic_height_level": 6, "minimum_primitive_height": 66, "maximum_primitive_height": 75, "shape_count": 22, "signed_power_one_total": -2.41854991671160945e-12, "absolute_power_one_sum": 3.18797743056718769e-12, "effective_shapes": 1.30553746953292182, "signed_alignment": 0.758647126394904836, "absolute_fraction": 1.24312476520304758e-09, "weighted_angle_sine_squared": 0.425117424786146947, "weighted_length_aspect_ratio": 1.97985421367006653}
+    ],
+    "exact_reconstruction": true,
+    "summable_projective_shape_envelope_proved": false
+  },
   "reported_shape_count": 64,
   "top_projective_shapes": [
     {"primitive_squared_lengths": [2, 3, 5], "scale_count": 6, "interactions": 2592, "minimum_scale": 1, "maximum_scale": 10, "bracket_total": -0.35526396842754876, "power_one_total": 0.00131283132270195823, "absolute_scale_sum": 0.00131284222170166011, "effective_scales": 1.00000831058124739, "signed_scale_alignment": 0.999991698164850562, "absolute_fraction": 0.511927441561190522},

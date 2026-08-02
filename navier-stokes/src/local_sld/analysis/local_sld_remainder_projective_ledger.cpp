@@ -1,5 +1,7 @@
 #include "local_sld_remainder_projective_ledger.hpp"
 
+#include "local_sld_projective_shape_envelope.hpp"
+
 #include "spectral_galerkin.hpp"
 #include "state_analysis.hpp"
 
@@ -43,13 +45,14 @@ std::pair<Shape, SpectralInteger> primitive_shape(
 
 void write_json(
     const LocalSldRemainderProjectiveReport& report,
+    const LocalSldProjectiveShapeEnvelopeReport& envelope,
     const LocalSldRemainderProjectiveCliOptions& options,
     std::ostream& output) {
     const std::size_t count = std::min(
         report.shapes.size(), static_cast<std::size_t>(options.top));
     output << std::setprecision(18)
         << "{\n"
-        << "  \"schema\": \"navier-stokes-local-sld-remainder-projective-ledger-v1\",\n"
+        << "  \"schema\": \"navier-stokes-local-sld-remainder-projective-ledger-v2\",\n"
         << "  \"state_path\": \"" << options.state_path << "\",\n"
         << "  \"cutoff\": " << report.cutoff << ",\n"
         << "  \"threads\": " << options.threads << ",\n"
@@ -82,6 +85,66 @@ void write_json(
         << "  \"signed_projective_alignment\": "
         << static_cast<double>(report.signed_projective_alignment)
         << ",\n"
+        << "  \"shape_height_envelope\": {\n"
+        << "    \"contribution_weighted_angle_sine_squared\": "
+        << static_cast<double>(
+               envelope.contribution_weighted_angle_sine_squared)
+        << ",\n"
+        << "    \"contribution_weighted_length_aspect_ratio\": "
+        << static_cast<double>(
+               envelope.contribution_weighted_length_aspect_ratio)
+        << ",\n"
+        << "    \"contribution_weighted_dyadic_span\": "
+        << static_cast<double>(
+               envelope.contribution_weighted_dyadic_span)
+        << ",\n"
+        << "    \"primitive_height_half_moment\": "
+        << static_cast<double>(envelope.primitive_height_half_moment)
+        << ",\n"
+        << "    \"primitive_height_first_moment\": "
+        << static_cast<double>(envelope.primitive_height_first_moment)
+        << ",\n"
+        << "    \"fitted_absolute_height_shell_slope\": "
+        << static_cast<double>(
+               envelope.fitted_absolute_height_shell_slope)
+        << ",\n"
+        << "    \"height_shells\": [\n";
+    for (std::size_t index = 0;
+         index < envelope.height_shells.size(); ++index) {
+        const LocalSldProjectiveShapeShellRow& shell =
+            envelope.height_shells[index];
+        output << "      {\"dyadic_height_level\": "
+            << shell.dyadic_height_level
+            << ", \"minimum_primitive_height\": "
+            << shell.minimum_primitive_height
+            << ", \"maximum_primitive_height\": "
+            << shell.maximum_primitive_height
+            << ", \"shape_count\": " << shell.shape_count
+            << ", \"signed_power_one_total\": "
+            << static_cast<double>(shell.signed_power_one_total)
+            << ", \"absolute_power_one_sum\": "
+            << static_cast<double>(shell.absolute_power_one_sum)
+            << ", \"effective_shapes\": "
+            << static_cast<double>(shell.effective_shapes)
+            << ", \"signed_alignment\": "
+            << static_cast<double>(shell.signed_alignment)
+            << ", \"absolute_fraction\": "
+            << static_cast<double>(shell.absolute_fraction)
+            << ", \"weighted_angle_sine_squared\": "
+            << static_cast<double>(shell.weighted_angle_sine_squared)
+            << ", \"weighted_length_aspect_ratio\": "
+            << static_cast<double>(shell.weighted_length_aspect_ratio)
+            << '}'
+            << (index + 1 == envelope.height_shells.size()
+                ? "\n" : ",\n");
+    }
+    output
+        << "    ],\n"
+        << "    \"exact_reconstruction\": "
+        << (envelope.exact_reconstruction ? "true" : "false")
+        << ",\n"
+        << "    \"summable_projective_shape_envelope_proved\": false\n"
+        << "  },\n"
         << "  \"reported_shape_count\": " << count << ",\n"
         << "  \"top_projective_shapes\": [\n";
     for (std::size_t index = 0; index < count; ++index) {
@@ -262,6 +325,8 @@ int LocalSldRemainderProjectiveCli::run(
             options.exclude_triple_family);
     const LocalSldRemainderProjectiveReport report =
         LocalSldRemainderProjectiveLedger::analyze(signatures);
+    const LocalSldProjectiveShapeEnvelopeReport envelope =
+        LocalSldProjectiveShapeEnvelope::analyze(report);
     const std::filesystem::path path(options.certificate_path);
     if (!path.parent_path().empty()) {
         std::filesystem::create_directories(path.parent_path());
@@ -271,7 +336,7 @@ int LocalSldRemainderProjectiveCli::run(
         throw std::runtime_error(
             "cannot write remainder projective certificate");
     }
-    write_json(report, options, certificate);
+    write_json(report, envelope, options, certificate);
     out << std::setprecision(12)
         << "remainder projective ledger cutoff=" << report.cutoff
         << " signatures=" << report.signature_count
@@ -280,12 +345,16 @@ int LocalSldRemainderProjectiveCli::run(
         << static_cast<double>(report.effective_projective_shapes)
         << " dominant="
         << static_cast<double>(report.dominant_projective_fraction)
+        << " height_slope="
+        << static_cast<double>(
+               envelope.fitted_absolute_height_shell_slope)
         << " power_one="
         << static_cast<double>(report.reconstructed_power_one_total)
         << " reconstruction="
         << static_cast<double>(report.reconstruction_error) << '\n'
         << "Certificate written to " << options.certificate_path << '\n';
-    return report.exact_reconstruction ? 0 : 2;
+    return report.exact_reconstruction && envelope.exact_reconstruction
+        ? 0 : 2;
 }
 
 }  // namespace lemma

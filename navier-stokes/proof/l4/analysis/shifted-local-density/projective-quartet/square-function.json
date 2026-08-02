@@ -1,0 +1,23 @@
+{
+  "schema": "navier-stokes-projective-square-function-closure-v1",
+  "ray_partition": "each local ordered input pair belongs to exactly one primitive squared-length ray",
+  "uniform_incidence_proof": "a fixed input determines the ray scale; at most six role assignments and at most 2(2K+1) plane-sphere partners per role give a shape-independent O(K) degree",
+  "square_function_bound": "sum_sigma ||B_sigma(u,u)||_2^2 <= C K^3 E^2",
+  "square_function_derivation": "target-wise Cauchy-Schwarz costs one K degree, the squared derivative costs K^2, and disjoint ray pair sets eliminate the number of shapes",
+  "uniform_ray_incidence_degree_power": "1",
+  "squared_function_squared_frequency_power": "3",
+  "squared_function_frequency_power": "3/2",
+  "candidate_diagonal_quartet_frequency_power": "5",
+  "target_frequency_power": "11/2",
+  "candidate_diagonal_frequency_gain": "-1/2",
+  "primitive_ray_partition_is_disjoint": true,
+  "uniform_single_ray_incidence_constant_proved": true,
+  "bilinear_projective_square_function_bound_proved": true,
+  "square_function_has_target_power_gain": true,
+  "diagonal_projective_quartet_sum_proved": false,
+  "coherent_projective_synthesis_bound_proved": false,
+  "cross_ray_quartet_bound_proved": false,
+  "power_one_tradeoff_bound_proved": false,
+  "full_local_lemma_proved": false,
+  "remaining_requirement": "control the coherent cross-ray synthesis on shared output modes, including normalization and the product with S_full"
+}

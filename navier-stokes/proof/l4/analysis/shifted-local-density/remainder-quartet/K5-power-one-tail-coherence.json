@@ -1,0 +1,21 @@
+{
+  "schema": "navier-stokes-local-sld-projective-coherence-v1",
+  "state_path": "proof/l4/states/local-shape-power/remainder-p1-without-double-triple-123-K1-K5/K5.tsv",
+  "cutoff": 5,
+  "threads": 12,
+  "selected_interactions": 473916,
+  "projective_shape_count": 1214,
+  "maximum_output_shape_multiplicity": 186,
+  "excludes_signature_123": true,
+  "excludes_triple_family": true,
+  "total_advection_norm2": 0.304470684249083967,
+  "projective_square_function_norm2": 0.236500437453524226,
+  "coherent_synthesis_ratio": 1.2874000890967352,
+  "coherent_synthesis_amplification": 1.13463654493266497,
+  "effective_advection_shapes": 2.25512970095007681,
+  "dominant_advection_shape_fraction": 0.645351894179537866,
+  "reconstruction_relative_error": 1.12364149905300358e-19,
+  "exact_projective_reconstruction": true,
+  "cutoff_independent_synthesis_bound_proved": false,
+  "finite_ledger_is_not_a_proof": true
+}

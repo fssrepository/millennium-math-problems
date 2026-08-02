@@ -6,10 +6,11 @@ that absolute-value route is too strong, and reduces the required one-sided
 bound to a sign-aware commutator absorption inequality. It does not prove the
 remainder bound or the full local SLD lemma.
 
-## Fixed signatures already close
+## Fixed projective rays already close
 
-For a fixed squared-length signature `(r,s,t)`, fixing an input or target
-leaves a plane--sphere intersection with degree `O(R)`. Therefore
+For a primitive squared-length shape `(a,b,c)`, fixing an input or target
+also fixes the dilation scale in the complete ray `(am,bm,cm)`. The remaining
+input lies on a plane--sphere intersection with degree `O(R)`. Therefore
 
 ```text
 ||B_sigma(v,w)||_2 <= C R^(3/2)||v||_2||w||_2.
@@ -17,8 +18,13 @@ leaves a plane--sphere intersection with degree `O(R)`. Therefore
 
 The same quartet power count as in the doubling proof gives `R^5 E^2`, a
 half derivative below the LQC-3 shell target `R^(11/2)E^2`. Consequently
-every fixed remainder signature has a cutoff-independent estimate. The open
-problem is summing the growing signature family, not any individual triple.
+every fixed projective ray has a cutoff-independent estimate. The proof is
+given in [PROJECTIVE_QUARTET.md](PROJECTIVE_QUARTET.md); the special equal-low
+triple family is recorded in [TRIPLE_QUARTET.md](TRIPLE_QUARTET.md). The open
+problem is the coherent cross-ray coupling over the growing primitive-shape
+family, not an individual ray. The ray decomposition does satisfy the proved
+square-function bound `sum_sigma ||B_sigma||_2^2 <= C R^3 E^2`; the missing
+step is synthesis on shared output modes and the associated cross-ray quartet.
 
 ## Dense-count obstruction
 
@@ -254,9 +260,18 @@ it retains one stretching factor analytically, while the remaining two are
 closed by the bounded scalar multiplier. The exact-gradient
 `shape-power-ratio` objective tests `|c_rem|^2|x|^(2p)`. For `p=1`, twelve
 starts give `|c_rem x|=0.0060065`, `0.0062905`, `0.0063403`, `0.0063550`,
-and `0.0063610` at K1--K5, with fitted root slope `0.0123`. The `p=2` roots
-are also flat at `0.0004265`--`0.0005381`. This is direct evidence for RQ-11,
-not its proof.
+`0.0063610`, `0.0063638`, and `0.0063648` at K1--K7. The K7 ledger contains
+8105 exact signatures but only `1.097` effective contributors, with `95.42%`
+from the `(1,2,3)` ray. The `p=2` roots are also flat at
+`0.0004265`--`0.0005381` through K5.
+
+Removing the proved doubling and triple families and the exact `(1,2,3)`
+signature leaves a K5 power-one root `0.0025621`. Its 1395 exact signatures
+collapse to 1214 primitive shapes and only `3.027` effective projective
+contributors; `(2,3,5)`, `(3,3,8)`, and `(1,3,4)` are the leading rays. Each
+fixed ray is now closed by the plane--sphere argument. What remains in RQ-11
+is the coherent summation over primitive shapes. These measurements are direct
+evidence for the target, not its proof.
 
 ## Reproduction
 
@@ -323,8 +338,15 @@ Artifacts:
 - [`../../analysis/shifted-local-density/remainder-quartet/block-winners-K1-K6-tradeoff.json`](../../analysis/shifted-local-density/remainder-quartet/block-winners-K1-K6-tradeoff.json)
 - [`../../analysis/shifted-local-density/remainder-quartet/strong-signed-lqc3-K4-K6-tradeoff.json`](../../analysis/shifted-local-density/remainder-quartet/strong-signed-lqc3-K4-K6-tradeoff.json)
 - [`../../adversary/shifted-local-density/remainder-shape-power/p1-K1-K5.json`](../../adversary/shifted-local-density/remainder-shape-power/p1-K1-K5.json)
+- [`../../adversary/shifted-local-density/remainder-shape-power/p1-K6.json`](../../adversary/shifted-local-density/remainder-shape-power/p1-K6.json)
+- [`../../adversary/shifted-local-density/remainder-shape-power/p1-K7.json`](../../adversary/shifted-local-density/remainder-shape-power/p1-K7.json)
 - [`../../adversary/shifted-local-density/remainder-shape-power/p2-K1-K5.json`](../../adversary/shifted-local-density/remainder-shape-power/p2-K1-K5.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K7-power-one-projective.json`](../../analysis/shifted-local-density/remainder-quartet/K7-power-one-projective.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K5-power-one-tail-projective.json`](../../analysis/shifted-local-density/remainder-quartet/K5-power-one-tail-projective.json)
+- [`../../analysis/shifted-local-density/projective-quartet/ray-2-3-5-K12.json`](../../analysis/shifted-local-density/projective-quartet/ray-2-3-5-K12.json)
 
-The exact remaining remainder statement is the power-one estimate RQ-11,
-which implies RQ-9 with constant `2C`, followed by the mixed block. No finite
-scan is treated as that proof.
+The exact remaining remainder statement is the cross-ray projective synthesis
+in the power-one estimate RQ-11. Every fixed ray and the bilinear projective
+square function are closed, but coherent cross-ray terms are not. RQ-11
+implies RQ-9 with constant `2C`; the mixed block then remains. No finite scan
+is treated as that proof.

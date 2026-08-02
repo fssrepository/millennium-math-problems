@@ -6,6 +6,7 @@
 #include "local_sld_remainder_envelope_objective.hpp"
 #include "local_sld_remainder_absorption_objective.hpp"
 #include "local_sld_shape_power_objective.hpp"
+#include "local_sld_projective_coherence_objective.hpp"
 #include "parallel_executor.hpp"
 #include "spectral_adjoint.hpp"
 #include "spectral_galerkin.hpp"
@@ -223,6 +224,8 @@ LocalQuarticClosureAdversary::maximize(
                ? "local-remainder-absorption-ratio"
         : (options.objective == "shape-power-ratio"
                ? "local-shape-power-ratio"
+        : (options.objective == "projective-coherence-ratio"
+               ? "local-projective-coherence-ratio"
         : (options.objective == "signed-closure-ratio"
                ? "local-signed-closure-ratio"
                : (options.objective == "block-ratio"
@@ -234,7 +237,7 @@ LocalQuarticClosureAdversary::maximize(
                                     : (options.objective ==
                                                "maximum-sld-ratio"
                                            ? "local-frozen-maximum-sld-ratio"
-                                           : "local-sld-ratio"))))))))));
+                                           : "local-sld-ratio")))))))))));
     search.method = options.method;
     search.lbfgs_history = options.lbfgs_history;
     search.sobolev_order = options.sobolev_order;
@@ -266,6 +269,14 @@ LocalQuarticClosureAdversary::maximize(
         shape_power_value.absolute_power_product;
     result.shape_power_normalized_stretching =
         shape_power_value.normalized_stretching;
+    const LocalSldProjectiveCoherenceObjectiveValue coherence_value =
+        LocalSldProjectiveCoherenceObjective(
+            dynamics, search.closure_selection).evaluate(result.state);
+    result.projective_coherence_ratio = coherence_value.synthesis_ratio;
+    result.projective_coherence_amplification =
+        coherence_value.synthesis_amplification;
+    result.projective_coherence_shape_count =
+        coherence_value.projective_shape_count;
     result.common_block_objective =
         is_common_block_objective(options.objective);
     if (result.common_block_objective) {
@@ -344,6 +355,7 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
          options.objective != "remainder-envelope-ratio" &&
          options.objective != "remainder-absorption-ratio" &&
          options.objective != "shape-power-ratio" &&
+         options.objective != "projective-coherence-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "sld-ratio" &&
          options.objective != "block-ratio" &&

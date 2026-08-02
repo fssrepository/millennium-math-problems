@@ -25,6 +25,8 @@ struct RemainderQuartetClosureReport {
     Rational fixed_signature_frequency_gain{-1, 2};
     bool dense_energy_only_count_closes = false;
     bool every_fixed_signature_closes = false;
+    bool every_fixed_projective_ray_closes = false;
+    bool uniform_projective_shape_sum_proved = false;
     bool remainder_requires_collective_cancellation = false;
     bool one_sided_double_square_reduction = false;
     bool stretching_vjp_commutator_identity = false;

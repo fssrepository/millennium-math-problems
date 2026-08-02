@@ -413,8 +413,10 @@ derivative better than the LQC-3 target. Neighbor-shell locality sums the
 structural entries. Direct sequence estimates give
 `S <= C Z^(5/4)P^(1/4)` and `T <= C Z^(1/4)P^(5/4)`, closing both global
 normalization terms at `Z^(5/4)P^(3/4)`. Thus the complete doubling block is
-now proved cutoff-independently. The active proof targets are the closed
-signature remainder and the mixed block. For the remainder, a cross-objective
+now proved cutoff-independently. The same plane--sphere argument closes the
+complete `(m,m,3m)` family and, more generally, every fixed primitive
+projective ray `(am,bm,cm)`. The active proof targets are the uniform sum over
+projective shapes and the mixed block. For the remainder, a cross-objective
 warm start disproves the initially flat signed-LQC3 search: a dense positive
 branch grows from `0.103623` at K4 to `0.175398` at K6. Its stretching is
 nearly zero, however, so its actual local SLD ratio is below `6e-20`. Two exact
@@ -424,8 +426,11 @@ active target is the exact joint bracket--shape factorization; its direct
 remainder objective remains near `0.00022068` from K3 through K6. The scalar
 shape algebra reduces this further to the energy-independent estimate
 `|(K_rem+G_rem)S_full| <= C Z^2P^2`; its direct power-one search is nearly
-flat through K5. See
+flat through K7. On its K7 winner, one projective ray carries `95.42%` of the
+absolute power-one total; after removing the proved equal-low families, the K5
+tail has `3.027` effective projective shapes. See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
+`proof/l4/lemmas/shifted-local-density/PROJECTIVE_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/REMAINDER_QUARTET.md`.
 
 The helical local target has its own replayable optimizer and same-state

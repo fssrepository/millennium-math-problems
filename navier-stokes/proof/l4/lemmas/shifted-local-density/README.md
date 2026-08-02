@@ -10,6 +10,11 @@ Companion response-space proof targets:
 - [`DOUBLING_QUARTET.md`](DOUBLING_QUARTET.md) proves the half-derivative
   one-shell gain and the direct sequence estimates that close the complete
   dominant orthogonal family at the cutoff-independent LQC-3 target scale.
+- [`TRIPLE_QUARTET.md`](TRIPLE_QUARTET.md) proves the complete equal-low
+  `(m,m,3m)` family by the corresponding fixed-angle incidence argument.
+- [`PROJECTIVE_QUARTET.md`](PROJECTIVE_QUARTET.md) proves the complete scale
+  ray `(am,bm,cm)` for every fixed primitive squared-length shape and isolates
+  the still-open sum over shapes.
 - [`REMAINDER_QUARTET.md`](REMAINDER_QUARTET.md) computes the exact dense
   signature loss, rejects the absolute dense-count route, and gives the exact
   double-square reduction to the open signed commutator-absorption estimate.
@@ -415,13 +420,15 @@ so [RESPONSE_DIAGONAL.md](RESPONSE_DIAGONAL.md) retains only orders `0..K`
 and states the weighted response-majorant target. The observed diagonal is
 evidence, not the required cutoff-uniform bilinear and complement estimate.
 
-The complete equal-low doubling quartet is no longer an open sub-block.
+The complete equal-low doubling and triple quartets are no longer open
+sub-blocks.
 Equal-length orthogonal incidence gives its half-derivative one-shell gain;
 fixed-width shell locality sums the structural entries, and the direct bounds
 `S <= C Z^(5/4)P^(1/4)` and `T <= C Z^(1/4)P^(5/4)` close both normalization
 terms at `Z^(5/4)P^(3/4)`. The full shifted-density lemma remains open because
-the closed signature remainder and the mixed doubling/remainder block have not
-yet been controlled uniformly. For the remainder, cross-objective warm starts
+the projective-shape remainder sum and the mixed doubling/remainder block have
+not yet been controlled uniformly. Every fixed primitive projective ray is
+already closed by plane--sphere incidence. For the remainder, cross-objective warm starts
 find a growing dense signed-LQC3 branch, but its stretching is nearly zero and
 the actual local source vanishes at cubic order. The exact double-square
 identity in [REMAINDER_QUARTET.md](REMAINDER_QUARTET.md) explains the negative
@@ -429,7 +436,8 @@ dense branch and reduces the active numerical/analytic target to a joint
 tradeoff between the remainder bracket coefficient and the full stretching
 shape factor. The scalar shape multiplier is at most two, so the remaining
 remainder statement is the energy-independent power-one bound
-`|(K_rem+G_rem)S_full| <= C Z^2P^2`.
+`|(K_rem+G_rem)S_full| <= C Z^2P^2`; its precise unresolved step is summing
+the fixed-ray estimates uniformly over primitive shapes.
 
 ## Reduced proof obligation
 
