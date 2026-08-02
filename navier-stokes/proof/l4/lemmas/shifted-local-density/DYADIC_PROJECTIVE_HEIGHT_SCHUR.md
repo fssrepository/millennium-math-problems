@@ -263,6 +263,40 @@ the outer-degenerate stress state it reduces `4.55082` to `1.14162`. This
 removes the observed normalization singularity but does not prove a uniform
 response-weighted Schur product.
 
+For the signed dynamical block required by RQ-11, a stronger simplification is
+available. Summing the exact response entries before taking absolute values
+gives `<sum_j b_j,sum_j R_j>`. Its absolute value is bounded directly by the
+global `H1`--`H-1` Young weight, so no cutoff-uniform Schur row or gap-decay
+theorem is needed for that signed block. The K8 reconstruction error is
+`1.37e-18`; its signed normalized dynamical value `0.00136712` is below the
+direct global bound `0.00298882`. The height-Schur data remain useful stress
+diagnostics and for stronger shellwise envelopes, but the active proof target
+has narrowed to bounding the global response weight and the two exact
+normalization terms.
+
+A dedicated exact-gradient adversary isolates the palinstrophy normalization.
+The large `0.0029279` branch is carried by the fixed `(1,2,3)` family; after
+that exact signature is removed, a 52-step K8 continuation reaches
+`0.0005621`, and one complete K12 step gives `0.0005624`. Directly optimizing
+the portion outside fixed cores of heights 8, 16, 32, and 64 gives
+`0.0003456`, `0.0003319`, `0.0003936`, and `0.0002500`. These values reject a
+monotone finite core-height-decay argument and focus the open lemma on the
+cross-tail product `s t-s_core t_core`.
+
+The cross-tail product is now reconstructed exactly as
+`s_core t_tail+s_tail t_core+s_tail t_tail`.  Exact gradients for all three
+factors support a dominant-component alternating search.  It raises the H8
+K8 stress value from `0.000345645` to `0.000573211`, with `75.6%` in the
+tail--tail factor.  Zero padding to complete K12 leaves the factorized value
+unchanged but raises the aggregate-norm Cauchy majorant from `0.00844764` to
+`0.00849852`; one K12 component/open step reaches `0.000575812`.  The exact
+two-term identity `s*t_tail+s_tail*t_core` removes the H-dependent three-way
+dominance.  Optimizing its first channel raises the K8 record to `0.000590223`
+and supplies `91.3%` of the result.  The active normalization target is
+consequently the joint two-channel estimate PNT-4, not separate tail-norm or
+alignment decay.  See
+[PALINSTROPHY_NORMALIZATION_TAIL.md](PALINSTROPHY_NORMALIZATION_TAIL.md).
+
 ## Reproduction
 
 ```bash

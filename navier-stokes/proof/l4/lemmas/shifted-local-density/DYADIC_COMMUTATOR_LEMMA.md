@@ -161,6 +161,64 @@ the specific degeneration found by the adversary. The remaining proof task is
 still cutoff-uniform: bound the response-weighted Schur product analytically.
 The finite data do not establish such a bound.
 
+## Global response reduction
+
+The shellwise envelope is stronger than the signed statement needed by
+RQ-11. Set `b=sum_j b_j` and `R=sum_j R_j`. Summing DCL-12 first gives the
+exact identity
+
+```text
+sum_(i<=j) D_ij=<b,R>.                             (DCL-14)
+```
+
+Therefore Young's inequality in the `H1`--`H-1` duality gives, without a
+Schur row or a shell-gap assumption,
+
+```text
+q |sum_(i<=j) D_ij|
+ <= q( ||A^(1/2)b||_2^2+||A^(-1/2)R||_2^2 )/2.   (DCL-15)
+```
+
+The matrix engine reconstructs DCL-14 from all entries. On the K8 joint
+winner its relative error is `1.37e-18`; the signed dynamical value is
+`0.00136712`, while the DCL-15 bound is `0.00298882` with ratio `0.457413`.
+On the outer-degenerate stress state the corresponding bound ratio is
+`0.619884`. Thus Schur summability is no longer required for the signed
+dynamical part of RQ-11.
+
+Writing `s=<Au,b>` and `t=<Ab,Au>`, the complete selected bracket is exactly
+
+```text
+<b,R> + s^2/(2Z) + 3st/(2P).                       (DCL-16)
+```
+
+The first normalization is bounded by `||A^(1/2)b||^2/2`. Direct Cauchy gives
+`3 sqrt(Z/P) ||A^(1/2)b|| ||Ab||/2` for the second, but this bound is loose on
+the current winner. The remaining analytic task is a cutoff-uniform estimate
+for the DCL-15 response weight together with these two global normalization
+terms, especially the palinstrophy cross term. No finite certificate proves
+that estimate.
+
+The engine now differentiates the palinstrophy-normalization power-one term
+directly; its directional finite-difference error is `1.63e-11`. A broad K1--K8
+search finds `0.0029279`, essentially flat from K3 onward, but `95.9%` of its
+height envelope is in the height-3--4 fixed core. Removing the exact `(1,2,3)`
+signature reduces that winner to `5.30e-7`. Reoptimizing the signature-free
+selection reaches `0.0005621` at K8; zero-padding and one full K12 step gives
+`0.0005624`, so no new large high-mode direction appears in that test.
+
+For a fixed core, the exact open normalization is
+
+```text
+3 [s t-s_core t_core]/(2P).                        (DCL-17)
+```
+
+Its own exact-gradient searches give `0.0003456`, `0.0003319`, `0.0003936`,
+and `0.0002500` at core heights 8, 16, 32, and 64 on K8. The nonmonotone values
+show relocation into higher primitive shapes. DCL-17 therefore needs a
+uniform structural cross-tail estimate; increasing the core and fitting
+finite decay is not sufficient.
+
 ## Why the paired diagonal is not a weight
 
 Using the paired diagonal `g_jj` itself as the Schur weight fails even on a

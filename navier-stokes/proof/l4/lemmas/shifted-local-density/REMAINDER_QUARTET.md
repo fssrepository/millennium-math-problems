@@ -354,7 +354,30 @@ joint envelope shrinks. Pairing the nested term with the commutator gives the
 sharper dynamic majorant. Its refined K8 value is `0.00186662`, and the
 complete K12 value is `0.00187877` after one full gradient step. The remaining
 analytic step is a cutoff-uniform bound on this joint quantity, not on the
-isolated row constant.
+isolated row constant. The signed dynamical part now admits a sharper exact
+global reduction: summing its mixed-Gram height entries gives `<b,R>` with
+`b=sum_j b_j` and `R=sum_j R_j`. Hence an `H1`--`H-1` Young inequality bounds
+it without any Schur row. The engine also reconstructs the two remaining
+normalizations as `s^2/(2Z)` and `3st/(2P)`. The current RQ-11 gap is therefore
+a cutoff-uniform bound for this global response/norm expression, with the
+palinstrophy cross term currently giving the loosest elementary estimate.
+The exact-gradient normalization objective confirms that the largest broad
+branch (`0.0029279`) is the removable `(1,2,3)` fixed-family contribution.
+On the signature-free open selection it reaches `0.0005621` at K8 and
+`0.0005624` after one full K12 step. Core-subtracted searches at H=8,16,32,64
+give `0.0003456`, `0.0003319`, `0.0003936`, and `0.0002500`; relocation makes
+finite core-height decay unavailable as a proof mechanism.
+The open product is now factored into the exact core--tail, tail--core, and
+tail--tail contributions.  Dominant-factor/open-sum alternating optimization
+raises the H8 K8 stress value to `0.000573211`, of which `75.6%` is tail--tail.
+The value is exactly invariant under zero padding to K12 even though its raw
+Cauchy norm bound increases; one full K12 step reaches `0.000575812`.  The
+canonical identity `s*t_tail+s_tail*t_core` removes the H-dependent three-way
+dominance.  Optimizing its first channel raises the K8 record to `0.000590223`
+and supplies `91.3%` of the result.  This narrows the
+palinstrophy-normalization restart point to the joint two-channel estimate
+PNT-4 in
+[PALINSTROPHY_NORMALIZATION_TAIL.md](PALINSTROPHY_NORMALIZATION_TAIL.md).
 
 ## Reproduction
 

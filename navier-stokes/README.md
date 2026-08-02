@@ -77,12 +77,13 @@ source file:
   their respective algorithms;
 - `src/proof/projective/` contains projective-family proof certificates,
   beginning with the complete fixed finite-family self+cross closure;
-- `src/local_sld/core/`, `analysis/`, `optimization/`, and `cli/` separate the
-  active shifted-local-density lemma work into numerical primitives,
-  diagnostic ledgers, searches, and artifact/report handling;
-- `src/local_sld/core/projective/` and `analysis/projective/` contain the
-  projective open-tail objective, fixed-core ledgers, and cutoff/height replay
-  scans without enlarging the older monolithic analysis files;
+- `src/local_sld/core/`, `analysis/`, `optimization/`, `states/`, and `cli/`
+  separate the active shifted-local-density lemma work into numerical
+  primitives, diagnostic ledgers, searches, state factories, and reporting;
+- every `local_sld` implementation file is inside a thematic subdirectory
+  such as `closure`, `cyclic`, `density`, `doubling`, `projective`,
+  `remainder`, `response`, `signature`, `trajectory`, or `triads`; the
+  `analysis`, `core`, and `optimization` roots contain no source files;
 - `src/reporting/` contains the remaining shared certificate writers.
 
 - `ScalingCertificate` stores exact rational scaling results, while
@@ -468,13 +469,38 @@ that joint majorant reaches `0.00186662`; its complete K12 value is
 the cutoff-uniform analytic bound remains open. An exact mixed-Gram identity
 for the dynamic entry supplies a nondegenerate response weight; it lowers the
 K8/K12 finite Schur rows to `0.672016`/`0.684904` and removes the observed
-outer-null singularity. Uniform control of the response-weighted product is
-the current analytic target. See
+outer-null singularity. More importantly, summing the mixed-Gram identity
+before taking shellwise absolute values gives the exact global pairing
+`<sum b_j,sum R_j>`. Young's inequality therefore removes the Schur estimate
+entirely from the signed dynamical block. The current analytic target is a
+cutoff-uniform bound for this global response norm and the two explicit
+normalization terms. A dedicated exact-gradient normalization adversary has
+relative directional error `1.63e-11`. Its apparent `0.0029279` K8 branch is
+the already isolated `(1,2,3)` fixed-family contribution; removing that
+signature gives `0.0005621` at K8 and `0.0005624` after one full K12 step.
+Core-subtracted searches at heights 8, 16, 32, and 64 do not decay
+monotonically, so simply enlarging a fixed core is not the missing theorem.
+The open normalization is now factored exactly into core--tail, tail--core,
+and tail--tail products, each with an analytic gradient.  Alternating the
+dominant factor with the full open objective raises the H8 K8 stress value
+from `0.000345645` to `0.000573211`.  Refactoring the open product as the two
+disjoint channels `s_selected*t_tail+s_tail*t_core` and optimizing the first
+raises the K8 record to `0.000590223`; that selected/tail channel supplies
+`91.3%`.  Energy-preserving zero padding to the complete K12 cube leaves
+all three pairings and the objective exactly unchanged, while the raw Cauchy
+bound grows from `0.00844764` to `0.00849852`.  One full K12 component/open
+step reaches `0.000575812` on the preceding branch; the canonical K12 branch
+reaches `0.000592977` after one component/open step.  Thus the active
+palinstrophy sublemma is the joint two-channel PNT-4 estimate, led by the
+selected-stretching/tail-cross term, not a standalone aggregate-norm or angle
+bound.  These finite values do not prove a cutoff-uniform estimate.
+See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_CROSS_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/FINITE_PROJECTIVE_FAMILY.md` and
 `proof/l4/lemmas/shifted-local-density/DYADIC_PROJECTIVE_HEIGHT_SCHUR.md` and
+`proof/l4/lemmas/shifted-local-density/PALINSTROPHY_NORMALIZATION_TAIL.md` and
 `proof/l4/lemmas/shifted-local-density/REMAINDER_QUARTET.md`.
 
 The helical local target has its own replayable optimizer and same-state

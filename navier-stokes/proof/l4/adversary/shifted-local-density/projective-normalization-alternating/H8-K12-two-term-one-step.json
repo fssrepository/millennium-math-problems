@@ -1,0 +1,23 @@
+{
+  "schema": "navier-stokes-local-sld-projective-normalization-alternating-adversary-v1",
+  "initial_state_path": "proof/l4/states/local-projective-normalization-alternating/H8-K8-two-term-eleventh-cycle-zero-pad-K12/K12.tsv",
+  "output_state_path": "proof/l4/states/local-projective-normalization-alternating/H8-K12-two-term-one-step/K12.tsv",
+  "triad_selection": "double-triple-remainder-without-123",
+  "cutoff": 12,
+  "core_maximum_height": 8,
+  "component": "dominant",
+  "threads": 12,
+  "cycles": 1,
+  "component_iterations": 1,
+  "open_iterations": 1,
+  "initial_open_power_one": 0.000590223320347610706,
+  "final_open_power_one": 0.000592976912511716087,
+  "improvement_factor": 1.00466533948960812,
+  "phases": [
+    {"cycle": 1, "component": "selected-stretching-tail-cross", "component_initial": 0.000538954584096970461, "component_final": 0.000541687364550556198, "open_initial": 0.000592499568660332819, "open_final": 0.000592976912511716087, "component_projected_gradient_norm": 2.42598077089790073e-06, "open_projected_gradient_norm": 2.34031103363581508e-06, "component_accepted_steps": 1, "open_accepted_steps": 1, "component_evaluations": 8, "open_evaluations": 9, "component_state_path": "proof/l4/states/local-projective-normalization-alternating/H8-K12-two-term-one-step/K12-cycle-1-component.tsv", "open_state_path": "proof/l4/states/local-projective-normalization-alternating/H8-K12-two-term-one-step/K12-cycle-1-open.tsv"}
+  ],
+  "every_phase_finite": true,
+  "finite_alternating_search_is_not_a_proof": true,
+  "candidate_lemma_proved": false,
+  "interpretation": "alternating an exact component gradient with the exact open-sum gradient exposes maxima missed by a single monolithic L-BFGS trajectory"
+}

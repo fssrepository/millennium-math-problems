@@ -7,6 +7,7 @@
 #include "local_sld_remainder_absorption_objective.hpp"
 #include "local_sld_shape_power_objective.hpp"
 #include "local_sld_projective_coherence_objective.hpp"
+#include "local_sld_projective_core_tail_alignment_objective.hpp"
 #include "local_sld_projective_stretching_objective.hpp"
 #include "local_sld_projective_cross_power_objective.hpp"
 #include "local_sld_projective_open_power_objective.hpp"
@@ -16,6 +17,7 @@
 #include "local_sld_projective_height_envelope_objective.hpp"
 #include "local_sld_projective_height_commutator_ratio_objective.hpp"
 #include "local_sld_projective_height_dynamic_ratio_objective.hpp"
+#include "local_sld_projective_normalization_objective.hpp"
 #include "local_sld_triad_selection.hpp"
 #include "parallel_executor.hpp"
 #include "spectral_adjoint.hpp"
@@ -47,6 +49,52 @@ bool is_common_block_objective(const std::string& objective) {
 bool is_frozen_trajectory_objective(const std::string& objective) {
     return objective == "terminal-sld-ratio" ||
         objective == "maximum-sld-ratio";
+}
+
+bool is_normalization_component_objective(
+    const std::string& objective) {
+    return objective ==
+            "projective-selected-stretching-tail-cross-ratio" ||
+        objective ==
+            "projective-core-stretching-tail-cross-ratio" ||
+        objective ==
+            "projective-tail-stretching-core-cross-ratio" ||
+        objective ==
+            "projective-tail-stretching-tail-cross-ratio";
+}
+
+bool is_projective_normalization_objective(
+    const std::string& objective) {
+    return objective ==
+            "projective-palinstrophy-normalization-ratio" ||
+        objective ==
+            "projective-open-palinstrophy-normalization-ratio" ||
+        is_normalization_component_objective(objective);
+}
+
+LocalSldProjectiveNormalizationComponent normalization_component(
+    const std::string& objective) {
+    if (objective ==
+        "projective-selected-stretching-tail-cross-ratio") {
+        return LocalSldProjectiveNormalizationComponent::
+            selected_stretching_tail_cross;
+    }
+    if (objective ==
+        "projective-core-stretching-tail-cross-ratio") {
+        return LocalSldProjectiveNormalizationComponent::
+            core_stretching_tail_cross;
+    }
+    if (objective ==
+        "projective-tail-stretching-core-cross-ratio") {
+        return LocalSldProjectiveNormalizationComponent::
+            tail_stretching_core_cross;
+    }
+    if (objective ==
+        "projective-tail-stretching-tail-cross-ratio") {
+        return LocalSldProjectiveNormalizationComponent::
+            tail_stretching_tail_cross;
+    }
+    return LocalSldProjectiveNormalizationComponent::open_sum;
 }
 
 LocalSldBlock block_for_objective(const std::string& objective) {
@@ -266,6 +314,24 @@ LocalQuarticClosureAdversary::maximize(
         search.objective =
             "local-projective-height-dynamic-envelope-ratio";
     }
+    if (options.objective ==
+        "projective-palinstrophy-normalization-ratio") {
+        search.objective =
+            "local-projective-palinstrophy-normalization-ratio";
+    }
+    if (options.objective ==
+        "projective-open-palinstrophy-normalization-ratio") {
+        search.objective =
+            "local-projective-open-palinstrophy-normalization-ratio";
+    }
+    if (options.objective ==
+        "projective-tail-stretching-alignment-ratio") {
+        search.objective =
+            "local-projective-tail-stretching-alignment-ratio";
+    }
+    if (is_normalization_component_objective(options.objective)) {
+        search.objective = "local-" + options.objective;
+    }
     search.lbfgs_history = options.lbfgs_history;
     search.sobolev_order = options.sobolev_order;
     search.sobolev_cap = options.sobolev_cap;
@@ -301,6 +367,25 @@ LocalQuarticClosureAdversary::maximize(
         if (options.objective ==
             "projective-height-dynamic-coercivity-ratio") {
             result.projective_height_dynamic_coercivity_ratio =
+                std::sqrt(std::max(0.0L, optimized.objective));
+        }
+        if (options.objective ==
+            "projective-palinstrophy-normalization-ratio") {
+            result.projective_palinstrophy_normalization_power_one =
+                std::sqrt(std::max(0.0L, optimized.objective));
+        }
+        if (options.objective ==
+            "projective-open-palinstrophy-normalization-ratio") {
+            result.projective_palinstrophy_normalization_power_one =
+                std::sqrt(std::max(0.0L, optimized.objective));
+        }
+        if (options.objective ==
+            "projective-tail-stretching-alignment-ratio") {
+            result.projective_tail_stretching_alignment_squared =
+                optimized.objective;
+        }
+        if (is_normalization_component_objective(options.objective)) {
+            result.projective_palinstrophy_normalization_power_one =
                 std::sqrt(std::max(0.0L, optimized.objective));
         }
         result.initial_objective = optimized.initial_objective;
@@ -437,6 +522,24 @@ LocalQuarticClosureAdversary::maximize(
             dynamics, search.closure_selection,
             search.objective_threads)
             .evaluate(result.state).coercivity_ratio;
+    result.projective_palinstrophy_normalization_power_one =
+        LocalSldProjectiveNormalizationObjective(
+            dynamics, search.closure_selection,
+            (options.objective ==
+                 "projective-open-palinstrophy-normalization-ratio" ||
+             is_normalization_component_objective(options.objective))
+                ? options.projective_core_maximum_height : 0,
+            search.objective_threads,
+            normalization_component(options.objective))
+            .evaluate(result.state)
+            .palinstrophy_normalization_power_one;
+    result.projective_tail_stretching_alignment_squared =
+        LocalSldProjectiveCoreTailAlignmentObjective(
+            dynamics, search.closure_selection,
+            options.projective_core_maximum_height,
+            LocalSldProjectiveHeightRegion::tail,
+            search.objective_threads)
+            .evaluate(result.state).stretching_h1_alignment_squared;
     result.projective_height_component_bracket_envelope =
         height_envelope_value.absolute_component_bracket_envelope;
     result.projective_height_pair_count =
@@ -537,6 +640,20 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
              "projective-height-commutator-coercivity-ratio" &&
          options.objective !=
              "projective-height-dynamic-coercivity-ratio" &&
+         options.objective !=
+             "projective-palinstrophy-normalization-ratio" &&
+         options.objective !=
+             "projective-open-palinstrophy-normalization-ratio" &&
+         options.objective !=
+             "projective-tail-stretching-alignment-ratio" &&
+         options.objective !=
+             "projective-selected-stretching-tail-cross-ratio" &&
+         options.objective !=
+             "projective-core-stretching-tail-cross-ratio" &&
+         options.objective !=
+             "projective-tail-stretching-core-cross-ratio" &&
+         options.objective !=
+             "projective-tail-stretching-tail-cross-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "sld-ratio" &&
          options.objective != "block-ratio" &&
@@ -631,8 +748,37 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                  options.objective ==
                      "projective-height-commutator-coercivity-ratio" ||
                  options.objective ==
-                     "projective-height-dynamic-coercivity-ratio")) {
-                if (options.objective ==
+                     "projective-height-dynamic-coercivity-ratio" ||
+                 is_projective_normalization_objective(
+                     options.objective) ||
+                 options.objective ==
+                     "projective-tail-stretching-alignment-ratio")) {
+                if (is_projective_normalization_objective(
+                        options.objective)) {
+                    row.warm_lift_objective =
+                        LocalSldProjectiveNormalizationObjective(
+                            dynamics,
+                            closure_selection(options.selection),
+                            options.objective ==
+                                    "projective-palinstrophy-normalization-ratio"
+                                ? 0
+                                : options.projective_core_maximum_height,
+                            options.workers,
+                            normalization_component(options.objective))
+                            .evaluate(starts.front())
+                            .squared_palinstrophy_normalization_power_one;
+                } else if (options.objective ==
+                           "projective-tail-stretching-alignment-ratio") {
+                    row.warm_lift_objective =
+                        LocalSldProjectiveCoreTailAlignmentObjective(
+                            dynamics,
+                            closure_selection(options.selection),
+                            options.projective_core_maximum_height,
+                            LocalSldProjectiveHeightRegion::tail,
+                            options.workers)
+                            .evaluate(starts.front())
+                            .stretching_h1_alignment_squared;
+                } else if (options.objective ==
                     "projective-height-commutator-coercivity-ratio") {
                     row.warm_lift_objective =
                         LocalSldProjectiveHeightCommutatorRatioObjective(
@@ -801,6 +947,50 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                         options.workers)
                         .evaluate(starts.front())
                         .squared_coercivity_ratio;
+            }
+            if (options.objective ==
+                "projective-palinstrophy-normalization-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveNormalizationObjective(
+                        dynamics,
+                        closure_selection(options.selection))
+                        .evaluate(starts.front())
+                        .squared_palinstrophy_normalization_power_one;
+            }
+            if (options.objective ==
+                "projective-open-palinstrophy-normalization-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveNormalizationObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.projective_core_maximum_height,
+                        options.workers)
+                        .evaluate(starts.front())
+                        .squared_palinstrophy_normalization_power_one;
+            }
+            if (is_normalization_component_objective(
+                    options.objective)) {
+                row.warm_lift_objective =
+                    LocalSldProjectiveNormalizationObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.projective_core_maximum_height,
+                        options.workers,
+                        normalization_component(options.objective))
+                        .evaluate(starts.front())
+                        .squared_palinstrophy_normalization_power_one;
+            }
+            if (options.objective ==
+                "projective-tail-stretching-alignment-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveCoreTailAlignmentObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.projective_core_maximum_height,
+                        LocalSldProjectiveHeightRegion::tail,
+                        options.workers)
+                        .evaluate(starts.front())
+                        .stretching_h1_alignment_squared;
             }
             }
         }

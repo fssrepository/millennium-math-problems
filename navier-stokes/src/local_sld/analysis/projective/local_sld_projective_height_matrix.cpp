@@ -154,6 +154,12 @@ void write_json(
         << ",\n"
         << "  \"power_one_scale\": "
         << static_cast<double>(report.power_one_scale) << ",\n"
+        << "  \"selected_enstrophy\": "
+        << static_cast<double>(report.selected_enstrophy) << ",\n"
+        << "  \"selected_palinstrophy\": "
+        << static_cast<double>(report.selected_palinstrophy) << ",\n"
+        << "  \"full_local_stretching\": "
+        << static_cast<double>(report.full_local_stretching) << ",\n"
         << "  \"selected_power_one\": "
         << static_cast<double>(report.selected_power_one) << ",\n"
         << "  \"reconstructed_power_one\": "
@@ -266,6 +272,10 @@ void write_json(
             << ", \"dynamic_paired_power_one_envelope\": "
             << static_cast<double>(
                    entry.dynamic_paired_power_one_envelope)
+            << ", \"aggregate_h1_pairing\": "
+            << static_cast<double>(entry.aggregate_h1_pairing)
+            << ", \"aggregate_h2_pairing\": "
+            << static_cast<double>(entry.aggregate_h2_pairing)
             << ", \"dynamic_response_pairing\": "
             << static_cast<double>(entry.dynamic_response_pairing)
             << ", \"dynamic_response_reconstruction_error\": "
@@ -306,6 +316,83 @@ void write_json(
             << ", \"open_palinstrophy_normalization_power_one\": "
             << static_cast<double>(
                    row.open_palinstrophy_normalization_power_one)
+            << ", \"core_stretching\": "
+            << static_cast<double>(row.core_stretching)
+            << ", \"tail_stretching\": "
+            << static_cast<double>(row.tail_stretching)
+            << ", \"core_palinstrophy_cross\": "
+            << static_cast<double>(row.core_palinstrophy_cross)
+            << ", \"tail_palinstrophy_cross\": "
+            << static_cast<double>(row.tail_palinstrophy_cross)
+            << ", \"core_aggregate_h1_norm2\": "
+            << static_cast<double>(row.core_aggregate_h1_norm2)
+            << ", \"core_aggregate_h2_norm2\": "
+            << static_cast<double>(row.core_aggregate_h2_norm2)
+            << ", \"tail_aggregate_h1_norm2\": "
+            << static_cast<double>(row.tail_aggregate_h1_norm2)
+            << ", \"tail_aggregate_h2_norm2\": "
+            << static_cast<double>(row.tail_aggregate_h2_norm2)
+            << ", \"core_stretching_h1_alignment\": "
+            << static_cast<double>(row.core_stretching_h1_alignment)
+            << ", \"tail_stretching_h1_alignment\": "
+            << static_cast<double>(row.tail_stretching_h1_alignment)
+            << ", \"selected_stretching_h1_alignment\": "
+            << static_cast<double>(row.selected_stretching_h1_alignment)
+            << ", \"core_palinstrophy_cross_h2_alignment\": "
+            << static_cast<double>(
+                   row.core_palinstrophy_cross_h2_alignment)
+            << ", \"tail_palinstrophy_cross_h2_alignment\": "
+            << static_cast<double>(
+                   row.tail_palinstrophy_cross_h2_alignment)
+            << ", \"selected_stretching_tail_cross_power_one\": "
+            << static_cast<double>(
+                   row.selected_stretching_tail_cross_power_one)
+            << ", \"core_stretching_tail_cross_power_one\": "
+            << static_cast<double>(
+                   row.core_stretching_tail_cross_power_one)
+            << ", \"tail_stretching_core_cross_power_one\": "
+            << static_cast<double>(
+                   row.tail_stretching_core_cross_power_one)
+            << ", \"tail_stretching_tail_cross_power_one\": "
+            << static_cast<double>(
+                   row.tail_stretching_tail_cross_power_one)
+            << ", \"selected_stretching_tail_cross_cauchy_bound\": "
+            << static_cast<double>(
+                   row.selected_stretching_tail_cross_cauchy_bound)
+            << ", \"core_stretching_tail_cross_cauchy_bound\": "
+            << static_cast<double>(
+                   row.core_stretching_tail_cross_cauchy_bound)
+            << ", \"tail_stretching_core_cross_cauchy_bound\": "
+            << static_cast<double>(
+                   row.tail_stretching_core_cross_cauchy_bound)
+            << ", \"tail_stretching_tail_cross_cauchy_bound\": "
+            << static_cast<double>(
+                   row.tail_stretching_tail_cross_cauchy_bound)
+            << ", \"core_stretching_tail_cross_cauchy_ratio\": "
+            << static_cast<double>(
+                   row.core_stretching_tail_cross_cauchy_ratio)
+            << ", \"tail_stretching_core_cross_cauchy_ratio\": "
+            << static_cast<double>(
+                   row.tail_stretching_core_cross_cauchy_ratio)
+            << ", \"tail_stretching_tail_cross_cauchy_ratio\": "
+            << static_cast<double>(
+                   row.tail_stretching_tail_cross_cauchy_ratio)
+            << ", \"selected_stretching_tail_cross_cauchy_ratio\": "
+            << static_cast<double>(
+                   row.selected_stretching_tail_cross_cauchy_ratio)
+            << ", \"joint_cross_tail_cauchy_bound\": "
+            << static_cast<double>(row.joint_cross_tail_cauchy_bound)
+            << ", \"joint_cross_tail_cauchy_ratio\": "
+            << static_cast<double>(row.joint_cross_tail_cauchy_ratio)
+            << ", \"maximum_alignment_product_reconstruction_error\": "
+            << static_cast<double>(
+                   row.maximum_alignment_product_reconstruction_error)
+            << ", \"palinstrophy_factorization_error\": "
+            << static_cast<double>(
+                   row.palinstrophy_factorization_error)
+            << ", \"two_term_palinstrophy_factorization_error\": "
+            << static_cast<double>(
+                   row.two_term_palinstrophy_factorization_error)
             << ", \"open_absolute_power_one_sum\": "
             << static_cast<double>(row.open_absolute_power_one_sum)
             << ", \"open_effective_height_pairs\": "
@@ -559,6 +646,21 @@ void write_json(
         << static_cast<double>(
                tail.maximum_component_reconstruction_error)
         << ",\n"
+        << "  \"maximum_cumulative_palinstrophy_factorization_error\": "
+        << static_cast<double>(
+               tail.maximum_palinstrophy_factorization_error)
+        << ",\n"
+        << "  \"maximum_cumulative_normalization_cauchy_ratio\": "
+        << static_cast<double>(tail.maximum_normalization_cauchy_ratio)
+        << ",\n"
+        << "  \"maximum_alignment_product_reconstruction_error\": "
+        << static_cast<double>(
+               tail.maximum_alignment_product_reconstruction_error)
+        << ",\n"
+        << "  \"finite_normalization_cauchy_inequalities_verified\": "
+        << (tail.finite_normalization_cauchy_inequalities_verified
+                ? "true" : "false")
+        << ",\n"
         << "  \"exact_cumulative_height_decomposition\": "
         << (tail.exact_cumulative_decomposition ? "true" : "false")
         << ",\n"
@@ -611,6 +713,24 @@ void write_json(
         << "  \"global_selected_palinstrophy_cross\": "
         << static_cast<double>(
                report.global_selected_palinstrophy_cross)
+        << ",\n"
+        << "  \"global_stretching_h1_alignment_squared\": "
+        << static_cast<double>(
+               report.global_stretching_h1_alignment_squared)
+        << ",\n"
+        << "  \"global_palinstrophy_cross_h2_alignment_squared\": "
+        << static_cast<double>(
+               report
+                   .global_palinstrophy_cross_h2_alignment_squared)
+        << ",\n"
+        << "  \"global_normalization_alignment_product\": "
+        << static_cast<double>(
+               report.global_normalization_alignment_product)
+        << ",\n"
+        << "  \"finite_global_normalization_alignment_bounds_verified\": "
+        << (report
+                    .finite_global_normalization_alignment_bounds_verified
+                ? "true" : "false")
         << ",\n"
         << "  \"global_enstrophy_normalization\": "
         << static_cast<double>(report.global_enstrophy_normalization)
@@ -852,6 +972,9 @@ LocalSldProjectiveHeightMatrix::analyze(
     report.excludes_signature_123 = exclude_signature_123;
     report.excludes_triple_family = exclude_triple_family;
     report.selected_bracket = selected.signed_two_entry_bracket;
+    report.selected_enstrophy = selected.enstrophy;
+    report.selected_palinstrophy = selected.palinstrophy;
+    report.full_local_stretching = full_local.signed_stretching;
     report.power_one_scale =
         full_local.signed_stretching /
         (selected.enstrophy * selected.enstrophy *
@@ -895,6 +1018,25 @@ LocalSldProjectiveHeightMatrix::analyze(
     }
     report.global_selected_stretching = pairing(au, global_b);
     report.global_selected_palinstrophy_cross = pairing(global_ab, au);
+    const SpectralReal stretching_alignment_denominator =
+        selected.enstrophy * report.global_aggregate_h1_norm2;
+    if (stretching_alignment_denominator > 0.0L) {
+        report.global_stretching_h1_alignment_squared =
+            report.global_selected_stretching *
+            report.global_selected_stretching /
+            stretching_alignment_denominator;
+    }
+    const SpectralReal cross_alignment_denominator =
+        selected.palinstrophy * report.global_aggregate_h2_norm2;
+    if (cross_alignment_denominator > 0.0L) {
+        report.global_palinstrophy_cross_h2_alignment_squared =
+            report.global_selected_palinstrophy_cross *
+            report.global_selected_palinstrophy_cross /
+            cross_alignment_denominator;
+    }
+    report.global_normalization_alignment_product = std::sqrt(
+        report.global_stretching_h1_alignment_squared *
+        report.global_palinstrophy_cross_h2_alignment_squared);
     report.global_enstrophy_normalization =
         report.global_selected_stretching *
         report.global_selected_stretching /
@@ -957,6 +1099,10 @@ LocalSldProjectiveHeightMatrix::analyze(
                     target_dot / incidence_denominator;
             }
             if (first == second) {
+                entry.aggregate_h1_pairing = pairing(
+                    left.b, left.ab);
+                entry.aggregate_h2_pairing = pairing(
+                    left.ab, left.ab);
                 const SpectralIncrement nested = evaluate(
                     left, left.b, state.velocity);
                 entry.outer_square = -pairing(left.b, left.ab);
@@ -974,6 +1120,11 @@ LocalSldProjectiveHeightMatrix::analyze(
                 entry.dynamic_response_pairing = pairing(
                     left.b, left.dynamic_response);
             } else {
+                entry.aggregate_h1_pairing =
+                    pairing(left.b, right.ab) +
+                    pairing(right.b, left.ab);
+                entry.aggregate_h2_pairing =
+                    2.0L * pairing(left.ab, right.ab);
                 const SpectralIncrement left_advects_right = evaluate(
                     left, right.b, state.velocity);
                 const SpectralIncrement right_advects_left = evaluate(
@@ -1085,6 +1236,11 @@ LocalSldProjectiveHeightMatrix::analyze(
         std::abs(report.selected_power_one) <=
         report.global_response_bracket_power_one_upper_bound *
             (1.0L + 1e-14L);
+    report.finite_global_normalization_alignment_bounds_verified =
+        report.global_stretching_h1_alignment_squared <=
+            1.0L + 1e-14L &&
+        report.global_palinstrophy_cross_h2_alignment_squared <=
+            1.0L + 1e-14L;
     report.exact_height_matrix_decomposition =
         report.bracket_reconstruction_error < 1e-13L &&
         report.maximum_dynamic_response_reconstruction_error < 1e-13L &&
@@ -1094,6 +1250,7 @@ LocalSldProjectiveHeightMatrix::analyze(
         report.global_palinstrophy_normalization_reconstruction_error <
             1e-13L &&
         report.global_response_bracket_reconstruction_error < 1e-13L &&
+        report.finite_global_normalization_alignment_bounds_verified &&
         report.finite_global_dynamic_response_young_inequality_verified &&
         report.finite_global_response_bracket_inequality_verified;
     return report;

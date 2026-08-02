@@ -45,6 +45,8 @@ public:
         const SpectralState& state) const;
     [[nodiscard]] SpectralIncrement signed_stretching_gradient(
         const SpectralState& state) const;
+    [[nodiscard]] SpectralIncrement palinstrophy_cross_gradient(
+        const SpectralState& state) const;
     [[nodiscard]] SpectralIncrement squared_constant_ratio_gradient(
         const SpectralState& state) const;
     [[nodiscard]] SpectralIncrement squared_lqc3_target_ratio_gradient(

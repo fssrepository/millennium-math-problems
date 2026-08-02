@@ -83,6 +83,7 @@ add_executable(navier_stokes_lab
     src/local_sld/core/remainder/local_sld_remainder_envelope_objective.cpp
     src/local_sld/core/closure/local_sld_shape_power_objective.cpp
     src/local_sld/core/projective/local_sld_projective_coherence_objective.cpp
+    src/local_sld/core/projective/local_sld_projective_core_tail_alignment_objective.cpp
     src/local_sld/core/projective/local_sld_projective_stretching_objective.cpp
     src/local_sld/core/projective/local_sld_projective_cross_power_objective.cpp
     src/local_sld/core/projective/local_sld_projective_open_power_objective.cpp
@@ -92,6 +93,7 @@ add_executable(navier_stokes_lab
     src/local_sld/core/projective/local_sld_projective_height_envelope_objective.cpp
     src/local_sld/core/projective/local_sld_projective_height_commutator_ratio_objective.cpp
     src/local_sld/core/projective/local_sld_projective_height_dynamic_ratio_objective.cpp
+    src/local_sld/core/projective/local_sld_projective_normalization_objective.cpp
 
     src/local_sld/analysis/closure/local_critical_derivative_ledger.cpp
     src/local_sld/analysis/closure/local_quartic_closure_target.cpp
@@ -128,6 +130,8 @@ add_executable(navier_stokes_lab
     src/local_sld/analysis/projective/local_sld_projective_core_height_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_open_power_replay_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_matrix.cpp
+    src/local_sld/analysis/projective/local_sld_projective_normalization_tail_scan.cpp
+    src/local_sld/analysis/projective/local_sld_projective_normalization_tradeoff_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_coercivity_path_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_coercivity_line_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_tail_summary.cpp
@@ -144,6 +148,7 @@ add_executable(navier_stokes_lab
     src/local_sld/optimization/cyclic/local_sld_cyclic_krylov_ansatz.cpp
     src/local_sld/optimization/cyclic/local_sld_cyclic_trajectory_ansatz.cpp
     src/local_sld/optimization/trajectory/local_sld_trajectory_adjoint.cpp
+    src/local_sld/optimization/projective/local_sld_projective_normalization_alternating_adversary.cpp
 
     src/local_sld/states/local_sld_projective_fan_state.cpp
     src/local_sld/states/local_sld_two_scale_state.cpp
@@ -184,6 +189,7 @@ target_include_directories(navier_stokes_lab PRIVATE
     src/local_sld/optimization/cyclic
     src/local_sld/optimization/signature
     src/local_sld/optimization/trajectory
+    src/local_sld/optimization/projective
     src/local_sld/states
     src/local_sld/cli
 )

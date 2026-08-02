@@ -26,6 +26,8 @@ struct LocalSldProjectiveHeightMatrixEntry {
     SpectralReal absolute_component_power_one_envelope = 0.0L;
     SpectralReal commutator_paired_power_one_envelope = 0.0L;
     SpectralReal dynamic_paired_power_one_envelope = 0.0L;
+    SpectralReal aggregate_h1_pairing = 0.0L;
+    SpectralReal aggregate_h2_pairing = 0.0L;
     SpectralReal dynamic_response_pairing = 0.0L;
     SpectralReal dynamic_response_reconstruction_error = 0.0L;
     std::size_t shared_target_mode_count = 0;
@@ -69,6 +71,9 @@ struct LocalSldProjectiveHeightMatrixReport {
     bool excludes_signature_123 = false;
     bool excludes_triple_family = false;
     SpectralReal selected_bracket = 0.0L;
+    SpectralReal selected_enstrophy = 0.0L;
+    SpectralReal selected_palinstrophy = 0.0L;
+    SpectralReal full_local_stretching = 0.0L;
     SpectralReal selected_power_one = 0.0L;
     SpectralReal power_one_scale = 0.0L;
     SpectralReal reconstructed_bracket = 0.0L;
@@ -90,6 +95,9 @@ struct LocalSldProjectiveHeightMatrixReport {
     SpectralReal global_dynamic_response_young_upper_bound_ratio = 0.0L;
     SpectralReal global_selected_stretching = 0.0L;
     SpectralReal global_selected_palinstrophy_cross = 0.0L;
+    SpectralReal global_stretching_h1_alignment_squared = 0.0L;
+    SpectralReal global_palinstrophy_cross_h2_alignment_squared = 0.0L;
+    SpectralReal global_normalization_alignment_product = 0.0L;
     SpectralReal global_enstrophy_normalization = 0.0L;
     SpectralReal reconstructed_global_enstrophy_normalization = 0.0L;
     SpectralReal global_enstrophy_normalization_reconstruction_error = 0.0L;
@@ -103,6 +111,7 @@ struct LocalSldProjectiveHeightMatrixReport {
     SpectralReal global_response_bracket_upper_bound_ratio = 0.0L;
     bool finite_global_dynamic_response_young_inequality_verified = false;
     bool finite_global_response_bracket_inequality_verified = false;
+    bool finite_global_normalization_alignment_bounds_verified = false;
     bool exact_height_matrix_decomposition = false;
     bool finite_height_matrix_is_not_a_proof = true;
     std::vector<LocalSldProjectiveHeightShellSummary> shells;
