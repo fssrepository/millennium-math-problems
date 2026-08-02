@@ -53,12 +53,14 @@ LocalSldProjectiveHeightEnvelopeObjective(
     const SpectralDynamics& dynamics,
     TriadSelection selection,
     int threads,
-    bool pair_outer_and_advected_commutator)
+    bool pair_outer_and_advected_commutator,
+    bool pair_nested_with_commutator)
     : dynamics_(dynamics),
       selection_(selection),
       threads_(threads),
       pair_outer_and_advected_commutator_(
-          pair_outer_and_advected_commutator) {
+          pair_outer_and_advected_commutator),
+      pair_nested_with_commutator_(pair_nested_with_commutator) {
     if (threads < 1 || threads > 256) {
         throw std::invalid_argument(
             "projective height envelope threads must be 1..256");
@@ -80,6 +82,8 @@ LocalSldProjectiveHeightEnvelopeObjective::evaluate(
     result.full_stretching = full.signed_stretching;
     result.pairs_outer_and_advected_commutator =
         pair_outer_and_advected_commutator_;
+    result.pairs_nested_with_commutator =
+        pair_nested_with_commutator_;
     if (!(result.enstrophy > 0.0L) ||
         !(result.palinstrophy > 0.0L)) {
         return result;
@@ -88,7 +92,8 @@ LocalSldProjectiveHeightEnvelopeObjective::evaluate(
         ProjectiveHeightEnvelopeKernel::evaluate(
             state, selection_, result.enstrophy,
             result.palinstrophy, false, threads_,
-            pair_outer_and_advected_commutator_);
+            pair_outer_and_advected_commutator_,
+            pair_nested_with_commutator_);
     result.height_shell_count = envelope.height_shell_count;
     result.height_pair_count = envelope.height_pair_count;
     result.absolute_component_brackets =
@@ -128,7 +133,8 @@ SpectralIncrement LocalSldProjectiveHeightEnvelopeObjective::gradient(
         ProjectiveHeightEnvelopeKernel::evaluate(
             state, selection_, selected.enstrophy,
             selected.palinstrophy, true, threads_,
-            pair_outer_and_advected_commutator_);
+            pair_outer_and_advected_commutator_,
+            pair_nested_with_commutator_);
     const SpectralReal denominator =
         selected.enstrophy * selected.enstrophy *
         selected.palinstrophy * selected.palinstrophy;

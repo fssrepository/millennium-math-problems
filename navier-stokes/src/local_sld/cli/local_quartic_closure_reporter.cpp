@@ -65,6 +65,10 @@ std::string objective_formula(const std::string& objective) {
         return "maximize the squared dyadic height envelope after pairing the outer-square and advected terms into their exact commutator";
     }
     if (objective ==
+        "projective-height-dynamic-envelope-ratio") {
+        return "maximize the squared dyadic height envelope after jointly pairing the outer-square, advected, and nested dynamical terms";
+    }
+    if (objective ==
         "projective-height-commutator-coercivity-ratio") {
         return "maximize the squared commutator-paired height envelope divided by the squared outer H1 shell weight";
     }
@@ -236,6 +240,9 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
             << ", \"projective_height_commutator_envelope_absolute\": "
             << static_cast<double>(
                    winner.projective_height_commutator_envelope_absolute)
+            << ", \"projective_height_dynamic_envelope_absolute\": "
+            << static_cast<double>(
+                   winner.projective_height_dynamic_envelope_absolute)
             << ", \"projective_height_commutator_coercivity_ratio\": "
             << static_cast<double>(
                    winner.projective_height_commutator_coercivity_ratio)

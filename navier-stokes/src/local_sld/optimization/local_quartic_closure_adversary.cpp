@@ -261,6 +261,11 @@ LocalQuarticClosureAdversary::maximize(
         search.objective =
             "local-projective-height-dynamic-coercivity-ratio";
     }
+    if (options.objective ==
+        "projective-height-dynamic-envelope-ratio") {
+        search.objective =
+            "local-projective-height-dynamic-envelope-ratio";
+    }
     search.lbfgs_history = options.lbfgs_history;
     search.sobolev_order = options.sobolev_order;
     search.sobolev_cap = options.sobolev_cap;
@@ -281,6 +286,11 @@ LocalQuarticClosureAdversary::maximize(
         if (options.objective ==
             "projective-height-commutator-envelope-ratio") {
             result.projective_height_commutator_envelope_absolute =
+                std::sqrt(std::max(0.0L, optimized.objective));
+        }
+        if (options.objective ==
+            "projective-height-dynamic-envelope-ratio") {
+            result.projective_height_dynamic_envelope_absolute =
                 std::sqrt(std::max(0.0L, optimized.objective));
         }
         if (options.objective ==
@@ -411,6 +421,12 @@ LocalQuarticClosureAdversary::maximize(
             search.objective_threads, true)
             .evaluate(result.state)
             .absolute_component_power_one_envelope;
+    result.projective_height_dynamic_envelope_absolute =
+        LocalSldProjectiveHeightEnvelopeObjective(
+            dynamics, search.closure_selection,
+            search.objective_threads, true, true)
+            .evaluate(result.state)
+            .absolute_component_power_one_envelope;
     result.projective_height_commutator_coercivity_ratio =
         LocalSldProjectiveHeightCommutatorRatioObjective(
             dynamics, search.closure_selection,
@@ -516,6 +532,8 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
          options.objective !=
              "projective-height-commutator-envelope-ratio" &&
          options.objective !=
+             "projective-height-dynamic-envelope-ratio" &&
+         options.objective !=
              "projective-height-commutator-coercivity-ratio" &&
          options.objective !=
              "projective-height-dynamic-coercivity-ratio" &&
@@ -609,6 +627,8 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                  options.objective ==
                      "projective-height-commutator-envelope-ratio" ||
                  options.objective ==
+                     "projective-height-dynamic-envelope-ratio" ||
+                 options.objective ==
                      "projective-height-commutator-coercivity-ratio" ||
                  options.objective ==
                      "projective-height-dynamic-coercivity-ratio")) {
@@ -637,7 +657,11 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                             closure_selection(options.selection),
                             options.workers,
                             options.objective ==
-                                "projective-height-commutator-envelope-ratio")
+                                "projective-height-commutator-envelope-ratio" ||
+                            options.objective ==
+                                "projective-height-dynamic-envelope-ratio",
+                            options.objective ==
+                                "projective-height-dynamic-envelope-ratio")
                             .evaluate(starts.front())
                             .squared_component_power_one_envelope;
                 }
@@ -745,6 +769,16 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                         dynamics,
                         closure_selection(options.selection),
                         options.workers, true)
+                        .evaluate(starts.front())
+                        .squared_component_power_one_envelope;
+            }
+            if (options.objective ==
+                "projective-height-dynamic-envelope-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveHeightEnvelopeObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.workers, true, true)
                         .evaluate(starts.front())
                         .squared_component_power_one_envelope;
             }

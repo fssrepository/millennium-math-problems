@@ -19,6 +19,7 @@ struct LocalSldProjectiveHeightEnvelopeObjectiveValue {
     SpectralReal squared_component_power_one_envelope = 0.0L;
     bool finite = false;
     bool pairs_outer_and_advected_commutator = false;
+    bool pairs_nested_with_commutator = false;
 };
 
 class LocalSldProjectiveHeightEnvelopeObjective {
@@ -27,7 +28,8 @@ public:
         const SpectralDynamics& dynamics,
         TriadSelection selection,
         int threads = 12,
-        bool pair_outer_and_advected_commutator = false);
+        bool pair_outer_and_advected_commutator = false,
+        bool pair_nested_with_commutator = false);
 
     [[nodiscard]] LocalSldProjectiveHeightEnvelopeObjectiveValue evaluate(
         const SpectralState& state) const;
@@ -40,6 +42,7 @@ private:
     TriadSelection selection_;
     int threads_ = 12;
     bool pair_outer_and_advected_commutator_ = false;
+    bool pair_nested_with_commutator_ = false;
 };
 
 }  // namespace lemma
