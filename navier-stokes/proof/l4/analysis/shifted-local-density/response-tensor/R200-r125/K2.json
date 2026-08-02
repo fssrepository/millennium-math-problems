@@ -1,0 +1,31 @@
+{
+  "schema": "navier-stokes-local-sld-response-tensor-v2",
+  "definition": "exact direct-triad coefficients <b_m,B(b_i,b_j)> on the cutoff-diagonal response basis",
+  "cutoff": 2,
+  "depth": 3,
+  "input_radius": 2,
+  "output_radius": 1.25,
+  "entry_tolerance": 9.99999999999999999e-15,
+  "boundary_free_depth": true,
+  "maximum_gram_error": 1.08420217248550443e-19,
+  "maximum_projected_bilinear_constant": 0.721687836487032164,
+  "maximum_complement_norm": 1.28812237743906111,
+  "maximum_complement_fraction": 1,
+  "maximum_input_weighted_complement_norm": 0.26352313834736496,
+  "maximum_norm_reconstruction_error": 5.42101086242752217e-20,
+  "retained_tensor_entries": 4,
+  "pairs": [
+    {"left_order": 0, "right_order": 0, "left_highest_shell": 1, "right_highest_shell": 1, "full_norm": 0.577350269189625731, "projected_norm": 0.577350269189625731, "complement_norm": 0, "complement_fraction": 0, "weighted_projected_ratio": 0.721687836487032164, "input_weighted_complement_norm": 0, "entries": [{"output_order": 1, "coefficient": 0.577350269189625731}]},
+    {"left_order": 0, "right_order": 1, "left_highest_shell": 1, "right_highest_shell": 1, "full_norm": 0.707106781186547573, "projected_norm": 0.707106781186547573, "complement_norm": 0, "complement_fraction": 0, "weighted_projected_ratio": 0.607619111519705823, "input_weighted_complement_norm": 0, "entries": [{"output_order": 0, "coefficient": -0.577350269189625731}, {"output_order": 2, "coefficient": 0.408248290463863017}]},
+    {"left_order": 0, "right_order": 2, "left_highest_shell": 1, "right_highest_shell": 2, "full_norm": 1.13038833052087795, "projected_norm": 0.408248290463863017, "complement_norm": 1.05409255338945984, "complement_fraction": 0.932504808240313787, "weighted_projected_ratio": 0.1275775907699572, "input_weighted_complement_norm": 0.26352313834736496, "entries": [{"output_order": 1, "coefficient": -0.408248290463863017}]},
+    {"left_order": 1, "right_order": 0, "left_highest_shell": 1, "right_highest_shell": 1, "full_norm": 0, "projected_norm": 0, "complement_norm": 0, "complement_fraction": 0, "weighted_projected_ratio": 0, "input_weighted_complement_norm": 0, "entries": []},
+    {"left_order": 1, "right_order": 1, "left_highest_shell": 1, "right_highest_shell": 1, "full_norm": 0.471404520791031678, "projected_norm": 0, "complement_norm": 0.471404520791031678, "complement_fraction": 1, "weighted_projected_ratio": 0, "input_weighted_complement_norm": 0.11785113019775792, "entries": []},
+    {"left_order": 1, "right_order": 2, "left_highest_shell": 1, "right_highest_shell": 2, "full_norm": 1.28812237743906111, "projected_norm": 0, "complement_norm": 1.28812237743906111, "complement_fraction": 1, "weighted_projected_ratio": 0, "input_weighted_complement_norm": 0.161015297179882638, "entries": []},
+    {"left_order": 2, "right_order": 0, "left_highest_shell": 2, "right_highest_shell": 1, "full_norm": 0.333333333333333315, "projected_norm": 0, "complement_norm": 0.333333333333333315, "complement_fraction": 1, "weighted_projected_ratio": 0, "input_weighted_complement_norm": 0.0833333333333333287, "entries": []},
+    {"left_order": 2, "right_order": 1, "left_highest_shell": 2, "right_highest_shell": 1, "full_norm": 0.399072999912621573, "projected_norm": 0, "complement_norm": 0.399072999912621573, "complement_fraction": 1, "weighted_projected_ratio": 0, "input_weighted_complement_norm": 0.0498841249890776967, "entries": []},
+    {"left_order": 2, "right_order": 2, "left_highest_shell": 2, "right_highest_shell": 2, "full_norm": 0.623609564462323518, "projected_norm": 0, "complement_norm": 0.623609564462323518, "complement_fraction": 1, "weighted_projected_ratio": 0, "input_weighted_complement_norm": 0.0389755977788952199, "entries": []}
+  ],
+  "candidate_lemma_proved": false,
+  "finite_tensor_is_not_a_proof": true,
+  "remaining_requirement": "prove cutoff-uniform projected and complement bilinear bounds in the weighted response norm"
+}

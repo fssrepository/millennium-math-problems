@@ -252,6 +252,13 @@ The current direct local-lemma search is reproducible with:
   --residual-state proof/l4/states/local-sld-trajectory/response-hierarchy-residual-K3/depth16-plus-orbits.tsv \
   --certificate proof/l4/analysis/shifted-local-density/cyclic-response-hierarchy-K3-depth16-plus-orbits.json
 
+./build/navier_stokes_lab local-sld-response-diagonal \
+  --state proof/l4/states/local-sld-trajectory/maximum-T050-K2/K2.tsv \
+  --state proof/l4/states/local-sld-trajectory/maximum-T050-K3-from-K2/K3.tsv \
+  --state proof/l4/states/local-sld-trajectory/maximum-T032-K4-from-K3/K4.tsv \
+  --max-depth 16 --radius 1.25 --threads 12 \
+  --certificate proof/l4/analysis/shifted-local-density/cyclic-response-diagonal-K2-K4-r125.json
+
 ./build/navier_stokes_lab local-sld-trajectory-evaluate \
   --state proof/l4/states/local-sld-trajectory/response-hierarchy-projection-K3/depth16-plus-orbits.tsv \
   --trajectory-steps 320 --threads 12 --nu 0.1 --dt 0.001 --backend auto \
@@ -317,6 +324,13 @@ of the absolute three-block sum. The winning state retains `99.969%` of its
 energy in the first hard shell, but its projected gradient is still
 `4.04e-4`; this remains a lower bound, not a converged global maximum.
 
+Six accepted K4 continuation steps improve the finite lower bound to
+`8.53527437357e-4` at the same `t=0.298`; the dt-halving error is `9.00e-16`.
+The added shell-four energy is `1.97e-9`, the K4-to-K3 state residual is
+`2.96e-4`, and the final projected objective gradient is `5.17e-5`.
+At the refined peak the exact three-block split is
+`8.24057223723e-4 + 1.51705418626e-5 + 1.42996717717e-5`.
+
 The explicit response hierarchy makes that pattern quantitative. Orders
 `0..15`, the transverse `(2,1,1)` polarization, and both oriented `(3,1,0)`
 orbits capture `99.9998628%` of the K3 winner's energy. Evolving only its
@@ -324,6 +338,15 @@ orbits capture `99.9998628%` of the K3 winner's energy. Evolving only its
 `99.96181%` of the unrestricted lower bound. Direct and FFT trajectory
 evaluation agree to all reported digits. This identifies a compact candidate
 extremal structure; it is not a cutoff-uniform theorem.
+
+On the K4 winner the same 19 directions capture `99.9997617%` of state energy
+and `99.9331554%` of the trajectory objective. The cutoff-diagonal response
+ledger then retains only the boundary-free orders `0..K`. On the K4 state
+zero-padded through K8, `A_1.25(K)` stays below `1.15916`; the full radius
+sweep and the exact sequence majorant are recorded in
+`proof/l4/lemmas/shifted-local-density/RESPONSE_DIAGONAL.md`. This is the
+current route toward a weighted response-space lemma, not a proof of its
+required cutoff-uniform operator or complement bounds.
 
 The helical local target has its own replayable optimizer and same-state
 cutoff scan:

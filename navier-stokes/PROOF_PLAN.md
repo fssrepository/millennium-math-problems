@@ -1,6 +1,6 @@
 # Proof roadmap and restart point
 
-Last updated: 2026-08-01
+Last updated: 2026-08-02
 
 ## Exact target
 
@@ -84,6 +84,12 @@ and falsification result, not the required analytic bound. Resume from the
 cyclic response hierarchy and the `(m,m,2m)`/remainder/mixed decomposition in
 `proof/l4/lemmas/shifted-local-density/SIGNATURE_BLOCK.md`.
 
+Six accepted K4 continuation steps improve that value to
+`8.53527437357e-4`, again at `t=0.298`, with dt-halving error `9.00e-16`.
+The new hard-shell-four energy is only `1.97e-9`; the K4-to-K3 state residual
+is `2.96e-4`, and the final projected objective gradient is `5.17e-5`.
+This is the current finite lower bound, not a global optimum or a lemma.
+
 The current K3 winner is not an unstructured high-dimensional state. Sixteen
 quadratic response orders plus the explicit transverse `(2,1,1)` and two
 oriented `(3,1,0)` orbit directions capture `99.9998628%` of its energy. The
@@ -91,6 +97,19 @@ projected state retains `99.96181%` of the trajectory objective and the same
 peak time. The next proof step is to replace this finite projection fact by a
 cutoff-uniform summability estimate for the response coefficients and orbit
 remainders; finite-dimensional agreement alone is not the lemma.
+
+At K4, the corresponding 19 directions capture `99.9997617%` of state energy
+and `99.9331554%` of the full trajectory objective. Direct-triad and FFT
+evaluation agree exactly at the serialized precision. A new cutoff-diagonal
+ledger avoids comparing response orders after they hit the Galerkin wall: at
+cutoff K it retains only orders `0,...,K`. For the same K4 state zero-padded
+through K8, the weighted coefficient sum
+`A_1.25(K)=sum_{n<=K}1.25^n |<u,b_n>|/sqrt(E)` remains between `1.12012` and
+`1.15916` from K2 through K8. This is evidence for the explicit weighted
+response target in
+`proof/l4/lemmas/shifted-local-density/RESPONSE_DIAGONAL.md`; proving its
+cutoff-uniform bilinear operator bound and complement estimate is now the
+lowest open analytical subtask.
 
 The first explicit L4 candidate in the reduction was
 

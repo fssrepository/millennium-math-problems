@@ -382,14 +382,24 @@ RK4 plus both parameter dependencies. Its gradient error is `5.62e-12`.
 Optimized K3 terminal ratios increase from `7.98918e-4` at `T=0.01` to
 `8.46863e-4` at `T=0.20`, so the unresolved lemma is explicitly the uniform
 frozen-data trajectory bound rather than the static conjecture alone.
-Maximizing over all stored times in `[0,0.5]` selects `t=0.2175` and gives
-the refined lower bound `8.48675785e-4`. The initial state still has
-`99.9723%` of its energy in the first hard shell; the search is not yet
+Warm continuation from K2 corrects that older secondary branch. K3 selects
+`t=0.298` and reaches `8.53498799310e-4`; six accepted K4 steps improve the
+finite lower bound to `8.53527437357e-4` at the same time. The K4 dt-halving
+error is `9.00e-16`, hard-shell-four energy is `1.97e-9`, and the final
+projected objective gradient is `5.17e-5`. The search is not proved globally
 stationary, so this remains a pattern and falsification artifact.
-At the refined peak, frozen-data block analysis gives `8.18560410e-4` from
-the doubling family and about `1.5e-5` from each correction, reconstructing
-the full quotient to `9.98e-19`. Dominance of the same family therefore
+At the refined K4 peak, frozen-data block analysis gives
+`8.24057223723e-4` from the doubling family, `1.51705418626e-5` from the
+closed remainder, and `1.42996717717e-5` from the mixed block. The relative
+reconstruction error is `1.36e-18`. Dominance of the same family therefore
 survives the evolution rather than being only a `t=0` artifact.
+
+Nineteen explicit response/orbit directions capture `99.9997617%` of the K4
+state energy and `99.9331554%` of its trajectory objective. Fixed-depth
+response comparisons beyond order K are polluted by the Galerkin boundary,
+so [RESPONSE_DIAGONAL.md](RESPONSE_DIAGONAL.md) retains only orders `0..K`
+and states the weighted response-majorant target. The observed diagonal is
+evidence, not the required cutoff-uniform bilinear and complement estimate.
 
 ## Reduced proof obligation
 

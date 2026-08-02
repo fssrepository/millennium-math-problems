@@ -20,6 +20,7 @@
 #include "helical_adversary_cli.hpp"
 #include "helical_cutoff_scan.hpp"
 #include "state_analysis.hpp"
+#include "state_transform.hpp"
 #include "orthogonal_triad_geometry.hpp"
 #include "local_signature_geometry.hpp"
 #include "local_signature_adversary.hpp"
@@ -32,6 +33,8 @@
 #include "local_sld_cyclic_trajectory_ansatz.hpp"
 #include "local_sld_response_hierarchy.hpp"
 #include "local_sld_response_family.hpp"
+#include "local_sld_response_diagonal.hpp"
+#include "local_sld_response_tensor.hpp"
 #include "local_sld_trajectory_evaluator.hpp"
 #include "local_sld_signature_block.hpp"
 #include "shifted_critical_density_cli.hpp"
@@ -895,9 +898,12 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab local-sld-krylov-ansatz [options]\n"
         << "  navier_stokes_lab local-sld-response-hierarchy [options]\n"
         << "  navier_stokes_lab local-sld-response-family [options]\n"
+        << "  navier_stokes_lab local-sld-response-diagonal [options]\n"
+        << "  navier_stokes_lab local-sld-response-tensor [options]\n"
         << "  navier_stokes_lab local-sld-trajectory-evaluate [options]\n"
         << "  navier_stokes_lab local-sld-block [options]\n"
         << "  navier_stokes_lab shifted-density [options]\n"
+        << "  navier_stokes_lab state-transform [options]\n"
         << "  navier_stokes_lab self-test\n\n"
         << "Simulation options:\n"
         << "  --n N                 grid N^3 (default 16)\n"
@@ -951,6 +957,10 @@ void print_help(std::ostream& out) {
     out << '\n';
     lemma::LocalSldResponseFamilyCli::print_help(out);
     out << '\n';
+    lemma::LocalSldResponseDiagonalCli::print_help(out);
+    out << '\n';
+    lemma::LocalSldResponseTensorCli::print_help(out);
+    out << '\n';
     lemma::LocalSldTrajectoryEvaluatorCli::print_help(out);
     out << '\n';
     lemma::LocalSldSignatureBlockCli::print_help(out);
@@ -960,6 +970,8 @@ void print_help(std::ostream& out) {
     lemma::StateAnalysisCli::print_help(out);
     out << '\n';
     lemma::StateFamilyAnalysisCli::print_help(out);
+    out << '\n';
+    lemma::SpectralStateTransformCli::print_help(out);
 }
 
 }  // namespace ns
@@ -1062,6 +1074,18 @@ int main(int argc, char** argv) {
                     argc, argv, 2),
                 std::cout);
         }
+        if (command == "local-sld-response-diagonal") {
+            return lemma::LocalSldResponseDiagonalCli::run(
+                lemma::LocalSldResponseDiagonalCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command == "local-sld-response-tensor") {
+            return lemma::LocalSldResponseTensorCli::run(
+                lemma::LocalSldResponseTensorCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
         if (command == "local-sld-trajectory-evaluate") {
             return lemma::LocalSldTrajectoryEvaluatorCli::run(
                 lemma::LocalSldTrajectoryEvaluatorCli::parse(
@@ -1076,6 +1100,11 @@ int main(int argc, char** argv) {
         if (command == "shifted-density") {
             return lemma::ShiftedCriticalDensityCli::run(
                 lemma::ShiftedCriticalDensityCli::parse(argc, argv, 2),
+                std::cout);
+        }
+        if (command == "state-transform") {
+            return lemma::SpectralStateTransformCli::run(
+                lemma::SpectralStateTransformCli::parse(argc, argv, 2),
                 std::cout);
         }
         if (command == "state-analysis") {

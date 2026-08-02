@@ -33,8 +33,10 @@
 #include "local_sld_cyclic_ansatz.hpp"
 #include "local_sld_cyclic_krylov_ansatz.hpp"
 #include "local_sld_cyclic_trajectory_ansatz.hpp"
+#include "local_sld_response_diagonal.hpp"
 #include "local_sld_response_family.hpp"
 #include "local_sld_response_hierarchy.hpp"
+#include "local_sld_response_tensor.hpp"
 #include "local_sld_block_objective.hpp"
 #include "local_sld_signature_block.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
@@ -1893,6 +1895,35 @@ bool self_test(std::ostream& out) {
             response_family.rows[0].final_projection_energy -
             response_family.rows[1].final_projection_energy) < 1e-18L &&
         response_family.finite_cutoff_family_is_not_a_proof;
+    const LocalSldResponseDiagonalReport response_diagonal =
+        LocalSldResponseDiagonal::analyze(
+            active_dynamics,
+            {{"reference-a", cyclic_ansatz.state},
+             {"reference-b", cyclic_ansatz.state}},
+            4, 1.25L);
+    const bool response_diagonal_ok =
+        response_diagonal.rows.size() == 2 &&
+        response_diagonal.rows[0].safe_order_count == 3 &&
+        response_diagonal.rows[0].first_truncated_order == 3 &&
+        response_diagonal.rows[0].safe_shells_inside_cutoff &&
+        response_diagonal.maximum_common_coefficient_l2_difference <
+            1e-18L &&
+        response_diagonal.maximum_quadratic_majorant_ratio <=
+            1.0L + 1e-18L &&
+        response_diagonal.finite_cutoff_diagonal_is_not_a_proof;
+    const LocalSldResponseTensorReport response_tensor =
+        LocalSldResponseTensor::analyze(
+            active_dynamics, 2, 3, 1.5L, 1.25L, 1e-16L);
+    const bool response_tensor_ok =
+        response_tensor.boundary_free_depth &&
+        response_tensor.pairs.size() == 9 &&
+        response_tensor.retained_tensor_entries > 0 &&
+        response_tensor.maximum_gram_error < 1e-14L &&
+        response_tensor.maximum_projected_bilinear_constant > 0.0L &&
+        std::isfinite(
+            response_tensor.maximum_projected_bilinear_constant) &&
+        response_tensor.maximum_norm_reconstruction_error < 1e-14L &&
+        response_tensor.finite_tensor_is_not_a_proof;
     const LocalSldTrajectoryEvaluatorReport trajectory_evaluation =
         LocalSldTrajectoryEvaluator::evaluate(
             active_dynamics, cyclic_ansatz.state,
@@ -2391,6 +2422,27 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(
                response_family.maximum_coefficient_l2_difference)
         << ")\n"
+        << "local SLD response diagonal test: "
+        << (response_diagonal_ok ? "PASS" : "FAIL")
+        << " (safe orders="
+        << response_diagonal.rows[0].safe_order_count
+        << ", weighted l1="
+        << static_cast<double>(
+               response_diagonal.rows[0].safe_weighted_l1)
+        << ", quadratic ratio="
+        << static_cast<double>(
+               response_diagonal.maximum_quadratic_majorant_ratio)
+        << ")\n"
+        << "local SLD response tensor test: "
+        << (response_tensor_ok ? "PASS" : "FAIL")
+        << " (entries=" << response_tensor.retained_tensor_entries
+        << ", projected constant="
+        << static_cast<double>(
+               response_tensor.maximum_projected_bilinear_constant)
+        << ", complement fraction="
+        << static_cast<double>(
+               response_tensor.maximum_complement_fraction)
+        << ")\n"
         << "local SLD trajectory evaluator test: "
         << (trajectory_evaluation_ok ? "PASS" : "FAIL")
         << " (maximum="
@@ -2450,6 +2502,7 @@ bool self_test(std::ostream& out) {
            cyclic_ansatz_ok && cyclic_trajectory_ansatz_ok &&
            cyclic_krylov_ansatz_ok && signature_block_ok &&
            response_hierarchy_ok && response_family_ok &&
+           response_diagonal_ok && response_tensor_ok &&
            trajectory_evaluation_ok &&
            adversary_ok && dynamic_class_ok && q_derivative_ok && evolution_ok;
 }

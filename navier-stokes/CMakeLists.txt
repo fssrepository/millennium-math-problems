@@ -19,6 +19,7 @@ add_executable(navier_stokes_lab
     src/spectral/spectral_objective.cpp
     src/spectral/spectral_state.cpp
     src/spectral/state_analysis.cpp
+    src/spectral/state_transform.cpp
     src/spectral/trajectory_analyzer.cpp
 
     src/optimization/dynamic_adversary.cpp
@@ -70,8 +71,10 @@ add_executable(navier_stokes_lab
     src/local_sld/analysis/local_quartic_shell_envelope.cpp
     src/local_sld/analysis/local_quartic_shell_ledger.cpp
     src/local_sld/analysis/local_signature_geometry.cpp
+    src/local_sld/analysis/local_sld_response_diagonal.cpp
     src/local_sld/analysis/local_sld_response_family.cpp
     src/local_sld/analysis/local_sld_response_hierarchy.cpp
+    src/local_sld/analysis/local_sld_response_tensor.cpp
     src/local_sld/analysis/local_sld_signature_block.cpp
     src/local_sld/analysis/local_sld_trajectory_evaluator.cpp
     src/local_sld/analysis/shifted_critical_density.cpp
