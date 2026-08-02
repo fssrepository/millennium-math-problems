@@ -53,16 +53,15 @@ LocalSldProjectiveCoherenceObjectiveValue
 LocalSldProjectiveCoherenceObjective::evaluate(
     const SpectralState& state) const {
     LocalSldProjectiveCoherenceObjectiveValue result;
-    const std::vector<ProjectiveInteractionGroup> groups =
+    const std::vector<ProjectiveInteractionGroup>& groups =
         ProjectiveAdvectionDecomposition::group(state, selection_);
     result.projective_shape_count = groups.size();
     const SpectralIncrement coherent =
         dynamics_.advection_direct_partition(state, selection_);
     result.coherent_norm2 = norm2(coherent);
-    for (const ProjectiveInteractionGroup& group : groups) {
-        result.square_function_norm2 += norm2(
-            ProjectiveAdvectionDecomposition::evaluate(state, group));
-    }
+    result.square_function_norm2 =
+        ProjectiveAdvectionDecomposition::square_function(
+            state, groups, false).norm2;
     if (result.square_function_norm2 > 1e-60L) {
         result.synthesis_ratio = result.coherent_norm2 /
             result.square_function_norm2;
@@ -75,24 +74,15 @@ LocalSldProjectiveCoherenceObjective::evaluate(
 
 SpectralIncrement LocalSldProjectiveCoherenceObjective::gradient(
     const SpectralState& state) const {
-    const std::vector<ProjectiveInteractionGroup> groups =
+    const std::vector<ProjectiveInteractionGroup>& groups =
         ProjectiveAdvectionDecomposition::group(state, selection_);
     const SpectralIncrement coherent =
         dynamics_.advection_direct_partition(state, selection_);
     const SpectralReal numerator = norm2(coherent);
-    SpectralReal denominator = 0.0L;
-    SpectralIncrement denominator_gradient(state.waves.size());
-    for (const ProjectiveInteractionGroup& group : groups) {
-        SpectralIncrement component =
-            ProjectiveAdvectionDecomposition::evaluate(state, group);
-        denominator += norm2(component);
-        scale(component, 2.0L);
-        add_scaled(
-            denominator_gradient,
-            ProjectiveAdvectionDecomposition::vjp(
-                state, group, component),
-            1.0L);
-    }
+    ProjectiveSquareFunctionMoment square_function =
+        ProjectiveAdvectionDecomposition::square_function(
+            state, groups, true);
+    const SpectralReal denominator = square_function.norm2;
     if (!(denominator > 1e-60L)) {
         return SpectralIncrement(state.waves.size());
     }
@@ -103,7 +93,7 @@ SpectralIncrement LocalSldProjectiveCoherenceObjective::gradient(
             state, numerator_cotangent, selection_);
     scale(result, 1.0L / denominator);
     add_scaled(
-        result, denominator_gradient,
+        result, square_function.gradient,
         -numerator / (denominator * denominator));
     return result;
 }

@@ -1,5 +1,7 @@
 #include "projective_square_function_closure.hpp"
 
+#include "projective_fan_geometry.hpp"
+
 #include <filesystem>
 #include <fstream>
 #include <ostream>
@@ -35,6 +37,13 @@ ProjectiveSquareFunctionClosure::certify() {
             Rational(2) +
             Rational(2) * report.squared_function_frequency_power &&
         report.candidate_diagonal_frequency_gain < Rational(0);
+    const ProjectiveFanGeometryCertificate fan =
+        ProjectiveFanGeometry::certify(64);
+    report.cutoff_independent_projective_synthesis_bound_rejected =
+        fan.target_synthesis_unbounded_proved;
+    report.coherent_fan_zero_stretching_proved =
+        fan.exact_zero_stretching_proved &&
+        fan.exact_zero_power_one_product_proved;
     // The components B_sigma share output Fourier modes. The square-function
     // estimate does not bound ||sum_sigma B_sigma|| without an additional
     // synthesis/almost-orthogonality estimate, so all cross-ray flags stay
@@ -112,10 +121,12 @@ int ProjectiveSquareFunctionClosureCli::run(
         << "  \"square_function_has_target_power_gain\": true,\n"
         << "  \"diagonal_projective_quartet_sum_proved\": false,\n"
         << "  \"coherent_projective_synthesis_bound_proved\": false,\n"
+        << "  \"cutoff_independent_projective_synthesis_bound_rejected\": true,\n"
+        << "  \"coherent_fan_zero_stretching_proved\": true,\n"
         << "  \"cross_ray_quartet_bound_proved\": false,\n"
         << "  \"power_one_tradeoff_bound_proved\": false,\n"
         << "  \"full_local_lemma_proved\": false,\n"
-        << "  \"remaining_requirement\": \"control the coherent cross-ray synthesis on shared output modes, including normalization and the product with S_full\"\n"
+        << "  \"remaining_requirement\": \"control the joint cross-ray bracket--stretching tradeoff; standalone synthesis is impossible because the explicit coherent fan grows at least as K^2/640 while its stretching is exactly zero\"\n"
         << "}\n";
     out << "projective square function=K^"
         << report.squared_function_frequency_power.str()

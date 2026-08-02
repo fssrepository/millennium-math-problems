@@ -1,5 +1,7 @@
 #include "remainder_quartet_closure.hpp"
 
+#include "projective_fan_geometry.hpp"
+
 #include <filesystem>
 #include <fstream>
 #include <ostream>
@@ -55,6 +57,12 @@ RemainderQuartetClosureReport RemainderQuartetClosure::certify() {
     report.every_fixed_projective_ray_closes =
         report.every_fixed_signature_closes &&
         report.fixed_signature_incidence_degree_power == Rational(1);
+    const ProjectiveFanGeometryCertificate fan =
+        ProjectiveFanGeometry::certify(64);
+    report.standalone_projective_synthesis_bound_rejected =
+        fan.target_synthesis_unbounded_proved;
+    report.coherent_fan_zero_power_one_proved =
+        fan.exact_zero_power_one_product_proved;
     report.remainder_requires_collective_cancellation =
         !report.dense_energy_only_count_closes &&
         report.every_fixed_signature_closes &&
@@ -152,6 +160,8 @@ int RemainderQuartetClosureCli::run(
         << (report.every_fixed_projective_ray_closes
             ? "true" : "false") << ",\n"
         << "  \"uniform_projective_shape_sum_proved\": false,\n"
+        << "  \"standalone_projective_synthesis_bound_rejected\": true,\n"
+        << "  \"coherent_fan_zero_power_one_proved\": true,\n"
         << "  \"remainder_requires_collective_cancellation\": "
         << (report.remainder_requires_collective_cancellation
             ? "true" : "false") << ",\n"

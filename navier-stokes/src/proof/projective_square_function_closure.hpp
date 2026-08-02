@@ -21,6 +21,8 @@ struct ProjectiveSquareFunctionClosureReport {
     bool square_function_has_target_power_gain = false;
     bool diagonal_projective_quartet_sum_proved = false;
     bool coherent_projective_synthesis_bound_proved = false;
+    bool cutoff_independent_projective_synthesis_bound_rejected = false;
+    bool coherent_fan_zero_stretching_proved = false;
     bool cross_ray_quartet_bound_proved = false;
     bool power_one_tradeoff_bound_proved = false;
     bool full_local_lemma_proved = false;

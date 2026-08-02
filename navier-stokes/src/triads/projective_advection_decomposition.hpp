@@ -13,9 +13,14 @@ struct ProjectiveInteractionGroup {
     std::vector<InteractionIndex> interactions;
 };
 
+struct ProjectiveSquareFunctionMoment {
+    SpectralReal norm2 = 0.0L;
+    SpectralIncrement gradient;
+};
+
 class ProjectiveAdvectionDecomposition {
 public:
-    [[nodiscard]] static std::vector<ProjectiveInteractionGroup> group(
+    [[nodiscard]] static const std::vector<ProjectiveInteractionGroup>& group(
         const SpectralState& state,
         TriadSelection selection);
 
@@ -23,10 +28,21 @@ public:
         const SpectralState& state,
         const ProjectiveInteractionGroup& group);
 
+    [[nodiscard]] static SpectralIncrement evaluate_bilinear(
+        const SpectralState& state,
+        const ProjectiveInteractionGroup& group,
+        const SpectralIncrement& advecting,
+        const SpectralIncrement& advected);
+
     [[nodiscard]] static SpectralIncrement vjp(
         const SpectralState& state,
         const ProjectiveInteractionGroup& group,
         const SpectralIncrement& output_cotangent);
+
+    [[nodiscard]] static ProjectiveSquareFunctionMoment square_function(
+        const SpectralState& state,
+        const std::vector<ProjectiveInteractionGroup>& groups,
+        bool compute_gradient);
 };
 
 }  // namespace lemma

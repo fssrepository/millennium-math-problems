@@ -16,8 +16,10 @@
   "square_function_has_target_power_gain": true,
   "diagonal_projective_quartet_sum_proved": false,
   "coherent_projective_synthesis_bound_proved": false,
+  "cutoff_independent_projective_synthesis_bound_rejected": true,
+  "coherent_fan_zero_stretching_proved": true,
   "cross_ray_quartet_bound_proved": false,
   "power_one_tradeoff_bound_proved": false,
   "full_local_lemma_proved": false,
-  "remaining_requirement": "control the coherent cross-ray synthesis on shared output modes, including normalization and the product with S_full"
+  "remaining_requirement": "control the joint cross-ray bracket--stretching tradeoff; standalone synthesis is impossible because the explicit coherent fan grows at least as K^2/640 while its stretching is exactly zero"
 }

@@ -901,8 +901,12 @@ energy-independent power-one tradeoff
 remain between `0.00601` and `0.006365` through K7. Projective grouping shows
 that `95.42%` of the K7 absolute total lies on one primitive ray. After the
 proved doubling and triple families are removed, the K5 tail has only `3.027`
-effective projective shapes. Every fixed ray is proved cutoff-independently;
-the remaining analytic gap is their uniform summation.
+effective projective shapes. Every fixed ray and the projective square
+function are proved cutoff-independently. A coherent fan proves that a
+standalone synthesis estimate cannot be uniform: its ratio is at least
+`K^2/640`, while its stretching is exactly zero. The remaining analytic gap
+is therefore the stretching-aware cross-ray tradeoff in RQ-11, not unsigned
+uniform summation.
 
 The absolute closure ratio was subsequently reverse-differentiated and
 optimized directly. A K1 branch reaches `C_state=1/3`, but its stretching is

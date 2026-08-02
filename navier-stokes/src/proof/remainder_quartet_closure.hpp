@@ -27,6 +27,8 @@ struct RemainderQuartetClosureReport {
     bool every_fixed_signature_closes = false;
     bool every_fixed_projective_ray_closes = false;
     bool uniform_projective_shape_sum_proved = false;
+    bool standalone_projective_synthesis_bound_rejected = false;
+    bool coherent_fan_zero_power_one_proved = false;
     bool remainder_requires_collective_cancellation = false;
     bool one_sided_double_square_reduction = false;
     bool stretching_vjp_commutator_identity = false;

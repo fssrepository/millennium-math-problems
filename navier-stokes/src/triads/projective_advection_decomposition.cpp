@@ -1,7 +1,9 @@
 #include "projective_advection_decomposition.hpp"
 
 #include <algorithm>
+#include <compare>
 #include <map>
+#include <mutex>
 #include <numeric>
 #include <stdexcept>
 
@@ -9,6 +11,32 @@ namespace lemma {
 namespace {
 
 using Shape = std::array<SpectralInteger, 3>;
+
+struct GroupCacheKey {
+    std::vector<WaveVector> waves;
+    int minimum_gap = 0;
+    int maximum_gap = 0;
+    TriadSelection::SignatureMode signature_mode =
+        TriadSelection::SignatureMode::none;
+    Shape signature{};
+    SpectralInteger minimum_low_squared = 0;
+    SpectralInteger maximum_low_squared_exclusive = 0;
+
+    auto operator<=>(const GroupCacheKey&) const = default;
+};
+
+GroupCacheKey cache_key(
+    const SpectralState& state,
+    TriadSelection selection) {
+    return {
+        state.waves,
+        selection.minimum_gap(),
+        selection.maximum_gap(),
+        selection.signature_mode(),
+        selection.squared_length_signature(),
+        selection.minimum_low_squared(),
+        selection.maximum_low_squared_exclusive()};
+}
 
 Shape primitive_shape(
     const SpectralState& state,
@@ -50,10 +78,19 @@ void project(
 
 }  // namespace
 
-std::vector<ProjectiveInteractionGroup>
+const std::vector<ProjectiveInteractionGroup>&
 ProjectiveAdvectionDecomposition::group(
     const SpectralState& state,
     TriadSelection selection) {
+    static std::map<
+        GroupCacheKey, std::vector<ProjectiveInteractionGroup>> cache;
+    static std::mutex cache_mutex;
+    const GroupCacheKey key = cache_key(state, selection);
+    const std::lock_guard<std::mutex> lock(cache_mutex);
+    const auto existing = cache.find(key);
+    if (existing != cache.end()) {
+        return existing->second;
+    }
     std::map<Shape, std::vector<InteractionIndex>> grouped;
     for (const InteractionIndex interaction :
          SpectralStateOps::interactions(state)) {
@@ -67,21 +104,32 @@ ProjectiveAdvectionDecomposition::group(
     for (auto& [shape, interactions] : grouped) {
         result.push_back({shape, std::move(interactions)});
     }
-    return result;
+    return cache.emplace(key, std::move(result)).first->second;
 }
 
 SpectralIncrement ProjectiveAdvectionDecomposition::evaluate(
     const SpectralState& state,
     const ProjectiveInteractionGroup& group) {
+    return evaluate_bilinear(
+        state, group, state.velocity, state.velocity);
+}
+
+SpectralIncrement ProjectiveAdvectionDecomposition::evaluate_bilinear(
+    const SpectralState& state,
+    const ProjectiveInteractionGroup& group,
+    const SpectralIncrement& advecting,
+    const SpectralIncrement& advected) {
+    require_layout(state, advecting);
+    require_layout(state, advected);
     SpectralIncrement result(state.waves.size());
     const SpectralComplex imaginary_unit{0.0L, 1.0L};
     for (const InteractionIndex interaction : group.interactions) {
         const auto [p, q, target] = interaction;
         const SpectralComplex coefficient = imaginary_unit *
-            wave_dot(state.waves[q], state.velocity[p]);
+            wave_dot(state.waves[q], advecting[p]);
         for (std::size_t component = 0; component < 3; ++component) {
             result[target][component] +=
-                coefficient * state.velocity[q][component];
+                coefficient * advected[q][component];
         }
     }
     project(result, state);
@@ -121,6 +169,86 @@ SpectralIncrement ProjectiveAdvectionDecomposition::vjp(
         }
     }
     project(result, state);
+    return result;
+}
+
+ProjectiveSquareFunctionMoment
+ProjectiveAdvectionDecomposition::square_function(
+    const SpectralState& state,
+    const std::vector<ProjectiveInteractionGroup>& groups,
+    bool compute_gradient) {
+    ProjectiveSquareFunctionMoment result;
+    if (compute_gradient) {
+        result.gradient.resize(state.waves.size());
+    }
+    SpectralIncrement component(state.waves.size());
+    std::vector<std::size_t> touched_targets;
+    touched_targets.reserve(state.waves.size());
+    std::vector<std::size_t> target_generation(
+        state.waves.size(), 0);
+    std::size_t generation = 0;
+    const SpectralComplex imaginary_unit{0.0L, 1.0L};
+    const SpectralComplex minus_imaginary_unit{0.0L, -1.0L};
+    for (const ProjectiveInteractionGroup& group : groups) {
+        ++generation;
+        touched_targets.clear();
+        for (const InteractionIndex interaction : group.interactions) {
+            const auto [p, q, target] = interaction;
+            if (target_generation[target] != generation) {
+                target_generation[target] = generation;
+                component[target] = {};
+                touched_targets.push_back(target);
+            }
+            const SpectralComplex coefficient = imaginary_unit *
+                wave_dot(state.waves[q], state.velocity[p]);
+            for (std::size_t coordinate = 0; coordinate < 3;
+                 ++coordinate) {
+                component[target][coordinate] +=
+                    coefficient * state.velocity[q][coordinate];
+            }
+        }
+        for (const std::size_t target : touched_targets) {
+            component[target] = project_divergence_free(
+                state.waves[target], component[target]);
+            result.norm2 += std::real(dot_hermitian(
+                component[target], component[target]));
+        }
+        if (!compute_gradient) {
+            continue;
+        }
+        for (const InteractionIndex interaction : group.interactions) {
+            const auto [p, q, target] = interaction;
+            ComplexVector target_cotangent = component[target];
+            for (SpectralComplex& value : target_cotangent) {
+                value *= 2.0L;
+            }
+            const SpectralComplex first_coefficient =
+                minus_imaginary_unit *
+                dot_hermitian(
+                    state.velocity[q], target_cotangent);
+            for (std::size_t coordinate = 0; coordinate < 3;
+                 ++coordinate) {
+                const SpectralReal wave_component =
+                    static_cast<SpectralReal>(
+                        coordinate == 0   ? state.waves[q].x
+                        : coordinate == 1 ? state.waves[q].y
+                                          : state.waves[q].z);
+                result.gradient[p][coordinate] +=
+                    wave_component * first_coefficient;
+            }
+            const SpectralComplex second_coefficient =
+                minus_imaginary_unit * std::conj(
+                    wave_dot(state.waves[q], state.velocity[p]));
+            for (std::size_t coordinate = 0; coordinate < 3;
+                 ++coordinate) {
+                result.gradient[q][coordinate] +=
+                    second_coefficient * target_cotangent[coordinate];
+            }
+        }
+    }
+    if (compute_gradient) {
+        project(result.gradient, state);
+    }
     return result;
 }
 

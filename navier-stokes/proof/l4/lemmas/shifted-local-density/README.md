@@ -426,9 +426,12 @@ Equal-length orthogonal incidence gives its half-derivative one-shell gain;
 fixed-width shell locality sums the structural entries, and the direct bounds
 `S <= C Z^(5/4)P^(1/4)` and `T <= C Z^(1/4)P^(5/4)` close both normalization
 terms at `Z^(5/4)P^(3/4)`. The full shifted-density lemma remains open because
-the projective-shape remainder sum and the mixed doubling/remainder block have
-not yet been controlled uniformly. Every fixed primitive projective ray is
-already closed by plane--sphere incidence. For the remainder, cross-objective warm starts
+the stretching-aware projective remainder sum and the mixed
+doubling/remainder block have not yet been controlled uniformly. Every fixed
+primitive projective ray and the projective square function are already
+closed. A coherent fan rejects a standalone synthesis estimate with a
+`K^2/640` lower bound, but its stretching vanishes exactly. For the remainder,
+cross-objective warm starts
 find a growing dense signed-LQC3 branch, but its stretching is nearly zero and
 the actual local source vanishes at cubic order. The exact double-square
 identity in [REMAINDER_QUARTET.md](REMAINDER_QUARTET.md) explains the negative
@@ -436,8 +439,8 @@ dense branch and reduces the active numerical/analytic target to a joint
 tradeoff between the remainder bracket coefficient and the full stretching
 shape factor. The scalar shape multiplier is at most two, so the remaining
 remainder statement is the energy-independent power-one bound
-`|(K_rem+G_rem)S_full| <= C Z^2P^2`; its precise unresolved step is summing
-the fixed-ray estimates uniformly over primitive shapes.
+`|(K_rem+G_rem)S_full| <= C Z^2P^2`; its precise unresolved step is coupling
+cross-ray coherence to the stretching direction detected by `Au`.
 
 ## Reduced proof obligation
 

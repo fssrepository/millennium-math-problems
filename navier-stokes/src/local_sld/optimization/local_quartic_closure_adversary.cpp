@@ -7,6 +7,7 @@
 #include "local_sld_remainder_absorption_objective.hpp"
 #include "local_sld_shape_power_objective.hpp"
 #include "local_sld_projective_coherence_objective.hpp"
+#include "local_sld_projective_stretching_objective.hpp"
 #include "parallel_executor.hpp"
 #include "spectral_adjoint.hpp"
 #include "spectral_galerkin.hpp"
@@ -226,6 +227,8 @@ LocalQuarticClosureAdversary::maximize(
                ? "local-shape-power-ratio"
         : (options.objective == "projective-coherence-ratio"
                ? "local-projective-coherence-ratio"
+        : (options.objective == "projective-stretching-ratio"
+               ? "local-projective-stretching-ratio"
         : (options.objective == "signed-closure-ratio"
                ? "local-signed-closure-ratio"
                : (options.objective == "block-ratio"
@@ -237,7 +240,7 @@ LocalQuarticClosureAdversary::maximize(
                                     : (options.objective ==
                                                "maximum-sld-ratio"
                                            ? "local-frozen-maximum-sld-ratio"
-                                           : "local-sld-ratio")))))))))));
+                                           : "local-sld-ratio"))))))))))));
     search.method = options.method;
     search.lbfgs_history = options.lbfgs_history;
     search.sobolev_order = options.sobolev_order;
@@ -277,6 +280,15 @@ LocalQuarticClosureAdversary::maximize(
         coherence_value.synthesis_amplification;
     result.projective_coherence_shape_count =
         coherence_value.projective_shape_count;
+    const LocalSldProjectiveStretchingObjectiveValue stretching_value =
+        LocalSldProjectiveStretchingObjective(
+            dynamics, search.closure_selection).evaluate(result.state);
+    result.projective_stretching_ratio =
+        stretching_value.stretching_aware_synthesis_ratio;
+    result.projective_stretching_alignment_squared =
+        stretching_value.stretching_alignment_squared;
+    result.projective_stretching_reconstruction_error =
+        stretching_value.product_reconstruction_error;
     result.common_block_objective =
         is_common_block_objective(options.objective);
     if (result.common_block_objective) {
@@ -356,6 +368,7 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
          options.objective != "remainder-absorption-ratio" &&
          options.objective != "shape-power-ratio" &&
          options.objective != "projective-coherence-ratio" &&
+         options.objective != "projective-stretching-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "sld-ratio" &&
          options.objective != "block-ratio" &&

@@ -23,8 +23,14 @@ given in [PROJECTIVE_QUARTET.md](PROJECTIVE_QUARTET.md); the special equal-low
 triple family is recorded in [TRIPLE_QUARTET.md](TRIPLE_QUARTET.md). The open
 problem is the coherent cross-ray coupling over the growing primitive-shape
 family, not an individual ray. The ray decomposition does satisfy the proved
-square-function bound `sum_sigma ||B_sigma||_2^2 <= C R^3 E^2`; the missing
-step is synthesis on shared output modes and the associated cross-ray quartet.
+square-function bound `sum_sigma ||B_sigma||_2^2 <= C R^3 E^2`.
+
+A cutoff-independent standalone synthesis step is now analytically rejected.
+The coherent fan in [PROJECTIVE_QUARTET.md](PROJECTIVE_QUARTET.md) has at least
+`R^2/160` distinct primitive rays aligned at one output, and its target-wise
+synthesis ratio is at least `R^2/640`. Nevertheless its stretching and
+power-one product vanish exactly. Thus the missing estimate must retain the
+joint bracket--stretching geometry rather than bound synthesis independently.
 
 ## Dense-count obstruction
 
@@ -270,8 +276,22 @@ signature leaves a K5 power-one root `0.0025621`. Its 1395 exact signatures
 collapse to 1214 primitive shapes and only `3.027` effective projective
 contributors; `(2,3,5)`, `(3,3,8)`, and `(1,3,4)` are the leading rays. Each
 fixed ray is now closed by the plane--sphere argument. What remains in RQ-11
-is the coherent summation over primitive shapes. These measurements are direct
-evidence for the target, not its proof.
+is a stretching-aware coherent summation over primitive shapes. These
+measurements are direct evidence for the target, not its proof.
+
+Direct optimization of the stronger standalone coherence quotient
+
+```text
+||sum_sigma B_sigma||_2^2 / sum_sigma ||B_sigma||_2^2
+```
+
+grows from `1.95299` at K1 to `68.8967` at K5, with fitted cutoff slope
+`3.034`. On the K5 winner, however, `|x|=4.06e-5` and the actual remainder
+block is only `3.12e-16`. The analytic coherent fan makes the separation
+decisive: it proves a synthesis lower bound `K^2/640` while its stretching is
+identically zero. At K1024 the exact integer enumeration contains 15,862
+primitive rays and has target synthesis ratio `15,822.5`. This is an
+obstruction to standalone synthesis, not to RQ-11.
 
 ## Reproduction
 
@@ -321,6 +341,10 @@ evidence for the target, not its proof.
   --iterations 12 --method lbfgs --backend direct \
   --certificate proof/l4/adversary/shifted-local-density/remainder-envelope/K1-K5.json \
   --state-dir proof/l4/states/local-remainder-envelope/doubling-remainder-K1-K5
+
+./build/navier_stokes_lab projective-fan-certificate \
+  --max-cutoff 1024 \
+  --certificate proof/l4/analysis/shifted-local-density/projective-quartet/coherent-fan-obstruction-K1024.json
 ```
 
 Artifacts:
@@ -344,9 +368,14 @@ Artifacts:
 - [`../../analysis/shifted-local-density/remainder-quartet/K7-power-one-projective.json`](../../analysis/shifted-local-density/remainder-quartet/K7-power-one-projective.json)
 - [`../../analysis/shifted-local-density/remainder-quartet/K5-power-one-tail-projective.json`](../../analysis/shifted-local-density/remainder-quartet/K5-power-one-tail-projective.json)
 - [`../../analysis/shifted-local-density/projective-quartet/ray-2-3-5-K12.json`](../../analysis/shifted-local-density/projective-quartet/ray-2-3-5-K12.json)
+- [`../../analysis/shifted-local-density/projective-quartet/square-function.json`](../../analysis/shifted-local-density/projective-quartet/square-function.json)
+- [`../../analysis/shifted-local-density/projective-quartet/coherent-fan-obstruction-K1024.json`](../../analysis/shifted-local-density/projective-quartet/coherent-fan-obstruction-K1024.json)
+- [`../../analysis/shifted-local-density/projective-quartet/coherent-fan-unique-rays-K3-K24.json`](../../analysis/shifted-local-density/projective-quartet/coherent-fan-unique-rays-K3-K24.json)
+- [`../../adversary/shifted-local-density/projective-coherence/K1-K5.json`](../../adversary/shifted-local-density/projective-coherence/K1-K5.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/projective-coherence-winners-K1-K5-tradeoff.json`](../../analysis/shifted-local-density/remainder-quartet/projective-coherence-winners-K1-K5-tradeoff.json)
 
-The exact remaining remainder statement is the cross-ray projective synthesis
-in the power-one estimate RQ-11. Every fixed ray and the bilinear projective
-square function are closed, but coherent cross-ray terms are not. RQ-11
-implies RQ-9 with constant `2C`; the mixed block then remains. No finite scan
-is treated as that proof.
+The exact remaining remainder statement is the stretching-aware cross-ray
+tradeoff RQ-11. Every fixed ray and the bilinear projective square function
+are closed, while the stronger standalone coherent synthesis estimate is
+proved false by the zero-stretching fan. RQ-11 implies RQ-9 with constant
+`2C`; the mixed block then remains. No finite scan is treated as that proof.

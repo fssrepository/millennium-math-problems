@@ -415,8 +415,12 @@ structural entries. Direct sequence estimates give
 normalization terms at `Z^(5/4)P^(3/4)`. Thus the complete doubling block is
 now proved cutoff-independently. The same plane--sphere argument closes the
 complete `(m,m,3m)` family and, more generally, every fixed primitive
-projective ray `(am,bm,cm)`. The active proof targets are the uniform sum over
-projective shapes and the mixed block. For the remainder, a cross-objective
+projective ray `(am,bm,cm)`. The projective square function is also proved
+uniformly, but a standalone synthesis estimate is impossible: an explicit
+coherent fan has synthesis ratio at least `K^2/640`. Its stretching vanishes
+exactly, so it does not obstruct the desired lemma. The active proof targets
+are the stretching-aware cross-ray tradeoff and the mixed block. For the
+remainder, a cross-objective
 warm start disproves the initially flat signed-LQC3 search: a dense positive
 branch grows from `0.103623` at K4 to `0.175398` at K6. Its stretching is
 nearly zero, however, so its actual local SLD ratio is below `6e-20`. Two exact

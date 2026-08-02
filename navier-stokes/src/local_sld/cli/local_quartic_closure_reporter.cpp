@@ -39,6 +39,9 @@ std::string objective_formula(const std::string& objective) {
     if (objective == "projective-coherence-ratio") {
         return "maximize ||sum_sigma B_sigma||_2^2 / sum_sigma ||B_sigma||_2^2";
     }
+    if (objective == "projective-stretching-ratio") {
+        return "maximize |<Au,sum_sigma B_sigma>|^2 / (||Au||_2^2 sum_sigma ||B_sigma||_2^2)";
+    }
     if (objective == "signed-closure-ratio") {
         return "maximize (K+G) E^(1/4) / (Z^(7/4) P)";
     }
@@ -144,6 +147,14 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
                    winner.projective_coherence_amplification)
             << ", \"projective_coherence_shape_count\": "
             << winner.projective_coherence_shape_count
+            << ", \"projective_stretching_ratio\": "
+            << static_cast<double>(winner.projective_stretching_ratio)
+            << ", \"projective_stretching_alignment_squared\": "
+            << static_cast<double>(
+                   winner.projective_stretching_alignment_squared)
+            << ", \"projective_stretching_reconstruction_error\": "
+            << static_cast<double>(
+                   winner.projective_stretching_reconstruction_error)
             << ", \"squared_lqc3_target_ratio\": "
             << static_cast<double>(value.squared_lqc3_target_ratio)
             << ", \"signed_constant_ratio\": "
@@ -285,7 +296,7 @@ void LocalQuarticClosureReporter::print_summary(
         << "absorption_theta="
         << static_cast<double>(report.absorption_theta) << '\n'
         << "cutoff,initial_objective,optimized_objective,gain,"
-           "closure_C,lqc3_C,signed_lqc3_C,envelope_C,absorption_C,projective_coherence,projective_amplification,signed_S,warm_lift_objective,projection_residual,"
+           "closure_C,lqc3_C,signed_lqc3_C,envelope_C,absorption_C,projective_coherence,projective_amplification,projective_stretching,projective_alignment_squared,signed_S,warm_lift_objective,projection_residual,"
            "gradient_norm,time_refinement_error,accepted,evaluations,seed\n";
     for (const auto& row : report.rows) {
         out << row.cutoff << ','
@@ -304,6 +315,10 @@ void LocalQuarticClosureReporter::print_summary(
                    row.winner.projective_coherence_ratio) << ','
             << static_cast<double>(
                    row.winner.projective_coherence_amplification) << ','
+            << static_cast<double>(
+                   row.winner.projective_stretching_ratio) << ','
+            << static_cast<double>(
+                   row.winner.projective_stretching_alignment_squared) << ','
             << static_cast<double>(row.winner.value.signed_stretching) << ','
             << static_cast<double>(row.warm_lift_objective) << ','
             << static_cast<double>(row.projection_residual) << ','

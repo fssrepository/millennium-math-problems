@@ -31,6 +31,7 @@ add_executable(navier_stokes_lab
     src/triads/orthogonal_triad_geometry.cpp
     src/triads/projective_triad_geometry.cpp
     src/triads/projective_advection_decomposition.cpp
+    src/triads/projective_fan_geometry.cpp
     src/triads/triad_commutator.cpp
     src/triads/triad_ledger.cpp
     src/triads/triad_partition.cpp
@@ -56,6 +57,7 @@ add_executable(navier_stokes_lab
     src/proof/proof_scaling.cpp
     src/proof/projective_quartet_closure.cpp
     src/proof/projective_square_function_closure.cpp
+    src/proof/projective_fan_obstruction.cpp
     src/proof/remainder_quartet_closure.cpp
     src/proof/transition_block_scaling.cpp
 
@@ -74,6 +76,7 @@ add_executable(navier_stokes_lab
     src/local_sld/core/local_sld_remainder_envelope_objective.cpp
     src/local_sld/core/local_sld_shape_power_objective.cpp
     src/local_sld/core/local_sld_projective_coherence_objective.cpp
+    src/local_sld/core/local_sld_projective_stretching_objective.cpp
     src/local_sld/core/local_sld_two_scale_state.cpp
 
     src/local_sld/analysis/local_critical_derivative_ledger.cpp
@@ -95,6 +98,7 @@ add_executable(navier_stokes_lab
     src/local_sld/analysis/local_sld_projective_shape_envelope.cpp
     src/local_sld/analysis/local_sld_projective_coherence_ledger.cpp
     src/local_sld/analysis/local_sld_projective_fan_scan.cpp
+    src/local_sld/analysis/local_sld_projective_quartic_cross_ledger.cpp
     src/local_sld/analysis/local_sld_remainder_double_square.cpp
     src/local_sld/analysis/local_sld_remainder_projective_ledger.cpp
     src/local_sld/analysis/local_sld_remainder_signature_ledger.cpp

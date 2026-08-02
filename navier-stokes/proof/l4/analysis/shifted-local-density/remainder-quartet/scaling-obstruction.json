@@ -15,6 +15,8 @@
   "every_fixed_signature_closes": true,
   "every_fixed_projective_ray_closes": true,
   "uniform_projective_shape_sum_proved": false,
+  "standalone_projective_synthesis_bound_rejected": true,
+  "coherent_fan_zero_power_one_proved": true,
   "remainder_requires_collective_cancellation": true,
   "one_sided_double_square_reduction": true,
   "double_square_identity": "K+G=-||A^(1/2)(B-cAu-(1/2)A^(-1)D)||^2+S^2/(2Z)+c^2H3+c<Au,D>+(1/4)||A^(-1/2)D||^2",

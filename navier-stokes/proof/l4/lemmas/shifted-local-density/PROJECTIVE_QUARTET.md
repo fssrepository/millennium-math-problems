@@ -66,7 +66,7 @@ and `T` sequence bounds then close the normalization terms as well. Hence
 
 with a constant independent of the Galerkin cutoff.
 
-## Exact remaining gap
+## Square function and synthesis obstruction
 
 The remainder contains all primitive shapes simultaneously, and the quadratic
 quartet expansion also contains cross-ray terms. Applying PQ-5 shape by shape
@@ -83,13 +83,42 @@ sum_sigma ||B_sigma(u,u)||_2^2 <= C K^3 E^2.        (PQ-6)
 
 Thus the projective square function itself retains the required `K^(3/2)`
 bilinear scale without a shape-count loss. Its formal diagonal quartet power
-would be `K^5`, but PQ-6 alone does not control coherent synthesis
-`||sum_sigma B_sigma||` or the cross-ray nested terms because different rays
-share output Fourier modes. The unresolved statement is an
-almost-orthogonality or signed cross-ray estimate compatible with
+would be `K^5`. A standalone coherent synthesis estimate, however, is not
+available: it is false with a cutoff-independent constant.
+
+For every sufficiently large integer `K`, set
 
 ```text
-|(K_rem+G_rem)S_full| <= C Z^2P^2.                  (PQ-7)
+r=(0,0,K),  q=(0,a,b),  p=(0,-a,K-b),
+a/K in [1/2,3/5],       b/K in [1/4,2/5].           (PQ-7)
+```
+
+Choose `u_q=e_x`, `u_p=i(0,-p_z,p_y)/|p|`, and impose conjugate symmetry at
+the negative modes. All three radii are local, `r` has the unique largest
+squared radius, and the primitive projective shape determines `(a,b)`.
+There are at least `K^2/160` distinct primitive rays. At the common target
+`r`, all their advection contributions point in the same positive `e_x`
+direction and have coefficients in `[K/2,K]`. Consequently
+
+```text
+||sum_sigma B_sigma(u,u)_r||_2^2
+-------------------------------- >= K^2/640.        (PQ-8)
+ sum_sigma ||B_sigma(u,u)_r||_2^2
+```
+
+This proves that no cutoff-independent bound can synthesize the projective
+square function by itself. The same construction also satisfies
+`<Au,B(u,u)>=0` exactly: `Au` is supported in the `yz` polarization, whereas
+the coherent target is in `e_x`. Hence its full stretching and its power-one
+product both vanish. The obstruction rejects only the stronger standalone
+synthesis route; it does not reject the remainder lemma.
+
+The unresolved statement must therefore couple coherent synthesis to the
+stretching direction tested by `Au`, or exploit an equivalent signed
+cross-ray cancellation compatible with
+
+```text
+|(K_rem+G_rem)S_full| <= C Z^2P^2.                  (PQ-9)
 ```
 
 The projective ledger groups exact signatures by their gcd. On the K7
@@ -108,6 +137,15 @@ not the missing sum theorem.
 
 ./build/navier_stokes_lab projective-square-function-certificate \
   --certificate proof/l4/analysis/shifted-local-density/projective-quartet/square-function.json
+
+./build/navier_stokes_lab projective-fan-certificate \
+  --max-cutoff 1024 \
+  --certificate proof/l4/analysis/shifted-local-density/projective-quartet/coherent-fan-obstruction-K1024.json
+
+./build/navier_stokes_lab local-sld-projective-fan-scan \
+  --min-cutoff 3 --max-cutoff 24 --threads 12 \
+  --certificate proof/l4/analysis/shifted-local-density/projective-quartet/coherent-fan-unique-rays-K3-K24.json \
+  --state-dir proof/l4/states/projective-coherent-fan/unique-rays-K3-K24
 ```
 
 Artifacts:
@@ -116,6 +154,9 @@ Artifacts:
 - [`../../analysis/shifted-local-density/projective-quartet/ray-3-3-8-K12.json`](../../analysis/shifted-local-density/projective-quartet/ray-3-3-8-K12.json)
 - [`../../analysis/shifted-local-density/projective-quartet/ray-1-3-4-K12.json`](../../analysis/shifted-local-density/projective-quartet/ray-1-3-4-K12.json)
 - [`../../analysis/shifted-local-density/projective-quartet/square-function.json`](../../analysis/shifted-local-density/projective-quartet/square-function.json)
+- [`../../analysis/shifted-local-density/projective-quartet/coherent-fan-obstruction-K1024.json`](../../analysis/shifted-local-density/projective-quartet/coherent-fan-obstruction-K1024.json)
+- [`../../analysis/shifted-local-density/projective-quartet/coherent-fan-unique-rays-K3-K24.json`](../../analysis/shifted-local-density/projective-quartet/coherent-fan-unique-rays-K3-K24.json)
+- [`../../adversary/shifted-local-density/projective-coherence/K1-K5.json`](../../adversary/shifted-local-density/projective-coherence/K1-K5.json)
 - [`../../analysis/shifted-local-density/remainder-quartet/K7-power-one-projective.json`](../../analysis/shifted-local-density/remainder-quartet/K7-power-one-projective.json)
 - [`../../analysis/shifted-local-density/remainder-quartet/K5-power-one-tail-projective.json`](../../analysis/shifted-local-density/remainder-quartet/K5-power-one-tail-projective.json)
 
