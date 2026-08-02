@@ -20,6 +20,11 @@ public:
         const SpectralState& left,
         const SpectralState& right,
         SpectralReal right_weight);
+
+    [[nodiscard]] static SpectralState affine_normalized(
+        const SpectralState& left,
+        const SpectralState& right,
+        SpectralReal parameter);
 };
 
 class SpectralStateBlendCli {

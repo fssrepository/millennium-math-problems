@@ -32,21 +32,11 @@ void validate_state(const SpectralState& state, const char* name) {
     }
 }
 
-}  // namespace
-
-SpectralState SpectralStateBlend::blend_on_energy_sphere(
+SpectralState normalized_linear_combination(
     const SpectralState& left,
+    SpectralReal left_weight,
     const SpectralState& right,
     SpectralReal right_weight) {
-    validate_state(left, "left");
-    validate_state(right, "right");
-    if (!(right_weight >= 0.0L) || !(right_weight <= 1.0L) ||
-        !std::isfinite(right_weight)) {
-        throw std::invalid_argument(
-            "state blend right weight must be finite and in [0,1]");
-    }
-    const SpectralReal left_weight = std::sqrt(
-        std::max(0.0L, 1.0L - right_weight * right_weight));
     std::map<WaveVector, ComplexVector> values;
     for (std::size_t index = 0; index < left.waves.size(); ++index) {
         add_scaled(
@@ -68,6 +58,39 @@ SpectralState SpectralStateBlend::blend_on_energy_sphere(
     }
     SpectralStateOps::normalize_energy(result);
     return result;
+}
+
+}  // namespace
+
+SpectralState SpectralStateBlend::blend_on_energy_sphere(
+    const SpectralState& left,
+    const SpectralState& right,
+    SpectralReal right_weight) {
+    validate_state(left, "left");
+    validate_state(right, "right");
+    if (!(right_weight >= 0.0L) || !(right_weight <= 1.0L) ||
+        !std::isfinite(right_weight)) {
+        throw std::invalid_argument(
+            "state blend right weight must be finite and in [0,1]");
+    }
+    const SpectralReal left_weight = std::sqrt(
+        std::max(0.0L, 1.0L - right_weight * right_weight));
+    return normalized_linear_combination(
+        left, left_weight, right, right_weight);
+}
+
+SpectralState SpectralStateBlend::affine_normalized(
+    const SpectralState& left,
+    const SpectralState& right,
+    SpectralReal parameter) {
+    validate_state(left, "left");
+    validate_state(right, "right");
+    if (!std::isfinite(parameter)) {
+        throw std::invalid_argument(
+            "state affine parameter must be finite");
+    }
+    return normalized_linear_combination(
+        left, 1.0L - parameter, right, parameter);
 }
 
 SpectralStateBlendOptions SpectralStateBlendCli::parse(

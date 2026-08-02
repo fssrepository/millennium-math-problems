@@ -15,6 +15,7 @@
 #include "local_sld_projective_height_outer_power_objective.hpp"
 #include "local_sld_projective_height_envelope_objective.hpp"
 #include "local_sld_projective_height_commutator_ratio_objective.hpp"
+#include "local_sld_triad_selection.hpp"
 #include "parallel_executor.hpp"
 #include "spectral_adjoint.hpp"
 #include "spectral_galerkin.hpp"
@@ -35,31 +36,7 @@ namespace lemma {
 namespace {
 
 TriadSelection closure_selection(const std::string& name) {
-    if (name == "local") {
-        return TriadPartition::local;
-    }
-    if (name == "doubling-family") {
-        return TriadSelection::local_equal_low_doubling();
-    }
-    if (name == "doubling-remainder") {
-        return TriadSelection::local_without_equal_low_doubling();
-    }
-    if (name == "remainder-without-123") {
-        return TriadSelection::
-            local_without_equal_low_doubling_and_signature(1, 2, 3);
-    }
-    if (name == "double-triple-family") {
-        return TriadSelection::local_equal_low_double_triple();
-    }
-    if (name == "double-triple-remainder") {
-        return TriadSelection::local_without_equal_low_double_triple();
-    }
-    if (name == "double-triple-remainder-without-123") {
-        return TriadSelection::
-            local_without_equal_low_double_triple_and_signature(1, 2, 3);
-    }
-    throw std::invalid_argument(
-        "unsupported closure selection");
+    return LocalSldTriadSelection::parse(name);
 }
 
 bool is_common_block_objective(const std::string& objective) {
@@ -530,13 +507,7 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
          options.objective != "mixed-ratio" &&
          options.objective != "terminal-sld-ratio" &&
          options.objective != "maximum-sld-ratio") ||
-        (options.selection != "local" &&
-         options.selection != "doubling-family" &&
-         options.selection != "doubling-remainder" &&
-         options.selection != "remainder-without-123" &&
-         options.selection != "double-triple-family" &&
-         options.selection != "double-triple-remainder" &&
-         options.selection != "double-triple-remainder-without-123") ||
+        !LocalSldTriadSelection::supports(options.selection) ||
         (options.initial_profile != "mixed" &&
          options.initial_profile != "decaying" &&
          options.initial_profile != "flat" &&

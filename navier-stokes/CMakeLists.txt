@@ -72,6 +72,7 @@ add_executable(navier_stokes_lab
     src/reporting/lemma_reporter.cpp
 
     src/local_sld/core/local_quartic_closure_objective.cpp
+    src/local_sld/core/local_sld_triad_selection.cpp
     src/local_sld/core/local_signature_density.cpp
     src/local_sld/core/local_signature_objective.cpp
     src/local_sld/core/local_sld_block_objective.cpp
@@ -127,6 +128,7 @@ add_executable(navier_stokes_lab
     src/local_sld/analysis/projective/local_sld_projective_core_height_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_open_power_replay_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_matrix.cpp
+    src/local_sld/analysis/projective/local_sld_projective_height_coercivity_path_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_tail_summary.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_transfer_scan.cpp
     src/local_sld/analysis/projective/local_sld_projective_height_schur_summary.cpp

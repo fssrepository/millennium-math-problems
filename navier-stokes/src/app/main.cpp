@@ -54,6 +54,7 @@
 #include "local_sld_projective_core_height_scan.hpp"
 #include "local_sld_projective_open_power_replay_scan.hpp"
 #include "local_sld_projective_height_matrix.hpp"
+#include "local_sld_projective_height_coercivity_path_scan.hpp"
 #include "local_sld_projective_height_transfer_scan.hpp"
 #include "local_sld_remainder_projective_ledger.hpp"
 #include "local_sld_remainder_signature_ledger.hpp"
@@ -943,6 +944,7 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab local-sld-projective-core-height-scan [options]\n"
         << "  navier_stokes_lab local-sld-projective-open-power-replay [options]\n"
         << "  navier_stokes_lab local-sld-projective-height-matrix [options]\n"
+        << "  navier_stokes_lab local-sld-projective-height-coercivity-path [options]\n"
         << "  navier_stokes_lab local-sld-projective-height-transfer [options]\n"
         << "  navier_stokes_lab local-sld-remainder-projective [options]\n"
         << "  navier_stokes_lab local-sld-remainder-signatures [options]\n"
@@ -1046,6 +1048,8 @@ void print_help(std::ostream& out) {
     lemma::LocalSldProjectiveOpenPowerReplayCli::print_help(out);
     out << '\n';
     lemma::LocalSldProjectiveHeightMatrixCli::print_help(out);
+    out << '\n';
+    lemma::LocalSldProjectiveHeightCoercivityPathScanCli::print_help(out);
     out << '\n';
     lemma::LocalSldProjectiveHeightTransferCli::print_help(out);
     out << '\n';
@@ -1295,6 +1299,15 @@ int main(int argc, char** argv) {
                 lemma::LocalSldProjectiveHeightMatrixCli::parse(
                     argc, argv, 2),
                 std::cout);
+        }
+        if (command ==
+            "local-sld-projective-height-coercivity-path") {
+            return lemma::
+                LocalSldProjectiveHeightCoercivityPathScanCli::run(
+                    lemma::
+                        LocalSldProjectiveHeightCoercivityPathScanCli::parse(
+                            argc, argv, 2),
+                    std::cout);
         }
         if (command == "local-sld-projective-height-transfer") {
             return lemma::LocalSldProjectiveHeightTransferCli::run(

@@ -1,6 +1,7 @@
 #include "local_quartic_closure_cli.hpp"
 
 #include "local_quartic_closure_reporter.hpp"
+#include "local_sld_triad_selection.hpp"
 
 #include <cmath>
 #include <ostream>
@@ -120,13 +121,7 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
          options.objective != "mixed-ratio" &&
          options.objective != "terminal-sld-ratio" &&
          options.objective != "maximum-sld-ratio") ||
-        (options.selection != "local" &&
-         options.selection != "doubling-family" &&
-         options.selection != "doubling-remainder" &&
-         options.selection != "remainder-without-123" &&
-         options.selection != "double-triple-family" &&
-         options.selection != "double-triple-remainder" &&
-         options.selection != "double-triple-remainder-without-123") ||
+        !LocalSldTriadSelection::supports(options.selection) ||
         (options.initial_profile != "mixed" &&
          options.initial_profile != "decaying" &&
          options.initial_profile != "flat" &&
