@@ -151,8 +151,11 @@ source file:
 - `LocalQuarticClosureAdversary`, its CLI, and its reporter run 12-worker
   projected L-BFGS cutoff continuations and save English JSON plus replayable
   Fourier states without placing artifacts at an analysis/adversary root;
-- `LocalSldCyclicAnsatz` tests the symmetry-reduced cyclic-shear plus
-  quadratic-response family suggested by the optimized direct quotient;
+- `LocalSldCyclicBasis` owns the reusable cyclic axis-shear and quadratic
+  response basis, while `LocalSldCyclicAnsatz` optimizes its static mixture;
+- `LocalSldCyclicTrajectoryAnsatz` searches the frozen-data trajectory
+  maximum in that one-angle family, refines the time step, and uses the exact
+  adjoint to measure both the restricted and full projected gradients;
 - `LocalSldSignatureBlock` splits `K+G` exactly into a selected squared-length
   signature family, its local complement, and their independently evaluated
   mixed terms;
@@ -219,6 +222,12 @@ The current direct local-lemma search is reproducible with:
   --certificate proof/l4/analysis/shifted-local-density/cyclic-two-basis-ansatz.json \
   --state proof/l4/states/local-sld-ratio/cyclic-ansatz/K2.tsv
 
+./build/navier_stokes_lab local-sld-trajectory-ansatz \
+  --cutoff 2 --samples 256 --refinements 64 --threads 12 \
+  --trajectory-steps 500 --nu 0.1 --dt 0.001 --backend auto \
+  --certificate proof/l4/analysis/shifted-local-density/cyclic-trajectory-T050-K2.json \
+  --state proof/l4/states/local-sld-trajectory/cyclic-ansatz-T050-K2/K2.tsv
+
 ./build/navier_stokes_lab local-sld-block \
   --state proof/l4/states/local-sld-ratio/K8/K8.tsv \
   --doubling-family --threads 12 \
@@ -242,10 +251,16 @@ The current direct local-lemma search is reproducible with:
   --objective maximum-sld-ratio --selection local \
   --min-cutoff 3 --max-cutoff 3 --restarts 12 --workers 12 \
   --iterations 4 --trajectory-steps 500 --nu 0.1 --dt 0.001 \
+  --backend auto \
   --warm-state proof/l4/states/local-sld-trajectory/frozen-T020-K3/K3.tsv \
   --certificate proof/l4/adversary/shifted-local-density/frozen-maximum-sld-T050-K3.json \
   --state-dir proof/l4/states/local-sld-trajectory/maximum-T050-K3
 ```
+
+Trajectory searches accept `--backend direct`, `--backend fft`, or
+`--backend auto`. `direct` remains the reference oracle; `auto` switches the
+forward RK4 and its exact discrete VJP to the validated FFT path from K3 while
+the selected local closure objective retains exact triad sums.
 
 The first command maximizes the signed polynomial quotient itself. The
 `closure-ratio` objective remains available as a stronger sufficient screen,

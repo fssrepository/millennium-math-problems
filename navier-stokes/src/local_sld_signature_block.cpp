@@ -108,6 +108,7 @@ void write_certificate(
         << "{\n"
         << "  \"schema\": \"navier-stokes-local-sld-signature-block-v1\",\n"
         << "  \"state_path\": \"" << options.state_path << "\",\n"
+        << "  \"backend\": \"" << options.backend << "\",\n"
         << "  \"squared_length_signature\": ["
         << report.squared_lengths[0] << ", "
         << report.squared_lengths[1] << ", "
@@ -385,6 +386,8 @@ LocalSldSignatureBlockCliOptions LocalSldSignatureBlockCli::parse(
             options.viscosity = std::stold(next(index, name));
         } else if (name == "--dt") {
             options.time_step = std::stold(next(index, name));
+        } else if (name == "--backend") {
+            options.backend = next(index, name);
         } else {
             throw std::invalid_argument(
                 "unknown local-sld-block option: " + name);
@@ -393,7 +396,9 @@ LocalSldSignatureBlockCliOptions LocalSldSignatureBlockCli::parse(
     if (options.state_path.empty() || options.certificate_path.empty() ||
         options.threads < 1 || options.threads > 256 ||
         options.evolve_steps < 0 || !(options.viscosity > 0.0L) ||
-        !(options.time_step > 0.0L)) {
+        !(options.time_step > 0.0L) ||
+        (options.backend != "auto" && options.backend != "direct" &&
+         options.backend != "fft")) {
         throw std::invalid_argument(
             "local-sld-block requires --state, --certificate, and valid threads");
     }
@@ -405,10 +410,11 @@ void LocalSldSignatureBlockCli::print_help(std::ostream& out) {
         << "  --state PATH         input Fourier TSV\n"
         << "  --signature A,B,C    squared-length signature (default 1,1,2)\n"
         << "  --doubling-family    select every (m,m,2m) signature\n"
-        << "  --threads N          direct-kernel threads\n"
+        << "  --threads N          evolution/triad worker threads\n"
         << "  --evolve-steps N     evolve input and freeze normalization at input\n"
         << "  --nu X               viscosity for optional evolution\n"
         << "  --dt X               RK4 step for optional evolution\n"
+        << "  --backend NAME       direct oracle, fft, or auto (default auto)\n"
         << "  --certificate PATH   write English JSON decomposition\n";
 }
 
@@ -416,7 +422,7 @@ int LocalSldSignatureBlockCli::run(
     const LocalSldSignatureBlockCliOptions& options,
     std::ostream& out) {
     SpectralGalerkin galerkin;
-    galerkin.configure("direct", options.threads);
+    galerkin.configure(options.backend, options.threads);
     const SpectralDynamics dynamics(galerkin);
     SpectralState state = SpectralStateReader::read_tsv(
         options.state_path);

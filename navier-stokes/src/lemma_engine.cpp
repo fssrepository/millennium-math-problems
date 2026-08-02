@@ -31,6 +31,7 @@
 #include "local_quartic_shell_ledger.hpp"
 #include "local_quartic_shell_envelope.hpp"
 #include "local_sld_cyclic_ansatz.hpp"
+#include "local_sld_cyclic_trajectory_ansatz.hpp"
 #include "local_sld_block_objective.hpp"
 #include "local_sld_signature_block.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
@@ -1831,6 +1832,23 @@ bool self_test(std::ostream& out) {
         cyclic_ansatz.value.signed_local_sld_ratio > 7.7e-4L &&
         std::abs(cyclic_ansatz.basis_inner_product) < 1e-14L &&
         cyclic_ansatz.pure_axis_identity_error < 1e-14L;
+    LocalSldCyclicTrajectoryOptions cyclic_trajectory_options;
+    cyclic_trajectory_options.coarse_samples = 32;
+    cyclic_trajectory_options.refinement_iterations = 2;
+    cyclic_trajectory_options.trajectory_steps = 2;
+    cyclic_trajectory_options.threads = 2;
+    const LocalSldCyclicTrajectoryReport cyclic_trajectory_ansatz =
+        LocalSldCyclicTrajectoryAnsatz::optimize(
+            cyclic_trajectory_options);
+    const bool cyclic_trajectory_ansatz_ok =
+        cyclic_trajectory_ansatz.value.finite &&
+        cyclic_trajectory_ansatz.refined_value.finite &&
+        cyclic_trajectory_ansatz.value.steps >= 0 &&
+        cyclic_trajectory_ansatz.value.steps <= 2 &&
+        std::isfinite(cyclic_trajectory_ansatz.restricted_gradient) &&
+        std::isfinite(
+            cyclic_trajectory_ansatz.projected_full_gradient_norm) &&
+        cyclic_trajectory_ansatz.time_step_relative_error < 1e-4L;
     const LocalSldSignatureBlockReport signature_block =
         LocalSldSignatureBlock::analyze(
             active_dynamics, cyclic_ansatz.state, {1, 1, 2});
@@ -2282,6 +2300,16 @@ bool self_test(std::ostream& out) {
         << ", pure axis error="
         << static_cast<double>(cyclic_ansatz.pure_axis_identity_error)
         << ")\n"
+        << "local SLD cyclic trajectory ansatz test: "
+        << (cyclic_trajectory_ansatz_ok ? "PASS" : "FAIL")
+        << " (ratio="
+        << static_cast<double>(
+               cyclic_trajectory_ansatz.value.terminal_ratio)
+        << ", peak step=" << cyclic_trajectory_ansatz.value.steps
+        << ", time refinement="
+        << static_cast<double>(
+               cyclic_trajectory_ansatz.time_step_relative_error)
+        << ")\n"
         << "local SLD signature block test: "
         << (signature_block_ok ? "PASS" : "FAIL")
         << " (dominant="
@@ -2328,7 +2356,8 @@ bool self_test(std::ostream& out) {
            closure_gradient_search_ok &&
            signed_closure_gradient_search_ok &&
            local_sld_gradient_search_ok &&
-           cyclic_ansatz_ok && signature_block_ok &&
+           cyclic_ansatz_ok && cyclic_trajectory_ansatz_ok &&
+           signature_block_ok &&
            adversary_ok && dynamic_class_ok && q_derivative_ok && evolution_ok;
 }
 

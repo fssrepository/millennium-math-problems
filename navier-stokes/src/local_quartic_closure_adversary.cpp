@@ -133,7 +133,7 @@ LocalQuarticClosureAdversary::maximize(
     const LocalQuarticClosureAdversaryOptions& options,
     int restart, std::uint64_t seed, bool warm_continuation) {
     SpectralGalerkin galerkin;
-    galerkin.configure("direct", 1);
+    galerkin.configure(options.backend, 1);
     const SpectralDynamics dynamics(galerkin);
     const SpectralObjective spectral_objective(dynamics);
     const SpectralAdjoint adjoint(dynamics, spectral_objective);
@@ -243,6 +243,8 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
         options.line_search_steps < 1 ||
         !(options.initial_step > 0.0L) ||
         (options.method != "steepest" && options.method != "lbfgs") ||
+        (options.backend != "auto" && options.backend != "direct" &&
+         options.backend != "fft") ||
         (options.objective != "closure-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "sld-ratio" &&
@@ -273,6 +275,7 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
         ? options.trajectory_steps
         : 0;
     report.objective = options.objective;
+    report.backend = options.backend;
     report.viscosity = options.viscosity;
     report.time_step = options.time_step;
     report.sobolev_order = options.sobolev_order;
@@ -314,7 +317,7 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
         row.cutoff = cutoff;
         if (has_previous_winner) {
             SpectralGalerkin galerkin;
-            galerkin.configure("direct", 1);
+            galerkin.configure(options.backend, 1);
             const SpectralDynamics dynamics(galerkin);
             const LocalQuarticClosureObjectiveValue warm_value =
                 LocalQuarticClosureObjective(

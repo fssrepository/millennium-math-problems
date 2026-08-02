@@ -67,6 +67,7 @@ struct LocalSldSignatureBlockCliOptions {
     int evolve_steps = 0;
     SpectralReal viscosity = 0.1L;
     SpectralReal time_step = 0.001L;
+    std::string backend = "auto";
 };
 
 class LocalSldSignatureBlockCli {

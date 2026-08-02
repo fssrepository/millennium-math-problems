@@ -26,6 +26,7 @@ struct LocalQuarticClosureAdversaryOptions {
     SpectralReal sobolev_cap = 0.0L;
     std::uint64_t seed = 20260801;
     std::string method = "lbfgs";
+    std::string backend = "direct";
     std::string objective = "sld-ratio";
     std::string selection = "local";
     std::string certificate_path;
@@ -75,6 +76,7 @@ struct LocalQuarticClosureAdversaryReport {
     int iterations = 0;
     int trajectory_steps = 0;
     std::string objective;
+    std::string backend;
     SpectralReal viscosity = 0.0L;
     SpectralReal time_step = 0.0L;
     int sobolev_order = 0;

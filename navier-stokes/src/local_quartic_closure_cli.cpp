@@ -50,6 +50,8 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
             options.seed = std::stoull(next(index, name));
         } else if (name == "--method") {
             options.method = next(index, name);
+        } else if (name == "--backend") {
+            options.backend = next(index, name);
         } else if (name == "--objective") {
             options.objective = next(index, name);
         } else if (name == "--selection") {
@@ -73,6 +75,8 @@ LocalQuarticClosureAdversaryOptions LocalQuarticClosureCli::parse(
         options.lbfgs_history < 1 || options.lbfgs_history > 64 ||
         !(options.initial_step > 0.0L) ||
         !std::isfinite(options.initial_step) ||
+        (options.backend != "auto" && options.backend != "direct" &&
+         options.backend != "fft") ||
         (options.objective != "sld-ratio" &&
          options.objective != "closure-ratio" &&
          options.objective != "signed-closure-ratio" &&
@@ -114,6 +118,7 @@ void LocalQuarticClosureCli::print_help(std::ostream& out) {
         << "  --dt X               RK4 step for trajectory objectives\n"
         << "  --step X             initial Riemannian step\n"
         << "  --method NAME        lbfgs or steepest\n"
+        << "  --backend NAME       direct oracle, fft, or auto (default direct)\n"
         << "  --objective NAME     sld-ratio, terminal-sld-ratio, maximum-sld-ratio, closure-ratio, signed-closure-ratio, block-ratio, or mixed-ratio\n"
         << "  --selection NAME     local, doubling-family, or doubling-remainder\n"
         << "  --sobolev-order M    optional homogeneous Sobolev cap\n"

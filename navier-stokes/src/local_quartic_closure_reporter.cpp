@@ -61,9 +61,10 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
         << "  \"direct_sld_objective\": \"maximize 4 S^3 Z P (K+G) / (k0 (S^4 Z^2 P + B0 Z^3 P^4))\",\n"
         << "  \"implemented_static_scale\": \"Z^(7/4) P / E^(1/4)\",\n"
         << "  \"optimizer\": \"" << options.method << "\",\n"
+        << "  \"backend\": \"" << options.backend << "\",\n"
         << "  \"warm_state_path\": \"" << options.warm_state_path
         << "\",\n"
-        << "  \"gradient\": \"exact discrete reverse mode through local Galerkin triads\",\n"
+        << "  \"gradient\": \"exact discrete reverse mode; selected local objectives use direct triads and RK4 follows the requested backend\",\n"
         << "  \"workers\": " << report.workers << ",\n"
         << "  \"restarts_per_cutoff\": " << report.restarts << ",\n"
         << "  \"iterations_per_restart\": " << report.iterations << ",\n"
@@ -213,6 +214,7 @@ void LocalQuarticClosureReporter::write_artifacts(
                  << "cutoff=" << row.cutoff
                  << "; objective=" << options.objective
                  << "; selection=" << options.selection
+                 << "; backend=" << options.backend
                  << "; objective_value="
                  << static_cast<double>(row.winner.objective)
                  << "; constant_ratio="
@@ -230,6 +232,7 @@ void LocalQuarticClosureReporter::print_summary(
     std::ostream& out) {
     out << "local quartic closure exact-gradient adversary"
         << " objective=" << report.objective
+        << " backend=" << report.backend
         << " workers=" << report.workers
         << " restarts=" << report.restarts
         << " iterations=" << report.iterations << '\n'

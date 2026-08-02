@@ -46,7 +46,9 @@ add_executable(navier_stokes_lab
     src/local_quartic_reduced_ledger.cpp
     src/local_quartic_shell_ledger.cpp
     src/local_quartic_shell_envelope.cpp
+    src/local_sld_cyclic_basis.cpp
     src/local_sld_cyclic_ansatz.cpp
+    src/local_sld_cyclic_trajectory_ansatz.cpp
     src/local_sld_block_objective.cpp
     src/local_sld_signature_block.cpp
     src/local_sld_trajectory_adjoint.cpp

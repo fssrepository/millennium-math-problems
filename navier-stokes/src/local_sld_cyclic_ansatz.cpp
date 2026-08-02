@@ -1,5 +1,6 @@
 #include "local_sld_cyclic_ansatz.hpp"
 
+#include "local_sld_cyclic_basis.hpp"
 #include "spectral_galerkin.hpp"
 #include "state_analysis.hpp"
 
@@ -10,67 +11,11 @@
 #include <iomanip>
 #include <numbers>
 #include <ostream>
-#include <random>
 #include <stdexcept>
 #include <string>
 
 namespace lemma {
 namespace {
-
-SpectralReal pairing(const SpectralIncrement& left,
-                     const SpectralIncrement& right) {
-    SpectralReal result = 0.0L;
-    for (std::size_t mode = 0; mode < left.size(); ++mode) {
-        result += std::real(dot_hermitian(left[mode], right[mode]));
-    }
-    return result;
-}
-
-SpectralState cyclic_axis_state() {
-    std::mt19937_64 generator(1);
-    SpectralState state = SpectralStateFactory::random(2, generator);
-    for (ComplexVector& value : state.velocity) {
-        value = {};
-    }
-    auto set_pair = [&](WaveVector wave, std::size_t component) {
-        ComplexVector value{};
-        value[component] = 1.0L;
-        state.velocity[state.index.at(wave)] = value;
-        state.velocity[state.index.at(-wave)] = conjugate(value);
-    };
-    set_pair(WaveVector{1, 0, 0}, 2);
-    set_pair(WaveVector{0, 1, 0}, 0);
-    set_pair(WaveVector{0, 0, 1}, 1);
-    SpectralStateOps::normalize_energy(state);
-    return state;
-}
-
-SpectralState response_state(const SpectralDynamics& dynamics,
-                             const SpectralState& axis) {
-    SpectralState response = axis;
-    response.velocity = dynamics.advection_direct_partition(
-        axis, TriadPartition::local);
-    dynamics.enforce_constraints(response);
-    SpectralStateOps::normalize_energy(response);
-    return response;
-}
-
-SpectralState mix(const SpectralState& axis,
-                  const SpectralState& response,
-                  SpectralReal angle) {
-    SpectralState state = axis;
-    const SpectralReal left = std::cos(angle);
-    const SpectralReal right = std::sin(angle);
-    for (std::size_t mode = 0; mode < state.velocity.size(); ++mode) {
-        for (std::size_t component = 0; component < 3; ++component) {
-            state.velocity[mode][component] =
-                left * axis.velocity[mode][component] +
-                right * response.velocity[mode][component];
-        }
-    }
-    SpectralStateOps::normalize_energy(state);
-    return state;
-}
 
 SpectralReal tangent_gradient_norm(
     const LocalQuarticClosureObjective& objective,
@@ -78,14 +23,16 @@ SpectralReal tangent_gradient_norm(
     SpectralIncrement gradient =
         objective.signed_local_sld_ratio_gradient(state);
     const SpectralReal energy = SpectralStateOps::energy(state);
-    const SpectralReal radial = pairing(gradient, state.velocity) / energy;
+    const SpectralReal radial = LocalSldCyclicBasis::pairing(
+        gradient, state.velocity) / energy;
     for (std::size_t mode = 0; mode < gradient.size(); ++mode) {
         for (std::size_t component = 0; component < 3; ++component) {
             gradient[mode][component] -=
                 radial * state.velocity[mode][component];
         }
     }
-    return std::sqrt(std::max(0.0L, pairing(gradient, gradient)));
+    return std::sqrt(std::max(
+        0.0L, LocalSldCyclicBasis::pairing(gradient, gradient)));
 }
 
 void write_certificate(const LocalSldCyclicAnsatzReport& report,
@@ -178,8 +125,9 @@ LocalSldCyclicAnsatzReport LocalSldCyclicAnsatz::optimize(
     galerkin.configure("direct", 1);
     const SpectralDynamics dynamics(galerkin);
     const LocalQuarticClosureObjective objective(dynamics);
-    const SpectralState axis = cyclic_axis_state();
-    const SpectralState response = response_state(dynamics, axis);
+    const SpectralState axis = LocalSldCyclicBasis::axis_state();
+    const SpectralState response =
+        LocalSldCyclicBasis::response_state(dynamics, axis);
     const SpectralReal period =
         2.0L * std::numbers::pi_v<SpectralReal>;
     const SpectralReal spacing = period /
@@ -190,7 +138,8 @@ LocalSldCyclicAnsatzReport LocalSldCyclicAnsatz::optimize(
         const SpectralReal angle = spacing *
             static_cast<SpectralReal>(sample);
         const SpectralReal value = objective.evaluate(
-            mix(axis, response, angle)).signed_local_sld_ratio;
+            LocalSldCyclicBasis::mix(axis, response, angle))
+                .signed_local_sld_ratio;
         if (value > best_value) {
             best_value = value;
             best_angle = angle;
@@ -204,7 +153,8 @@ LocalSldCyclicAnsatzReport LocalSldCyclicAnsatz::optimize(
     SpectralReal right = lower + golden * (upper - lower);
     auto value_at = [&](SpectralReal angle) {
         return objective.evaluate(
-            mix(axis, response, angle)).signed_local_sld_ratio;
+            LocalSldCyclicBasis::mix(axis, response, angle))
+                .signed_local_sld_ratio;
     };
     SpectralReal left_value = value_at(left);
     SpectralReal right_value = value_at(right);
@@ -230,7 +180,7 @@ LocalSldCyclicAnsatzReport LocalSldCyclicAnsatz::optimize(
         std::cos(report.angle) * std::cos(report.angle);
     report.response_energy_fraction =
         std::sin(report.angle) * std::sin(report.angle);
-    report.basis_inner_product = pairing(
+    report.basis_inner_product = LocalSldCyclicBasis::pairing(
         axis.velocity, response.velocity);
     report.pure_axis_value = objective.evaluate(axis);
     report.pure_response_value = objective.evaluate(response);
@@ -243,7 +193,8 @@ LocalSldCyclicAnsatzReport LocalSldCyclicAnsatz::optimize(
             report.pure_axis_value.signed_two_entry_bracket + 1.0L / 3.0L),
         std::abs(
             report.pure_axis_value.signed_constant_ratio + 1.0L / 3.0L)});
-    report.state = mix(axis, response, report.angle);
+    report.state = LocalSldCyclicBasis::mix(
+        axis, response, report.angle);
     report.value = objective.evaluate(report.state);
     report.projected_gradient_norm = tangent_gradient_norm(
         objective, report.state);

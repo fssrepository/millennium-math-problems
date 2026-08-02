@@ -28,6 +28,7 @@
 #include "local_signature_trajectory.hpp"
 #include "local_quartic_closure_cli.hpp"
 #include "local_sld_cyclic_ansatz.hpp"
+#include "local_sld_cyclic_trajectory_ansatz.hpp"
 #include "local_sld_signature_block.hpp"
 #include "shifted_critical_density_cli.hpp"
 
@@ -886,6 +887,7 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab local-signature-trajectory [options]\n"
         << "  navier_stokes_lab local-closure-adversary [options]\n"
         << "  navier_stokes_lab local-sld-ansatz [options]\n"
+        << "  navier_stokes_lab local-sld-trajectory-ansatz [options]\n"
         << "  navier_stokes_lab local-sld-block [options]\n"
         << "  navier_stokes_lab shifted-density [options]\n"
         << "  navier_stokes_lab self-test\n\n"
@@ -932,6 +934,8 @@ void print_help(std::ostream& out) {
     lemma::LocalQuarticClosureCli::print_help(out);
     out << '\n';
     lemma::LocalSldCyclicAnsatzCli::print_help(out);
+    out << '\n';
+    lemma::LocalSldCyclicTrajectoryCli::print_help(out);
     out << '\n';
     lemma::LocalSldSignatureBlockCli::print_help(out);
     out << '\n';
@@ -1016,6 +1020,12 @@ int main(int argc, char** argv) {
         if (command == "local-sld-ansatz") {
             return lemma::LocalSldCyclicAnsatzCli::run(
                 lemma::LocalSldCyclicAnsatzCli::parse(argc, argv, 2),
+                std::cout);
+        }
+        if (command == "local-sld-trajectory-ansatz") {
+            return lemma::LocalSldCyclicTrajectoryCli::run(
+                lemma::LocalSldCyclicTrajectoryCli::parse(
+                    argc, argv, 2),
                 std::cout);
         }
         if (command == "local-sld-block") {
