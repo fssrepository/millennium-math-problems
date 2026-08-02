@@ -13,7 +13,9 @@ struct ProjectiveHeightEnvelopeMoment {
     std::size_t height_pair_count = 0;
     std::array<SpectralReal, 5> absolute_component_sums{};
     SpectralReal absolute_component_envelope = 0.0L;
+    SpectralReal outer_h1_sum = 0.0L;
     SpectralIncrement gradient;
+    SpectralIncrement outer_gradient;
 };
 
 // Exact value and a sign-chamber gradient of the five-component absolute

@@ -55,6 +55,7 @@
 #include "local_sld_projective_height_power_objective.hpp"
 #include "local_sld_projective_height_outer_power_objective.hpp"
 #include "local_sld_projective_height_envelope_objective.hpp"
+#include "local_sld_projective_height_commutator_ratio_objective.hpp"
 #include "local_sld_doubling_shell_ledger.hpp"
 #include "local_sld_doubling_scale_scan.hpp"
 #include "local_sld_projective_coherence_ledger.hpp"
@@ -1480,6 +1481,10 @@ bool self_test(std::ostream& out) {
             active_dynamics,
             TriadSelection::local_without_equal_low_doubling(),
             2, true);
+    const LocalSldProjectiveHeightCommutatorRatioObjective
+        projective_height_commutator_ratio_objective(
+            active_dynamics,
+            TriadSelection::local_without_equal_low_doubling(), 2);
     const LocalSldProjectiveCrossPowerObjective
         projective_cross_power_objective(
             active_dynamics,
@@ -1856,6 +1861,33 @@ bool self_test(std::ostream& out) {
                     projective_height_commutator_envelope_directional_adjoint),
                 std::abs(
                     projective_height_commutator_envelope_directional_finite_difference)));
+    const SpectralIncrement projective_height_commutator_ratio_gradient =
+        projective_height_commutator_ratio_objective.gradient(
+            partition_state);
+    const Real projective_height_commutator_ratio_directional_adjoint =
+        increment_inner_product(
+            projective_height_commutator_ratio_gradient,
+            partition_tangent);
+    const Real
+        projective_height_commutator_ratio_directional_finite_difference =
+            (projective_height_commutator_ratio_objective
+                 .evaluate(partition_plus_state)
+                 .squared_coercivity_ratio -
+             projective_height_commutator_ratio_objective
+                 .evaluate(partition_minus_state)
+                 .squared_coercivity_ratio) /
+            (2.0L * finite_difference_step);
+    const Real projective_height_commutator_ratio_gradient_error =
+        std::abs(
+            projective_height_commutator_ratio_directional_adjoint -
+            projective_height_commutator_ratio_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(
+                    projective_height_commutator_ratio_directional_adjoint),
+                std::abs(
+                    projective_height_commutator_ratio_directional_finite_difference)));
     const SpectralIncrement projective_cross_power_gradient =
         projective_cross_power_objective.gradient(partition_state);
     const Real projective_cross_power_directional_adjoint =
@@ -2307,6 +2339,7 @@ bool self_test(std::ostream& out) {
         projective_height_outer_power_gradient_error < 1e-9L &&
         projective_height_envelope_gradient_error < 1e-9L &&
         projective_height_commutator_envelope_gradient_error < 1e-9L &&
+        projective_height_commutator_ratio_gradient_error < 1e-9L &&
         projective_cross_power_gradient_error < 1e-9L &&
         projective_open_power_gradient_error < 1e-9L &&
         signed_closure_gradient_error < 1e-9L &&
@@ -3221,6 +3254,9 @@ bool self_test(std::ostream& out) {
         << ", projective height commutator-envelope gradient error="
         << static_cast<double>(
                projective_height_commutator_envelope_gradient_error)
+        << ", projective height commutator-ratio gradient error="
+        << static_cast<double>(
+               projective_height_commutator_ratio_gradient_error)
         << ", projective cross-power gradient error="
         << static_cast<double>(projective_cross_power_gradient_error)
         << ", projective open-power gradient error="

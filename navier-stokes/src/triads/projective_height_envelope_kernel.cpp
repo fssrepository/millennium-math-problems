@@ -129,6 +129,7 @@ ProjectiveHeightEnvelopeMoment ProjectiveHeightEnvelopeKernel::evaluate(
     if (partition.empty()) {
         if (compute_gradient) {
             result.gradient.resize(state.waves.size());
+            result.outer_gradient.resize(state.waves.size());
         }
         return result;
     }
@@ -147,6 +148,7 @@ ProjectiveHeightEnvelopeMoment ProjectiveHeightEnvelopeKernel::evaluate(
             state, groups, partition[index].group_indices,
             state.velocity, state.velocity, threads);
         shell.ab = laplacian_weight(state, shell.b);
+        result.outer_h1_sum += pairing(shell.b, shell.ab);
         shell.transported_au =
             ProjectiveAdvectionDecomposition::evaluate_bilinear_sum(
                 state, groups, partition[index].group_indices,
@@ -228,6 +230,7 @@ ProjectiveHeightEnvelopeMoment ProjectiveHeightEnvelopeKernel::evaluate(
     }
 
     result.gradient.resize(state.waves.size());
+    result.outer_gradient.resize(state.waves.size());
     SpectralIncrement bar_au(state.waves.size());
     std::vector<SpectralIncrement> bar_b(
         shell_count, SpectralIncrement(state.waves.size()));
@@ -358,6 +361,12 @@ ProjectiveHeightEnvelopeMoment ProjectiveHeightEnvelopeKernel::evaluate(
             ProjectiveAdvectionDecomposition::vjp(
                 state, *shells[shell].group, bar_b[shell], threads),
             1.0L);
+        add_scaled(
+            result.outer_gradient,
+            ProjectiveAdvectionDecomposition::vjp(
+                state, *shells[shell].group,
+                shells[shell].ab, threads),
+            2.0L);
     }
     add_scaled(
         result.gradient,

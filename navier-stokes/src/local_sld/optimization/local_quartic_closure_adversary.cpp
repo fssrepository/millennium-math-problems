@@ -14,6 +14,7 @@
 #include "local_sld_projective_height_power_objective.hpp"
 #include "local_sld_projective_height_outer_power_objective.hpp"
 #include "local_sld_projective_height_envelope_objective.hpp"
+#include "local_sld_projective_height_commutator_ratio_objective.hpp"
 #include "parallel_executor.hpp"
 #include "spectral_adjoint.hpp"
 #include "spectral_galerkin.hpp"
@@ -261,6 +262,9 @@ LocalQuarticClosureAdversary::maximize(
         : (options.objective ==
                "projective-height-commutator-envelope-ratio"
                ? "local-projective-height-commutator-envelope-ratio"
+        : (options.objective ==
+               "projective-height-commutator-coercivity-ratio"
+               ? "local-projective-height-commutator-coercivity-ratio"
         : (options.objective == "signed-closure-ratio"
                ? "local-signed-closure-ratio"
                : (options.objective == "block-ratio"
@@ -272,7 +276,7 @@ LocalQuarticClosureAdversary::maximize(
                                     : (options.objective ==
                                                "maximum-sld-ratio"
                                            ? "local-frozen-maximum-sld-ratio"
-                                           : "local-sld-ratio")))))))))))))))))));
+                                           : "local-sld-ratio"))))))))))))))))))));
     search.method = options.method;
     search.lbfgs_history = options.lbfgs_history;
     search.sobolev_order = options.sobolev_order;
@@ -294,6 +298,11 @@ LocalQuarticClosureAdversary::maximize(
         if (options.objective ==
             "projective-height-commutator-envelope-ratio") {
             result.projective_height_commutator_envelope_absolute =
+                std::sqrt(std::max(0.0L, optimized.objective));
+        }
+        if (options.objective ==
+            "projective-height-commutator-coercivity-ratio") {
+            result.projective_height_commutator_coercivity_ratio =
                 std::sqrt(std::max(0.0L, optimized.objective));
         }
         result.initial_objective = optimized.initial_objective;
@@ -414,6 +423,11 @@ LocalQuarticClosureAdversary::maximize(
             search.objective_threads, true)
             .evaluate(result.state)
             .absolute_component_power_one_envelope;
+    result.projective_height_commutator_coercivity_ratio =
+        LocalSldProjectiveHeightCommutatorRatioObjective(
+            dynamics, search.closure_selection,
+            search.objective_threads)
+            .evaluate(result.state).coercivity_ratio;
     result.projective_height_component_bracket_envelope =
         height_envelope_value.absolute_component_bracket_envelope;
     result.projective_height_pair_count =
@@ -508,6 +522,8 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
          options.objective != "projective-height-envelope-ratio" &&
          options.objective !=
              "projective-height-commutator-envelope-ratio" &&
+         options.objective !=
+             "projective-height-commutator-coercivity-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "sld-ratio" &&
          options.objective != "block-ratio" &&
@@ -602,16 +618,29 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                 (options.objective ==
                      "projective-height-envelope-ratio" ||
                  options.objective ==
-                     "projective-height-commutator-envelope-ratio")) {
-                row.warm_lift_objective =
-                    LocalSldProjectiveHeightEnvelopeObjective(
-                        dynamics,
-                        closure_selection(options.selection),
-                        options.workers,
-                        options.objective ==
-                            "projective-height-commutator-envelope-ratio")
-                        .evaluate(starts.front())
-                        .squared_component_power_one_envelope;
+                     "projective-height-commutator-envelope-ratio" ||
+                 options.objective ==
+                     "projective-height-commutator-coercivity-ratio")) {
+                if (options.objective ==
+                    "projective-height-commutator-coercivity-ratio") {
+                    row.warm_lift_objective =
+                        LocalSldProjectiveHeightCommutatorRatioObjective(
+                            dynamics,
+                            closure_selection(options.selection),
+                            options.workers)
+                            .evaluate(starts.front())
+                            .squared_coercivity_ratio;
+                } else {
+                    row.warm_lift_objective =
+                        LocalSldProjectiveHeightEnvelopeObjective(
+                            dynamics,
+                            closure_selection(options.selection),
+                            options.workers,
+                            options.objective ==
+                                "projective-height-commutator-envelope-ratio")
+                            .evaluate(starts.front())
+                            .squared_component_power_one_envelope;
+                }
             } else {
             const LocalQuarticClosureObjectiveValue warm_value =
                 LocalQuarticClosureObjective(
@@ -718,6 +747,16 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                         options.workers, true)
                         .evaluate(starts.front())
                         .squared_component_power_one_envelope;
+            }
+            if (options.objective ==
+                "projective-height-commutator-coercivity-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveHeightCommutatorRatioObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.workers)
+                        .evaluate(starts.front())
+                        .squared_coercivity_ratio;
             }
             }
         }
