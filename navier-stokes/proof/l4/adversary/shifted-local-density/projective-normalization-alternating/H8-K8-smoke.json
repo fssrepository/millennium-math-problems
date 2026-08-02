@@ -1,0 +1,23 @@
+{
+  "schema": "navier-stokes-local-sld-projective-normalization-alternating-adversary-v1",
+  "initial_state_path": "proof/l4/states/local-projective-open-palinstrophy-normalization/H8-K8-second-cycle-sixteen-step/K8.tsv",
+  "output_state_path": "proof/l4/states/local-projective-normalization-alternating/H8-K8-smoke/K8.tsv",
+  "triad_selection": "double-triple-remainder-without-123",
+  "cutoff": 8,
+  "core_maximum_height": 8,
+  "component": "core-stretching-tail-cross",
+  "threads": 12,
+  "cycles": 1,
+  "component_iterations": 1,
+  "open_iterations": 1,
+  "initial_open_power_one": 0.000393285330893104366,
+  "final_open_power_one": 0.000393285330893104366,
+  "improvement_factor": 1,
+  "phases": [
+    {"cycle": 1, "component_initial": 0.000172545587219137704, "component_final": 0.000172545587219137704, "open_initial": 0.000393285330893104366, "open_final": 0.000393285330893104366, "component_projected_gradient_norm": 2.88330145506626061e-07, "open_projected_gradient_norm": 1.24296593804732278e-06, "component_accepted_steps": 0, "open_accepted_steps": 0, "component_evaluations": 8, "open_evaluations": 8}
+  ],
+  "every_phase_finite": true,
+  "finite_alternating_search_is_not_a_proof": true,
+  "candidate_lemma_proved": false,
+  "interpretation": "alternating an exact component gradient with the exact open-sum gradient exposes maxima missed by a single monolithic L-BFGS trajectory"
+}

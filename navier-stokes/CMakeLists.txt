@@ -148,6 +148,7 @@ add_executable(navier_stokes_lab
     src/local_sld/optimization/cyclic/local_sld_cyclic_krylov_ansatz.cpp
     src/local_sld/optimization/cyclic/local_sld_cyclic_trajectory_ansatz.cpp
     src/local_sld/optimization/trajectory/local_sld_trajectory_adjoint.cpp
+    src/local_sld/optimization/projective/local_sld_projective_normalization_alternating_adversary.cpp
 
     src/local_sld/states/local_sld_projective_fan_state.cpp
     src/local_sld/states/local_sld_two_scale_state.cpp
@@ -188,6 +189,7 @@ target_include_directories(navier_stokes_lab PRIVATE
     src/local_sld/optimization/cyclic
     src/local_sld/optimization/signature
     src/local_sld/optimization/trajectory
+    src/local_sld/optimization/projective
     src/local_sld/states
     src/local_sld/cli
 )

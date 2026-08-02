@@ -56,6 +56,7 @@
 #include "local_sld_projective_height_matrix.hpp"
 #include "local_sld_projective_normalization_tail_scan.hpp"
 #include "local_sld_projective_normalization_tradeoff_scan.hpp"
+#include "local_sld_projective_normalization_alternating_adversary.hpp"
 #include "local_sld_projective_height_coercivity_path_scan.hpp"
 #include "local_sld_projective_height_coercivity_line_scan.hpp"
 #include "local_sld_projective_height_transfer_scan.hpp"
@@ -949,6 +950,7 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab local-sld-projective-height-matrix [options]\n"
         << "  navier_stokes_lab local-sld-projective-normalization-tail-scan [options]\n"
         << "  navier_stokes_lab local-sld-projective-normalization-tradeoff [options]\n"
+        << "  navier_stokes_lab local-sld-projective-normalization-alternating [options]\n"
         << "  navier_stokes_lab local-sld-projective-height-coercivity-path [options]\n"
         << "  navier_stokes_lab local-sld-projective-height-coercivity-line [options]\n"
         << "  navier_stokes_lab local-sld-projective-height-transfer [options]\n"
@@ -1323,6 +1325,15 @@ int main(int argc, char** argv) {
                 LocalSldProjectiveNormalizationTradeoffScanCli::run(
                     lemma::
                         LocalSldProjectiveNormalizationTradeoffScanCli::parse(
+                            argc, argv, 2),
+                    std::cout);
+        }
+        if (command ==
+            "local-sld-projective-normalization-alternating") {
+            return lemma::
+                LocalSldProjectiveNormalizationAlternatingAdversaryCli::run(
+                    lemma::
+                        LocalSldProjectiveNormalizationAlternatingAdversaryCli::parse(
                             argc, argv, 2),
                     std::cout);
         }
