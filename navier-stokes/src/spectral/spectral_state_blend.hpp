@@ -12,6 +12,7 @@ struct SpectralStateBlendOptions {
     std::string right_state_path;
     std::string output_path;
     SpectralReal right_weight = 0.01L;
+    bool affine = false;
 };
 
 class SpectralStateBlend {

@@ -110,6 +110,10 @@ SpectralStateBlendOptions SpectralStateBlendCli::parse(
             options.right_state_path = next(index, name);
         } else if (name == "--right-weight") {
             options.right_weight = std::stold(next(index, name));
+            options.affine = false;
+        } else if (name == "--affine-parameter") {
+            options.right_weight = std::stold(next(index, name));
+            options.affine = true;
         } else if (name == "--output") {
             options.output_path = next(index, name);
         } else {
@@ -119,11 +123,12 @@ SpectralStateBlendOptions SpectralStateBlendCli::parse(
     }
     if (options.left_state_path.empty() ||
         options.right_state_path.empty() || options.output_path.empty() ||
-        !(options.right_weight >= 0.0L) ||
-        !(options.right_weight <= 1.0L) ||
-        !std::isfinite(options.right_weight)) {
+        !std::isfinite(options.right_weight) ||
+        (!options.affine &&
+         (!(options.right_weight >= 0.0L) ||
+          !(options.right_weight <= 1.0L)))) {
         throw std::invalid_argument(
-            "state-blend requires two states, output, and right weight in [0,1]");
+            "state-blend requires two states, output, and either a sphere weight in [0,1] or a finite affine parameter");
     }
     return options;
 }
@@ -133,6 +138,7 @@ void SpectralStateBlendCli::print_help(std::ostream& out) {
         << "  --left-state PATH    primary Fourier TSV\n"
         << "  --right-state PATH   perturbing Fourier TSV\n"
         << "  --right-weight X     perturbing amplitude in [0,1]\n"
+        << "  --affine-parameter X normalize((1-X) left + X right)\n"
         << "  --output PATH        write normalized union-layout TSV\n";
 }
 
@@ -143,25 +149,31 @@ int SpectralStateBlendCli::run(
         options.left_state_path);
     const SpectralState right = SpectralStateReader::read_tsv(
         options.right_state_path);
-    const SpectralState blended =
-        SpectralStateBlend::blend_on_energy_sphere(
-        left, right, options.right_weight);
+    const SpectralState blended = options.affine
+        ? SpectralStateBlend::affine_normalized(
+              left, right, options.right_weight)
+        : SpectralStateBlend::blend_on_energy_sphere(
+              left, right, options.right_weight);
     const std::filesystem::path path(options.output_path);
     if (!path.parent_path().empty()) {
         std::filesystem::create_directories(path.parent_path());
     }
     std::ostringstream metadata;
     metadata << std::setprecision(18)
-        << "energy-sphere spectral state blend; left="
+        << (options.affine
+                ? "normalized affine spectral state blend; left="
+                : "energy-sphere spectral state blend; left=")
         << options.left_state_path
         << "; right=" << options.right_state_path
-        << "; right_weight="
+        << (options.affine ? "; affine_parameter=" : "; right_weight=")
         << static_cast<double>(options.right_weight)
         << "; candidate_lemma_proved=false";
     SpectralStateWriter::write_tsv(
         options.output_path, blended, metadata.str());
     out << std::setprecision(12)
-        << "state blend right_weight="
+        << (options.affine
+                ? "state blend affine_parameter="
+                : "state blend right_weight=")
         << static_cast<double>(options.right_weight)
         << " modes=" << blended.waves.size()
         << " energy="
