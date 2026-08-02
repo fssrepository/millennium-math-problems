@@ -34,6 +34,49 @@ std::string local_component_objective(const std::string& component) {
         "unknown normalization alternating component: " + component);
 }
 
+std::string dominant_component(
+    const LocalSldProjectiveNormalizationObjectiveValue& value) {
+    const SpectralReal first =
+        value.core_stretching_tail_cross_power_one;
+    const SpectralReal second =
+        value.tail_stretching_core_cross_power_one;
+    const SpectralReal third =
+        value.tail_stretching_tail_cross_power_one;
+    if (first >= second && first >= third) {
+        return "core-stretching-tail-cross";
+    }
+    if (second >= third) {
+        return "tail-stretching-core-cross";
+    }
+    return "tail-stretching-tail-cross";
+}
+
+std::string checkpoint_path(
+    const std::string& output_state_path,
+    int cycle,
+    const std::string& phase) {
+    const std::filesystem::path output(output_state_path);
+    const std::string extension = output.extension().string();
+    const std::string filename = output.stem().string() +
+        "-cycle-" + std::to_string(cycle) + '-' + phase + extension;
+    return (output.parent_path() / filename).string();
+}
+
+void write_phase_state(
+    const std::string& path,
+    const SpectralState& state,
+    int cycle,
+    const std::string& phase,
+    SpectralReal objective) {
+    std::ostringstream metadata;
+    metadata << std::setprecision(18)
+        << "projective normalization alternating checkpoint; cycle="
+        << cycle << "; phase=" << phase
+        << "; objective=" << static_cast<double>(objective)
+        << "; candidate_lemma_proved=false";
+    SpectralStateWriter::write_tsv(path, state, metadata.str());
+}
+
 void write_json(
     const LocalSldProjectiveNormalizationAlternatingReport& report,
     const LocalSldProjectiveNormalizationAlternatingOptions& options,
@@ -67,6 +110,7 @@ void write_json(
     for (std::size_t index = 0; index < report.phases.size(); ++index) {
         const auto& phase = report.phases[index];
         output << "    {\"cycle\": " << phase.cycle
+            << ", \"component\": \"" << phase.component << "\""
             << ", \"component_initial\": "
             << static_cast<double>(phase.component_initial)
             << ", \"component_final\": "
@@ -87,7 +131,11 @@ void write_json(
             << ", \"component_evaluations\": "
             << phase.component_evaluations
             << ", \"open_evaluations\": "
-            << phase.open_evaluations << '}'
+            << phase.open_evaluations
+            << ", \"component_state_path\": \""
+            << phase.component_state_path
+            << "\", \"open_state_path\": \""
+            << phase.open_state_path << "\"}"
             << (index + 1 == report.phases.size() ? "\n" : ",\n");
     }
     output << "  ],\n"
@@ -166,6 +214,7 @@ LocalSldProjectiveNormalizationAlternatingAdversaryCli::parse(
         }
     }
     const bool valid_component =
+        options.component == "dominant" ||
         options.component == "core-stretching-tail-cross" ||
         options.component == "tail-stretching-core-cross" ||
         options.component == "tail-stretching-tail-cross";
@@ -195,7 +244,7 @@ void LocalSldProjectiveNormalizationAlternatingAdversaryCli::print_help(
         << "  --output-state PATH          final Fourier TSV\n"
         << "  --certificate PATH           write English JSON trace\n"
         << "  --selection NAME             local SLD triad selection\n"
-        << "  --component NAME             core-stretching-tail-cross, tail-stretching-core-cross, or tail-stretching-tail-cross\n"
+        << "  --component NAME             dominant, core-stretching-tail-cross, tail-stretching-core-cross, or tail-stretching-tail-cross\n"
         << "  --projective-core-height H   fixed primitive-height core\n"
         << "  --cycles N                   alternating phase pairs\n"
         << "  --component-iterations N     L-BFGS component steps per cycle\n"
@@ -231,15 +280,24 @@ int LocalSldProjectiveNormalizationAlternatingAdversaryCli::run(
     report.initial_open_power_one = open_objective.evaluate(state)
         .palinstrophy_normalization_power_one;
     report.every_phase_finite = true;
-    const std::string component_objective =
-        local_component_objective(options.component);
     for (int cycle = 0; cycle < options.cycles; ++cycle) {
+        const std::string cycle_component = options.component == "dominant"
+            ? dominant_component(open_objective.evaluate(state))
+            : options.component;
+        const std::string component_objective =
+            local_component_objective(cycle_component);
         const GradientSearchResult component = adversary.maximize_q(
             state,
             search_options(
                 options, selection, component_objective,
                 options.component_iterations));
         state = component.state;
+        const int cycle_number = cycle + 1;
+        const std::string component_state_path = checkpoint_path(
+            options.output_state_path, cycle_number, "component");
+        write_phase_state(
+            component_state_path, state, cycle_number, "component",
+            std::sqrt(std::max(0.0L, component.objective)));
         const GradientSearchResult open = adversary.maximize_q(
             state,
             search_options(
@@ -247,8 +305,14 @@ int LocalSldProjectiveNormalizationAlternatingAdversaryCli::run(
                 "local-projective-open-palinstrophy-normalization-ratio",
                 options.open_iterations));
         state = open.state;
+        const std::string open_state_path = checkpoint_path(
+            options.output_state_path, cycle_number, "open");
+        write_phase_state(
+            open_state_path, state, cycle_number, "open",
+            std::sqrt(std::max(0.0L, open.objective)));
         LocalSldProjectiveNormalizationAlternatingPhase phase;
-        phase.cycle = cycle + 1;
+        phase.cycle = cycle_number;
+        phase.component = cycle_component;
         phase.component_initial = std::sqrt(std::max(
             0.0L, component.initial_objective));
         phase.component_final = std::sqrt(std::max(
@@ -265,6 +329,8 @@ int LocalSldProjectiveNormalizationAlternatingAdversaryCli::run(
         phase.open_accepted_steps = open.accepted_steps;
         phase.component_evaluations = component.trajectory_evaluations;
         phase.open_evaluations = open.trajectory_evaluations;
+        phase.component_state_path = component_state_path;
+        phase.open_state_path = open_state_path;
         report.every_phase_finite = report.every_phase_finite &&
             std::isfinite(phase.component_final) &&
             std::isfinite(phase.open_final);

@@ -10,6 +10,7 @@ namespace lemma {
 
 struct LocalSldProjectiveNormalizationAlternatingPhase {
     int cycle = 0;
+    std::string component;
     SpectralReal component_initial = 0.0L;
     SpectralReal component_final = 0.0L;
     SpectralReal open_initial = 0.0L;
@@ -20,6 +21,8 @@ struct LocalSldProjectiveNormalizationAlternatingPhase {
     int open_accepted_steps = 0;
     int component_evaluations = 0;
     int open_evaluations = 0;
+    std::string component_state_path;
+    std::string open_state_path;
 };
 
 struct LocalSldProjectiveNormalizationAlternatingReport {
@@ -41,7 +44,7 @@ struct LocalSldProjectiveNormalizationAlternatingOptions {
     std::string output_state_path;
     std::string certificate_path;
     std::string selection = "double-triple-remainder-without-123";
-    std::string component = "core-stretching-tail-cross";
+    std::string component = "dominant";
     SpectralInteger core_maximum_height = 8;
     int cycles = 2;
     int component_iterations = 12;
