@@ -39,7 +39,7 @@ RELEASE_DATE = "AUG 2026"
 W, H = 1920, 1080
 
 OVERVIEW_STEM = f"Millennium_Math_Problems_Project_Overview_v{VERSION}_{LANGUAGE}"
-NAVIER_STEM = f"Navier_Stokes_Plain_Language_Brief_v{VERSION}_{LANGUAGE}"
+NAVIER_STEM = f"Navier_Stokes_Brief_v{VERSION}_{LANGUAGE}"
 
 FONT_REG = "/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf"
 FONT_MED = "/usr/share/fonts/truetype/ubuntu/Ubuntu-M.ttf"
