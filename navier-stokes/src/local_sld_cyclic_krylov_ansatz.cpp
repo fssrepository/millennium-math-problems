@@ -159,6 +159,12 @@ void write_certificate(
         << static_cast<double>(report.energy_fractions[2]) << "],\n"
         << "  \"maximum_gram_error\": "
         << static_cast<double>(report.maximum_gram_error) << ",\n"
+        << "  \"warm_state_path\": \""
+        << options.warm_state_path << "\",\n"
+        << "  \"warm_projection_energy\": "
+        << static_cast<double>(report.warm_projection_energy) << ",\n"
+        << "  \"warm_projection_residual\": "
+        << static_cast<double>(report.warm_projection_residual) << ",\n"
         << "  \"maximum_sld_ratio\": "
         << static_cast<double>(report.value.terminal_ratio) << ",\n"
         << "  \"objective_step\": " << report.value.steps << ",\n"
@@ -197,35 +203,60 @@ LocalSldCyclicKrylovReport LocalSldCyclicKrylovAnsatz::optimize(
         sampler_dynamics, basis[0]);
     basis[2] = LocalSldCyclicBasis::cubic_response_state(
         sampler_dynamics, basis[0], basis[1]);
-    const LocalSldTrajectoryAdjoint sampler_trajectory(
-        sampler_dynamics);
-    const SpectralReal spacing =
-        2.0L * std::numbers::pi_v<SpectralReal> /
-        static_cast<SpectralReal>(options.warm_angle_samples);
-    std::vector<SpectralReal> warm_values(
-        static_cast<std::size_t>(options.warm_angle_samples));
+    Coefficients coefficients{};
+    SpectralReal warm_projection_energy = 0.0L;
+    SpectralReal warm_projection_residual = 0.0L;
+    int evaluations = 0;
+    if (!options.warm_state_path.empty()) {
+        const SpectralState warm = SpectralStateReader::read_tsv(
+            options.warm_state_path);
+        if (warm.waves != basis[0].waves) {
+            throw std::invalid_argument(
+                "cyclic Krylov warm-state layout does not match cutoff");
+        }
+        for (std::size_t index = 0; index < basis.size(); ++index) {
+            coefficients[index] = LocalSldCyclicBasis::pairing(
+                warm.velocity, basis[index].velocity);
+            warm_projection_energy +=
+                coefficients[index] * coefficients[index];
+        }
+        warm_projection_energy /= SpectralStateOps::energy(warm);
+        warm_projection_residual = std::sqrt(std::max(
+            0.0L, 1.0L - warm_projection_energy));
+        normalize(coefficients);
+    } else {
+        const LocalSldTrajectoryAdjoint sampler_trajectory(
+            sampler_dynamics);
+        const SpectralReal spacing =
+            2.0L * std::numbers::pi_v<SpectralReal> /
+            static_cast<SpectralReal>(options.warm_angle_samples);
+        std::vector<SpectralReal> warm_values(
+            static_cast<std::size_t>(options.warm_angle_samples));
 #ifdef NS_HAVE_OPENMP
 #pragma omp parallel for schedule(static) num_threads(options.threads)
 #endif
-    for (int sample = 0; sample < options.warm_angle_samples; ++sample) {
-        const SpectralReal angle = spacing *
-            static_cast<SpectralReal>(sample);
-        Coefficients trial{
-            std::cos(angle), std::sin(angle), 0.0L};
-        warm_values[static_cast<std::size_t>(sample)] =
-            sampler_trajectory.maximum_value(
-                state_from_coefficients(basis, trial),
-                options.viscosity, options.time_step,
-                options.trajectory_steps).terminal_ratio;
+        for (int sample = 0;
+             sample < options.warm_angle_samples; ++sample) {
+            const SpectralReal angle = spacing *
+                static_cast<SpectralReal>(sample);
+            Coefficients trial{
+                std::cos(angle), std::sin(angle), 0.0L};
+            warm_values[static_cast<std::size_t>(sample)] =
+                sampler_trajectory.maximum_value(
+                    state_from_coefficients(basis, trial),
+                    options.viscosity, options.time_step,
+                    options.trajectory_steps).terminal_ratio;
+        }
+        const std::size_t best_sample = static_cast<std::size_t>(
+            std::distance(warm_values.begin(),
+                          std::max_element(
+                              warm_values.begin(), warm_values.end())));
+        const SpectralReal warm_angle = spacing *
+            static_cast<SpectralReal>(best_sample);
+        coefficients = {
+            std::cos(warm_angle), std::sin(warm_angle), 0.0L};
+        evaluations = options.warm_angle_samples;
     }
-    const std::size_t best_sample = static_cast<std::size_t>(
-        std::distance(warm_values.begin(),
-                      std::max_element(
-                          warm_values.begin(), warm_values.end())));
-    const SpectralReal warm_angle = spacing *
-        static_cast<SpectralReal>(best_sample);
-    Coefficients coefficients{
-        std::cos(warm_angle), std::sin(warm_angle), 0.0L};
 
     SpectralGalerkin optimizer_galerkin;
     optimizer_galerkin.configure(options.backend, options.threads);
@@ -237,7 +268,7 @@ LocalSldCyclicKrylovReport LocalSldCyclicKrylovAnsatz::optimize(
         options.trajectory_steps).terminal_ratio;
     SpectralReal step_size = options.initial_step;
     int accepted_steps = 0;
-    int evaluations = options.warm_angle_samples + 1;
+    ++evaluations;
     for (int iteration = 0; iteration < options.iterations; ++iteration) {
         const QTrajectoryGradient state_gradient =
             trajectory.maximum_gradient(
@@ -298,6 +329,8 @@ LocalSldCyclicKrylovReport LocalSldCyclicKrylovAnsatz::optimize(
             coefficients[index] * coefficients[index];
     }
     report.maximum_gram_error = maximum_gram_error(basis);
+    report.warm_projection_energy = warm_projection_energy;
+    report.warm_projection_residual = warm_projection_residual;
     report.restricted_gradient_norm = coefficient_norm(
         coefficient_gradient);
     report.projected_full_gradient_norm = full_projected_gradient_norm(
@@ -344,6 +377,8 @@ LocalSldCyclicKrylovOptions LocalSldCyclicKrylovCli::parse(
             options.time_step = std::stold(next(index, name));
         } else if (name == "--backend") {
             options.backend = next(index, name);
+        } else if (name == "--warm-state") {
+            options.warm_state_path = next(index, name);
         } else if (name == "--certificate") {
             options.certificate_path = next(index, name);
         } else if (name == "--state") {
@@ -373,6 +408,7 @@ void LocalSldCyclicKrylovCli::print_help(std::ostream& out) {
         << "  --nu X               viscosity (default 0.1)\n"
         << "  --dt X               RK4 step (default 0.001)\n"
         << "  --backend NAME       direct oracle, fft, or auto\n"
+        << "  --warm-state PATH    project a full-state winner into the basis\n"
         << "  --certificate PATH   write English JSON certificate\n"
         << "  --state PATH         write optimized Fourier state\n";
 }

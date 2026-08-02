@@ -49,7 +49,9 @@ add_executable(navier_stokes_lab
     src/local_sld_cyclic_basis.cpp
     src/local_sld_cyclic_ansatz.cpp
     src/local_sld_cyclic_krylov_ansatz.cpp
+    src/local_sld_cyclic_orbit_basis.cpp
     src/local_sld_cyclic_trajectory_ansatz.cpp
+    src/local_sld_response_hierarchy.cpp
     src/local_sld_block_objective.cpp
     src/local_sld_signature_block.cpp
     src/local_sld_trajectory_adjoint.cpp

@@ -19,6 +19,7 @@ struct LocalSldCyclicKrylovOptions {
     SpectralReal viscosity = 0.1L;
     SpectralReal time_step = 0.001L;
     std::string backend = "auto";
+    std::string warm_state_path;
     std::string certificate_path;
     std::string state_path;
 };
@@ -30,6 +31,8 @@ struct LocalSldCyclicKrylovReport {
     std::array<SpectralReal, 3> coefficients{};
     std::array<SpectralReal, 3> energy_fractions{};
     SpectralReal maximum_gram_error = 0.0L;
+    SpectralReal warm_projection_energy = 0.0L;
+    SpectralReal warm_projection_residual = 0.0L;
     SpectralReal restricted_gradient_norm = 0.0L;
     SpectralReal projected_full_gradient_norm = 0.0L;
     SpectralReal time_step_relative_error = 0.0L;

@@ -33,6 +33,7 @@
 #include "local_sld_cyclic_ansatz.hpp"
 #include "local_sld_cyclic_krylov_ansatz.hpp"
 #include "local_sld_cyclic_trajectory_ansatz.hpp"
+#include "local_sld_response_hierarchy.hpp"
 #include "local_sld_block_objective.hpp"
 #include "local_sld_signature_block.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
@@ -1868,6 +1869,14 @@ bool self_test(std::ostream& out) {
         std::isfinite(
             cyclic_krylov_ansatz.projected_full_gradient_norm) &&
         cyclic_krylov_ansatz.time_step_relative_error < 1e-4L;
+    const LocalSldResponseHierarchyReport response_hierarchy =
+        LocalSldResponseHierarchy::analyze(
+            active_dynamics, cyclic_ansatz.state, 4);
+    const bool response_hierarchy_ok =
+        response_hierarchy.constructed_depth == 4 &&
+        response_hierarchy.maximum_gram_error < 1e-14L &&
+        response_hierarchy.final_projection_energy > 0.999999L &&
+        response_hierarchy.final_projection_energy < 1.000001L;
     const LocalSldSignatureBlockReport signature_block =
         LocalSldSignatureBlock::analyze(
             active_dynamics, cyclic_ansatz.state, {1, 1, 2});
@@ -2339,6 +2348,15 @@ bool self_test(std::ostream& out) {
                cyclic_krylov_ansatz.maximum_gram_error)
         << ", accepted=" << cyclic_krylov_ansatz.accepted_steps
         << ")\n"
+        << "local SLD response hierarchy test: "
+        << (response_hierarchy_ok ? "PASS" : "FAIL")
+        << " (depth=" << response_hierarchy.constructed_depth
+        << ", projection="
+        << static_cast<double>(
+               response_hierarchy.final_projection_energy)
+        << ", Gram error="
+        << static_cast<double>(response_hierarchy.maximum_gram_error)
+        << ")\n"
         << "local SLD signature block test: "
         << (signature_block_ok ? "PASS" : "FAIL")
         << " (dominant="
@@ -2387,6 +2405,7 @@ bool self_test(std::ostream& out) {
            local_sld_gradient_search_ok &&
            cyclic_ansatz_ok && cyclic_trajectory_ansatz_ok &&
            cyclic_krylov_ansatz_ok && signature_block_ok &&
+           response_hierarchy_ok &&
            adversary_ok && dynamic_class_ok && q_derivative_ok && evolution_ok;
 }
 
