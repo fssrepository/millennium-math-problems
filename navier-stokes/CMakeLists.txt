@@ -99,6 +99,7 @@ add_executable(navier_stokes_lab
     src/local_sld/analysis/local_sld_projected_square.cpp
     src/local_sld/analysis/local_sld_projective_shape_envelope.cpp
     src/local_sld/analysis/local_sld_projective_coherence_ledger.cpp
+    src/local_sld/analysis/local_sld_projective_cross_attribution.cpp
     src/local_sld/analysis/local_sld_projective_fan_scan.cpp
     src/local_sld/analysis/local_sld_projective_quartic_cross_ledger.cpp
     src/local_sld/analysis/local_sld_remainder_double_square.cpp

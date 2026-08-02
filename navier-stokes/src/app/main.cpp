@@ -47,6 +47,7 @@
 #include "local_sld_projective_coherence_ledger.hpp"
 #include "local_sld_projective_fan_scan.hpp"
 #include "local_sld_projective_quartic_cross_ledger.hpp"
+#include "local_sld_projective_cross_attribution.hpp"
 #include "local_sld_remainder_projective_ledger.hpp"
 #include "local_sld_remainder_signature_ledger.hpp"
 #include "local_sld_remainder_tradeoff_ledger.hpp"
@@ -927,6 +928,7 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab local-sld-projective-coherence [options]\n"
         << "  navier_stokes_lab local-sld-projective-fan-scan [options]\n"
         << "  navier_stokes_lab local-sld-projective-quartic-cross [options]\n"
+        << "  navier_stokes_lab local-sld-projective-cross-attribution [options]\n"
         << "  navier_stokes_lab local-sld-remainder-projective [options]\n"
         << "  navier_stokes_lab local-sld-remainder-signatures [options]\n"
         << "  navier_stokes_lab local-sld-remainder-tradeoff [options]\n"
@@ -1014,6 +1016,8 @@ void print_help(std::ostream& out) {
     lemma::LocalSldProjectiveFanScan::print_help(out);
     out << '\n';
     lemma::LocalSldProjectiveQuarticCrossCli::print_help(out);
+    out << '\n';
+    lemma::LocalSldProjectiveCrossAttributionCli::print_help(out);
     out << '\n';
     lemma::LocalSldRemainderProjectiveCli::print_help(out);
     out << '\n';
@@ -1215,6 +1219,12 @@ int main(int argc, char** argv) {
         if (command == "local-sld-projective-quartic-cross") {
             return lemma::LocalSldProjectiveQuarticCrossCli::run(
                 lemma::LocalSldProjectiveQuarticCrossCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command == "local-sld-projective-cross-attribution") {
+            return lemma::LocalSldProjectiveCrossAttributionCli::run(
+                lemma::LocalSldProjectiveCrossAttributionCli::parse(
                     argc, argv, 2),
                 std::cout);
         }

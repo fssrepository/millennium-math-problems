@@ -53,6 +53,7 @@
 #include "local_sld_doubling_scale_scan.hpp"
 #include "local_sld_projective_coherence_ledger.hpp"
 #include "local_sld_projective_quartic_cross_ledger.hpp"
+#include "local_sld_projective_cross_attribution.hpp"
 #include "local_sld_remainder_double_square.hpp"
 #include "local_sld_projective_shape_envelope.hpp"
 #include "local_sld_remainder_projective_ledger.hpp"
@@ -2452,6 +2453,17 @@ bool self_test(std::ostream& out) {
                 .bracket_decomposition_error < 1e-13L &&
         remainder_projective_quartic_cross
                 .finite_ledger_is_not_a_proof;
+    const LocalSldProjectiveCrossAttributionReport
+        remainder_projective_cross_attribution =
+            LocalSldProjectiveCrossAttribution::analyze(
+                remainder_projective_ledger,
+                remainder_projective_quartic_cross);
+    const bool remainder_projective_cross_attribution_ok =
+        remainder_projective_cross_attribution.exact_reconstruction &&
+        remainder_projective_cross_attribution.projective_shape_count ==
+            remainder_projective_ledger.projective_shape_count &&
+        remainder_projective_cross_attribution.reconstruction_error <
+            1e-13L;
     const LocalSldRemainderDoubleSquareReport remainder_double_square =
         LocalSldRemainderDoubleSquare::analyze(
             active_dynamics, cyclic_ansatz.state);
@@ -3158,6 +3170,19 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(remainder_projective_quartic_cross
                                    .full_component_reconstruction_error)
         << ")\n"
+        << "local SLD projective cross attribution test: "
+        << (remainder_projective_cross_attribution_ok
+                ? "PASS" : "FAIL")
+        << " (effective="
+        << static_cast<double>(remainder_projective_cross_attribution
+                                   .effective_cross_attribution_shapes)
+        << ", dominant="
+        << static_cast<double>(remainder_projective_cross_attribution
+                                   .dominant_cross_attribution_fraction)
+        << ", error="
+        << static_cast<double>(remainder_projective_cross_attribution
+                                   .reconstruction_error)
+        << ")\n"
         << "local SLD remainder double-square test: "
         << (remainder_double_square_ok ? "PASS" : "FAIL")
         << " (signed LQC-3="
@@ -3231,6 +3256,7 @@ bool self_test(std::ostream& out) {
            remainder_projective_envelope_ok &&
            remainder_projective_coherence_ok &&
            remainder_projective_quartic_cross_ok &&
+           remainder_projective_cross_attribution_ok &&
            remainder_double_square_ok &&
            remainder_tradeoff_ok &&
            response_hierarchy_ok && response_family_ok &&

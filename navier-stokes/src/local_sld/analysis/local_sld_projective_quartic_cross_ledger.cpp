@@ -125,6 +125,16 @@ void write_json(
         << ",\n"
         << "    \"diagonal_palinstrophy_normalization\": "
         << static_cast<double>(report.diagonal_palinstrophy_normalization)
+        << ",\n"
+        << "    \"cross_outer_commutator\": "
+        << static_cast<double>(report.cross_outer_commutator) << ",\n"
+        << "    \"cross_advecting_nested\": "
+        << static_cast<double>(report.cross_advecting_nested) << ",\n"
+        << "    \"cross_enstrophy_normalization\": "
+        << static_cast<double>(report.cross_enstrophy_normalization)
+        << ",\n"
+        << "    \"cross_palinstrophy_normalization\": "
+        << static_cast<double>(report.cross_palinstrophy_normalization)
         << "\n  },\n"
         << "  \"power_one_scale\": "
         << static_cast<double>(report.power_one_scale) << ",\n"
@@ -134,6 +144,20 @@ void write_json(
         << static_cast<double>(report.diagonal_power_one) << ",\n"
         << "  \"cross_power_one\": "
         << static_cast<double>(report.cross_power_one) << ",\n"
+        << "  \"cross_component_power_one\": {\n"
+        << "    \"outer_commutator\": "
+        << static_cast<double>(
+               report.cross_outer_commutator_power_one) << ",\n"
+        << "    \"advecting_nested\": "
+        << static_cast<double>(
+               report.cross_advecting_nested_power_one) << ",\n"
+        << "    \"enstrophy_normalization\": "
+        << static_cast<double>(
+               report.cross_enstrophy_normalization_power_one) << ",\n"
+        << "    \"palinstrophy_normalization\": "
+        << static_cast<double>(
+               report.cross_palinstrophy_normalization_power_one)
+        << "\n  },\n"
         << "  \"absolute_diagonal_power_one_sum\": "
         << static_cast<double>(report.absolute_diagonal_power_one_sum)
         << ",\n"
@@ -281,11 +305,29 @@ LocalSldProjectiveQuarticCrossLedger::analyze(
             entry.power_one_self * entry.power_one_self;
     }
     report.cross_bracket = report.full_bracket - report.diagonal_bracket;
+    report.cross_outer_commutator = report.full_outer_commutator -
+        report.diagonal_outer_commutator;
+    report.cross_advecting_nested = report.full_advecting_nested -
+        report.diagonal_advecting_nested;
+    report.cross_enstrophy_normalization =
+        report.full_enstrophy_normalization -
+        report.diagonal_enstrophy_normalization;
+    report.cross_palinstrophy_normalization =
+        report.full_palinstrophy_normalization -
+        report.diagonal_palinstrophy_normalization;
     report.full_power_one = report.full_bracket * report.power_one_scale;
     report.diagonal_power_one =
         report.diagonal_bracket * report.power_one_scale;
     report.cross_power_one =
         report.cross_bracket * report.power_one_scale;
+    report.cross_outer_commutator_power_one =
+        report.cross_outer_commutator * report.power_one_scale;
+    report.cross_advecting_nested_power_one =
+        report.cross_advecting_nested * report.power_one_scale;
+    report.cross_enstrophy_normalization_power_one =
+        report.cross_enstrophy_normalization * report.power_one_scale;
+    report.cross_palinstrophy_normalization_power_one =
+        report.cross_palinstrophy_normalization * report.power_one_scale;
     if (diagonal_square_sum > 0.0L) {
         report.effective_diagonal_shapes =
             report.absolute_diagonal_power_one_sum *
