@@ -92,6 +92,7 @@ add_executable(navier_stokes_lab
     src/local_sld/core/projective/local_sld_projective_height_envelope_objective.cpp
     src/local_sld/core/projective/local_sld_projective_height_commutator_ratio_objective.cpp
     src/local_sld/core/projective/local_sld_projective_height_dynamic_ratio_objective.cpp
+    src/local_sld/core/projective/local_sld_projective_normalization_objective.cpp
 
     src/local_sld/analysis/closure/local_critical_derivative_ledger.cpp
     src/local_sld/analysis/closure/local_quartic_closure_target.cpp

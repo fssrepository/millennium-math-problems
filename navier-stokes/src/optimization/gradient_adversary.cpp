@@ -15,6 +15,7 @@
 #include "local_sld_projective_height_envelope_objective.hpp"
 #include "local_sld_projective_height_commutator_ratio_objective.hpp"
 #include "local_sld_projective_height_dynamic_ratio_objective.hpp"
+#include "local_sld_projective_normalization_objective.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
 
 #include <algorithm>
@@ -274,6 +275,13 @@ SpectralReal GradientAdversary::objective_value(
             dynamics_, options.closure_selection,
             options.objective_threads, true, true)
             .evaluate(initial).squared_component_power_one_envelope;
+    }
+    if (options.objective ==
+        "local-projective-palinstrophy-normalization-ratio") {
+        return LocalSldProjectiveNormalizationObjective(
+            dynamics_, options.closure_selection)
+            .evaluate(initial)
+            .squared_palinstrophy_normalization_power_one;
     }
     if (options.objective ==
         "local-projective-height-commutator-coercivity-ratio") {
@@ -597,6 +605,15 @@ GradientSearchResult GradientAdversary::maximize_q(
                 .squared_component_power_one_envelope;
             trajectory.objective_step = 0;
             trajectory.initial_gradient = envelope.gradient(result.state);
+        } else if (options.objective ==
+                   "local-projective-palinstrophy-normalization-ratio") {
+            const LocalSldProjectiveNormalizationObjective normalization(
+                dynamics_, options.closure_selection);
+            trajectory.objective_value = normalization.evaluate(result.state)
+                .squared_palinstrophy_normalization_power_one;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = normalization.gradient(
+                result.state);
         } else if (options.objective ==
                    "local-projective-height-commutator-coercivity-ratio") {
             const LocalSldProjectiveHeightCommutatorRatioObjective ratio(

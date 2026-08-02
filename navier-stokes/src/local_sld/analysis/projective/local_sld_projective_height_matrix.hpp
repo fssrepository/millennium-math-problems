@@ -90,6 +90,9 @@ struct LocalSldProjectiveHeightMatrixReport {
     SpectralReal global_dynamic_response_young_upper_bound_ratio = 0.0L;
     SpectralReal global_selected_stretching = 0.0L;
     SpectralReal global_selected_palinstrophy_cross = 0.0L;
+    SpectralReal global_stretching_h1_alignment_squared = 0.0L;
+    SpectralReal global_palinstrophy_cross_h2_alignment_squared = 0.0L;
+    SpectralReal global_normalization_alignment_product = 0.0L;
     SpectralReal global_enstrophy_normalization = 0.0L;
     SpectralReal reconstructed_global_enstrophy_normalization = 0.0L;
     SpectralReal global_enstrophy_normalization_reconstruction_error = 0.0L;
@@ -103,6 +106,7 @@ struct LocalSldProjectiveHeightMatrixReport {
     SpectralReal global_response_bracket_upper_bound_ratio = 0.0L;
     bool finite_global_dynamic_response_young_inequality_verified = false;
     bool finite_global_response_bracket_inequality_verified = false;
+    bool finite_global_normalization_alignment_bounds_verified = false;
     bool exact_height_matrix_decomposition = false;
     bool finite_height_matrix_is_not_a_proof = true;
     std::vector<LocalSldProjectiveHeightShellSummary> shells;

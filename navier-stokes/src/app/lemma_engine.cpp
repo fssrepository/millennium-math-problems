@@ -2820,6 +2820,8 @@ bool self_test(std::ostream& out) {
                 .global_response_bracket_reconstruction_error < 1e-13L &&
         remainder_projective_height_matrix
                 .finite_global_response_bracket_inequality_verified &&
+        remainder_projective_height_matrix
+                .finite_global_normalization_alignment_bounds_verified &&
         remainder_projective_height_matrix.effective_height_pairs >=
             1.0L &&
         remainder_projective_height_matrix

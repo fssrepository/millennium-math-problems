@@ -354,7 +354,13 @@ joint envelope shrinks. Pairing the nested term with the commutator gives the
 sharper dynamic majorant. Its refined K8 value is `0.00186662`, and the
 complete K12 value is `0.00187877` after one full gradient step. The remaining
 analytic step is a cutoff-uniform bound on this joint quantity, not on the
-isolated row constant.
+isolated row constant. The signed dynamical part now admits a sharper exact
+global reduction: summing its mixed-Gram height entries gives `<b,R>` with
+`b=sum_j b_j` and `R=sum_j R_j`. Hence an `H1`--`H-1` Young inequality bounds
+it without any Schur row. The engine also reconstructs the two remaining
+normalizations as `s^2/(2Z)` and `3st/(2P)`. The current RQ-11 gap is therefore
+a cutoff-uniform bound for this global response/norm expression, with the
+palinstrophy cross term currently giving the loosest elementary estimate.
 
 ## Reproduction
 

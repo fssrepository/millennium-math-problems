@@ -77,12 +77,13 @@ source file:
   their respective algorithms;
 - `src/proof/projective/` contains projective-family proof certificates,
   beginning with the complete fixed finite-family self+cross closure;
-- `src/local_sld/core/`, `analysis/`, `optimization/`, and `cli/` separate the
-  active shifted-local-density lemma work into numerical primitives,
-  diagnostic ledgers, searches, and artifact/report handling;
-- `src/local_sld/core/projective/` and `analysis/projective/` contain the
-  projective open-tail objective, fixed-core ledgers, and cutoff/height replay
-  scans without enlarging the older monolithic analysis files;
+- `src/local_sld/core/`, `analysis/`, `optimization/`, `states/`, and `cli/`
+  separate the active shifted-local-density lemma work into numerical
+  primitives, diagnostic ledgers, searches, state factories, and reporting;
+- every `local_sld` implementation file is inside a thematic subdirectory
+  such as `closure`, `cyclic`, `density`, `doubling`, `projective`,
+  `remainder`, `response`, `signature`, `trajectory`, or `triads`; the
+  `analysis`, `core`, and `optimization` roots contain no source files;
 - `src/reporting/` contains the remaining shared certificate writers.
 
 - `ScalingCertificate` stores exact rational scaling results, while
@@ -468,8 +469,12 @@ that joint majorant reaches `0.00186662`; its complete K12 value is
 the cutoff-uniform analytic bound remains open. An exact mixed-Gram identity
 for the dynamic entry supplies a nondegenerate response weight; it lowers the
 K8/K12 finite Schur rows to `0.672016`/`0.684904` and removes the observed
-outer-null singularity. Uniform control of the response-weighted product is
-the current analytic target. See
+outer-null singularity. More importantly, summing the mixed-Gram identity
+before taking shellwise absolute values gives the exact global pairing
+`<sum b_j,sum R_j>`. Young's inequality therefore removes the Schur estimate
+entirely from the signed dynamical block. The current analytic target is a
+cutoff-uniform bound for this global response norm and the two explicit
+normalization terms. See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_CROSS_QUARTET.md` and

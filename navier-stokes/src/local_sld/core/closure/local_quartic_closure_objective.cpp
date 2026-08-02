@@ -483,6 +483,23 @@ LocalQuarticClosureObjective::signed_stretching_gradient(
 }
 
 SpectralIncrement
+LocalQuarticClosureObjective::palinstrophy_cross_gradient(
+    const SpectralState& state) const {
+    const ClosureGraph graph = build_graph(dynamics_, state, selection_);
+    if (!(graph.enstrophy > 0.0L) ||
+        !(graph.palinstrophy > 0.0L)) {
+        return SpectralIncrement(state.waves.size());
+    }
+    SpectralIncrement result = laplacian_weight(state, graph.ab);
+    add_scaled(
+        result,
+        dynamics_.advection_vjp_direct_partition(
+            state, laplacian_weight(state, graph.au), selection_),
+        1.0L);
+    return result;
+}
+
+SpectralIncrement
 LocalQuarticClosureObjective::squared_constant_ratio_gradient(
     const SpectralState& state) const {
     const ClosureGraph graph = build_graph(dynamics_, state, selection_);

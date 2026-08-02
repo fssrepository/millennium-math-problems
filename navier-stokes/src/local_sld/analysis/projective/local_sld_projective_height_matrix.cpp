@@ -612,6 +612,24 @@ void write_json(
         << static_cast<double>(
                report.global_selected_palinstrophy_cross)
         << ",\n"
+        << "  \"global_stretching_h1_alignment_squared\": "
+        << static_cast<double>(
+               report.global_stretching_h1_alignment_squared)
+        << ",\n"
+        << "  \"global_palinstrophy_cross_h2_alignment_squared\": "
+        << static_cast<double>(
+               report
+                   .global_palinstrophy_cross_h2_alignment_squared)
+        << ",\n"
+        << "  \"global_normalization_alignment_product\": "
+        << static_cast<double>(
+               report.global_normalization_alignment_product)
+        << ",\n"
+        << "  \"finite_global_normalization_alignment_bounds_verified\": "
+        << (report
+                    .finite_global_normalization_alignment_bounds_verified
+                ? "true" : "false")
+        << ",\n"
         << "  \"global_enstrophy_normalization\": "
         << static_cast<double>(report.global_enstrophy_normalization)
         << ",\n"
@@ -895,6 +913,25 @@ LocalSldProjectiveHeightMatrix::analyze(
     }
     report.global_selected_stretching = pairing(au, global_b);
     report.global_selected_palinstrophy_cross = pairing(global_ab, au);
+    const SpectralReal stretching_alignment_denominator =
+        selected.enstrophy * report.global_aggregate_h1_norm2;
+    if (stretching_alignment_denominator > 0.0L) {
+        report.global_stretching_h1_alignment_squared =
+            report.global_selected_stretching *
+            report.global_selected_stretching /
+            stretching_alignment_denominator;
+    }
+    const SpectralReal cross_alignment_denominator =
+        selected.palinstrophy * report.global_aggregate_h2_norm2;
+    if (cross_alignment_denominator > 0.0L) {
+        report.global_palinstrophy_cross_h2_alignment_squared =
+            report.global_selected_palinstrophy_cross *
+            report.global_selected_palinstrophy_cross /
+            cross_alignment_denominator;
+    }
+    report.global_normalization_alignment_product = std::sqrt(
+        report.global_stretching_h1_alignment_squared *
+        report.global_palinstrophy_cross_h2_alignment_squared);
     report.global_enstrophy_normalization =
         report.global_selected_stretching *
         report.global_selected_stretching /
@@ -1085,6 +1122,11 @@ LocalSldProjectiveHeightMatrix::analyze(
         std::abs(report.selected_power_one) <=
         report.global_response_bracket_power_one_upper_bound *
             (1.0L + 1e-14L);
+    report.finite_global_normalization_alignment_bounds_verified =
+        report.global_stretching_h1_alignment_squared <=
+            1.0L + 1e-14L &&
+        report.global_palinstrophy_cross_h2_alignment_squared <=
+            1.0L + 1e-14L;
     report.exact_height_matrix_decomposition =
         report.bracket_reconstruction_error < 1e-13L &&
         report.maximum_dynamic_response_reconstruction_error < 1e-13L &&
@@ -1094,6 +1136,7 @@ LocalSldProjectiveHeightMatrix::analyze(
         report.global_palinstrophy_normalization_reconstruction_error <
             1e-13L &&
         report.global_response_bracket_reconstruction_error < 1e-13L &&
+        report.finite_global_normalization_alignment_bounds_verified &&
         report.finite_global_dynamic_response_young_inequality_verified &&
         report.finite_global_response_bracket_inequality_verified;
     return report;

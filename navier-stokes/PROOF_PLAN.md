@@ -973,7 +973,20 @@ The dynamic matrix has the exact response form `D_ij=<b_i,R_j>+<b_j,R_i>`
 outer-null degeneration: finite Schur rows are `0.672016` at K8 and
 `0.684904` at K12, versus `1.14162` on the deliberately outer-degenerate K8
 stress state. The remaining task is a cutoff-uniform analytic bound on this
-response-weighted Schur product.
+response-weighted Schur product if shellwise absolute summation is retained.
+For the signed quantity actually needed by RQ-11, the shell matrix now sums
+exactly before absolute values:
+
+```text
+sum_(i<=j) D_ij = <b,R>,  b=sum_j b_j, R=sum_j R_j.
+```
+
+Consequently `q|<b,R>|` is bounded directly by
+`q(||A^(1/2)b||^2+||A^(-1/2)R||^2)/2`; no Schur row or gap-decay hypothesis is
+needed for the dynamical block. The certificate also reconstructs both
+normalizations globally and verifies their elementary Cauchy bounds. The
+lowest open analytic target is now a cutoff-uniform bound for the resulting
+global response/norm expression, especially the palinstrophy cross term.
 
 The absolute closure ratio was subsequently reverse-differentiated and
 optimized directly. A K1 branch reaches `C_state=1/3`, but its stretching is

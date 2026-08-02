@@ -263,6 +263,17 @@ the outer-degenerate stress state it reduces `4.55082` to `1.14162`. This
 removes the observed normalization singularity but does not prove a uniform
 response-weighted Schur product.
 
+For the signed dynamical block required by RQ-11, a stronger simplification is
+available. Summing the exact response entries before taking absolute values
+gives `<sum_j b_j,sum_j R_j>`. Its absolute value is bounded directly by the
+global `H1`--`H-1` Young weight, so no cutoff-uniform Schur row or gap-decay
+theorem is needed for that signed block. The K8 reconstruction error is
+`1.37e-18`; its signed normalized dynamical value `0.00136712` is below the
+direct global bound `0.00298882`. The height-Schur data remain useful stress
+diagnostics and for stronger shellwise envelopes, but the active proof target
+has narrowed to bounding the global response weight and the two exact
+normalization terms.
+
 ## Reproduction
 
 ```bash
