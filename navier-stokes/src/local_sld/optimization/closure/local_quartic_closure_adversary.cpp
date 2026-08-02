@@ -18,6 +18,8 @@
 #include "local_sld_projective_height_commutator_ratio_objective.hpp"
 #include "local_sld_projective_height_dynamic_ratio_objective.hpp"
 #include "local_sld_projective_normalization_objective.hpp"
+#include "local_sld_projective_normalization_alignment_objective.hpp"
+#include "local_sld_projective_normalization_cauchy_objective.hpp"
 #include "local_sld_triad_selection.hpp"
 #include "parallel_executor.hpp"
 #include "spectral_adjoint.hpp"
@@ -328,6 +330,16 @@ LocalQuarticClosureAdversary::maximize(
         "projective-tail-stretching-alignment-ratio") {
         search.objective =
             "local-projective-tail-stretching-alignment-ratio";
+    }
+    if (options.objective ==
+        "projective-normalization-alignment-ratio") {
+        search.objective =
+            "local-projective-normalization-alignment-ratio";
+    }
+    if (options.objective ==
+        "projective-normalization-cauchy-ratio") {
+        search.objective =
+            "local-projective-normalization-cauchy-ratio";
     }
     if (is_normalization_component_objective(options.objective)) {
         search.objective = "local-" + options.objective;
@@ -647,6 +659,10 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
          options.objective !=
              "projective-tail-stretching-alignment-ratio" &&
          options.objective !=
+             "projective-normalization-alignment-ratio" &&
+         options.objective !=
+             "projective-normalization-cauchy-ratio" &&
+         options.objective !=
              "projective-selected-stretching-tail-cross-ratio" &&
          options.objective !=
              "projective-core-stretching-tail-cross-ratio" &&
@@ -752,7 +768,11 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                  is_projective_normalization_objective(
                      options.objective) ||
                  options.objective ==
-                     "projective-tail-stretching-alignment-ratio")) {
+                     "projective-tail-stretching-alignment-ratio" ||
+                 options.objective ==
+                     "projective-normalization-alignment-ratio" ||
+                 options.objective ==
+                     "projective-normalization-cauchy-ratio")) {
                 if (is_projective_normalization_objective(
                         options.objective)) {
                     row.warm_lift_objective =
@@ -778,6 +798,26 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                             options.workers)
                             .evaluate(starts.front())
                             .stretching_h1_alignment_squared;
+                } else if (options.objective ==
+                           "projective-normalization-alignment-ratio") {
+                    row.warm_lift_objective =
+                        LocalSldProjectiveNormalizationAlignmentObjective(
+                            dynamics,
+                            closure_selection(options.selection),
+                            options.projective_core_maximum_height,
+                            options.workers)
+                            .evaluate(starts.front())
+                            .normalization_alignment_product_squared;
+                } else if (options.objective ==
+                           "projective-normalization-cauchy-ratio") {
+                    row.warm_lift_objective =
+                        LocalSldProjectiveNormalizationCauchyObjective(
+                            dynamics,
+                            closure_selection(options.selection),
+                            options.projective_core_maximum_height,
+                            options.workers)
+                            .evaluate(starts.front())
+                            .squared_cauchy_bound_power_one;
                 } else if (options.objective ==
                     "projective-height-commutator-coercivity-ratio") {
                     row.warm_lift_objective =
@@ -991,6 +1031,28 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                         options.workers)
                         .evaluate(starts.front())
                         .stretching_h1_alignment_squared;
+            }
+            if (options.objective ==
+                "projective-normalization-alignment-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveNormalizationAlignmentObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.projective_core_maximum_height,
+                        options.workers)
+                        .evaluate(starts.front())
+                        .normalization_alignment_product_squared;
+            }
+            if (options.objective ==
+                "projective-normalization-cauchy-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveNormalizationCauchyObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.projective_core_maximum_height,
+                        options.workers)
+                        .evaluate(starts.front())
+                        .squared_cauchy_bound_power_one;
             }
             }
         }

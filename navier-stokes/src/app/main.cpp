@@ -56,7 +56,14 @@
 #include "local_sld_projective_height_matrix.hpp"
 #include "local_sld_projective_normalization_tail_scan.hpp"
 #include "local_sld_projective_normalization_tradeoff_scan.hpp"
+#include "local_sld_projective_normalization_cauchy_scan.hpp"
+#include "local_sld_projective_normalization_satellite_scan.hpp"
+#include "local_sld_projective_normalization_tail_schur_cli.hpp"
 #include "local_sld_projective_normalization_alternating_adversary.hpp"
+#include "local_sld_projective_height_gap_correlation_adversary.hpp"
+#include "local_sld_projective_normalization_schur_adversary.hpp"
+#include "local_sld_projective_height_gap_output_ledger.hpp"
+#include "local_sld_projective_height_gap_triad_attribution.hpp"
 #include "local_sld_projective_height_coercivity_path_scan.hpp"
 #include "local_sld_projective_height_coercivity_line_scan.hpp"
 #include "local_sld_projective_height_transfer_scan.hpp"
@@ -901,6 +908,33 @@ int self_test() {
                   << ", div=" << run.final.divergence_l2 << ")\n";
         okay = okay && pass;
     }
+    {
+        const lemma::SpectralState state =
+            lemma::SpectralStateFactory::analytic(2, 20260802, 1.0L);
+        const auto output =
+            lemma::LocalSldProjectiveHeightGapOutputLedger::analyze(
+                state, lemma::TriadPartition::local,
+                1, 2, 8, 2);
+        bool pass = output.finite && !output.top_modes.empty() &&
+            std::abs(output.correlation) <= 1.0L + 2e-12L;
+        if (pass) {
+            const auto attribution =
+                lemma::LocalSldProjectiveHeightGapTriadAttribution::analyze(
+                    state, lemma::TriadPartition::local,
+                    1, 2, output.top_modes.front().wave, 8, 2);
+            pass = attribution.finite &&
+                attribution.first.exact_output_reconstruction &&
+                attribution.second.exact_output_reconstruction;
+        }
+        std::cout << "height-gap ledger test: "
+                  << (pass ? "PASS" : "FAIL")
+                  << " (corr="
+                  << static_cast<double>(output.correlation)
+                  << ", gram-error="
+                  << static_cast<double>(output.gram_reconstruction_error)
+                  << ")\n";
+        okay = okay && pass;
+    }
     okay = lemma::self_test(std::cout) && okay;
     return okay ? 0 : 1;
 }
@@ -950,7 +984,14 @@ void print_help(std::ostream& out) {
         << "  navier_stokes_lab local-sld-projective-height-matrix [options]\n"
         << "  navier_stokes_lab local-sld-projective-normalization-tail-scan [options]\n"
         << "  navier_stokes_lab local-sld-projective-normalization-tradeoff [options]\n"
+        << "  navier_stokes_lab local-sld-projective-normalization-cauchy-scan [options]\n"
+        << "  navier_stokes_lab local-sld-projective-normalization-satellite [options]\n"
+        << "  navier_stokes_lab local-sld-projective-normalization-tail-schur [options]\n"
         << "  navier_stokes_lab local-sld-projective-normalization-alternating [options]\n"
+        << "  navier_stokes_lab local-sld-projective-height-gap-correlation [options]\n"
+        << "  navier_stokes_lab local-sld-projective-normalization-schur [options]\n"
+        << "  navier_stokes_lab local-sld-projective-height-gap-output [options]\n"
+        << "  navier_stokes_lab local-sld-projective-height-gap-triad-attribution [options]\n"
         << "  navier_stokes_lab local-sld-projective-height-coercivity-path [options]\n"
         << "  navier_stokes_lab local-sld-projective-height-coercivity-line [options]\n"
         << "  navier_stokes_lab local-sld-projective-height-transfer [options]\n"
@@ -1329,11 +1370,70 @@ int main(int argc, char** argv) {
                     std::cout);
         }
         if (command ==
+            "local-sld-projective-normalization-cauchy-scan") {
+            return lemma::
+                LocalSldProjectiveNormalizationCauchyScanCli::run(
+                    lemma::
+                        LocalSldProjectiveNormalizationCauchyScanCli::parse(
+                            argc, argv, 2),
+                    std::cout);
+        }
+        if (command ==
+            "local-sld-projective-normalization-satellite") {
+            return lemma::
+                LocalSldProjectiveNormalizationSatelliteCli::run(
+                    lemma::
+                        LocalSldProjectiveNormalizationSatelliteCli::parse(
+                            argc, argv, 2),
+                    std::cout);
+        }
+        if (command ==
+            "local-sld-projective-normalization-tail-schur") {
+            return lemma::
+                LocalSldProjectiveNormalizationTailSchurCli::run(
+                    lemma::
+                        LocalSldProjectiveNormalizationTailSchurCli::parse(
+                            argc, argv, 2),
+                    std::cout);
+        }
+        if (command ==
             "local-sld-projective-normalization-alternating") {
             return lemma::
                 LocalSldProjectiveNormalizationAlternatingAdversaryCli::run(
                     lemma::
                         LocalSldProjectiveNormalizationAlternatingAdversaryCli::parse(
+                            argc, argv, 2),
+                    std::cout);
+        }
+        if (command ==
+            "local-sld-projective-height-gap-correlation") {
+            return lemma::
+                LocalSldProjectiveHeightGapCorrelationAdversaryCli::run(
+                    lemma::
+                        LocalSldProjectiveHeightGapCorrelationAdversaryCli::parse(
+                            argc, argv, 2),
+                    std::cout);
+        }
+        if (command == "local-sld-projective-normalization-schur") {
+            return lemma::
+                LocalSldProjectiveNormalizationSchurAdversaryCli::run(
+                    lemma::
+                        LocalSldProjectiveNormalizationSchurAdversaryCli::parse(
+                            argc, argv, 2),
+                    std::cout);
+        }
+        if (command == "local-sld-projective-height-gap-output") {
+            return lemma::LocalSldProjectiveHeightGapOutputCli::run(
+                lemma::LocalSldProjectiveHeightGapOutputCli::parse(
+                    argc, argv, 2),
+                std::cout);
+        }
+        if (command ==
+            "local-sld-projective-height-gap-triad-attribution") {
+            return lemma::
+                LocalSldProjectiveHeightGapTriadAttributionCli::run(
+                    lemma::
+                        LocalSldProjectiveHeightGapTriadAttributionCli::parse(
                             argc, argv, 2),
                     std::cout);
         }

@@ -15,6 +15,10 @@ struct LocalSldProjectiveNormalizationTradeoffRow {
     SpectralReal open_palinstrophy_normalization_power_one = 0.0L;
     SpectralReal squared_open_palinstrophy_normalization_power_one = 0.0L;
     SpectralReal tail_stretching_alignment_squared = 0.0L;
+    SpectralReal selected_stretching_h1_alignment_squared = 0.0L;
+    SpectralReal tail_palinstrophy_cross_h2_alignment_squared = 0.0L;
+    SpectralReal normalization_alignment_product_squared = 0.0L;
+    SpectralReal selected_stretching_tail_cross_power_one = 0.0L;
     SpectralReal enstrophy = 0.0L;
     SpectralReal palinstrophy = 0.0L;
     SpectralReal palinstrophy_over_enstrophy_squared = 0.0L;
@@ -30,6 +34,10 @@ struct LocalSldProjectiveNormalizationTradeoffReport {
     SpectralReal maximum_open_parameter = 0.0L;
     SpectralReal maximum_tail_alignment_squared = 0.0L;
     SpectralReal maximum_tail_alignment_parameter = 0.0L;
+    SpectralReal maximum_normalization_alignment_product_squared = 0.0L;
+    SpectralReal maximum_normalization_alignment_parameter = 0.0L;
+    SpectralReal maximum_selected_channel_power_one = 0.0L;
+    SpectralReal maximum_selected_channel_parameter = 0.0L;
     SpectralReal maximum_roughness = 0.0L;
     SpectralReal maximum_roughness_parameter = 0.0L;
     bool every_sample_finite = false;

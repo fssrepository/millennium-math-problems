@@ -1,0 +1,52 @@
+{
+  "schema": "navier-stokes-local-sld-projective-normalization-tail-schur-v1",
+  "triad_selection": "double-triple-remainder-without-123",
+  "threads": 12,
+  "exact_identity": "T2=sum_(i,j>H)<A b_i,A b_j>",
+  "finite_schur_bound": "T2 <= R_H sum_(i>H)||A b_i||_2^2",
+  "fitted_squared_cauchy_height_slope": 0,
+  "fitted_diagonal_squared_height_slope": 0,
+  "fitted_schur_squared_height_slope": 0,
+  "maximum_normalized_absolute_gram_row_sum": 1.52102452486915607,
+  "maximum_half_decay_weighted_correlation": 0.665152575807745672,
+  "maximum_height_half_compensated_diagonal_squared_majorant": 0.000274956329155383588,
+  "maximum_height_half_compensated_schur_squared_majorant": 0.000418215319913334586,
+  "maximum_height_half_compensated_half_decay_squared_majorant": 0.000640732150300075097,
+  "reports": [
+    {"state_path": "proof/l4/states/local-projective-normalization-schur/H16-row6-K12-one-step/K12.tsv", "cutoff": 12, "core_maximum_height": 16, "selected_shape_count": 136479, "tail_shape_count": 136276, "aggregate_tail_h2_norm2": 5091.41413770302279, "reconstructed_tail_h2_norm2": 5091.41413770302279, "diagonal_tail_h2_norm2": 3642.94749146463937, "absolute_gram_tail_h2": 5091.41413770302279, "maximum_normalized_absolute_gram_row_sum": 1.52102452486915607, "schur_tail_h2_upper_bound": 5541.01247732828688, "maximum_half_decay_weighted_correlation": 0.665152575807745672, "half_decay_implied_row_bound": 2.33030515161549134, "half_decay_tail_h2_upper_bound": 8489.17930642478132, "aggregate_to_diagonal_ratio": 1.39760843372903798, "aggregate_to_absolute_gram_ratio": 1, "aggregate_to_schur_bound_ratio": 0.918859894023908108, "tail_h2_reconstruction_error": 4.36115780251979524e-19, "objective_tail_h2_reconstruction_error": 8.72231560503958904e-20, "full_stretching": 4.23802395880266136, "enstrophy": 5.77329953126168594, "palinstrophy": 74.1970230273281004, "selected_aggregate_h1_norm2": 202.044093448980476, "normalization_common_factor": 1.88690840177906288e-08, "squared_cauchy_majorant": 9.60703211336853651e-05, "diagonal_squared_majorant": 6.87390822888458969e-05, "schur_squared_majorant": 0.000104553829978333646, "height_half_compensated_squared_cauchy_majorant": 0.00038428128453474146, "height_half_compensated_diagonal_squared_majorant": 0.000274956329155383588, "height_half_compensated_schur_squared_majorant": 0.000418215319913334586, "height_half_compensated_half_decay_squared_majorant": 0.000640732150300075097, "exact_tail_h2_reconstruction": true, "finite_schur_inequality_verified": true, "finite_half_gap_decay_inequality_verified": true, "finite": true, "shells": [
+      {"shell": 5, "minimum_primitive_height": 17, "maximum_primitive_height": 32, "shape_count": 1158, "interaction_count": 1690776, "aggregate_h2_norm2": 1251.4744451068018, "diagonal_tail_fraction": 0.343533484366432385, "normalized_absolute_gram_row_sum": 1.39493072273984264},
+      {"shell": 6, "minimum_primitive_height": 33, "maximum_primitive_height": 64, "shape_count": 6998, "interaction_count": 5247864, "aggregate_h2_norm2": 1810.3650303090435, "diagonal_tail_fraction": 0.496950624336665925, "normalized_absolute_gram_row_sum": 1.52102452486915607},
+      {"shell": 7, "minimum_primitive_height": 65, "maximum_primitive_height": 128, "shape_count": 33567, "interaction_count": 17464536, "aggregate_h2_norm2": 557.613317638853005, "diagonal_tail_fraction": 0.153066526197627339, "normalized_absolute_gram_row_sum": 1.33163318338236092},
+      {"shell": 8, "minimum_primitive_height": 129, "maximum_primitive_height": 253, "shape_count": 74072, "interaction_count": 33160608, "aggregate_h2_norm2": 23.4654826745185332, "diagonal_tail_fraction": 0.00644134529237595007, "normalized_absolute_gram_row_sum": 1.21828095219833399},
+      {"shell": 9, "minimum_primitive_height": 257, "maximum_primitive_height": 432, "shape_count": 20481, "interaction_count": 6802128, "aggregate_h2_norm2": 0.0292157354225408596, "diagonal_tail_fraction": 8.01980689839554331e-06, "normalized_absolute_gram_row_sum": 1.17451128589345499}
+    ], "pairs": [
+      {"first_shell": 5, "second_shell": 5, "shell_gap": 0, "gram_pairing": 1251.4744451068018, "normalized_absolute_gram": 1, "half_decay_weighted_correlation": 1},
+      {"first_shell": 5, "second_shell": 6, "shell_gap": 1, "gram_pairing": 500.593666346462214, "normalized_absolute_gram": 0.332576287903872836, "half_decay_weighted_correlation": 0.665152575807745672},
+      {"first_shell": 5, "second_shell": 7, "shell_gap": 2, "gram_pairing": 45.9756891793634068, "normalized_absolute_gram": 0.0550364846472960537, "half_decay_weighted_correlation": 0.220145938589184215},
+      {"first_shell": 5, "second_shell": 8, "shell_gap": 3, "gram_pairing": 0.968887476878438458, "normalized_absolute_gram": 0.00565389324111686443, "half_decay_weighted_correlation": 0.0452311459289349155},
+      {"first_shell": 5, "second_shell": 9, "shell_gap": 4, "gram_pairing": 0.0100620759019933118, "normalized_absolute_gram": 0.0016640569475569716, "half_decay_weighted_correlation": 0.0266249111609115456},
+      {"first_shell": 6, "second_shell": 6, "shell_gap": 0, "gram_pairing": 1810.3650303090435, "normalized_absolute_gram": 1, "half_decay_weighted_correlation": 1},
+      {"first_shell": 6, "second_shell": 7, "shell_gap": 1, "gram_pairing": 164.661942783501758, "normalized_absolute_gram": 0.163886654693563505, "half_decay_weighted_correlation": 0.32777330938712701},
+      {"first_shell": 6, "second_shell": 8, "shell_gap": 2, "gram_pairing": 3.5353954752993384, "normalized_absolute_gram": 0.0171530036411531445, "half_decay_weighted_correlation": 0.0686120145646125779},
+      {"first_shell": 6, "second_shell": 9, "shell_gap": 3, "gram_pairing": 0.0538798505065974306, "normalized_absolute_gram": 0.00740857863056656497, "half_decay_weighted_correlation": 0.0592686290445325198},
+      {"first_shell": 7, "second_shell": 7, "shell_gap": 0, "gram_pairing": 557.613317638853005, "normalized_absolute_gram": 1, "half_decay_weighted_correlation": 1},
+      {"first_shell": 7, "second_shell": 8, "shell_gap": 1, "gram_pairing": 8.16419915454481249, "normalized_absolute_gram": 0.0713727245211169675, "half_decay_weighted_correlation": 0.142745449042233935},
+      {"first_shell": 7, "second_shell": 9, "shell_gap": 2, "gram_pairing": 0.166846573494774997, "normalized_absolute_gram": 0.0413373195203843788, "half_decay_weighted_correlation": 0.165349278081537515},
+      {"first_shell": 8, "second_shell": 8, "shell_gap": 0, "gram_pairing": 23.4654826745185332, "normalized_absolute_gram": 1, "half_decay_weighted_correlation": 1},
+      {"first_shell": 8, "second_shell": 9, "shell_gap": 1, "gram_pairing": 0.102754203238288933, "normalized_absolute_gram": 0.124101330794947035, "half_decay_weighted_correlation": 0.248202661589894069},
+      {"first_shell": 9, "second_shell": 9, "shell_gap": 0, "gram_pairing": 0.0292157354225408596, "normalized_absolute_gram": 1, "half_decay_weighted_correlation": 1}
+    ], "gaps": [
+      {"shell_gap": 0, "pair_count": 5, "maximum_normalized_absolute_gram": 1, "sum_normalized_absolute_gram": 5, "maximum_half_decay_weighted_correlation": 1},
+      {"shell_gap": 1, "pair_count": 4, "maximum_normalized_absolute_gram": 0.332576287903872836, "sum_normalized_absolute_gram": 0.691936997913500274, "maximum_half_decay_weighted_correlation": 0.665152575807745672},
+      {"shell_gap": 2, "pair_count": 3, "maximum_normalized_absolute_gram": 0.0550364846472960537, "sum_normalized_absolute_gram": 0.113526807808833577, "maximum_half_decay_weighted_correlation": 0.220145938589184215},
+      {"shell_gap": 3, "pair_count": 2, "maximum_normalized_absolute_gram": 0.00740857863056656497, "sum_normalized_absolute_gram": 0.0130624718716834294, "maximum_half_decay_weighted_correlation": 0.0592686290445325198},
+      {"shell_gap": 4, "pair_count": 1, "maximum_normalized_absolute_gram": 0.0016640569475569716, "sum_normalized_absolute_gram": 0.0016640569475569716, "maximum_half_decay_weighted_correlation": 0.0266249111609115456}
+    ]}
+  ],
+  "every_report_finite": true,
+  "finite_ledger_is_not_a_proof": true,
+  "uniform_schur_row_bound_proved": false,
+  "uniform_half_gap_decay_proved": false,
+  "uniform_diagonal_height_decay_proved": false,
+  "candidate_split": "a joint uniform bound on H^(1/2) times the common normalization times R_H times diagonal tail H2 mass is sufficient for PNT-8"
+}

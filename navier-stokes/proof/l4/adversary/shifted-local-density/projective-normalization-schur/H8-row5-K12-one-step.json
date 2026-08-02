@@ -1,0 +1,25 @@
+{
+  "schema": "navier-stokes-local-sld-projective-normalization-schur-adversary-v1",
+  "initial_state_path": "proof/l4/states/local-projective-normalization-schur/H8-row5-K8-sixteen-step-zero-pad-K12/K12.tsv",
+  "state_path": "proof/l4/states/local-projective-normalization-schur/H8-row5-K12-one-step/K12.tsv",
+  "triad_selection": "double-triple-remainder-without-123",
+  "core_maximum_height": 8,
+  "row_shell": 5,
+  "iterations_requested": 1,
+  "iterations_executed": 1,
+  "accepted_steps": 1,
+  "evaluations": 7,
+  "final_projected_gradient_norm": 0.00521904619046124809,
+  "initial_gradient_directional_absolute_error": 7.56930665805201344e-15,
+  "initial_gradient_directional_relative_error": 2.60224302915325404e-09,
+  "final_gradient_directional_absolute_error": 1.12061892534634908e-14,
+  "final_gradient_directional_relative_error": 1.49873301901402813e-10,
+  "initial": {"full_stretching": 3.3207897250698073, "enstrophy": 5.30660834277019866, "palinstrophy": 56.5993228987289996, "selected_aggregate_h1_norm2": 130.397612900090849, "diagonal_tail_h2_norm2": 2052.30870285478022, "normalized_absolute_gram_row_sum": 1.70229282856038799, "normalization_common_factor": 3.72758561806065913e-08, "schur_squared_majorant": 0.000130228063848856107, "height_half_compensated_schur_squared_majorant": 0.000368340588193283346, "finite": true},
+  "final": {"full_stretching": 3.32404948749301266, "enstrophy": 5.30729920432695579, "palinstrophy": 56.7270906736412215, "selected_aggregate_h1_norm2": 130.820371422106462, "diagonal_tail_h2_norm2": 2063.14829165649871, "normalized_absolute_gram_row_sum": 1.70594108030550218, "normalization_common_factor": 3.70356172781591168e-08, "schur_squared_majorant": 0.000130350907651380159, "height_half_compensated_schur_squared_majorant": 0.000368688042936449363, "finite": true},
+  "trace": [
+    {"iteration": 0, "objective_before": 0.000368340588193283346, "objective_after": 0.000368688042936449363, "projected_gradient_norm": 0.00521904619046124809, "accepted_step": 0.00625000000000000035, "line_search_evaluations": 5, "used_steepest_fallback": false, "accepted": true}
+  ],
+  "finite_search_is_not_a_proof": true,
+  "uniform_PNT12_bound_proved": false,
+  "interpretation": "exact-gradient stress search for one smooth fixed-row branch of the coupled PNT-12 Schur majorant"
+}

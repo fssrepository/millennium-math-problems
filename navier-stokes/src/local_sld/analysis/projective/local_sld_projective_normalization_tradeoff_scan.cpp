@@ -1,6 +1,7 @@
 #include "local_sld_projective_normalization_tradeoff_scan.hpp"
 
 #include "local_sld_projective_core_tail_alignment_objective.hpp"
+#include "local_sld_projective_normalization_alignment_objective.hpp"
 #include "local_sld_projective_normalization_objective.hpp"
 #include "local_sld_triad_selection.hpp"
 #include "spectral_galerkin.hpp"
@@ -25,7 +26,7 @@ void write_json(
     std::ostream& output) {
     output << std::setprecision(18)
         << "{\n"
-        << "  \"schema\": \"navier-stokes-local-sld-projective-normalization-tradeoff-line-v1\",\n"
+        << "  \"schema\": \"navier-stokes-local-sld-projective-normalization-tradeoff-line-v2\",\n"
         << "  \"normalization_state_path\": \""
         << options.normalization_state_path << "\",\n"
         << "  \"alignment_state_path\": \""
@@ -47,6 +48,20 @@ void write_json(
         << "  \"maximum_tail_alignment_parameter\": "
         << static_cast<double>(report.maximum_tail_alignment_parameter)
         << ",\n"
+        << "  \"maximum_normalization_alignment_product_squared\": "
+        << static_cast<double>(
+               report.maximum_normalization_alignment_product_squared)
+        << ",\n"
+        << "  \"maximum_normalization_alignment_parameter\": "
+        << static_cast<double>(
+               report.maximum_normalization_alignment_parameter)
+        << ",\n"
+        << "  \"maximum_selected_channel_power_one\": "
+        << static_cast<double>(report.maximum_selected_channel_power_one)
+        << ",\n"
+        << "  \"maximum_selected_channel_parameter\": "
+        << static_cast<double>(report.maximum_selected_channel_parameter)
+        << ",\n"
         << "  \"maximum_roughness\": "
         << static_cast<double>(report.maximum_roughness) << ",\n"
         << "  \"maximum_roughness_parameter\": "
@@ -66,6 +81,18 @@ void write_json(
             << ", \"tail_stretching_alignment_squared\": "
             << static_cast<double>(
                    row.tail_stretching_alignment_squared)
+            << ", \"selected_stretching_h1_alignment_squared\": "
+            << static_cast<double>(
+                   row.selected_stretching_h1_alignment_squared)
+            << ", \"tail_palinstrophy_cross_h2_alignment_squared\": "
+            << static_cast<double>(
+                   row.tail_palinstrophy_cross_h2_alignment_squared)
+            << ", \"normalization_alignment_product_squared\": "
+            << static_cast<double>(
+                   row.normalization_alignment_product_squared)
+            << ", \"selected_stretching_tail_cross_power_one\": "
+            << static_cast<double>(
+                   row.selected_stretching_tail_cross_power_one)
             << ", \"enstrophy\": "
             << static_cast<double>(row.enstrophy)
             << ", \"palinstrophy\": "
@@ -118,6 +145,9 @@ LocalSldProjectiveNormalizationTradeoffScan::analyze(
     const LocalSldProjectiveCoreTailAlignmentObjective alignment(
         dynamics, selection, core_maximum_height,
         LocalSldProjectiveHeightRegion::tail, threads);
+    const LocalSldProjectiveNormalizationAlignmentObjective
+        normalization_alignment(
+            dynamics, selection, core_maximum_height, threads);
     LocalSldProjectiveNormalizationTradeoffReport report;
     report.cutoff = std::max(
         SpectralStateOps::cutoff(normalization_state),
@@ -134,6 +164,8 @@ LocalSldProjectiveNormalizationTradeoffScan::analyze(
             normalization_state, alignment_state, parameter);
         const auto normalization_value = normalization.evaluate(state);
         const auto alignment_value = alignment.evaluate(state);
+        const auto normalization_alignment_value =
+            normalization_alignment.evaluate(state);
         LocalSldProjectiveNormalizationTradeoffRow row;
         row.parameter = parameter;
         row.open_palinstrophy_normalization_power_one =
@@ -143,6 +175,18 @@ LocalSldProjectiveNormalizationTradeoffScan::analyze(
                 .squared_palinstrophy_normalization_power_one;
         row.tail_stretching_alignment_squared =
             alignment_value.stretching_h1_alignment_squared;
+        row.selected_stretching_h1_alignment_squared =
+            normalization_alignment_value
+                .selected_stretching_h1_alignment_squared;
+        row.tail_palinstrophy_cross_h2_alignment_squared =
+            normalization_alignment_value
+                .tail_palinstrophy_cross_h2_alignment_squared;
+        row.normalization_alignment_product_squared =
+            normalization_alignment_value
+                .normalization_alignment_product_squared;
+        row.selected_stretching_tail_cross_power_one =
+            normalization_value
+                .selected_stretching_tail_cross_power_one;
         row.enstrophy = normalization_value.enstrophy;
         row.palinstrophy = normalization_value.palinstrophy;
         if (row.enstrophy > 0.0L) {
@@ -161,6 +205,7 @@ LocalSldProjectiveNormalizationTradeoffScan::analyze(
             normalization_value.open_palinstrophy_normalization;
         report.every_sample_finite = report.every_sample_finite &&
             normalization_value.finite && alignment_value.finite &&
+            normalization_alignment_value.finite &&
             std::isfinite(row.palinstrophy_over_enstrophy_squared) &&
             std::isfinite(row.normalization_scale);
         if (row.open_palinstrophy_normalization_power_one >
@@ -174,6 +219,18 @@ LocalSldProjectiveNormalizationTradeoffScan::analyze(
             report.maximum_tail_alignment_squared =
                 row.tail_stretching_alignment_squared;
             report.maximum_tail_alignment_parameter = parameter;
+        }
+        if (row.normalization_alignment_product_squared >
+            report.maximum_normalization_alignment_product_squared) {
+            report.maximum_normalization_alignment_product_squared =
+                row.normalization_alignment_product_squared;
+            report.maximum_normalization_alignment_parameter = parameter;
+        }
+        if (row.selected_stretching_tail_cross_power_one >
+            report.maximum_selected_channel_power_one) {
+            report.maximum_selected_channel_power_one =
+                row.selected_stretching_tail_cross_power_one;
+            report.maximum_selected_channel_parameter = parameter;
         }
         if (row.palinstrophy_over_enstrophy_squared >
             report.maximum_roughness) {
@@ -288,6 +345,16 @@ int LocalSldProjectiveNormalizationTradeoffScanCli::run(
         << static_cast<double>(report.maximum_tail_alignment_squared)
         << " at="
         << static_cast<double>(report.maximum_tail_alignment_parameter)
+        << " max_joint_alignment_squared="
+        << static_cast<double>(
+               report.maximum_normalization_alignment_product_squared)
+        << " at="
+        << static_cast<double>(
+               report.maximum_normalization_alignment_parameter)
+        << " max_selected_channel="
+        << static_cast<double>(report.maximum_selected_channel_power_one)
+        << " at="
+        << static_cast<double>(report.maximum_selected_channel_parameter)
         << " max_roughness="
         << static_cast<double>(report.maximum_roughness)
         << " at="

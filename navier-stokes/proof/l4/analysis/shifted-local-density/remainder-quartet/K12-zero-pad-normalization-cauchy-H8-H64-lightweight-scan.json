@@ -1,0 +1,20 @@
+{
+  "schema": "navier-stokes-local-sld-projective-normalization-cauchy-height-scan-v1",
+  "triad_selection": "double-triple-remainder-without-123",
+  "threads": 12,
+  "fitted_height_slope": -0.331963668061104333,
+  "maximum_bound": 0.0104580402606791432,
+  "minimum_bound": 0.00520343572292543497,
+  "fitted_quarter_compensated_slope": -0.0819636680611043472,
+  "maximum_quarter_compensated_bound": 0.0189312155507879894,
+  "rows": [
+    {"core_maximum_height": 8, "cutoff": 12, "full_stretching": 3.1100123134856088, "enstrophy": 5.25588758842128456, "palinstrophy": 52.6468977196974279, "selected_aggregate_h1_norm2": 116.87248676361844, "tail_aggregate_h2_norm2": 2525.12991983092934, "cauchy_bound_power_one": 0.0104580402606791432, "squared_cauchy_bound_power_one": 0.000109370606093985864, "quarter_compensated_bound": 0.017588257131568228, "half_compensated_squared_bound": 0.000309346788926160568, "numerator": 42156.1363423922812, "denominator": 4030978.58600657806, "state_path": "proof/l4/states/local-projective-normalization-cauchy/H8-K8-twenty-four-step-zero-pad-K12/K12.tsv", "finite": true},
+    {"core_maximum_height": 16, "cutoff": 12, "full_stretching": 4.09525302611113329, "enstrophy": 5.82734753216228629, "palinstrophy": 71.3654341920089053, "selected_aggregate_h1_norm2": 194.048363135146872, "tail_aggregate_h2_norm2": 4482.24248819295462, "cauchy_bound_power_one": 0.00946560777539399469, "squared_cauchy_bound_power_one": 8.95977305575992682e-05, "quarter_compensated_bound": 0.0189312155507879894, "half_compensated_squared_bound": 0.000358390922230397073, "numerator": 116829.92037956338, "denominator": 12342569.3470275309, "state_path": "proof/l4/states/local-projective-normalization-cauchy/H16-K8-twenty-four-step-zero-pad-K12/K12.tsv", "finite": true},
+    {"core_maximum_height": 32, "cutoff": 12, "full_stretching": 7.25811990656674588, "enstrophy": 7.31736293887141631, "palinstrophy": 128.005541213477244, "selected_aggregate_h1_norm2": 515.017418585769974, "tail_aggregate_h2_norm2": 13067.4906147943038, "cauchy_bound_power_one": 0.00769694945996995516, "squared_cauchy_bound_power_one": 5.92430309893317826e-05, "quarter_compensated_bound": 0.0183065341232252453, "half_compensated_squared_bound": 0.000335129191604810288, "numerator": 864398.766070594429, "denominator": 112304071.965930328, "state_path": "proof/l4/states/local-projective-normalization-cauchy/H32-K8-twenty-four-step-zero-pad-K12/K12.tsv", "finite": true},
+    {"core_maximum_height": 64, "cutoff": 12, "full_stretching": 10.2198364960115065, "enstrophy": 8.28528447444259442, "palinstrophy": 186.304927100498361, "selected_aggregate_h1_norm2": 895.787575721606459, "tail_aggregate_h2_norm2": 16419.0836903828749, "cauchy_bound_power_one": 0.00520343572292543497, "squared_cauchy_bound_power_one": 2.70757433226165435e-05, "quarter_compensated_bound": 0.014717538740595601, "half_compensated_squared_bound": 0.000216605946580932348, "numerator": 2309819.61403150717, "denominator": 443902785.971746087, "state_path": "proof/l4/states/local-projective-normalization-cauchy/H64-K8-twenty-four-step-zero-pad-K12/K12.tsv", "finite": true}
+  ],
+  "every_row_finite": true,
+  "finite_scan_is_not_a_proof": true,
+  "uniform_height_decay_proved": false,
+  "interpretation": "finite optimized height scaling of the exact canonical Cauchy majorant; a negative fitted slope is a lemma candidate, not a uniform estimate"
+}
