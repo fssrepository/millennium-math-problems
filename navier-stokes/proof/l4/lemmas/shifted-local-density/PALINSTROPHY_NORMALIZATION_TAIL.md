@@ -165,11 +165,13 @@ Direct majorant optimization gives the complementary stress test.  After 24
 K8 L-BFGS steps, `M_H` rises from `0.00647629` to `0.0104101`, while
 `sqrt(A_H)` falls to `0.0258487` and the selected PNT value becomes
 `0.000269086`.  Exact zero padding of this state to complete K12 raises
-`M_H` slightly further to `0.0104580`.  The K8 objective agrees bit-for-bit
-with the square of the independent height-matrix Cauchy bound, and its
-analytic-gradient central-difference error is `7.14e-12` in the self-test.
-The cutoff behavior of `M_H`, not alignment alone, is therefore the sharper
-computational target for a PNT-5 lemma.
+`M_H` slightly further to `0.0104580`; one K12 gradient step reaches
+`0.0104740`, with selected PNT value `0.000269574` and actual/bound ratio
+`0.0257375`.  The K8 objective agrees bit-for-bit with the square of the
+independent height-matrix Cauchy bound, and its analytic-gradient
+central-difference error is `7.14e-12` in the self-test.  The cutoff behavior
+of `M_H`, not alignment alone, is therefore the sharper computational target
+for a PNT-5 lemma.
 
 ## Narrow candidate lemma
 
@@ -243,3 +245,5 @@ Primary certificates:
 - [`../../adversary/shifted-local-density/projective-normalization-cauchy/H8-K8-twenty-four-step.json`](../../adversary/shifted-local-density/projective-normalization-cauchy/H8-K8-twenty-four-step.json)
 - [`../../analysis/shifted-local-density/remainder-quartet/K8-normalization-cauchy-H8-twenty-four-step-matrix.json`](../../analysis/shifted-local-density/remainder-quartet/K8-normalization-cauchy-H8-twenty-four-step-matrix.json)
 - [`../../adversary/shifted-local-density/projective-normalization-cauchy/H8-K12-zero-pad-evaluate.json`](../../adversary/shifted-local-density/projective-normalization-cauchy/H8-K12-zero-pad-evaluate.json)
+- [`../../adversary/shifted-local-density/projective-normalization-cauchy/H8-K12-one-step.json`](../../adversary/shifted-local-density/projective-normalization-cauchy/H8-K12-one-step.json)
+- [`../../adversary/shifted-local-density/projective-normalization-cauchy/H8-K12-one-step-selected-channel-evaluate.json`](../../adversary/shifted-local-density/projective-normalization-cauchy/H8-K12-one-step-selected-channel-evaluate.json)

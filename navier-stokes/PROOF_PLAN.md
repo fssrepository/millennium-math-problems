@@ -1020,7 +1020,8 @@ analytic gradients.  Alignment optimization raises `sqrt(A_H)` from
 `0.0832` to `0.7712` while shrinking the actual term by about `4.47e5`, so
 alignment alone is not the lemma.  Direct majorant optimization raises
 `M_H` from `0.006476` to `0.010410` at K8; exact zero padding gives
-`0.010458` at K12.  The next precise palinstrophy target is
+`0.010458` at K12 and one K12 gradient step gives `0.010474`.  The next
+precise palinstrophy target is
 PNT-4: a cutoff-uniform joint bound for
 `|S_full(s*t_tail+s_tail*t_core)|/(Z^2 P^3)`.  Separate H2-tail or alignment
 estimates are intentionally not substituted for this joint target.
