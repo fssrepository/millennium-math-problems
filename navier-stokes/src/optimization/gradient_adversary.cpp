@@ -17,6 +17,7 @@
 #include "local_sld_projective_height_commutator_ratio_objective.hpp"
 #include "local_sld_projective_height_dynamic_ratio_objective.hpp"
 #include "local_sld_projective_normalization_objective.hpp"
+#include "local_sld_projective_normalization_alignment_objective.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
 
 #include <algorithm>
@@ -334,6 +335,15 @@ SpectralReal GradientAdversary::objective_value(
             options.objective_threads)
             .evaluate(initial)
             .squared_palinstrophy_normalization_power_one;
+    }
+    if (options.objective ==
+        "local-projective-normalization-alignment-ratio") {
+        return LocalSldProjectiveNormalizationAlignmentObjective(
+            dynamics_, options.closure_selection,
+            options.projective_core_maximum_height,
+            options.objective_threads)
+            .evaluate(initial)
+            .normalization_alignment_product_squared;
     }
     if (is_normalization_component_objective(options.objective)) {
         return LocalSldProjectiveNormalizationObjective(
@@ -697,6 +707,17 @@ GradientSearchResult GradientAdversary::maximize_q(
             trajectory.objective_step = 0;
             trajectory.initial_gradient = normalization.gradient(
                 result.state);
+        } else if (options.objective ==
+                   "local-projective-normalization-alignment-ratio") {
+            const LocalSldProjectiveNormalizationAlignmentObjective
+                alignment(
+                    dynamics_, options.closure_selection,
+                    options.projective_core_maximum_height,
+                    options.objective_threads);
+            trajectory.objective_value = alignment.evaluate(result.state)
+                .normalization_alignment_product_squared;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = alignment.gradient(result.state);
         } else if (is_normalization_component_objective(
                        options.objective)) {
             const LocalSldProjectiveNormalizationObjective normalization(
