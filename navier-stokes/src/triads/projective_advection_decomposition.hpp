@@ -19,6 +19,12 @@ struct ProjectiveSquareFunctionMoment {
     SpectralIncrement gradient;
 };
 
+struct ProjectiveSquareFunctionNorms {
+    SpectralReal l2_norm2 = 0.0L;
+    SpectralReal h1_norm2 = 0.0L;
+    SpectralReal h2_norm2 = 0.0L;
+};
+
 struct ProjectiveBilinearCotangents {
     SpectralIncrement advecting;
     SpectralIncrement advected;
@@ -70,6 +76,20 @@ public:
     [[nodiscard]] static ProjectiveSquareFunctionMoment square_function(
         const SpectralState& state,
         const std::vector<ProjectiveInteractionGroup>& groups,
+        bool compute_gradient);
+
+    [[nodiscard]] static ProjectiveSquareFunctionNorms
+    square_function_norms(
+        const SpectralState& state,
+        const std::vector<ProjectiveInteractionGroup>& groups,
+        const std::vector<std::size_t>& group_indices,
+        int threads = 1);
+
+    [[nodiscard]] static ProjectiveSquareFunctionMoment
+    h1_square_function(
+        const SpectralState& state,
+        const std::vector<ProjectiveInteractionGroup>& groups,
+        const std::vector<std::size_t>& group_indices,
         bool compute_gradient);
 };
 

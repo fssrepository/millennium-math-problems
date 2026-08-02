@@ -1,0 +1,20 @@
+{
+  "schema": "navier-stokes-local-sld-projective-height-transfer-v1",
+  "threads": 12,
+  "excludes_signature_123": false,
+  "excludes_triple_family": true,
+  "fitted_open_height_slope": -0.557168056852125559,
+  "fitted_next_shell_diagonal_height_slope": -0.487365689108248734,
+  "minimum_next_shell_fraction": 0.434532036895628138,
+  "maximum_next_shell_fraction": 0.519890586703039448,
+  "rows": [
+    {"core_maximum_height": 8, "cutoff": 8, "open_power_one": 0.0010076363713240246, "core_tail_power_one": 0.000198192824718383594, "tail_internal_power_one": 0.000809443546605640926, "next_shell_diagonal_power_one": 0.000461010859963481914, "next_shell_fraction_of_open_absolute_sum": 0.457399695915217508, "open_without_next_shell_diagonal": 0.000546625511360542579, "open_effective_height_pairs": 3.13166412681269835, "open_signed_alignment": 0.999743411409507177, "reconstruction_error": 3.72269935494438202e-18, "state_path": "proof/l4/states/local-projective-open-power/height-8-K8-refined/K8.tsv"},
+    {"core_maximum_height": 16, "cutoff": 8, "open_power_one": 0.000859087992059192306, "core_tail_power_one": 0.000128170991945532591, "tail_internal_power_one": 0.000730917000113659714, "next_shell_diagonal_power_one": 0.000373314314850556675, "next_shell_fraction_of_open_absolute_sum": 0.434532036895628138, "open_without_next_shell_diagonal": 0.000485773677208635576, "open_effective_height_pairs": 3.53696917342606998, "open_signed_alignment": 0.999965016641523929, "reconstruction_error": 4.68381011165700822e-18, "state_path": "proof/l4/states/local-projective-open-power/height-16-K8-refined/K8.tsv"},
+    {"core_maximum_height": 32, "cutoff": 8, "open_power_one": 0.000632953932594725521, "core_tail_power_one": 0.000190472679874146146, "tail_internal_power_one": 0.000442481252720579321, "next_shell_diagonal_power_one": 0.000304103390542393142, "next_shell_fraction_of_open_absolute_sum": 0.480451064259533878, "open_without_next_shell_diagonal": 0.000328850542052332379, "open_effective_height_pairs": 3.32519344567439834, "open_signed_alignment": 1, "reconstruction_error": 4.01629538022253547e-18, "state_path": "proof/l4/states/local-projective-open-power/height-32-K8-warm/K8.tsv"},
+    {"core_maximum_height": 64, "cutoff": 8, "open_power_one": 0.000307924816673899135, "core_tail_power_one": 0.000141156513171146177, "tail_internal_power_one": 0.000166768303502752959, "next_shell_diagonal_power_one": 0.000160087213601019278, "next_shell_fraction_of_open_absolute_sum": 0.519890586703039448, "open_without_next_shell_diagonal": 0.000147837603072879857, "open_effective_height_pairs": 2.70063024722958334, "open_signed_alignment": 1, "reconstruction_error": 9.54052688822480893e-19, "state_path": "proof/l4/states/local-projective-open-power/height-64-K8-warm/K8.tsv"}
+  ],
+  "every_matrix_exact": true,
+  "finite_scale_transfer_is_not_a_proof": true,
+  "uniform_weighted_height_bound_proved": false,
+  "interpretation": "the optimized open block follows the first dyadic shell above the fixed core; these finite lower-bound states identify the weighted matrix estimate still required and do not establish a uniform upper bound"
+}

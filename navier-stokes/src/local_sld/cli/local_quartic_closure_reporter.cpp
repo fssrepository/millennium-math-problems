@@ -48,6 +48,9 @@ std::string objective_formula(const std::string& objective) {
     if (objective == "projective-open-power-ratio") {
         return "maximize |(K_open+G_open) S_full|^2 / (Z^4 P^4) after subtracting the complete quartet internal to a fixed primitive-shape-height core";
     }
+    if (objective == "projective-height-stretching-ratio") {
+        return "maximize |<Au,B_(H,2H](u,u)>|^2 / (Z sum_sigma ||A^(1/2)B_sigma(u,u)||_2^2)";
+    }
     if (objective == "signed-closure-ratio") {
         return "maximize (K+G) E^(1/4) / (Z^(7/4) P)";
     }
@@ -177,6 +180,17 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
             << ", \"projective_fixed_core_bracket\": "
             << static_cast<double>(
                    winner.projective_fixed_core_bracket)
+            << ", \"projective_height_stretching_ratio\": "
+            << static_cast<double>(
+                   winner.projective_height_stretching_ratio)
+            << ", \"projective_height_h1_synthesis_ratio\": "
+            << static_cast<double>(
+                   winner.projective_height_h1_synthesis_ratio)
+            << ", \"projective_height_stretching_alignment_squared\": "
+            << static_cast<double>(
+                   winner.projective_height_stretching_alignment_squared)
+            << ", \"projective_height_shape_count\": "
+            << winner.projective_height_shape_count
             << ", \"squared_lqc3_target_ratio\": "
             << static_cast<double>(value.squared_lqc3_target_ratio)
             << ", \"signed_constant_ratio\": "

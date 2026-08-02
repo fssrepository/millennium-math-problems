@@ -9,6 +9,7 @@
 #include "local_sld_projective_stretching_objective.hpp"
 #include "local_sld_projective_cross_power_objective.hpp"
 #include "local_sld_projective_open_power_objective.hpp"
+#include "local_sld_projective_height_stretching_objective.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
 
 #include <algorithm>
@@ -225,6 +226,14 @@ SpectralReal GradientAdversary::objective_value(
             options.projective_core_maximum_height,
             options.objective_threads)
             .evaluate(initial).squared_open_power_one;
+    }
+    if (options.objective ==
+        "local-projective-height-stretching-ratio") {
+        return LocalSldProjectiveHeightStretchingObjective(
+            dynamics_, options.closure_selection,
+            options.projective_core_maximum_height,
+            options.objective_threads)
+            .evaluate(initial).stretching_aware_h1_ratio;
     }
     if (options.objective == "local-sld-ratio") {
         return LocalQuarticClosureObjective(
@@ -476,6 +485,18 @@ GradientSearchResult GradientAdversary::maximize_q(
                 .squared_open_power_one;
             trajectory.objective_step = 0;
             trajectory.initial_gradient = open_power.gradient(result.state);
+        } else if (options.objective ==
+                   "local-projective-height-stretching-ratio") {
+            const LocalSldProjectiveHeightStretchingObjective
+                height_stretching(
+                    dynamics_, options.closure_selection,
+                    options.projective_core_maximum_height,
+                    options.objective_threads);
+            trajectory.objective_value = height_stretching
+                .evaluate(result.state).stretching_aware_h1_ratio;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient =
+                height_stretching.gradient(result.state);
         } else if (options.objective == "local-sld-ratio") {
             const LocalQuarticClosureObjective closure(
                 dynamics_, options.closure_selection);

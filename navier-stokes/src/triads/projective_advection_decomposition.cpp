@@ -428,4 +428,194 @@ ProjectiveAdvectionDecomposition::square_function(
     return result;
 }
 
+ProjectiveSquareFunctionNorms
+ProjectiveAdvectionDecomposition::square_function_norms(
+    const SpectralState& state,
+    const std::vector<ProjectiveInteractionGroup>& groups,
+    const std::vector<std::size_t>& group_indices,
+    int threads) {
+    if (threads < 1 || threads > 256) {
+        throw std::invalid_argument(
+            "projective square-function workers must be 1..256");
+    }
+    for (const std::size_t index : group_indices) {
+        if (index >= groups.size()) {
+            throw std::invalid_argument(
+                "projective square-function group index out of range");
+        }
+    }
+    int worker_count = 1;
+#ifdef NS_HAVE_OPENMP
+    worker_count = std::min(
+        threads,
+        std::max(1, static_cast<int>(group_indices.size())));
+#else
+    static_cast<void>(threads);
+#endif
+    std::vector<ProjectiveSquareFunctionNorms> partials(
+        static_cast<std::size_t>(worker_count));
+    const SpectralComplex imaginary_unit{0.0L, 1.0L};
+#ifdef NS_HAVE_OPENMP
+#pragma omp parallel num_threads(worker_count) if(worker_count > 1)
+    {
+        const int worker = omp_get_thread_num();
+        auto& partial = partials[static_cast<std::size_t>(worker)];
+        SpectralIncrement component(state.waves.size());
+        std::vector<std::size_t> touched_targets;
+        touched_targets.reserve(state.waves.size());
+        std::vector<std::size_t> target_generation(
+            state.waves.size(), 0);
+        std::size_t generation = 0;
+#pragma omp for schedule(dynamic, 1)
+        for (std::ptrdiff_t position = 0;
+             position < static_cast<std::ptrdiff_t>(group_indices.size());
+             ++position) {
+            ++generation;
+            touched_targets.clear();
+            const auto& group = groups[group_indices[
+                static_cast<std::size_t>(position)]];
+            for (const InteractionIndex interaction : group.interactions) {
+                const auto [p, q, target] = interaction;
+                if (target_generation[target] != generation) {
+                    target_generation[target] = generation;
+                    component[target] = {};
+                    touched_targets.push_back(target);
+                }
+                const SpectralComplex coefficient = imaginary_unit *
+                    wave_dot(state.waves[q], state.velocity[p]);
+                for (std::size_t coordinate = 0; coordinate < 3;
+                     ++coordinate) {
+                    component[target][coordinate] +=
+                        coefficient * state.velocity[q][coordinate];
+                }
+            }
+            for (const std::size_t target : touched_targets) {
+                component[target] = project_divergence_free(
+                    state.waves[target], component[target]);
+                const SpectralReal norm2 = std::real(dot_hermitian(
+                    component[target], component[target]));
+                const SpectralReal weight = static_cast<SpectralReal>(
+                    norm_squared(state.waves[target]));
+                partial.l2_norm2 += norm2;
+                partial.h1_norm2 += weight * norm2;
+                partial.h2_norm2 += weight * weight * norm2;
+            }
+        }
+    }
+#else
+    auto& partial = partials.front();
+    for (const std::size_t index : group_indices) {
+        const SpectralIncrement component = evaluate(state, groups[index]);
+        for (std::size_t target = 0; target < component.size(); ++target) {
+            const SpectralReal norm2 = std::real(dot_hermitian(
+                component[target], component[target]));
+            const SpectralReal weight = static_cast<SpectralReal>(
+                norm_squared(state.waves[target]));
+            partial.l2_norm2 += norm2;
+            partial.h1_norm2 += weight * norm2;
+            partial.h2_norm2 += weight * weight * norm2;
+        }
+    }
+#endif
+    ProjectiveSquareFunctionNorms result;
+    for (const auto& partial : partials) {
+        result.l2_norm2 += partial.l2_norm2;
+        result.h1_norm2 += partial.h1_norm2;
+        result.h2_norm2 += partial.h2_norm2;
+    }
+    return result;
+}
+
+ProjectiveSquareFunctionMoment
+ProjectiveAdvectionDecomposition::h1_square_function(
+    const SpectralState& state,
+    const std::vector<ProjectiveInteractionGroup>& groups,
+    const std::vector<std::size_t>& group_indices,
+    bool compute_gradient) {
+    for (const std::size_t index : group_indices) {
+        if (index >= groups.size()) {
+            throw std::invalid_argument(
+                "projective H1 square-function group index out of range");
+        }
+    }
+    ProjectiveSquareFunctionMoment result;
+    if (compute_gradient) {
+        result.gradient.resize(state.waves.size());
+    }
+    SpectralIncrement component(state.waves.size());
+    std::vector<std::size_t> touched_targets;
+    touched_targets.reserve(state.waves.size());
+    std::vector<std::size_t> target_generation(
+        state.waves.size(), 0);
+    std::size_t generation = 0;
+    const SpectralComplex imaginary_unit{0.0L, 1.0L};
+    const SpectralComplex minus_imaginary_unit{0.0L, -1.0L};
+    for (const std::size_t index : group_indices) {
+        ++generation;
+        touched_targets.clear();
+        const ProjectiveInteractionGroup& group = groups[index];
+        for (const InteractionIndex interaction : group.interactions) {
+            const auto [p, q, target] = interaction;
+            if (target_generation[target] != generation) {
+                target_generation[target] = generation;
+                component[target] = {};
+                touched_targets.push_back(target);
+            }
+            const SpectralComplex coefficient = imaginary_unit *
+                wave_dot(state.waves[q], state.velocity[p]);
+            for (std::size_t coordinate = 0; coordinate < 3;
+                 ++coordinate) {
+                component[target][coordinate] +=
+                    coefficient * state.velocity[q][coordinate];
+            }
+        }
+        for (const std::size_t target : touched_targets) {
+            component[target] = project_divergence_free(
+                state.waves[target], component[target]);
+            const SpectralReal weight = static_cast<SpectralReal>(
+                norm_squared(state.waves[target]));
+            result.norm2 += weight * std::real(dot_hermitian(
+                component[target], component[target]));
+        }
+        if (!compute_gradient) {
+            continue;
+        }
+        for (const InteractionIndex interaction : group.interactions) {
+            const auto [p, q, target] = interaction;
+            ComplexVector target_cotangent = component[target];
+            const SpectralReal cotangent_scale =
+                2.0L * static_cast<SpectralReal>(
+                    norm_squared(state.waves[target]));
+            for (SpectralComplex& value : target_cotangent) {
+                value *= cotangent_scale;
+            }
+            const SpectralComplex first_coefficient =
+                minus_imaginary_unit * dot_hermitian(
+                    state.velocity[q], target_cotangent);
+            for (std::size_t coordinate = 0; coordinate < 3;
+                 ++coordinate) {
+                const SpectralReal wave_component =
+                    static_cast<SpectralReal>(
+                        coordinate == 0   ? state.waves[q].x
+                        : coordinate == 1 ? state.waves[q].y
+                                          : state.waves[q].z);
+                result.gradient[p][coordinate] +=
+                    wave_component * first_coefficient;
+            }
+            const SpectralComplex second_coefficient =
+                minus_imaginary_unit * std::conj(
+                    wave_dot(state.waves[q], state.velocity[p]));
+            for (std::size_t coordinate = 0; coordinate < 3;
+                 ++coordinate) {
+                result.gradient[q][coordinate] +=
+                    second_coefficient * target_cotangent[coordinate];
+            }
+        }
+    }
+    if (compute_gradient) {
+        project(result.gradient, state);
+    }
+    return result;
+}
+
 }  // namespace lemma

@@ -51,12 +51,15 @@
 #include "local_sld_projective_stretching_objective.hpp"
 #include "local_sld_projective_cross_power_objective.hpp"
 #include "local_sld_projective_open_power_objective.hpp"
+#include "local_sld_projective_height_stretching_objective.hpp"
 #include "local_sld_doubling_shell_ledger.hpp"
 #include "local_sld_doubling_scale_scan.hpp"
 #include "local_sld_projective_coherence_ledger.hpp"
 #include "local_sld_projective_quartic_cross_ledger.hpp"
 #include "local_sld_projective_cross_attribution.hpp"
 #include "local_sld_projective_core_tail_ledger.hpp"
+#include "local_sld_projective_height_matrix.hpp"
+#include "local_sld_projective_height_tail_summary.hpp"
 #include "local_sld_remainder_double_square.hpp"
 #include "local_sld_projective_shape_envelope.hpp"
 #include "local_sld_remainder_projective_ledger.hpp"
@@ -1450,6 +1453,11 @@ bool self_test(std::ostream& out) {
         projective_stretching_objective(
             active_dynamics,
             TriadSelection::local_without_equal_low_doubling());
+    const LocalSldProjectiveHeightStretchingObjective
+        projective_height_stretching_objective(
+            active_dynamics,
+            TriadSelection::local_without_equal_low_doubling(),
+            2, 2);
     const LocalSldProjectiveCrossPowerObjective
         projective_cross_power_objective(
             active_dynamics,
@@ -1712,6 +1720,30 @@ bool self_test(std::ostream& out) {
                 std::abs(projective_stretching_directional_adjoint),
                 std::abs(
                     projective_stretching_directional_finite_difference)));
+    const SpectralIncrement projective_height_stretching_gradient =
+        projective_height_stretching_objective.gradient(partition_state);
+    const Real projective_height_stretching_directional_adjoint =
+        increment_inner_product(
+            projective_height_stretching_gradient, partition_tangent);
+    const Real
+        projective_height_stretching_directional_finite_difference =
+            (projective_height_stretching_objective
+                 .evaluate(partition_plus_state)
+                 .stretching_aware_h1_ratio -
+             projective_height_stretching_objective
+                 .evaluate(partition_minus_state)
+                 .stretching_aware_h1_ratio) /
+            (2.0L * finite_difference_step);
+    const Real projective_height_stretching_gradient_error = std::abs(
+        projective_height_stretching_directional_adjoint -
+        projective_height_stretching_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(
+                    projective_height_stretching_directional_adjoint),
+                std::abs(
+                    projective_height_stretching_directional_finite_difference)));
     const SpectralIncrement projective_cross_power_gradient =
         projective_cross_power_objective.gradient(partition_state);
     const Real projective_cross_power_directional_adjoint =
@@ -2158,6 +2190,7 @@ bool self_test(std::ostream& out) {
         remainder_shape_power_gradient_error < 1e-9L &&
         projective_coherence_gradient_error < 1e-9L &&
         projective_stretching_gradient_error < 1e-9L &&
+        projective_height_stretching_gradient_error < 1e-9L &&
         projective_cross_power_gradient_error < 1e-9L &&
         projective_open_power_gradient_error < 1e-9L &&
         signed_closure_gradient_error < 1e-9L &&
@@ -2551,6 +2584,36 @@ bool self_test(std::ostream& out) {
         !remainder_projective_core_tail
              .growing_tail_internal_bound_proved &&
         !remainder_projective_core_tail.full_local_lemma_proved;
+    const LocalSldProjectiveHeightMatrixReport
+        remainder_projective_height_matrix =
+            LocalSldProjectiveHeightMatrix::analyze(
+                active_dynamics, cyclic_ansatz.state, 2);
+    const bool remainder_projective_height_matrix_ok =
+        remainder_projective_height_matrix
+                .exact_height_matrix_decomposition &&
+        !remainder_projective_height_matrix.shells.empty() &&
+        !remainder_projective_height_matrix.entries.empty() &&
+        remainder_projective_height_matrix
+                .bracket_reconstruction_error < 1e-13L &&
+        remainder_projective_height_matrix.effective_height_pairs >=
+            1.0L &&
+        remainder_projective_height_matrix
+                .finite_height_matrix_is_not_a_proof;
+    const LocalSldProjectiveHeightTailReport
+        remainder_projective_height_tail =
+            LocalSldProjectiveHeightTailSummary::summarize(
+                remainder_projective_height_matrix);
+    const bool remainder_projective_height_tail_ok =
+        remainder_projective_height_tail
+                .exact_cumulative_decomposition &&
+        remainder_projective_height_tail.rows.size() ==
+            remainder_projective_height_matrix.shells.size() &&
+        remainder_projective_height_tail
+                .maximum_reconstruction_error < 1e-13L &&
+        remainder_projective_height_tail
+                .maximum_component_reconstruction_error < 1e-13L &&
+        !remainder_projective_height_tail
+             .uniform_weighted_tail_bound_proved;
     const LocalSldRemainderDoubleSquareReport remainder_double_square =
         LocalSldRemainderDoubleSquare::analyze(
             active_dynamics, cyclic_ansatz.state);
@@ -3014,6 +3077,9 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(projective_coherence_gradient_error)
         << ", projective stretching gradient error="
         << static_cast<double>(projective_stretching_gradient_error)
+        << ", projective height-stretching gradient error="
+        << static_cast<double>(
+               projective_height_stretching_gradient_error)
         << ", projective cross-power gradient error="
         << static_cast<double>(projective_cross_power_gradient_error)
         << ", projective open-power gradient error="
@@ -3291,6 +3357,27 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(
                remainder_projective_core_tail.bracket_partition_error)
         << ")\n"
+        << "local SLD projective height-matrix test: "
+        << (remainder_projective_height_matrix_ok ? "PASS" : "FAIL")
+        << " (shells="
+        << remainder_projective_height_matrix.shells.size()
+        << ", effective pairs="
+        << static_cast<double>(
+               remainder_projective_height_matrix.effective_height_pairs)
+        << ", error="
+        << static_cast<double>(
+               remainder_projective_height_matrix
+                   .bracket_reconstruction_error)
+        << ")\n"
+        << "local SLD projective cumulative height-tail test: "
+        << (remainder_projective_height_tail_ok ? "PASS" : "FAIL")
+        << " (cuts="
+        << remainder_projective_height_tail.rows.size()
+        << ", maximum error="
+        << static_cast<double>(
+               remainder_projective_height_tail
+                   .maximum_reconstruction_error)
+        << ")\n"
         << "local SLD remainder double-square test: "
         << (remainder_double_square_ok ? "PASS" : "FAIL")
         << " (signed LQC-3="
@@ -3367,6 +3454,8 @@ bool self_test(std::ostream& out) {
            remainder_projective_quartic_cross_ok &&
            remainder_projective_cross_attribution_ok &&
            remainder_projective_core_tail_ok &&
+           remainder_projective_height_matrix_ok &&
+           remainder_projective_height_tail_ok &&
            remainder_double_square_ok &&
            remainder_tradeoff_ok &&
            response_hierarchy_ok && response_family_ok &&

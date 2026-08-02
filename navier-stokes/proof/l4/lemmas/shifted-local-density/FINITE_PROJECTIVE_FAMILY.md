@@ -170,7 +170,7 @@ closure with frequency gain `-1/2`, while explicitly recording the
 core--tail, tail--tail, uniform-growing-family, full-lemma, and Clay claims as
 unproved.
 
-Artifact:
+Artifacts:
 
 - [`../../certificates/shifted-local-density/projective/finite-dominant-core-K8.json`](../../certificates/shifted-local-density/projective/finite-dominant-core-K8.json)
 - [`../../certificates/shifted-local-density/projective/finite-height-8-core-K8.json`](../../certificates/shifted-local-density/projective/finite-height-8-core-K8.json)

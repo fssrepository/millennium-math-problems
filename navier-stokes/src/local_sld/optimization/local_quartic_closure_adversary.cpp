@@ -10,6 +10,7 @@
 #include "local_sld_projective_stretching_objective.hpp"
 #include "local_sld_projective_cross_power_objective.hpp"
 #include "local_sld_projective_open_power_objective.hpp"
+#include "local_sld_projective_height_stretching_objective.hpp"
 #include "parallel_executor.hpp"
 #include "spectral_adjoint.hpp"
 #include "spectral_galerkin.hpp"
@@ -239,6 +240,8 @@ LocalQuarticClosureAdversary::maximize(
                ? "local-projective-cross-power-ratio"
         : (options.objective == "projective-open-power-ratio"
                ? "local-projective-open-power-ratio"
+        : (options.objective == "projective-height-stretching-ratio"
+               ? "local-projective-height-stretching-ratio"
         : (options.objective == "signed-closure-ratio"
                ? "local-signed-closure-ratio"
                : (options.objective == "block-ratio"
@@ -250,7 +253,7 @@ LocalQuarticClosureAdversary::maximize(
                                     : (options.objective ==
                                                "maximum-sld-ratio"
                                            ? "local-frozen-maximum-sld-ratio"
-                                           : "local-sld-ratio"))))))))))))));
+                                           : "local-sld-ratio")))))))))))))));
     search.method = options.method;
     search.lbfgs_history = options.lbfgs_history;
     search.sobolev_order = options.sobolev_order;
@@ -320,6 +323,20 @@ LocalQuarticClosureAdversary::maximize(
     result.projective_open_bracket = open_power_value.open_bracket;
     result.projective_fixed_core_bracket =
         open_power_value.fixed_core_bracket;
+    const LocalSldProjectiveHeightStretchingObjectiveValue
+        height_stretching_value =
+            LocalSldProjectiveHeightStretchingObjective(
+                dynamics, search.closure_selection,
+                options.projective_core_maximum_height,
+                search.objective_threads).evaluate(result.state);
+    result.projective_height_stretching_ratio =
+        height_stretching_value.stretching_aware_h1_ratio;
+    result.projective_height_h1_synthesis_ratio =
+        height_stretching_value.h1_synthesis_ratio;
+    result.projective_height_stretching_alignment_squared =
+        height_stretching_value.stretching_h1_alignment_squared;
+    result.projective_height_shape_count =
+        height_stretching_value.shell_shape_count;
     result.common_block_objective =
         is_common_block_objective(options.objective);
     if (result.common_block_objective) {
@@ -404,6 +421,7 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
          options.objective != "projective-stretching-ratio" &&
          options.objective != "projective-cross-power-ratio" &&
          options.objective != "projective-open-power-ratio" &&
+         options.objective != "projective-height-stretching-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "sld-ratio" &&
          options.objective != "block-ratio" &&
@@ -550,6 +568,16 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                         options.projective_core_maximum_height)
                         .evaluate(starts.front())
                         .squared_open_power_one;
+            }
+            if (options.objective ==
+                "projective-height-stretching-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveHeightStretchingObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.projective_core_maximum_height)
+                        .evaluate(starts.front())
+                        .stretching_aware_h1_ratio;
             }
         }
         std::vector<LocalQuarticClosureRestartResult> results(
