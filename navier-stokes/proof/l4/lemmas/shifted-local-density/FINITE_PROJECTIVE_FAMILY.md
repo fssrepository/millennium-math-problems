@@ -87,6 +87,52 @@ estimate for the core--tail term `J_FT` and the tail--tail term `J_T` after
 multiplication by `S_full/(Z^2P^2)`. Allowing `F` to grow with the cutoff
 would merely rename this missing estimate.
 
+## Canonical height cores and exact boundary ledger
+
+For an integer `H`, define the canonical core
+
+```text
+F_H = {(a,b,c): 1<=a<=b<=c<=H, gcd(a,b,c)=1,
+                   (c-a-b)^2<=4ab}.                (FPF-7)
+```
+
+`F_H` is fixed and finite, so FPF-2 applies. `ProjectiveCoreFamily`
+enumerates exactly this set. The exact boundary ledger evaluates all five
+components of FPF-1 separately for `J_F`, `J_FT`, and `J_T`, using 12-thread
+projective interaction sums. On the original K7 power-one winner, the
+13-ray empirical core gives
+
+```text
+selected       fixed core       core--tail       tail--tail
+0.0063647724   0.0063635050     3.1639e-7        9.5097e-7.
+```
+
+The bracket reconstruction error is `6.42e-19`. This localizes the open
+quantity exactly; it is not a tail estimate.
+
+The height-core scan initially showed rapid decay on old winners, but the
+exact-gradient objective
+
+```text
+|(J_FT+J_T) S_full|^2/(Z^4P^4)                    (FPF-8)
+```
+
+finds states adapted to the boundary. Its gradient agrees with central
+differences to `8.94e-12`. On separately optimized K8 states, the square
+roots of FPF-8 are
+
+```text
+H                     8          16          32          64
+open power one   0.0010076   0.0008591   0.0006330   0.0003079
+```
+
+The fitted finite lower-branch height exponent is `-0.557`. Tail--tail is
+larger at H=8 and H=16; by H=64 the core--tail and tail--tail pieces are of
+comparable size. The observed decay is encouraging but is neither an upper
+bound nor an asymptotic theorem: each row used only one finite-cutoff local
+optimizer, and the optimizer visibly moves toward higher primitive shapes as
+`H` increases.
+
 ## Machine certificate
 
 The C++ certificate canonicalizes and rejects duplicate or nonprimitive
@@ -104,6 +150,18 @@ cutoff-independent proof.
   --signature 3,4,11 --signature 3,5,6 --signature 3,8,11 \
   --signature 5,5,6 \
   --certificate proof/l4/certificates/shifted-local-density/projective/finite-dominant-core-K8.json
+
+./build/navier_stokes_lab finite-projective-family-certificate \
+  --max-cutoff 8 --maximum-height 8 \
+  --certificate proof/l4/certificates/shifted-local-density/projective/finite-height-8-core-K8.json
+
+./build/navier_stokes_lab local-sld-projective-open-power-replay \
+  --height 8 --state proof/l4/states/local-projective-open-power/height-8-K8-refined/K8.tsv \
+  --height 16 --state proof/l4/states/local-projective-open-power/height-16-K8-refined/K8.tsv \
+  --height 32 --state proof/l4/states/local-projective-open-power/height-32-K8-warm/K8.tsv \
+  --height 64 --state proof/l4/states/local-projective-open-power/height-64-K8-warm/K8.tsv \
+  --threads 12 --exclude-triple-family \
+  --certificate proof/l4/analysis/shifted-local-density/remainder-quartet/K8-optimized-open-power-height-replay.json
 ```
 
 The listed 13-ray core contains the leading rays found by the power-one and
@@ -115,3 +173,6 @@ unproved.
 Artifact:
 
 - [`../../certificates/shifted-local-density/projective/finite-dominant-core-K8.json`](../../certificates/shifted-local-density/projective/finite-dominant-core-K8.json)
+- [`../../certificates/shifted-local-density/projective/finite-height-8-core-K8.json`](../../certificates/shifted-local-density/projective/finite-height-8-core-K8.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K7-power-one-dominant-core-tail.json`](../../analysis/shifted-local-density/remainder-quartet/K7-power-one-dominant-core-tail.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K8-optimized-open-power-height-replay.json`](../../analysis/shifted-local-density/remainder-quartet/K8-optimized-open-power-height-replay.json)

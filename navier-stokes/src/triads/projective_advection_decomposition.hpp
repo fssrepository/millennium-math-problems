@@ -30,6 +30,13 @@ public:
         const SpectralState& state,
         TriadSelection selection);
 
+    [[nodiscard]] static const std::vector<ProjectiveInteractionGroup>&
+    aggregate_family(
+        const SpectralState& state,
+        TriadSelection selection,
+        std::vector<std::array<SpectralInteger, 3>>
+            primitive_squared_lengths);
+
     [[nodiscard]] static SpectralIncrement evaluate(
         const SpectralState& state,
         const ProjectiveInteractionGroup& group);

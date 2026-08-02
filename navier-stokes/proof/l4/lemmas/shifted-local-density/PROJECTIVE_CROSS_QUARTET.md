@@ -98,9 +98,10 @@ full=+0.00059465,  self=+0.00171121,  cross=-0.00111656.
 ```
 
 The flat branch and the self/cross cancellation are finite evidence. They do
-not exclude another high-frequency cross branch. The remaining analytic task
-is a cutoff-independent estimate for PCQ-3 after multiplication by
-`S_full/(Z^2P^2)`, together with a uniform summation of PCQ-1.
+not exclude another high-frequency cross branch. Globally, a
+cutoff-independent estimate is still required after multiplication by
+`S_full/(Z^2P^2)`; the next section removes the part internal to any fixed
+finite core from that obligation.
 
 ## Cross attribution and fixed-core closure
 
@@ -123,6 +124,14 @@ Therefore PCQ-3 is no longer open inside any fixed finite core. The remaining
 statement is precisely the coupling between such a core and the growing
 projective tail, plus the tail's internal block. The constant is not uniform
 when the core itself grows with the cutoff.
+
+The boundary is now tested directly rather than inferred from old winners.
+For the canonical height core `F_H`, an exact-gradient objective subtracts
+the complete internal `J_F` and maximizes only `J_FT+J_T`. Separate K8
+branches give open power-one values `0.0010076`, `0.0008591`, `0.0006330`,
+and `0.0003079` for H=8,16,32,64. Their fitted finite height slope is
+`-0.557`. This is a lower-bound branch, not the missing uniform upper bound;
+see [FINITE_PROJECTIVE_FAMILY.md](FINITE_PROJECTIVE_FAMILY.md).
 
 ## Reproduction
 
@@ -162,3 +171,4 @@ Artifacts:
 - [`../../adversary/shifted-local-density/projective-cross-power/K8-lift-evaluate.json`](../../adversary/shifted-local-density/projective-cross-power/K8-lift-evaluate.json)
 - [`../../analysis/shifted-local-density/remainder-quartet/K7-power-one-cross-attribution.json`](../../analysis/shifted-local-density/remainder-quartet/K7-power-one-cross-attribution.json)
 - [`../../analysis/shifted-local-density/remainder-quartet/K6-cross-power-winner-cross-attribution.json`](../../analysis/shifted-local-density/remainder-quartet/K6-cross-power-winner-cross-attribution.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K8-optimized-open-power-height-replay.json`](../../analysis/shifted-local-density/remainder-quartet/K8-optimized-open-power-height-replay.json)

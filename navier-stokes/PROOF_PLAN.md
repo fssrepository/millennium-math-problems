@@ -920,6 +920,19 @@ analytic subtask is no longer the internal cross term of a fixed core. It is
 the core--growing-tail and tail--tail part of PCQ-3, with a constant uniform
 under movement of the core boundary.
 
+That boundary is now a first-class exact-gradient objective rather than a
+residual inferred from unrelated winners. For the canonical finite core
+`F_H={primitive feasible (a,b,c): max(a,b,c)<=H}`, the engine subtracts its
+complete internal quartet and maximizes only
+`|(J_FT+J_T)S_full|^2/(Z^4P^4)`. The gradient error is `8.94e-12`. The H=8
+branch stabilizes near `0.0010076` by K8. Separately adapted K8 branches at
+H=16,32,64 reach `0.0008591`, `0.0006330`, and `0.0003079`, giving a finite
+lower-branch height slope `-0.557`. Because the optimizer relocates toward
+higher primitive shapes, this decay cannot yet be used as an upper bound.
+The next analytic step is a uniform weighted estimate for `J_FT+J_T` in the
+height parameter; the next numerical step is higher-cutoff continuation of
+the H-adapted branches, not another optimization of the already closed core.
+
 The absolute closure ratio was subsequently reverse-differentiated and
 optimized directly. A K1 branch reaches `C_state=1/3`, but its stretching is
 only `1.23e-11`; the `S^3` factor makes it irrelevant to the actual local

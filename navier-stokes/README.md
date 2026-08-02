@@ -80,6 +80,9 @@ source file:
 - `src/local_sld/core/`, `analysis/`, `optimization/`, and `cli/` separate the
   active shifted-local-density lemma work into numerical primitives,
   diagnostic ledgers, searches, and artifact/report handling;
+- `src/local_sld/core/projective/` and `analysis/projective/` contain the
+  projective open-tail objective, fixed-core ledgers, and cutoff/height replay
+  scans without enlarging the older monolithic analysis files;
 - `src/reporting/` contains the remaining shared certificate writers.
 
 - `ScalingCertificate` stores exact rational scaling results, while
@@ -438,7 +441,11 @@ tail has `3.027` effective projective shapes. Cross attribution uses `2.103`
 effective rays on the K7 winner and `3.583` on the K6 cross-only winner. The
 complete self+cross block internal to every fixed finite ray family is now
 proved cutoff-independently with a half-derivative gain. The remaining
-projective target is core--growing-tail and tail--tail coupling. See
+projective target is core--growing-tail and tail--tail coupling. Its own
+exact-gradient objective reaches `0.0010076`, `0.0008591`, `0.0006330`, and
+`0.0003079` on separately optimized K8 branches for fixed shape-height cores
+H=8,16,32,64. The fitted finite lower-branch height exponent is `-0.557`, not
+a uniform upper bound. See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_CROSS_QUARTET.md` and

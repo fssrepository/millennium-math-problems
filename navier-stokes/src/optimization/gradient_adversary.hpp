@@ -25,6 +25,7 @@ struct GradientSearchOptions {
     int shape_power = 3;
     int minimum_dyadic_gap = 2;
     int objective_threads = 1;
+    SpectralInteger projective_core_maximum_height = 8;
     TriadSelection closure_selection = TriadPartition::local;
 };
 

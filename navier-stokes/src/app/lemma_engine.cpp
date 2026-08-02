@@ -50,6 +50,7 @@
 #include "local_sld_projective_coherence_objective.hpp"
 #include "local_sld_projective_stretching_objective.hpp"
 #include "local_sld_projective_cross_power_objective.hpp"
+#include "local_sld_projective_open_power_objective.hpp"
 #include "local_sld_doubling_shell_ledger.hpp"
 #include "local_sld_doubling_scale_scan.hpp"
 #include "local_sld_projective_coherence_ledger.hpp"
@@ -1453,6 +1454,11 @@ bool self_test(std::ostream& out) {
         projective_cross_power_objective(
             active_dynamics,
             TriadSelection::local_without_equal_low_doubling());
+    const LocalSldProjectiveOpenPowerObjective
+        projective_open_power_objective(
+            active_dynamics,
+            TriadSelection::local_without_equal_low_doubling(),
+            3, 2);
     const Real local_closure_value_error = std::abs(
         local_closure_value.constant_ratio -
         local_quartic_closure.required_constant_ratio) /
@@ -1726,6 +1732,26 @@ bool self_test(std::ostream& out) {
                 std::abs(projective_cross_power_directional_adjoint),
                 std::abs(
                     projective_cross_power_directional_finite_difference)));
+    const SpectralIncrement projective_open_power_gradient =
+        projective_open_power_objective.gradient(partition_state);
+    const Real projective_open_power_directional_adjoint =
+        increment_inner_product(
+            projective_open_power_gradient, partition_tangent);
+    const Real projective_open_power_directional_finite_difference =
+        (projective_open_power_objective.evaluate(partition_plus_state)
+             .squared_open_power_one -
+         projective_open_power_objective.evaluate(partition_minus_state)
+             .squared_open_power_one) /
+        (2.0L * finite_difference_step);
+    const Real projective_open_power_gradient_error = std::abs(
+        projective_open_power_directional_adjoint -
+        projective_open_power_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(projective_open_power_directional_adjoint),
+                std::abs(
+                    projective_open_power_directional_finite_difference)));
     const SpectralIncrement signed_closure_gradient =
         local_closure_objective.signed_constant_ratio_gradient(
             partition_state);
@@ -2133,6 +2159,7 @@ bool self_test(std::ostream& out) {
         projective_coherence_gradient_error < 1e-9L &&
         projective_stretching_gradient_error < 1e-9L &&
         projective_cross_power_gradient_error < 1e-9L &&
+        projective_open_power_gradient_error < 1e-9L &&
         signed_closure_gradient_error < 1e-9L &&
         local_sld_gradient_error < 1e-9L &&
         selected_block_gradient_error < 1e-9L &&
@@ -2989,6 +3016,8 @@ bool self_test(std::ostream& out) {
         << static_cast<double>(projective_stretching_gradient_error)
         << ", projective cross-power gradient error="
         << static_cast<double>(projective_cross_power_gradient_error)
+        << ", projective open-power gradient error="
+        << static_cast<double>(projective_open_power_gradient_error)
         << ", signed closure gradient error="
         << static_cast<double>(signed_closure_gradient_error)
         << ", direct SLD gradient error="

@@ -9,6 +9,7 @@
 #include "local_sld_projective_coherence_objective.hpp"
 #include "local_sld_projective_stretching_objective.hpp"
 #include "local_sld_projective_cross_power_objective.hpp"
+#include "local_sld_projective_open_power_objective.hpp"
 #include "parallel_executor.hpp"
 #include "spectral_adjoint.hpp"
 #include "spectral_galerkin.hpp"
@@ -196,7 +197,9 @@ LocalQuarticClosureAdversary::maximize(
     const LocalQuarticClosureAdversaryOptions& options,
     int restart, std::uint64_t seed, bool warm_continuation) {
     SpectralGalerkin galerkin;
-    galerkin.configure(options.backend, 1);
+    galerkin.configure(
+        options.backend,
+        options.restarts == 1 ? options.workers : 1);
     const SpectralDynamics dynamics(galerkin);
     const SpectralObjective spectral_objective(dynamics);
     const SpectralAdjoint adjoint(dynamics, spectral_objective);
@@ -214,6 +217,8 @@ LocalQuarticClosureAdversary::maximize(
     search.initial_step = options.initial_step;
     search.absorption_theta = options.absorption_theta;
     search.shape_power = options.shape_power;
+    search.projective_core_maximum_height =
+        options.projective_core_maximum_height;
     search.objective = options.objective == "closure-ratio"
         ? "local-closure-ratio"
         : (options.objective == "lqc3-ratio"
@@ -232,6 +237,8 @@ LocalQuarticClosureAdversary::maximize(
                ? "local-projective-stretching-ratio"
         : (options.objective == "projective-cross-power-ratio"
                ? "local-projective-cross-power-ratio"
+        : (options.objective == "projective-open-power-ratio"
+               ? "local-projective-open-power-ratio"
         : (options.objective == "signed-closure-ratio"
                ? "local-signed-closure-ratio"
                : (options.objective == "block-ratio"
@@ -243,7 +250,7 @@ LocalQuarticClosureAdversary::maximize(
                                     : (options.objective ==
                                                "maximum-sld-ratio"
                                            ? "local-frozen-maximum-sld-ratio"
-                                           : "local-sld-ratio")))))))))))));
+                                           : "local-sld-ratio"))))))))))))));
     search.method = options.method;
     search.lbfgs_history = options.lbfgs_history;
     search.sobolev_order = options.sobolev_order;
@@ -303,6 +310,16 @@ LocalQuarticClosureAdversary::maximize(
     result.projective_cross_bracket = cross_power_value.cross_bracket;
     result.projective_diagonal_bracket =
         cross_power_value.diagonal_bracket;
+    const LocalSldProjectiveOpenPowerObjectiveValue open_power_value =
+        LocalSldProjectiveOpenPowerObjective(
+            dynamics, search.closure_selection,
+            options.projective_core_maximum_height,
+            search.objective_threads).evaluate(result.state);
+    result.projective_open_power_absolute =
+        open_power_value.absolute_open_power_one;
+    result.projective_open_bracket = open_power_value.open_bracket;
+    result.projective_fixed_core_bracket =
+        open_power_value.fixed_core_bracket;
     result.common_block_objective =
         is_common_block_objective(options.objective);
     if (result.common_block_objective) {
@@ -372,6 +389,8 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
         !(options.absorption_theta <= 1.0L) ||
         !std::isfinite(options.absorption_theta) ||
         options.shape_power < 0 || options.shape_power > 3 ||
+        options.projective_core_maximum_height < 1 ||
+        options.projective_core_maximum_height > 256 ||
         (options.method != "steepest" && options.method != "lbfgs") ||
         (options.backend != "auto" && options.backend != "direct" &&
          options.backend != "fft") ||
@@ -384,6 +403,7 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
          options.objective != "projective-coherence-ratio" &&
          options.objective != "projective-stretching-ratio" &&
          options.objective != "projective-cross-power-ratio" &&
+         options.objective != "projective-open-power-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "sld-ratio" &&
          options.objective != "block-ratio" &&
@@ -430,6 +450,8 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
     report.time_step = options.time_step;
     report.absorption_theta = options.absorption_theta;
     report.shape_power = options.shape_power;
+    report.projective_core_maximum_height =
+        options.projective_core_maximum_height;
     report.sobolev_order = options.sobolev_order;
     report.sobolev_cap = options.sobolev_cap;
     SpectralState previous_winner;
@@ -520,6 +542,15 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                                     .evaluate(starts.front())
                                     .block_sld_ratio
                               : warm_value.signed_local_sld_ratio))))))));
+            if (options.objective == "projective-open-power-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveOpenPowerObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.projective_core_maximum_height)
+                        .evaluate(starts.front())
+                        .squared_open_power_one;
+            }
         }
         std::vector<LocalQuarticClosureRestartResult> results(
             static_cast<std::size_t>(options.restarts));

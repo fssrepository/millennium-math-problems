@@ -45,6 +45,9 @@ std::string objective_formula(const std::string& objective) {
     if (objective == "projective-cross-power-ratio") {
         return "maximize |(K_cross+G_cross) S_full|^2 / (Z^4 P^4) after subtracting every same-projective-ray quartet";
     }
+    if (objective == "projective-open-power-ratio") {
+        return "maximize |(K_open+G_open) S_full|^2 / (Z^4 P^4) after subtracting the complete quartet internal to a fixed primitive-shape-height core";
+    }
     if (objective == "signed-closure-ratio") {
         return "maximize (K+G) E^(1/4) / (Z^(7/4) P)";
     }
@@ -102,6 +105,8 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
         << "  \"absorption_theta\": "
         << static_cast<double>(report.absorption_theta) << ",\n"
         << "  \"shape_power\": " << report.shape_power << ",\n"
+        << "  \"projective_core_maximum_height\": "
+        << report.projective_core_maximum_height << ",\n"
         << "  \"sobolev_order\": " << report.sobolev_order << ",\n"
         << "  \"sobolev_cap\": "
         << static_cast<double>(report.sobolev_cap) << ",\n"
@@ -164,6 +169,14 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
             << static_cast<double>(winner.projective_cross_bracket)
             << ", \"projective_diagonal_bracket\": "
             << static_cast<double>(winner.projective_diagonal_bracket)
+            << ", \"projective_open_power_absolute\": "
+            << static_cast<double>(
+                   winner.projective_open_power_absolute)
+            << ", \"projective_open_bracket\": "
+            << static_cast<double>(winner.projective_open_bracket)
+            << ", \"projective_fixed_core_bracket\": "
+            << static_cast<double>(
+                   winner.projective_fixed_core_bracket)
             << ", \"squared_lqc3_target_ratio\": "
             << static_cast<double>(value.squared_lqc3_target_ratio)
             << ", \"signed_constant_ratio\": "
@@ -306,7 +319,7 @@ void LocalQuarticClosureReporter::print_summary(
         << static_cast<double>(report.absorption_theta) << '\n'
         << "cutoff,initial_objective,optimized_objective,gain,"
            "closure_C,lqc3_C,signed_lqc3_C,envelope_C,absorption_C,projective_coherence,projective_amplification,projective_stretching,projective_alignment_squared,projective_cross_power,signed_S,warm_lift_objective,projection_residual,"
-           "gradient_norm,time_refinement_error,accepted,evaluations,seed\n";
+           "projective_open_power,gradient_norm,time_refinement_error,accepted,evaluations,seed\n";
     for (const auto& row : report.rows) {
         out << row.cutoff << ','
             << static_cast<double>(row.winner.initial_objective) << ','
@@ -333,6 +346,8 @@ void LocalQuarticClosureReporter::print_summary(
             << static_cast<double>(row.winner.value.signed_stretching) << ','
             << static_cast<double>(row.warm_lift_objective) << ','
             << static_cast<double>(row.projection_residual) << ','
+            << static_cast<double>(
+                   row.winner.projective_open_power_absolute) << ','
             << static_cast<double>(
                    row.winner.final_projected_gradient_norm) << ','
             << static_cast<double>(

@@ -313,6 +313,22 @@ can be localized to core--growing-tail and tail--tail coupling. Enlarging the
 fixed core can move the boundary, but cannot make its constant uniform in a
 cutoff-dependent family.
 
+The boundary now has its own exact-gradient adversary. For the canonical
+fixed core containing every primitive feasible shape of height at most `H`,
+it maximizes only
+
+```text
+|(J_core-tail+J_tail-tail)S_full|^2/(Z^4P^4).
+```
+
+The H=8 branch reaches `0.0010076` at K8 and is nearly cutoff-flat after K7.
+Reoptimizing at H=16,32,64 gives `0.0008591`, `0.0006330`, and `0.0003079`.
+The fitted finite height exponent is `-0.557`; this is not a uniform tail
+theorem. It shows that old power-one winners substantially underestimated the
+open boundary because the adversary can relocate to higher projective
+shapes. The exact core--tail ledger and replay are documented in
+[FINITE_PROJECTIVE_FAMILY.md](FINITE_PROJECTIVE_FAMILY.md).
+
 ## Reproduction
 
 ```bash

@@ -29,6 +29,13 @@ struct GroupCacheKey {
     auto operator<=>(const GroupCacheKey&) const = default;
 };
 
+struct FamilyGroupCacheKey {
+    GroupCacheKey group;
+    std::vector<Shape> primitive_squared_lengths;
+
+    auto operator<=>(const FamilyGroupCacheKey&) const = default;
+};
+
 GroupCacheKey cache_key(
     const SpectralState& state,
     TriadSelection selection) {
@@ -107,6 +114,62 @@ ProjectiveAdvectionDecomposition::group(
     result.reserve(grouped.size());
     for (auto& [shape, interactions] : grouped) {
         result.push_back({shape, std::move(interactions)});
+    }
+    return cache.emplace(key, std::move(result)).first->second;
+}
+
+const std::vector<ProjectiveInteractionGroup>&
+ProjectiveAdvectionDecomposition::aggregate_family(
+    const SpectralState& state,
+    TriadSelection selection,
+    std::vector<Shape> primitive_squared_lengths) {
+    for (Shape& shape : primitive_squared_lengths) {
+        std::sort(shape.begin(), shape.end());
+    }
+    std::sort(
+        primitive_squared_lengths.begin(),
+        primitive_squared_lengths.end());
+    if (std::adjacent_find(
+            primitive_squared_lengths.begin(),
+            primitive_squared_lengths.end()) !=
+        primitive_squared_lengths.end()) {
+        throw std::invalid_argument(
+            "projective aggregate family contains duplicate shapes");
+    }
+    const auto& groups = group(state, selection);
+    static std::map<
+        FamilyGroupCacheKey,
+        std::vector<ProjectiveInteractionGroup>> cache;
+    static std::mutex cache_mutex;
+    const FamilyGroupCacheKey key{
+        cache_key(state, selection), primitive_squared_lengths};
+    const std::lock_guard<std::mutex> lock(cache_mutex);
+    const auto existing = cache.find(key);
+    if (existing != cache.end()) {
+        return existing->second;
+    }
+    std::vector<ProjectiveInteractionGroup> result(1);
+    ProjectiveInteractionGroup& aggregate = result.front();
+    std::size_t interaction_count = 0;
+    for (const ProjectiveInteractionGroup& source : groups) {
+        if (std::binary_search(
+                primitive_squared_lengths.begin(),
+                primitive_squared_lengths.end(),
+                source.primitive_squared_lengths)) {
+            interaction_count += source.interactions.size();
+        }
+    }
+    aggregate.interactions.reserve(interaction_count);
+    for (const ProjectiveInteractionGroup& source : groups) {
+        if (std::binary_search(
+                primitive_squared_lengths.begin(),
+                primitive_squared_lengths.end(),
+                source.primitive_squared_lengths)) {
+            aggregate.interactions.insert(
+                aggregate.interactions.end(),
+                source.interactions.begin(),
+                source.interactions.end());
+        }
     }
     return cache.emplace(key, std::move(result)).first->second;
 }
