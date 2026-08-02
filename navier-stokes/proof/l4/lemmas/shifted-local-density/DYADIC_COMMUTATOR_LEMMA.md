@@ -75,19 +75,102 @@ rho_ij <= C 2^(-alpha |i-j|), alpha>0,              (DCL-6)
 sup_(N,u) sum_j w_j,N(u) < infinity.                (DCL-7)
 ```
 
-DCL-6 and DCL-7 remain open. They are stronger than the joint condition
-DCL-5, but they separate the derivative-bearing commutator geometry from the
-outer coercive weight.
+DCL-6 and DCL-7 are stronger than the joint condition DCL-5. Exact-gradient
+stress tests now show that this separation is badly conditioned: at fixed K8,
+maximizing `(sum g_ij)/(sum w_j)` raises the ratio from `0.6584` to `4.8496`
+while both numerator and denominator decrease. The projected gradient remains
+large. This is finite numerical evidence, not an analytic counterexample, but
+it removes a cutoff-uniform bound on `R_comm` as the active proof target.
 
-## Why the weight must be coercive
+## Full dynamic pairing
+
+The same stress branch identifies a second exact cancellation. Define the
+complete dynamical entry
+
+```text
+D_ij=outer_ij+advected_ij+nested_ij.                (DCL-8)
+```
+
+On the strongest outer-coercivity stress state, the globally signed
+commutator and nested contributions are `+4.83e-8` and `-1.07e-7` after
+power-one normalization. Taking their absolute values separately discards
+this cancellation. The sharper matrix majorant is therefore
+
+```text
+h_ij=q( |D_ij|+|enstrophy_ij|+|palinstrophy_ij| ). (DCL-9)
+```
+
+The code computes DCL-9 directly and differentiates its sign chambers
+exactly. With the same outer weights, finite-dimensional AM--GM gives the
+corresponding exact Schur bound. The ratio `(sum h_ij)/(sum w_j)` can also be
+driven upward at fixed K8 (`1.823` to `3.209` in 24 steps), so separating a
+uniform row constant from the vanishing outer weight remains too strong.
+
+The active joint target is instead the scale-normalized quantity itself:
+
+```text
+sup_(N,u) sum_(i<=j) h_ij,N(u) < infinity.          (DCL-10)
+```
+
+Unlike the isolated row constant, DCL-10 is exactly the type of joint bound
+needed by RQ-11. Forty-four K8 exact-gradient steps raise its unsquared value
+from `0.00177488` to `0.00186662`. Zero-padding that state to the complete K12
+Galerkin cube gives `0.00187172`; one full K12 gradient step raises it to
+`0.00187877`. The activated gap-nine contribution is `3.92e-16`, and the
+finite diagnostic satisfies `rho_gap <= 0.63863 2^(-gap)`. These are finite
+lower branches and fitted diagnostics, not an upper bound or a proof of
+DCL-10.
+
+## Dynamic response weight
+
+The outer-only normalization fails near states for which `b_j` is small but
+the linear response responsible for the nested term is not comparably small.
+Let `B_j(.,u)^*` denote the adjoint in the advecting slot and define
+
+```text
+N_j=-B_j(.,u)^* Au,
+R_j=C_j+N_j.                                        (DCL-11)
+```
+
+The full dynamical matrix then has the exact mixed-Gram representation
+
+```text
+D_jj=<b_j,R_j>,
+D_ij=<b_i,R_j>+<b_j,R_i>, i!=j.                    (DCL-12)
+```
+
+The C++ matrix engine evaluates `R_j` with the exact bilinear VJP and checks
+DCL-12 entry by entry. The maximum reconstruction errors are `2.17e-16` at
+K8 and `1.44e-15` at K12. This suggests the nondegenerate combined weights
+
+```text
+v_j=q( ||A^(1/2)b_j||_2^2+||A^(-1/2)R_j||_2^2 ).  (DCL-13)
+```
+
+Normalizing DCL-9 by `v_j` gives another exact finite Schur inequality. On the
+joint-envelope winners its `(weight,row,bound)` values are
+
+```text
+K8   (0.00359195, 0.672016, 0.00241385)
+K12  (0.00359895, 0.684904, 0.00246494).
+```
+
+On the outer-degenerate K8 stress state, the outer row is `4.55082`, whereas
+the response-weighted row is `1.14162`; no pair is unscaled. Thus DCL-13 fixes
+the specific degeneration found by the adversary. The remaining proof task is
+still cutoff-uniform: bound the response-weighted Schur product analytically.
+The finite data do not establish such a bound.
+
+## Why the paired diagonal is not a weight
 
 Using the paired diagonal `g_jj` itself as the Schur weight fails even on a
 finite stress state. The height-one diagonal is about `1e-25` because DCL-1
 cancels, while its off-diagonal couplings are nonzero. The resulting row sum
 exceeds `9e7`. This is a normalization failure, not a large quartet.
 
-The outer weight `w_j` does not contain that cancellation. It gives no
-unscaled pair on the saved K8 and K12 complete-Galerkin winners.
+The outer weight `w_j` does not contain that diagonal cancellation and gives
+no unscaled pair on the saved K8 and K12 complete-Galerkin winners. DCL-13
+adds the missing dynamic response needed near the outer null set.
 
 ## Current exact diagnostics
 
@@ -116,3 +199,11 @@ Artifacts:
 
 - [`../../analysis/shifted-local-density/remainder-quartet/K8-height-commutator-envelope-twenty-step-matrix.json`](../../analysis/shifted-local-density/remainder-quartet/K8-height-commutator-envelope-twenty-step-matrix.json)
 - [`../../analysis/shifted-local-density/remainder-quartet/K12-height-commutator-envelope-twelve-step-full-matrix.json`](../../analysis/shifted-local-density/remainder-quartet/K12-height-commutator-envelope-twelve-step-full-matrix.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K8-height-dynamic-envelope-twenty-four-step-matrix.json`](../../analysis/shifted-local-density/remainder-quartet/K8-height-dynamic-envelope-twenty-four-step-matrix.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K8-height-dynamic-envelope-forty-four-step-matrix.json`](../../analysis/shifted-local-density/remainder-quartet/K8-height-dynamic-envelope-forty-four-step-matrix.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K12-height-dynamic-envelope-forty-four-step-zero-pad-matrix.json`](../../analysis/shifted-local-density/remainder-quartet/K12-height-dynamic-envelope-forty-four-step-zero-pad-matrix.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K12-height-dynamic-envelope-one-step-full-matrix.json`](../../analysis/shifted-local-density/remainder-quartet/K12-height-dynamic-envelope-one-step-full-matrix.json)
+- [`../../adversary/shifted-local-density/projective-height-dynamic-envelope/K8-twenty-four-step.json`](../../adversary/shifted-local-density/projective-height-dynamic-envelope/K8-twenty-four-step.json)
+- [`../../adversary/shifted-local-density/projective-height-dynamic-envelope/K8-forty-four-step.json`](../../adversary/shifted-local-density/projective-height-dynamic-envelope/K8-forty-four-step.json)
+- [`../../adversary/shifted-local-density/projective-height-dynamic-envelope/K12-forty-four-step-zero-pad-evaluate.json`](../../adversary/shifted-local-density/projective-height-dynamic-envelope/K12-forty-four-step-zero-pad-evaluate.json)
+- [`../../adversary/shifted-local-density/projective-height-dynamic-envelope/K12-one-step-full.json`](../../adversary/shifted-local-density/projective-height-dynamic-envelope/K12-one-step-full.json)

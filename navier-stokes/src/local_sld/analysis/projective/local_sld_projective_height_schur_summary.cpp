@@ -20,6 +20,8 @@ LocalSldProjectiveHeightSchurSummary::summarize(
         shell_count, 0.0L);
     std::vector<SpectralReal> outer_power_diagonal(
         shell_count, 0.0L);
+    std::vector<SpectralReal> dynamic_response_diagonal(
+        shell_count, 0.0L);
     for (const auto& entry : matrix.entries) {
         if (entry.first_shell == entry.second_shell) {
             diagonal_envelope[
@@ -31,6 +33,13 @@ LocalSldProjectiveHeightSchurSummary::summarize(
             outer_power_diagonal[
                 static_cast<std::size_t>(entry.first_shell)] =
                 std::abs(entry.outer_square * matrix.power_one_scale);
+            const auto& shell = matrix.shells[
+                static_cast<std::size_t>(entry.first_shell)];
+            dynamic_response_diagonal[
+                static_cast<std::size_t>(entry.first_shell)] =
+                std::abs(matrix.power_one_scale) *
+                (shell.aggregate_h1_norm2 +
+                 shell.dynamic_response_hminus1_norm2);
         }
     }
     LocalSldProjectiveHeightSchurReport report;
@@ -45,8 +54,13 @@ LocalSldProjectiveHeightSchurSummary::summarize(
         shell_count, 0.0L);
     std::vector<SpectralReal> dynamic_paired_outer_row_sums(
         shell_count, 0.0L);
+    std::vector<SpectralReal> dynamic_paired_response_row_sums(
+        shell_count, 0.0L);
     for (const SpectralReal weight : outer_power_diagonal) {
         report.commutator_paired_outer_weight += weight;
+    }
+    for (const SpectralReal weight : dynamic_response_diagonal) {
+        report.dynamic_paired_response_weight += weight;
     }
     for (const auto& source : matrix.entries) {
         LocalSldProjectiveHeightSchurEntry entry;
@@ -99,6 +113,7 @@ LocalSldProjectiveHeightSchurSummary::summarize(
             outer_power_diagonal[
                 static_cast<std::size_t>(entry.second_shell)]);
         SpectralReal paired_outer_ratio = 0.0L;
+        SpectralReal dynamic_outer_ratio = 0.0L;
         const bool has_paired_outer_scale =
             paired_outer_scale > 1e-30L;
         if (has_paired_outer_scale) {
@@ -116,16 +131,16 @@ LocalSldProjectiveHeightSchurSummary::summarize(
                     static_cast<std::size_t>(entry.second_shell)] +=
                     paired_outer_ratio;
             }
-            const SpectralReal dynamic_ratio =
+            dynamic_outer_ratio =
                 source.dynamic_paired_power_one_envelope /
                 (symmetry_factor * paired_outer_scale);
             dynamic_paired_outer_row_sums[
                 static_cast<std::size_t>(entry.first_shell)] +=
-                dynamic_ratio;
+                dynamic_outer_ratio;
             if (entry.first_shell != entry.second_shell) {
                 dynamic_paired_outer_row_sums[
                     static_cast<std::size_t>(entry.second_shell)] +=
-                    dynamic_ratio;
+                    dynamic_outer_ratio;
             }
         } else if (entry.first_shell != entry.second_shell &&
                    source.commutator_paired_power_one_envelope > 1e-30L) {
@@ -136,6 +151,33 @@ LocalSldProjectiveHeightSchurSummary::summarize(
             entry.first_shell != entry.second_shell &&
             source.dynamic_paired_power_one_envelope > 1e-30L) {
             ++report.dynamic_paired_outer_unscaled_off_diagonal_pair_count;
+        }
+        const SpectralReal response_scale = std::sqrt(
+            dynamic_response_diagonal[
+                static_cast<std::size_t>(entry.first_shell)] *
+            dynamic_response_diagonal[
+                static_cast<std::size_t>(entry.second_shell)]);
+        SpectralReal dynamic_response_ratio = 0.0L;
+        const bool has_response_scale = response_scale > 1e-30L;
+        if (has_response_scale) {
+            const SpectralReal symmetry_factor =
+                entry.first_shell == entry.second_shell
+                ? 1.0L : 2.0L;
+            dynamic_response_ratio =
+                source.dynamic_paired_power_one_envelope /
+                (symmetry_factor * response_scale);
+            dynamic_paired_response_row_sums[
+                static_cast<std::size_t>(entry.first_shell)] +=
+                dynamic_response_ratio;
+            if (entry.first_shell != entry.second_shell) {
+                dynamic_paired_response_row_sums[
+                    static_cast<std::size_t>(entry.second_shell)] +=
+                    dynamic_response_ratio;
+            }
+        } else if (entry.first_shell != entry.second_shell &&
+                   source.dynamic_paired_power_one_envelope > 1e-30L) {
+            ++report
+                .dynamic_paired_response_unscaled_off_diagonal_pair_count;
         }
         const SpectralReal first_diagonal = diagonal_envelope[
             static_cast<std::size_t>(entry.first_shell)];
@@ -173,6 +215,8 @@ LocalSldProjectiveHeightSchurSummary::summarize(
             entry.absolute_component_power_one_envelope;
         gap.commutator_paired_envelope_sum +=
             source.commutator_paired_power_one_envelope;
+        gap.dynamic_paired_envelope_sum +=
+            source.dynamic_paired_power_one_envelope;
         const SpectralReal absolute_scale =
             std::abs(matrix.power_one_scale);
         const SpectralReal commutator_envelope =
@@ -205,9 +249,30 @@ LocalSldProjectiveHeightSchurSummary::summarize(
                     gap.remainder_outer_maximum_symmetric_geometric_ratio,
                     remainder_envelope /
                         (symmetry_factor * paired_outer_scale));
+            gap.dynamic_paired_outer_maximum_symmetric_geometric_ratio =
+                std::max(
+                    gap
+                        .dynamic_paired_outer_maximum_symmetric_geometric_ratio,
+                    dynamic_outer_ratio);
         } else if (entry.first_shell != entry.second_shell &&
                    source.commutator_paired_power_one_envelope > 1e-30L) {
             ++gap.commutator_paired_outer_unscaled_pair_count;
+        }
+        if (!has_paired_outer_scale &&
+            entry.first_shell != entry.second_shell &&
+            source.dynamic_paired_power_one_envelope > 1e-30L) {
+            ++gap.dynamic_paired_outer_unscaled_pair_count;
+        }
+        if (has_response_scale) {
+            gap
+                .dynamic_paired_response_maximum_symmetric_geometric_ratio =
+                std::max(
+                    gap
+                        .dynamic_paired_response_maximum_symmetric_geometric_ratio,
+                    dynamic_response_ratio);
+        } else if (entry.first_shell != entry.second_shell &&
+                   source.dynamic_paired_power_one_envelope > 1e-30L) {
+            ++gap.dynamic_paired_response_unscaled_pair_count;
         }
         if (entry.has_nonzero_diagonal_scale) {
             gap.maximum_symmetric_geometric_ratio = std::max(
@@ -233,6 +298,28 @@ LocalSldProjectiveHeightSchurSummary::summarize(
         *std::max_element(
             dynamic_paired_outer_row_sums.begin(),
             dynamic_paired_outer_row_sums.end());
+    report.dynamic_paired_response_maximum_weighted_row_sum =
+        *std::max_element(
+            dynamic_paired_response_row_sums.begin(),
+            dynamic_paired_response_row_sums.end());
+    for (const auto& gap : report.gaps) {
+        report.dynamic_paired_outer_gap_ratio_sum +=
+            gap.dynamic_paired_outer_maximum_symmetric_geometric_ratio;
+        report.dynamic_paired_outer_gap_one_decay_constant = std::max(
+            report.dynamic_paired_outer_gap_one_decay_constant,
+            std::ldexp(
+                gap.dynamic_paired_outer_maximum_symmetric_geometric_ratio,
+                gap.shell_gap));
+        report.dynamic_paired_response_gap_ratio_sum +=
+            gap
+                .dynamic_paired_response_maximum_symmetric_geometric_ratio;
+        report.dynamic_paired_response_gap_one_decay_constant = std::max(
+            report.dynamic_paired_response_gap_one_decay_constant,
+            std::ldexp(
+                gap
+                    .dynamic_paired_response_maximum_symmetric_geometric_ratio,
+                gap.shell_gap));
+    }
     report.weighted_schur_upper_bound =
         report.maximum_weighted_row_sum *
         report.diagonal_component_envelope;
@@ -265,6 +352,14 @@ LocalSldProjectiveHeightSchurSummary::summarize(
         report.dynamic_paired_outer_upper_bound_ratio =
             report.dynamic_paired_total_envelope /
             report.dynamic_paired_outer_weighted_schur_upper_bound;
+    }
+    report.dynamic_paired_response_weighted_schur_upper_bound =
+        report.dynamic_paired_response_maximum_weighted_row_sum *
+        report.dynamic_paired_response_weight;
+    if (report.dynamic_paired_response_weighted_schur_upper_bound > 0.0L) {
+        report.dynamic_paired_response_upper_bound_ratio =
+            report.dynamic_paired_total_envelope /
+            report.dynamic_paired_response_weighted_schur_upper_bound;
     }
     std::vector<SpectralReal> outer_diagonal(shell_count, 0.0L);
     for (const auto& entry : matrix.entries) {
@@ -403,6 +498,12 @@ LocalSldProjectiveHeightSchurSummary::summarize(
         report.dynamic_paired_outer_unscaled_off_diagonal_pair_count == 0 &&
         report.dynamic_paired_total_envelope <=
             report.dynamic_paired_outer_weighted_schur_upper_bound *
+                (1.0L + 1e-14L);
+    report.finite_dynamic_paired_response_schur_inequality_verified =
+        report
+            .dynamic_paired_response_unscaled_off_diagonal_pair_count == 0 &&
+        report.dynamic_paired_total_envelope <=
+            report.dynamic_paired_response_weighted_schur_upper_bound *
                 (1.0L + 1e-14L);
     return report;
 }

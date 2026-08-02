@@ -2810,6 +2810,16 @@ bool self_test(std::ostream& out) {
         !remainder_projective_height_matrix.entries.empty() &&
         remainder_projective_height_matrix
                 .bracket_reconstruction_error < 1e-13L &&
+        remainder_projective_height_matrix
+                .maximum_dynamic_response_reconstruction_error < 1e-13L &&
+        remainder_projective_height_matrix
+                .global_dynamic_response_reconstruction_error < 1e-13L &&
+        remainder_projective_height_matrix
+                .finite_global_dynamic_response_young_inequality_verified &&
+        remainder_projective_height_matrix
+                .global_response_bracket_reconstruction_error < 1e-13L &&
+        remainder_projective_height_matrix
+                .finite_global_response_bracket_inequality_verified &&
         remainder_projective_height_matrix.effective_height_pairs >=
             1.0L &&
         remainder_projective_height_matrix
@@ -2839,6 +2849,8 @@ bool self_test(std::ostream& out) {
         remainder_projective_height_schur.components.size() == 5 &&
         remainder_projective_height_schur
                 .finite_schur_inequality_verified &&
+        remainder_projective_height_schur
+                .finite_dynamic_paired_response_schur_inequality_verified &&
         remainder_projective_height_schur
                 .maximum_weighted_row_sum >= 1.0L &&
         !remainder_projective_height_schur

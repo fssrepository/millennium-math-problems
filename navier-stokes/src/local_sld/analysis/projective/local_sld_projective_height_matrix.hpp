@@ -26,6 +26,8 @@ struct LocalSldProjectiveHeightMatrixEntry {
     SpectralReal absolute_component_power_one_envelope = 0.0L;
     SpectralReal commutator_paired_power_one_envelope = 0.0L;
     SpectralReal dynamic_paired_power_one_envelope = 0.0L;
+    SpectralReal dynamic_response_pairing = 0.0L;
+    SpectralReal dynamic_response_reconstruction_error = 0.0L;
     std::size_t shared_target_mode_count = 0;
     SpectralReal target_incidence_cosine = 0.0L;
     SpectralReal absolute_fraction = 0.0L;
@@ -57,6 +59,8 @@ struct LocalSldProjectiveHeightShellSummary {
     SpectralReal commutator_hminus1_norm2 = 0.0L;
     SpectralReal commutator_to_outer_ratio_squared = 0.0L;
     SpectralReal diagonal_commutator_alignment_squared = 0.0L;
+    SpectralReal dynamic_response_hminus1_norm2 = 0.0L;
+    SpectralReal dynamic_response_to_outer_ratio_squared = 0.0L;
 };
 
 struct LocalSldProjectiveHeightMatrixReport {
@@ -74,6 +78,31 @@ struct LocalSldProjectiveHeightMatrixReport {
     SpectralReal dominant_height_pair_fraction = 0.0L;
     SpectralReal signed_height_pair_alignment = 0.0L;
     SpectralReal bracket_reconstruction_error = 0.0L;
+    SpectralReal maximum_dynamic_response_reconstruction_error = 0.0L;
+    SpectralReal global_dynamic_response_pairing = 0.0L;
+    SpectralReal reconstructed_global_dynamic_pairing = 0.0L;
+    SpectralReal global_dynamic_response_reconstruction_error = 0.0L;
+    SpectralReal global_aggregate_h1_norm2 = 0.0L;
+    SpectralReal global_aggregate_h2_norm2 = 0.0L;
+    SpectralReal global_dynamic_response_hminus1_norm2 = 0.0L;
+    SpectralReal global_dynamic_paired_power_one = 0.0L;
+    SpectralReal global_dynamic_response_young_upper_bound = 0.0L;
+    SpectralReal global_dynamic_response_young_upper_bound_ratio = 0.0L;
+    SpectralReal global_selected_stretching = 0.0L;
+    SpectralReal global_selected_palinstrophy_cross = 0.0L;
+    SpectralReal global_enstrophy_normalization = 0.0L;
+    SpectralReal reconstructed_global_enstrophy_normalization = 0.0L;
+    SpectralReal global_enstrophy_normalization_reconstruction_error = 0.0L;
+    SpectralReal global_palinstrophy_normalization = 0.0L;
+    SpectralReal reconstructed_global_palinstrophy_normalization = 0.0L;
+    SpectralReal global_palinstrophy_normalization_reconstruction_error = 0.0L;
+    SpectralReal global_response_bracket_reconstruction_error = 0.0L;
+    SpectralReal global_enstrophy_normalization_power_one_bound = 0.0L;
+    SpectralReal global_palinstrophy_normalization_power_one_bound = 0.0L;
+    SpectralReal global_response_bracket_power_one_upper_bound = 0.0L;
+    SpectralReal global_response_bracket_upper_bound_ratio = 0.0L;
+    bool finite_global_dynamic_response_young_inequality_verified = false;
+    bool finite_global_response_bracket_inequality_verified = false;
     bool exact_height_matrix_decomposition = false;
     bool finite_height_matrix_is_not_a_proof = true;
     std::vector<LocalSldProjectiveHeightShellSummary> shells;

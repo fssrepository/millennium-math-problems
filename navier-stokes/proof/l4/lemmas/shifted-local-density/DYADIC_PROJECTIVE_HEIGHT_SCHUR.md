@@ -240,6 +240,29 @@ the separately absolute five-component envelope and only about twice the
 signed target. Its slight K8-to-K12 increase rules out finite decay as
 evidence, but is fully compatible with a cutoff-uniform constant.
 
+The separate row-bound route is not the active target anymore. An exact K8
+gradient search raises the commutator-paired envelope divided by the outer
+weight from `0.6584` to `4.8496` while moving toward a small-outer-weight
+state. Pairing the nested term as well gives the exact dynamic entry
+`D_ij=outer_ij+advected_ij+nested_ij`; its isolated outer-weight ratio is also
+ill-conditioned. The relevant joint objective, however, remains finite in
+the current search: the dynamic-paired normalized envelope reaches
+`0.00186662` after 44 K8 steps, and its complete zero-padded K12 value is
+`0.00187172`; one full K12 step raises it to `0.00187877`. The K8 exact matrix verifies its finite outer Schur inequality
+with row sum `0.857683`, bound `0.00248948`, and actual/bound ratio `0.749804`.
+The corresponding one-step K12 values are `0.875077`, `0.00254378`, and
+`0.738575`. Its maximum finite `2^gap rho_gap` diagnostic is `0.63863`.
+None of these finite values proves the required cutoff-uniform joint estimate.
+
+The dynamic entry also has an exact response representation. With
+`R_j=C_j-B_j(.,u)^*Au`, it is `<b_j,R_j>` on the diagonal and the symmetric
+cross pairing off the diagonal. Replacing the outer-only weight by
+`q(||A^(1/2)b_j||^2+||A^(-1/2)R_j||^2)` reduces the finite Schur row from
+`0.857683` to `0.672016` at K8 and from `0.875077` to `0.684904` at K12. On
+the outer-degenerate stress state it reduces `4.55082` to `1.14162`. This
+removes the observed normalization singularity but does not prove a uniform
+response-weighted Schur product.
+
 ## Reproduction
 
 ```bash

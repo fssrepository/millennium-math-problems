@@ -103,13 +103,13 @@ add_executable(navier_stokes_lab
     src/local_sld/analysis/local_quartic_shell_envelope.cpp
     src/local_sld/analysis/local_quartic_shell_ledger.cpp
     src/local_sld/analysis/local_signature_geometry.cpp
-    src/local_sld/analysis/local_sld_response_diagonal.cpp
+    src/local_sld/analysis/response/local_sld_response_diagonal.cpp
     src/local_sld/analysis/local_sld_doubling_shell_ledger.cpp
     src/local_sld/analysis/local_sld_doubling_scale_scan.cpp
-    src/local_sld/analysis/local_sld_response_family.cpp
-    src/local_sld/analysis/local_sld_response_hierarchy.cpp
-    src/local_sld/analysis/local_sld_response_tensor.cpp
-    src/local_sld/analysis/local_sld_projected_square.cpp
+    src/local_sld/analysis/response/local_sld_response_family.cpp
+    src/local_sld/analysis/response/local_sld_response_hierarchy.cpp
+    src/local_sld/analysis/response/local_sld_response_tensor.cpp
+    src/local_sld/analysis/response/local_sld_projected_square.cpp
     src/local_sld/analysis/local_sld_projective_shape_envelope.cpp
     src/local_sld/analysis/local_sld_projective_coherence_ledger.cpp
     src/local_sld/analysis/local_sld_projective_cross_attribution.cpp
@@ -165,6 +165,7 @@ target_include_directories(navier_stokes_lab PRIVATE
     src/local_sld/core
     src/local_sld/core/projective
     src/local_sld/analysis
+    src/local_sld/analysis/response
     src/local_sld/analysis/projective
     src/local_sld/optimization
     src/local_sld/states
