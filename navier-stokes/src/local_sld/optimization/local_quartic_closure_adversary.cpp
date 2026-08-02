@@ -8,6 +8,7 @@
 #include "local_sld_shape_power_objective.hpp"
 #include "local_sld_projective_coherence_objective.hpp"
 #include "local_sld_projective_stretching_objective.hpp"
+#include "local_sld_projective_cross_power_objective.hpp"
 #include "parallel_executor.hpp"
 #include "spectral_adjoint.hpp"
 #include "spectral_galerkin.hpp"
@@ -229,6 +230,8 @@ LocalQuarticClosureAdversary::maximize(
                ? "local-projective-coherence-ratio"
         : (options.objective == "projective-stretching-ratio"
                ? "local-projective-stretching-ratio"
+        : (options.objective == "projective-cross-power-ratio"
+               ? "local-projective-cross-power-ratio"
         : (options.objective == "signed-closure-ratio"
                ? "local-signed-closure-ratio"
                : (options.objective == "block-ratio"
@@ -240,7 +243,7 @@ LocalQuarticClosureAdversary::maximize(
                                     : (options.objective ==
                                                "maximum-sld-ratio"
                                            ? "local-frozen-maximum-sld-ratio"
-                                           : "local-sld-ratio"))))))))))));
+                                           : "local-sld-ratio")))))))))))));
     search.method = options.method;
     search.lbfgs_history = options.lbfgs_history;
     search.sobolev_order = options.sobolev_order;
@@ -289,6 +292,14 @@ LocalQuarticClosureAdversary::maximize(
         stretching_value.stretching_alignment_squared;
     result.projective_stretching_reconstruction_error =
         stretching_value.product_reconstruction_error;
+    const LocalSldProjectiveCrossPowerObjectiveValue cross_power_value =
+        LocalSldProjectiveCrossPowerObjective(
+            dynamics, search.closure_selection).evaluate(result.state);
+    result.projective_cross_power_absolute =
+        cross_power_value.absolute_cross_power_one;
+    result.projective_cross_bracket = cross_power_value.cross_bracket;
+    result.projective_diagonal_bracket =
+        cross_power_value.diagonal_bracket;
     result.common_block_objective =
         is_common_block_objective(options.objective);
     if (result.common_block_objective) {
@@ -369,6 +380,7 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
          options.objective != "shape-power-ratio" &&
          options.objective != "projective-coherence-ratio" &&
          options.objective != "projective-stretching-ratio" &&
+         options.objective != "projective-cross-power-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "sld-ratio" &&
          options.objective != "block-ratio" &&

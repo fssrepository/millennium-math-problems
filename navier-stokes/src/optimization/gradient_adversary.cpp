@@ -7,6 +7,7 @@
 #include "local_sld_shape_power_objective.hpp"
 #include "local_sld_projective_coherence_objective.hpp"
 #include "local_sld_projective_stretching_objective.hpp"
+#include "local_sld_projective_cross_power_objective.hpp"
 #include "local_sld_trajectory_adjoint.hpp"
 
 #include <algorithm>
@@ -210,6 +211,11 @@ SpectralReal GradientAdversary::objective_value(
         return LocalSldProjectiveStretchingObjective(
             dynamics_, options.closure_selection)
             .evaluate(initial).stretching_aware_synthesis_ratio;
+    }
+    if (options.objective == "local-projective-cross-power-ratio") {
+        return LocalSldProjectiveCrossPowerObjective(
+            dynamics_, options.closure_selection)
+            .evaluate(initial).squared_cross_power_one;
     }
     if (options.objective == "local-sld-ratio") {
         return LocalQuarticClosureObjective(
@@ -442,6 +448,14 @@ GradientSearchResult GradientAdversary::maximize_q(
                 .stretching_aware_synthesis_ratio;
             trajectory.objective_step = 0;
             trajectory.initial_gradient = stretching.gradient(result.state);
+        } else if (options.objective ==
+                   "local-projective-cross-power-ratio") {
+            const LocalSldProjectiveCrossPowerObjective cross_power(
+                dynamics_, options.closure_selection);
+            trajectory.objective_value = cross_power.evaluate(result.state)
+                .squared_cross_power_one;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = cross_power.gradient(result.state);
         } else if (options.objective == "local-sld-ratio") {
             const LocalQuarticClosureObjective closure(
                 dynamics_, options.closure_selection);

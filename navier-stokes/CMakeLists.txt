@@ -32,6 +32,7 @@ add_executable(navier_stokes_lab
     src/triads/projective_triad_geometry.cpp
     src/triads/projective_advection_decomposition.cpp
     src/triads/projective_fan_geometry.cpp
+    src/triads/projective_quartic_diagonal_kernel.cpp
     src/triads/triad_commutator.cpp
     src/triads/triad_ledger.cpp
     src/triads/triad_partition.cpp
@@ -77,6 +78,7 @@ add_executable(navier_stokes_lab
     src/local_sld/core/local_sld_shape_power_objective.cpp
     src/local_sld/core/local_sld_projective_coherence_objective.cpp
     src/local_sld/core/local_sld_projective_stretching_objective.cpp
+    src/local_sld/core/local_sld_projective_cross_power_objective.cpp
     src/local_sld/core/local_sld_two_scale_state.cpp
 
     src/local_sld/analysis/local_critical_derivative_ledger.cpp

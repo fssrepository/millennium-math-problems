@@ -1,0 +1,42 @@
+{
+  "schema": "navier-stokes-local-sld-projective-quartic-cross-v1",
+  "state_path": "proof/l4/states/local-shape-power/remainder-p1-K1-K5/K1.tsv",
+  "cutoff": 1,
+  "threads": 2,
+  "projective_shape_count": 2,
+  "excludes_signature_123": false,
+  "excludes_triple_family": false,
+  "enstrophy": 1.26268135501783685,
+  "palinstrophy": 1.8273828830974983,
+  "full_stretching": -0.123017341286413368,
+  "full_bracket": -0.259958137853015803,
+  "diagonal_bracket": -0.260275454847102183,
+  "cross_bracket": 0.000317316994086376146,
+  "components": {
+    "full_outer_commutator": -0.30479227855805674,
+    "full_advecting_nested": 0.000115719967468860431,
+    "full_enstrophy_normalization": 0.00480655470542847192,
+    "full_palinstrophy_normalization": 0.0399118660321435836,
+    "diagonal_outer_commutator": -0.304786197398140557,
+    "diagonal_advecting_nested": -0.000207678186533683586,
+    "diagonal_enstrophy_normalization": 0.00480655470542847192,
+    "diagonal_palinstrophy_normalization": 0.0399118660321435836
+  },
+  "power_one_scale": -0.0231057301049841513,
+  "full_power_one": 0.0060065225718260477,
+  "diagonal_power_one": 0.00601385441264913265,
+  "cross_power_one": -7.33184082308465947e-06,
+  "absolute_diagonal_power_one_sum": 0.00601385441264913265,
+  "effective_diagonal_shapes": 1,
+  "dominant_diagonal_fraction": 1,
+  "diagonal_signed_alignment": 1,
+  "full_component_reconstruction_error": 0,
+  "bracket_decomposition_error": 0,
+  "top_diagonal_shapes": [
+    {"primitive_squared_lengths": [1, 2, 3], "interactions": 144, "self_bracket": -0.260275454847102183, "power_one_self": 0.00601385441264913265, "absolute_fraction": 1},
+    {"primitive_squared_lengths": [1, 1, 1], "interactions": 48, "self_bracket": 2.89513214393559686e-24, "power_one_self": -6.68941419360400294e-26, "absolute_fraction": 1.1123339101016387e-23}
+  ],
+  "exact_decomposition": true,
+  "cutoff_independent_cross_bound_proved": false,
+  "finite_ledger_is_not_a_proof": true
+}

@@ -18,6 +18,11 @@ struct ProjectiveSquareFunctionMoment {
     SpectralIncrement gradient;
 };
 
+struct ProjectiveBilinearCotangents {
+    SpectralIncrement advecting;
+    SpectralIncrement advected;
+};
+
 class ProjectiveAdvectionDecomposition {
 public:
     [[nodiscard]] static const std::vector<ProjectiveInteractionGroup>& group(
@@ -37,6 +42,13 @@ public:
     [[nodiscard]] static SpectralIncrement vjp(
         const SpectralState& state,
         const ProjectiveInteractionGroup& group,
+        const SpectralIncrement& output_cotangent);
+
+    [[nodiscard]] static ProjectiveBilinearCotangents bilinear_vjp(
+        const SpectralState& state,
+        const ProjectiveInteractionGroup& group,
+        const SpectralIncrement& advecting,
+        const SpectralIncrement& advected,
         const SpectralIncrement& output_cotangent);
 
     [[nodiscard]] static ProjectiveSquareFunctionMoment square_function(

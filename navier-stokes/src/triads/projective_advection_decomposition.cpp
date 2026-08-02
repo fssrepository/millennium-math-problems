@@ -140,35 +140,60 @@ SpectralIncrement ProjectiveAdvectionDecomposition::vjp(
     const SpectralState& state,
     const ProjectiveInteractionGroup& group,
     const SpectralIncrement& output_cotangent) {
+    ProjectiveBilinearCotangents cotangents = bilinear_vjp(
+        state, group, state.velocity, state.velocity,
+        output_cotangent);
+    for (std::size_t mode = 0; mode < cotangents.advecting.size();
+         ++mode) {
+        for (std::size_t coordinate = 0; coordinate < 3; ++coordinate) {
+            cotangents.advecting[mode][coordinate] +=
+                cotangents.advected[mode][coordinate];
+        }
+    }
+    return cotangents.advecting;
+}
+
+ProjectiveBilinearCotangents
+ProjectiveAdvectionDecomposition::bilinear_vjp(
+    const SpectralState& state,
+    const ProjectiveInteractionGroup& group,
+    const SpectralIncrement& advecting,
+    const SpectralIncrement& advected,
+    const SpectralIncrement& output_cotangent) {
+    require_layout(state, advecting);
+    require_layout(state, advected);
     require_layout(state, output_cotangent);
     SpectralIncrement cotangent = output_cotangent;
     project(cotangent, state);
-    SpectralIncrement result(state.waves.size());
+    ProjectiveBilinearCotangents result{
+        SpectralIncrement(state.waves.size()),
+        SpectralIncrement(state.waves.size())};
     const SpectralComplex minus_imaginary_unit{0.0L, -1.0L};
     for (const InteractionIndex interaction : group.interactions) {
         const auto [p, q, target] = interaction;
         const ComplexVector& target_cotangent = cotangent[target];
         const SpectralComplex first_coefficient =
             minus_imaginary_unit *
-            dot_hermitian(state.velocity[q], target_cotangent);
+            dot_hermitian(advected[q], target_cotangent);
         for (std::size_t component = 0; component < 3; ++component) {
             const SpectralReal wave_component =
                 static_cast<SpectralReal>(
                     component == 0   ? state.waves[q].x
                     : component == 1 ? state.waves[q].y
                                      : state.waves[q].z);
-            result[p][component] +=
+            result.advecting[p][component] +=
                 wave_component * first_coefficient;
         }
         const SpectralComplex second_coefficient =
-            minus_imaginary_unit * std::conj(
-                wave_dot(state.waves[q], state.velocity[p]));
+                minus_imaginary_unit * std::conj(
+                wave_dot(state.waves[q], advecting[p]));
         for (std::size_t component = 0; component < 3; ++component) {
-            result[q][component] +=
+            result.advected[q][component] +=
                 second_coefficient * target_cotangent[component];
         }
     }
-    project(result, state);
+    project(result.advecting, state);
+    project(result.advected, state);
     return result;
 }
 
