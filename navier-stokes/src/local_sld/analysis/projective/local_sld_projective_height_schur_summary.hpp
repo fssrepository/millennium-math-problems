@@ -26,6 +26,10 @@ struct LocalSldProjectiveHeightSchurGapRow {
     SpectralReal absolute_power_one_sum = 0.0L;
     SpectralReal absolute_component_envelope_sum = 0.0L;
     SpectralReal maximum_symmetric_geometric_ratio = 0.0L;
+    SpectralReal commutator_paired_envelope_sum = 0.0L;
+    SpectralReal
+        commutator_paired_outer_maximum_symmetric_geometric_ratio = 0.0L;
+    std::size_t commutator_paired_outer_unscaled_pair_count = 0;
 };
 
 struct LocalSldProjectiveHeightComponentSchurRow {
@@ -51,9 +55,23 @@ struct LocalSldProjectiveHeightSchurReport {
     SpectralReal diagonal_component_envelope = 0.0L;
     SpectralReal weighted_schur_upper_bound = 0.0L;
     SpectralReal upper_bound_ratio = 0.0L;
+    SpectralReal commutator_paired_total_envelope = 0.0L;
+    SpectralReal commutator_paired_diagonal_envelope = 0.0L;
+    SpectralReal commutator_paired_maximum_weighted_row_sum = 0.0L;
+    SpectralReal commutator_paired_weighted_schur_upper_bound = 0.0L;
+    SpectralReal commutator_paired_upper_bound_ratio = 0.0L;
+    SpectralReal commutator_paired_outer_weight = 0.0L;
+    SpectralReal commutator_paired_outer_maximum_weighted_row_sum = 0.0L;
+    SpectralReal commutator_paired_outer_weighted_schur_upper_bound = 0.0L;
+    SpectralReal commutator_paired_outer_upper_bound_ratio = 0.0L;
     std::size_t unscaled_off_diagonal_pair_count = 0;
+    std::size_t commutator_paired_unscaled_off_diagonal_pair_count = 0;
+    std::size_t
+        commutator_paired_outer_unscaled_off_diagonal_pair_count = 0;
     bool finite_matrix_exact = false;
     bool finite_schur_inequality_verified = false;
+    bool finite_commutator_paired_schur_inequality_verified = false;
+    bool finite_commutator_paired_outer_schur_inequality_verified = false;
     bool cutoff_uniform_weighted_schur_bound_proved = false;
 };
 

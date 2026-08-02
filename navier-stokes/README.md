@@ -454,7 +454,12 @@ target. The optimized finite diagonal envelope has fitted height slope
 `-0.435`, but direct optimization of the complete five-component envelope
 removes that apparent decay: it gives `0.0094401` at K8 and `0.0095014` after
 embedding the K12 continuation in the complete K12 Galerkin cube. These are
-finite stress values, not a uniform bound. See
+finite stress values, not a uniform bound. Pairing the dominant outer-square
+and advected terms into their exact commutator sharpens the majorant to
+`0.00179960` at K8 and `0.00182423` at complete K12. A coercive outer-weight
+Schur reduction is proved for this paired matrix; its finite row sums are
+`0.881010` and `0.883351`. The required cutoff-uniform joint estimate remains
+open. See
 `proof/l4/lemmas/shifted-local-density/DOUBLING_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_QUARTET.md` and
 `proof/l4/lemmas/shifted-local-density/PROJECTIVE_CROSS_QUARTET.md` and

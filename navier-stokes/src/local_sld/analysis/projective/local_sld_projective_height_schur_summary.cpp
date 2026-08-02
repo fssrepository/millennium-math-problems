@@ -16,11 +16,21 @@ LocalSldProjectiveHeightSchurSummary::summarize(
     }
     const std::size_t shell_count = matrix.shells.size();
     std::vector<SpectralReal> diagonal_envelope(shell_count, 0.0L);
+    std::vector<SpectralReal> commutator_paired_diagonal(
+        shell_count, 0.0L);
+    std::vector<SpectralReal> outer_power_diagonal(
+        shell_count, 0.0L);
     for (const auto& entry : matrix.entries) {
         if (entry.first_shell == entry.second_shell) {
             diagonal_envelope[
                 static_cast<std::size_t>(entry.first_shell)] =
                 entry.absolute_component_power_one_envelope;
+            commutator_paired_diagonal[
+                static_cast<std::size_t>(entry.first_shell)] =
+                entry.commutator_paired_power_one_envelope;
+            outer_power_diagonal[
+                static_cast<std::size_t>(entry.first_shell)] =
+                std::abs(entry.outer_square * matrix.power_one_scale);
         }
     }
     LocalSldProjectiveHeightSchurReport report;
@@ -29,6 +39,13 @@ LocalSldProjectiveHeightSchurSummary::summarize(
         report.gaps[gap].shell_gap = static_cast<int>(gap);
     }
     std::vector<SpectralReal> row_sums(shell_count, 0.0L);
+    std::vector<SpectralReal> commutator_paired_row_sums(
+        shell_count, 0.0L);
+    std::vector<SpectralReal> commutator_paired_outer_row_sums(
+        shell_count, 0.0L);
+    for (const SpectralReal weight : outer_power_diagonal) {
+        report.commutator_paired_outer_weight += weight;
+    }
     for (const auto& source : matrix.entries) {
         LocalSldProjectiveHeightSchurEntry entry;
         entry.first_shell = source.first_shell;
@@ -42,6 +59,63 @@ LocalSldProjectiveHeightSchurSummary::summarize(
         if (entry.first_shell == entry.second_shell) {
             report.diagonal_component_envelope +=
                 entry.absolute_component_power_one_envelope;
+        }
+        report.commutator_paired_total_envelope +=
+            source.commutator_paired_power_one_envelope;
+        if (entry.first_shell == entry.second_shell) {
+            report.commutator_paired_diagonal_envelope +=
+                source.commutator_paired_power_one_envelope;
+        }
+        const SpectralReal paired_scale = std::sqrt(
+            commutator_paired_diagonal[
+                static_cast<std::size_t>(entry.first_shell)] *
+            commutator_paired_diagonal[
+                static_cast<std::size_t>(entry.second_shell)]);
+        if (paired_scale > 1e-30L) {
+            const SpectralReal symmetry_factor =
+                entry.first_shell == entry.second_shell
+                ? 1.0L : 2.0L;
+            const SpectralReal ratio =
+                source.commutator_paired_power_one_envelope /
+                (symmetry_factor * paired_scale);
+            commutator_paired_row_sums[
+                static_cast<std::size_t>(entry.first_shell)] += ratio;
+            if (entry.first_shell != entry.second_shell) {
+                commutator_paired_row_sums[
+                    static_cast<std::size_t>(entry.second_shell)] += ratio;
+            }
+        } else if (entry.first_shell != entry.second_shell &&
+                   source.commutator_paired_power_one_envelope > 1e-30L) {
+            ++report
+                .commutator_paired_unscaled_off_diagonal_pair_count;
+        }
+        const SpectralReal paired_outer_scale = std::sqrt(
+            outer_power_diagonal[
+                static_cast<std::size_t>(entry.first_shell)] *
+            outer_power_diagonal[
+                static_cast<std::size_t>(entry.second_shell)]);
+        SpectralReal paired_outer_ratio = 0.0L;
+        const bool has_paired_outer_scale =
+            paired_outer_scale > 1e-30L;
+        if (has_paired_outer_scale) {
+            const SpectralReal symmetry_factor =
+                entry.first_shell == entry.second_shell
+                ? 1.0L : 2.0L;
+            paired_outer_ratio =
+                source.commutator_paired_power_one_envelope /
+                (symmetry_factor * paired_outer_scale);
+            commutator_paired_outer_row_sums[
+                static_cast<std::size_t>(entry.first_shell)] +=
+                paired_outer_ratio;
+            if (entry.first_shell != entry.second_shell) {
+                commutator_paired_outer_row_sums[
+                    static_cast<std::size_t>(entry.second_shell)] +=
+                    paired_outer_ratio;
+            }
+        } else if (entry.first_shell != entry.second_shell &&
+                   source.commutator_paired_power_one_envelope > 1e-30L) {
+            ++report
+                .commutator_paired_outer_unscaled_off_diagonal_pair_count;
         }
         const SpectralReal first_diagonal = diagonal_envelope[
             static_cast<std::size_t>(entry.first_shell)];
@@ -77,6 +151,18 @@ LocalSldProjectiveHeightSchurSummary::summarize(
         gap.absolute_power_one_sum += std::abs(entry.power_one);
         gap.absolute_component_envelope_sum +=
             entry.absolute_component_power_one_envelope;
+        gap.commutator_paired_envelope_sum +=
+            source.commutator_paired_power_one_envelope;
+        if (has_paired_outer_scale) {
+            gap.commutator_paired_outer_maximum_symmetric_geometric_ratio =
+                std::max(
+                    gap
+                        .commutator_paired_outer_maximum_symmetric_geometric_ratio,
+                    paired_outer_ratio);
+        } else if (entry.first_shell != entry.second_shell &&
+                   source.commutator_paired_power_one_envelope > 1e-30L) {
+            ++gap.commutator_paired_outer_unscaled_pair_count;
+        }
         if (entry.has_nonzero_diagonal_scale) {
             gap.maximum_symmetric_geometric_ratio = std::max(
                 gap.maximum_symmetric_geometric_ratio,
@@ -89,6 +175,14 @@ LocalSldProjectiveHeightSchurSummary::summarize(
     }
     report.maximum_weighted_row_sum = *std::max_element(
         row_sums.begin(), row_sums.end());
+    report.commutator_paired_maximum_weighted_row_sum =
+        *std::max_element(
+            commutator_paired_row_sums.begin(),
+            commutator_paired_row_sums.end());
+    report.commutator_paired_outer_maximum_weighted_row_sum =
+        *std::max_element(
+            commutator_paired_outer_row_sums.begin(),
+            commutator_paired_outer_row_sums.end());
     report.weighted_schur_upper_bound =
         report.maximum_weighted_row_sum *
         report.diagonal_component_envelope;
@@ -96,6 +190,23 @@ LocalSldProjectiveHeightSchurSummary::summarize(
         report.upper_bound_ratio =
             report.total_component_envelope /
             report.weighted_schur_upper_bound;
+    }
+    report.commutator_paired_weighted_schur_upper_bound =
+        report.commutator_paired_maximum_weighted_row_sum *
+        report.commutator_paired_diagonal_envelope;
+    if (report.commutator_paired_weighted_schur_upper_bound > 0.0L) {
+        report.commutator_paired_upper_bound_ratio =
+            report.commutator_paired_total_envelope /
+            report.commutator_paired_weighted_schur_upper_bound;
+    }
+    report.commutator_paired_outer_weighted_schur_upper_bound =
+        report.commutator_paired_outer_maximum_weighted_row_sum *
+        report.commutator_paired_outer_weight;
+    if (report.commutator_paired_outer_weighted_schur_upper_bound >
+        0.0L) {
+        report.commutator_paired_outer_upper_bound_ratio =
+            report.commutator_paired_total_envelope /
+            report.commutator_paired_outer_weighted_schur_upper_bound;
     }
     std::vector<SpectralReal> outer_diagonal(shell_count, 0.0L);
     for (const auto& entry : matrix.entries) {
@@ -219,6 +330,17 @@ LocalSldProjectiveHeightSchurSummary::summarize(
         report.unscaled_off_diagonal_pair_count == 0 &&
         report.total_component_envelope <=
             report.weighted_schur_upper_bound * (1.0L + 1e-14L);
+    report.finite_commutator_paired_schur_inequality_verified =
+        report.commutator_paired_unscaled_off_diagonal_pair_count == 0 &&
+        report.commutator_paired_total_envelope <=
+            report.commutator_paired_weighted_schur_upper_bound *
+                (1.0L + 1e-14L);
+    report.finite_commutator_paired_outer_schur_inequality_verified =
+        report
+            .commutator_paired_outer_unscaled_off_diagonal_pair_count == 0 &&
+        report.commutator_paired_total_envelope <=
+            report.commutator_paired_outer_weighted_schur_upper_bound *
+                (1.0L + 1e-14L);
     return report;
 }
 

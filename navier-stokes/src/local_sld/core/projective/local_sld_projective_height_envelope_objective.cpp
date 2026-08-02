@@ -52,8 +52,13 @@ LocalSldProjectiveHeightEnvelopeObjective::
 LocalSldProjectiveHeightEnvelopeObjective(
     const SpectralDynamics& dynamics,
     TriadSelection selection,
-    int threads)
-    : dynamics_(dynamics), selection_(selection), threads_(threads) {
+    int threads,
+    bool pair_outer_and_advected_commutator)
+    : dynamics_(dynamics),
+      selection_(selection),
+      threads_(threads),
+      pair_outer_and_advected_commutator_(
+          pair_outer_and_advected_commutator) {
     if (threads < 1 || threads > 256) {
         throw std::invalid_argument(
             "projective height envelope threads must be 1..256");
@@ -73,6 +78,8 @@ LocalSldProjectiveHeightEnvelopeObjective::evaluate(
     result.enstrophy = selected.enstrophy;
     result.palinstrophy = selected.palinstrophy;
     result.full_stretching = full.signed_stretching;
+    result.pairs_outer_and_advected_commutator =
+        pair_outer_and_advected_commutator_;
     if (!(result.enstrophy > 0.0L) ||
         !(result.palinstrophy > 0.0L)) {
         return result;
@@ -80,7 +87,8 @@ LocalSldProjectiveHeightEnvelopeObjective::evaluate(
     const ProjectiveHeightEnvelopeMoment envelope =
         ProjectiveHeightEnvelopeKernel::evaluate(
             state, selection_, result.enstrophy,
-            result.palinstrophy, false, threads_);
+            result.palinstrophy, false, threads_,
+            pair_outer_and_advected_commutator_);
     result.height_shell_count = envelope.height_shell_count;
     result.height_pair_count = envelope.height_pair_count;
     result.absolute_component_brackets =
@@ -119,7 +127,8 @@ SpectralIncrement LocalSldProjectiveHeightEnvelopeObjective::gradient(
     const ProjectiveHeightEnvelopeMoment envelope =
         ProjectiveHeightEnvelopeKernel::evaluate(
             state, selection_, selected.enstrophy,
-            selected.palinstrophy, true, threads_);
+            selected.palinstrophy, true, threads_,
+            pair_outer_and_advected_commutator_);
     const SpectralReal denominator =
         selected.enstrophy * selected.enstrophy *
         selected.palinstrophy * selected.palinstrophy;

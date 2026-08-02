@@ -258,6 +258,9 @@ LocalQuarticClosureAdversary::maximize(
                ? "local-projective-height-outer-power-ratio"
         : (options.objective == "projective-height-envelope-ratio"
                ? "local-projective-height-envelope-ratio"
+        : (options.objective ==
+               "projective-height-commutator-envelope-ratio"
+               ? "local-projective-height-commutator-envelope-ratio"
         : (options.objective == "signed-closure-ratio"
                ? "local-signed-closure-ratio"
                : (options.objective == "block-ratio"
@@ -269,7 +272,7 @@ LocalQuarticClosureAdversary::maximize(
                                     : (options.objective ==
                                                "maximum-sld-ratio"
                                            ? "local-frozen-maximum-sld-ratio"
-                                           : "local-sld-ratio"))))))))))))))))));
+                                           : "local-sld-ratio")))))))))))))))))));
     search.method = options.method;
     search.lbfgs_history = options.lbfgs_history;
     search.sobolev_order = options.sobolev_order;
@@ -286,6 +289,11 @@ LocalQuarticClosureAdversary::maximize(
         if (options.objective ==
             "projective-height-envelope-ratio") {
             result.projective_height_component_envelope_absolute =
+                std::sqrt(std::max(0.0L, optimized.objective));
+        }
+        if (options.objective ==
+            "projective-height-commutator-envelope-ratio") {
+            result.projective_height_commutator_envelope_absolute =
                 std::sqrt(std::max(0.0L, optimized.objective));
         }
         result.initial_objective = optimized.initial_objective;
@@ -400,6 +408,12 @@ LocalQuarticClosureAdversary::maximize(
                 search.objective_threads).evaluate(result.state);
     result.projective_height_component_envelope_absolute =
         height_envelope_value.absolute_component_power_one_envelope;
+    result.projective_height_commutator_envelope_absolute =
+        LocalSldProjectiveHeightEnvelopeObjective(
+            dynamics, search.closure_selection,
+            search.objective_threads, true)
+            .evaluate(result.state)
+            .absolute_component_power_one_envelope;
     result.projective_height_component_bracket_envelope =
         height_envelope_value.absolute_component_bracket_envelope;
     result.projective_height_pair_count =
@@ -492,6 +506,8 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
          options.objective != "projective-height-power-ratio" &&
          options.objective != "projective-height-outer-power-ratio" &&
          options.objective != "projective-height-envelope-ratio" &&
+         options.objective !=
+             "projective-height-commutator-envelope-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "sld-ratio" &&
          options.objective != "block-ratio" &&
@@ -583,13 +599,17 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
             galerkin.configure(options.backend, 1);
             const SpectralDynamics dynamics(galerkin);
             if (options.lean_diagnostics &&
-                options.objective ==
-                    "projective-height-envelope-ratio") {
+                (options.objective ==
+                     "projective-height-envelope-ratio" ||
+                 options.objective ==
+                     "projective-height-commutator-envelope-ratio")) {
                 row.warm_lift_objective =
                     LocalSldProjectiveHeightEnvelopeObjective(
                         dynamics,
                         closure_selection(options.selection),
-                        options.workers)
+                        options.workers,
+                        options.objective ==
+                            "projective-height-commutator-envelope-ratio")
                         .evaluate(starts.front())
                         .squared_component_power_one_envelope;
             } else {
@@ -686,6 +706,16 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                     LocalSldProjectiveHeightEnvelopeObjective(
                         dynamics,
                         closure_selection(options.selection))
+                        .evaluate(starts.front())
+                        .squared_component_power_one_envelope;
+            }
+            if (options.objective ==
+                "projective-height-commutator-envelope-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveHeightEnvelopeObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.workers, true)
                         .evaluate(starts.front())
                         .squared_component_power_one_envelope;
             }

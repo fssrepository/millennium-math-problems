@@ -97,6 +97,12 @@ void finalize_entry(
          std::abs(entry.enstrophy_normalization) +
          std::abs(entry.palinstrophy_normalization)) *
         std::abs(power_one_scale);
+    entry.commutator_paired_power_one_envelope =
+        (std::abs(entry.outer_square + entry.advected_commutator) +
+         std::abs(entry.advecting_nested) +
+         std::abs(entry.enstrophy_normalization) +
+         std::abs(entry.palinstrophy_normalization)) *
+        std::abs(power_one_scale);
 }
 
 void write_json(
@@ -205,6 +211,9 @@ void write_json(
             << ", \"absolute_component_power_one_envelope\": "
             << static_cast<double>(
                    entry.absolute_component_power_one_envelope)
+            << ", \"commutator_paired_power_one_envelope\": "
+            << static_cast<double>(
+                   entry.commutator_paired_power_one_envelope)
             << ", \"absolute_fraction\": "
             << static_cast<double>(entry.absolute_fraction) << '}'
             << (index + 1 == report.entries.size() ? "\n" : ",\n");
@@ -268,7 +277,16 @@ void write_json(
                    gap.absolute_component_envelope_sum)
             << ", \"maximum_symmetric_geometric_ratio\": "
             << static_cast<double>(
-                   gap.maximum_symmetric_geometric_ratio) << '}'
+                   gap.maximum_symmetric_geometric_ratio)
+            << ", \"commutator_paired_envelope_sum\": "
+            << static_cast<double>(
+                   gap.commutator_paired_envelope_sum)
+            << ", \"commutator_paired_outer_maximum_symmetric_geometric_ratio\": "
+            << static_cast<double>(
+                   gap
+                       .commutator_paired_outer_maximum_symmetric_geometric_ratio)
+            << ", \"commutator_paired_outer_unscaled_pair_count\": "
+            << gap.commutator_paired_outer_unscaled_pair_count << '}'
             << (index + 1 == schur.gaps.size() ? "\n" : ",\n");
     }
     output << "  ],\n"
@@ -321,6 +339,60 @@ void write_json(
         << ",\n"
         << "  \"weighted_schur_upper_bound_ratio\": "
         << static_cast<double>(schur.upper_bound_ratio)
+        << ",\n"
+        << "  \"commutator_paired_total_power_one_envelope\": "
+        << static_cast<double>(
+               schur.commutator_paired_total_envelope)
+        << ",\n"
+        << "  \"commutator_paired_diagonal_power_one_envelope\": "
+        << static_cast<double>(
+               schur.commutator_paired_diagonal_envelope)
+        << ",\n"
+        << "  \"commutator_paired_maximum_weighted_schur_row_sum\": "
+        << static_cast<double>(
+               schur.commutator_paired_maximum_weighted_row_sum)
+        << ",\n"
+        << "  \"commutator_paired_weighted_schur_upper_bound\": "
+        << static_cast<double>(
+               schur.commutator_paired_weighted_schur_upper_bound)
+        << ",\n"
+        << "  \"commutator_paired_weighted_schur_upper_bound_ratio\": "
+        << static_cast<double>(
+               schur.commutator_paired_upper_bound_ratio)
+        << ",\n"
+        << "  \"commutator_paired_unscaled_off_diagonal_pair_count\": "
+        << schur.commutator_paired_unscaled_off_diagonal_pair_count
+        << ",\n"
+        << "  \"finite_commutator_paired_schur_inequality_verified\": "
+        << (schur.finite_commutator_paired_schur_inequality_verified
+                ? "true" : "false")
+        << ",\n"
+        << "  \"commutator_paired_outer_power_one_weight\": "
+        << static_cast<double>(
+               schur.commutator_paired_outer_weight)
+        << ",\n"
+        << "  \"commutator_paired_outer_maximum_weighted_schur_row_sum\": "
+        << static_cast<double>(
+               schur
+                   .commutator_paired_outer_maximum_weighted_row_sum)
+        << ",\n"
+        << "  \"commutator_paired_outer_weighted_schur_upper_bound\": "
+        << static_cast<double>(
+               schur
+                   .commutator_paired_outer_weighted_schur_upper_bound)
+        << ",\n"
+        << "  \"commutator_paired_outer_weighted_schur_upper_bound_ratio\": "
+        << static_cast<double>(
+               schur.commutator_paired_outer_upper_bound_ratio)
+        << ",\n"
+        << "  \"commutator_paired_outer_unscaled_off_diagonal_pair_count\": "
+        << schur
+               .commutator_paired_outer_unscaled_off_diagonal_pair_count
+        << ",\n"
+        << "  \"finite_commutator_paired_outer_schur_inequality_verified\": "
+        << (schur
+                    .finite_commutator_paired_outer_schur_inequality_verified
+                ? "true" : "false")
         << ",\n"
         << "  \"finite_weighted_schur_inequality_verified\": "
         << (schur.finite_schur_inequality_verified

@@ -75,6 +75,32 @@ void accumulate_component(
     result.absolute_component_envelope += std::abs(value);
 }
 
+void accumulate_outer_commutator(
+    ProjectiveHeightEnvelopeMoment& result,
+    PairGraph& pair,
+    SpectralReal outer,
+    SpectralReal advected,
+    bool pair_components) {
+    pair.components[0] = outer;
+    pair.components[1] = advected;
+    if (pair_components) {
+        const SpectralReal paired_sign = sign(outer + advected);
+        pair.signs[0] = paired_sign;
+        pair.signs[1] = paired_sign;
+        result.absolute_component_sums[0] +=
+            std::abs(outer + advected);
+        result.absolute_component_envelope +=
+            std::abs(outer + advected);
+        return;
+    }
+    pair.signs[0] = sign(outer);
+    pair.signs[1] = sign(advected);
+    result.absolute_component_sums[0] += std::abs(outer);
+    result.absolute_component_sums[1] += std::abs(advected);
+    result.absolute_component_envelope +=
+        std::abs(outer) + std::abs(advected);
+}
+
 }  // namespace
 
 ProjectiveHeightEnvelopeMoment ProjectiveHeightEnvelopeKernel::evaluate(
@@ -83,7 +109,8 @@ ProjectiveHeightEnvelopeMoment ProjectiveHeightEnvelopeKernel::evaluate(
     SpectralReal enstrophy,
     SpectralReal palinstrophy,
     bool compute_gradient,
-    int threads) {
+    int threads,
+    bool pair_outer_and_advected_commutator) {
     if (!(enstrophy > 0.0L) || !(palinstrophy > 0.0L)) {
         throw std::invalid_argument(
             "projective height envelope requires positive Z and P");
@@ -153,11 +180,11 @@ ProjectiveHeightEnvelopeMoment ProjectiveHeightEnvelopeKernel::evaluate(
             const ShellGraph& left = shells[first];
             const ShellGraph& right = shells[second];
             if (first == second) {
-                accumulate_component(
-                    result, pair, 0, -pairing(left.b, left.ab));
-                accumulate_component(
-                    result, pair, 1,
-                    pairing(left.b, left.transported_au));
+                accumulate_outer_commutator(
+                    result, pair,
+                    -pairing(left.b, left.ab),
+                    pairing(left.b, left.transported_au),
+                    pair_outer_and_advected_commutator);
                 accumulate_component(
                     result, pair, 2, -nested_value(first, first));
                 accumulate_component(
@@ -170,14 +197,13 @@ ProjectiveHeightEnvelopeMoment ProjectiveHeightEnvelopeKernel::evaluate(
                         left.palinstrophy_cross /
                         (2.0L * palinstrophy));
             } else {
-                accumulate_component(
-                    result, pair, 0,
+                accumulate_outer_commutator(
+                    result, pair,
                     -pairing(left.b, right.ab) -
-                        pairing(right.b, left.ab));
-                accumulate_component(
-                    result, pair, 1,
+                        pairing(right.b, left.ab),
                     pairing(left.b, right.transported_au) +
-                        pairing(right.b, left.transported_au));
+                        pairing(right.b, left.transported_au),
+                    pair_outer_and_advected_commutator);
                 accumulate_component(
                     result, pair, 2,
                     -nested_value(first, second) -

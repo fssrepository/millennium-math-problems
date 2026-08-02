@@ -24,6 +24,7 @@ struct LocalSldProjectiveHeightMatrixEntry {
     SpectralReal bracket = 0.0L;
     SpectralReal power_one = 0.0L;
     SpectralReal absolute_component_power_one_envelope = 0.0L;
+    SpectralReal commutator_paired_power_one_envelope = 0.0L;
     SpectralReal absolute_fraction = 0.0L;
 };
 

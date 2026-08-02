@@ -60,6 +60,10 @@ std::string objective_formula(const std::string& objective) {
     if (objective == "projective-height-envelope-ratio") {
         return "maximize the square of the exact five-component absolute dyadic height-matrix envelope times |S_full| / (Z^2 P^2)";
     }
+    if (objective ==
+        "projective-height-commutator-envelope-ratio") {
+        return "maximize the squared dyadic height envelope after pairing the outer-square and advected terms into their exact commutator";
+    }
     if (objective == "signed-closure-ratio") {
         return "maximize (K+G) E^(1/4) / (Z^(7/4) P)";
     }
@@ -221,6 +225,9 @@ void write_json(const LocalQuarticClosureAdversaryReport& report,
             << ", \"projective_height_component_envelope_absolute\": "
             << static_cast<double>(
                    winner.projective_height_component_envelope_absolute)
+            << ", \"projective_height_commutator_envelope_absolute\": "
+            << static_cast<double>(
+                   winner.projective_height_commutator_envelope_absolute)
             << ", \"projective_height_component_bracket_envelope\": "
             << static_cast<double>(
                    winner.projective_height_component_bracket_envelope)

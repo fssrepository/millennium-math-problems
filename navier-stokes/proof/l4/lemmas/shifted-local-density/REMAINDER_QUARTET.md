@@ -344,6 +344,11 @@ The complete five-component envelope is also optimized directly with an
 exact sign-chamber gradient. Current full-Galerkin stress values are
 `0.0094401` at K8 and `0.0095014` at K12; they remove finite decay as evidence
 for the missing theorem but do not show divergence or prove boundedness.
+Keeping the dominant outer-square and advected terms paired as a commutator
+gives a much sharper exact majorant: `0.00179960` at K8 and `0.00182423` at
+complete K12. Its outer-coercive Schur row sums are `0.881010` and `0.883351`.
+The finite Schur inequality is proved; uniform dyadic commutator control is
+the remaining analytic step.
 
 ## Reproduction
 

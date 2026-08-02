@@ -27,7 +27,8 @@ public:
         SpectralReal enstrophy,
         SpectralReal palinstrophy,
         bool compute_gradient,
-        int threads = 1);
+        int threads = 1,
+        bool pair_outer_and_advected_commutator = false);
 };
 
 }  // namespace lemma

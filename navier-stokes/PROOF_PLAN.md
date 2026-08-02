@@ -950,6 +950,16 @@ before any full-K12 optimization. The corresponding full-cube Schur data are
 current finite evidence is bounded-looking but nondecaying. The proof still
 requires a cutoff-uniform analytic estimate, not extrapolation of these two
 cutoffs.
+The separate five-component envelope discards a large exact cancellation:
+outer-square plus advected-commutator contributes about 95% of that envelope.
+Pairing those terms before taking absolute values gives a sharper exact
+majorant. With the coercive weights
+`w_j=|S_full| ||A^(1/2)B_j(u,u)||^2/(Z^2P^2)`, an AM--GM Schur argument proves
+`sum g_ij <= R_comm sum w_j`. Exact-gradient paired-envelope winners give
+`0.00179960` at K8 and `0.00182423` at complete K12, while `R_comm` is
+`0.881010` and `0.883351`. The lowest analytic target is now DHS-10: prove
+the cutoff-uniform joint bound `R_comm sum w_j <= C`, preferably from dyadic
+off-diagonal commutator decay. This is still open.
 
 The absolute closure ratio was subsequently reverse-differentiated and
 optimized directly. A K1 branch reaches `C_state=1/3`, but its stretching is

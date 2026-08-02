@@ -91,6 +91,51 @@ cancellation can make `J_jj` almost zero. The finite ratio then exceeds
 `10^7` on a saved K8 state. The five-component envelope removes that
 artificial small denominator.
 
+## Commutator-paired coercive Schur lemma
+
+The five-component envelope is sufficient but unnecessarily separates its
+two largest terms. Preserve their exact algebraic cancellation by defining
+
+```text
+g_ij=q( |outer_ij+advected_ij|+|nested_ij|
+          +|enstrophy_ij|+|palinstrophy_ij| ).       (DHS-6)
+```
+
+The signed quartet is still bounded by `sum_(i<=j) g_ij`. Define the
+coercive outer weights
+
+```text
+w_i=q |outer_ii|=q ||A^(1/2)B_i(u,u)||_2^2.         (DHS-7)
+```
+
+Unlike the signed or commutator-paired diagonal, `w_i` does not lose scale
+through internal cancellation. Set
+
+```text
+rho_ii=g_ii/w_i,
+rho_ij=g_ij/(2 sqrt(w_i w_j)), i!=j,
+R_comm=max_i sum_j rho_ij.                           (DHS-8)
+```
+
+The same arithmetic--geometric mean argument proves the exact finite bound
+
+```text
+sum_(i<=j) g_ij <= R_comm sum_i w_i.                 (DHS-9)
+```
+
+Consequently the current sharp sufficient condition for RQ-11 is
+
+```text
+sup_(N,u) R_comm,N(u) sum_i w_i,N(u) < infinity.     (DHS-10)
+```
+
+A natural analytic route is an off-diagonal estimate for `rho_ij` that
+decays in `|i-j|`, together with a bound for the outer weight. Neither is
+proved here. Normalizing `g_ij` by `sqrt(g_ii g_jj)` is invalid: on a saved
+K8 winner shell zero has paired diagonal about `1e-25` but nonzero coupling
+to higher shells, producing a spurious row sum above `9e7`. The outer weights
+in DHS-7 remove exactly this cancellation defect.
+
 ## Current falsification results
 
 On the H=64 K8 open-power winner, the exact matrix gives
@@ -156,7 +201,7 @@ maximizes the left side of DHS-3 itself:
 
 ```text
 [ |S_full| sum_(i<=j) sum_(five components) |J_ij,component|
-  /(Z^2 P^2) ]^2.                                  (DHS-6)
+  /(Z^2 P^2) ]^2.                                  (DHS-11)
 ```
 
 Its sign-chamber reverse derivative includes all shell pairs and all five
@@ -174,6 +219,26 @@ without any further K12 optimization. Its exact matrix has diagonal envelope
 total envelope does not exhibit the earlier diagonal-shell decay between K8
 and K12. This neither disproves nor proves a cutoff-uniform bound; it removes
 finite decay as the current reason to expect one.
+
+The commutator-paired majorant in DHS-6 has its own exact-gradient objective,
+`projective-height-commutator-envelope-ratio`, with central-difference error
+`7.74e-12`. Direct optimization gives the following complete-Galerkin stress
+data:
+
+```text
+                         K8              K12
+paired envelope       0.00179960       0.00182423
+signed block          0.00082522       0.00081183
+outer weight          0.00273347       0.00275855
+R_comm                0.881010         0.883351
+Schur upper bound     0.00240822       0.00243677.
+```
+
+The finite inequality DHS-9 is verified in both certificates and has no
+unscaled off-diagonal pair. The paired envelope is about five times below
+the separately absolute five-component envelope and only about twice the
+signed target. Its slight K8-to-K12 increase rules out finite decay as
+evidence, but is fully compatible with a cutoff-uniform constant.
 
 ## Reproduction
 
@@ -207,6 +272,15 @@ finite decay as the current reason to expect one.
   --warm-state proof/l4/states/local-projective-height-envelope/K12-warm-blend-two-step-sparse/K12.tsv \
   --certificate proof/l4/adversary/shifted-local-density/projective-height-envelope/K12-six-step-sparse.json \
   --state-dir proof/l4/states/local-projective-height-envelope/K12-six-step-sparse
+
+./build/navier_stokes_lab local-closure-adversary \
+  --objective projective-height-commutator-envelope-ratio \
+  --selection double-triple-remainder --min-cutoff 8 --max-cutoff 8 \
+  --restarts 1 --workers 12 --iterations 12 --method lbfgs --backend direct \
+  --lean \
+  --warm-state proof/l4/states/local-projective-height-commutator-envelope/K8-eight-step/K8.tsv \
+  --certificate proof/l4/adversary/shifted-local-density/projective-height-commutator-envelope/K8-twenty-step.json \
+  --state-dir proof/l4/states/local-projective-height-commutator-envelope/K8-twenty-step
 ```
 
 Artifacts:
@@ -219,3 +293,7 @@ Artifacts:
 - [`../../analysis/shifted-local-density/remainder-quartet/K12-height-envelope-six-step-full-matrix.json`](../../analysis/shifted-local-density/remainder-quartet/K12-height-envelope-six-step-full-matrix.json)
 - [`../../adversary/shifted-local-density/projective-height-envelope/K12-six-step-sparse.json`](../../adversary/shifted-local-density/projective-height-envelope/K12-six-step-sparse.json)
 - [`../../adversary/shifted-local-density/projective-height-envelope/K12-six-step-full-evaluate.json`](../../adversary/shifted-local-density/projective-height-envelope/K12-six-step-full-evaluate.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K8-height-commutator-envelope-twenty-step-matrix.json`](../../analysis/shifted-local-density/remainder-quartet/K8-height-commutator-envelope-twenty-step-matrix.json)
+- [`../../analysis/shifted-local-density/remainder-quartet/K12-height-commutator-envelope-twelve-step-full-matrix.json`](../../analysis/shifted-local-density/remainder-quartet/K12-height-commutator-envelope-twelve-step-full-matrix.json)
+- [`../../adversary/shifted-local-density/projective-height-commutator-envelope/K8-twenty-step.json`](../../adversary/shifted-local-density/projective-height-commutator-envelope/K8-twenty-step.json)
+- [`../../adversary/shifted-local-density/projective-height-commutator-envelope/K12-twelve-step-full-evaluate.json`](../../adversary/shifted-local-density/projective-height-commutator-envelope/K12-twelve-step-full-evaluate.json)

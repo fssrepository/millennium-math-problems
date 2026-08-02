@@ -259,6 +259,13 @@ SpectralReal GradientAdversary::objective_value(
             options.objective_threads)
             .evaluate(initial).squared_component_power_one_envelope;
     }
+    if (options.objective ==
+        "local-projective-height-commutator-envelope-ratio") {
+        return LocalSldProjectiveHeightEnvelopeObjective(
+            dynamics_, options.closure_selection,
+            options.objective_threads, true)
+            .evaluate(initial).squared_component_power_one_envelope;
+    }
     if (options.objective == "local-sld-ratio") {
         return LocalQuarticClosureObjective(
             dynamics_, options.closure_selection)
@@ -545,6 +552,15 @@ GradientSearchResult GradientAdversary::maximize_q(
             const LocalSldProjectiveHeightEnvelopeObjective envelope(
                 dynamics_, options.closure_selection,
                 options.objective_threads);
+            trajectory.objective_value = envelope.evaluate(result.state)
+                .squared_component_power_one_envelope;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = envelope.gradient(result.state);
+        } else if (options.objective ==
+                   "local-projective-height-commutator-envelope-ratio") {
+            const LocalSldProjectiveHeightEnvelopeObjective envelope(
+                dynamics_, options.closure_selection,
+                options.objective_threads, true);
             trajectory.objective_value = envelope.evaluate(result.state)
                 .squared_component_power_one_envelope;
             trajectory.objective_step = 0;
