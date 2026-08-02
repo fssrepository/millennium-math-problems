@@ -284,6 +284,15 @@ SpectralReal GradientAdversary::objective_value(
             .squared_palinstrophy_normalization_power_one;
     }
     if (options.objective ==
+        "local-projective-open-palinstrophy-normalization-ratio") {
+        return LocalSldProjectiveNormalizationObjective(
+            dynamics_, options.closure_selection,
+            options.projective_core_maximum_height,
+            options.objective_threads)
+            .evaluate(initial)
+            .squared_palinstrophy_normalization_power_one;
+    }
+    if (options.objective ==
         "local-projective-height-commutator-coercivity-ratio") {
         return LocalSldProjectiveHeightCommutatorRatioObjective(
             dynamics_, options.closure_selection,
@@ -609,6 +618,17 @@ GradientSearchResult GradientAdversary::maximize_q(
                    "local-projective-palinstrophy-normalization-ratio") {
             const LocalSldProjectiveNormalizationObjective normalization(
                 dynamics_, options.closure_selection);
+            trajectory.objective_value = normalization.evaluate(result.state)
+                .squared_palinstrophy_normalization_power_one;
+            trajectory.objective_step = 0;
+            trajectory.initial_gradient = normalization.gradient(
+                result.state);
+        } else if (options.objective ==
+                   "local-projective-open-palinstrophy-normalization-ratio") {
+            const LocalSldProjectiveNormalizationObjective normalization(
+                dynamics_, options.closure_selection,
+                options.projective_core_maximum_height,
+                options.objective_threads);
             trajectory.objective_value = normalization.evaluate(result.state)
                 .squared_palinstrophy_normalization_power_one;
             trajectory.objective_step = 0;

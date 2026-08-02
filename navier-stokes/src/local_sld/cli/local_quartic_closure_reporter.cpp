@@ -80,6 +80,10 @@ std::string objective_formula(const std::string& objective) {
         "projective-palinstrophy-normalization-ratio") {
         return "maximize the squared exact palinstrophy-normalization contribution |S_full 3 S_selected T_selected/(2P)|/(Z^2 P^2)";
     }
+    if (objective ==
+        "projective-open-palinstrophy-normalization-ratio") {
+        return "maximize the squared palinstrophy-normalization contribution remaining after subtracting the complete fixed primitive-height core";
+    }
     if (objective == "signed-closure-ratio") {
         return "maximize (K+G) E^(1/4) / (Z^(7/4) P)";
     }

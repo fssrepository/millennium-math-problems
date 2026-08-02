@@ -272,6 +272,11 @@ LocalQuarticClosureAdversary::maximize(
         search.objective =
             "local-projective-palinstrophy-normalization-ratio";
     }
+    if (options.objective ==
+        "projective-open-palinstrophy-normalization-ratio") {
+        search.objective =
+            "local-projective-open-palinstrophy-normalization-ratio";
+    }
     search.lbfgs_history = options.lbfgs_history;
     search.sobolev_order = options.sobolev_order;
     search.sobolev_cap = options.sobolev_cap;
@@ -311,6 +316,11 @@ LocalQuarticClosureAdversary::maximize(
         }
         if (options.objective ==
             "projective-palinstrophy-normalization-ratio") {
+            result.projective_palinstrophy_normalization_power_one =
+                std::sqrt(std::max(0.0L, optimized.objective));
+        }
+        if (options.objective ==
+            "projective-open-palinstrophy-normalization-ratio") {
             result.projective_palinstrophy_normalization_power_one =
                 std::sqrt(std::max(0.0L, optimized.objective));
         }
@@ -450,7 +460,11 @@ LocalQuarticClosureAdversary::maximize(
             .evaluate(result.state).coercivity_ratio;
     result.projective_palinstrophy_normalization_power_one =
         LocalSldProjectiveNormalizationObjective(
-            dynamics, search.closure_selection)
+            dynamics, search.closure_selection,
+            options.objective ==
+                "projective-open-palinstrophy-normalization-ratio"
+                ? options.projective_core_maximum_height : 0,
+            search.objective_threads)
             .evaluate(result.state)
             .palinstrophy_normalization_power_one;
     result.projective_height_component_bracket_envelope =
@@ -555,6 +569,8 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
              "projective-height-dynamic-coercivity-ratio" &&
          options.objective !=
              "projective-palinstrophy-normalization-ratio" &&
+         options.objective !=
+             "projective-open-palinstrophy-normalization-ratio" &&
          options.objective != "signed-closure-ratio" &&
          options.objective != "sld-ratio" &&
          options.objective != "block-ratio" &&
@@ -651,13 +667,21 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                  options.objective ==
                      "projective-height-dynamic-coercivity-ratio" ||
                  options.objective ==
-                     "projective-palinstrophy-normalization-ratio")) {
+                     "projective-palinstrophy-normalization-ratio" ||
+                 options.objective ==
+                     "projective-open-palinstrophy-normalization-ratio")) {
                 if (options.objective ==
-                    "projective-palinstrophy-normalization-ratio") {
+                        "projective-palinstrophy-normalization-ratio" ||
+                    options.objective ==
+                        "projective-open-palinstrophy-normalization-ratio") {
                     row.warm_lift_objective =
                         LocalSldProjectiveNormalizationObjective(
                             dynamics,
-                            closure_selection(options.selection))
+                            closure_selection(options.selection),
+                            options.objective ==
+                                "projective-open-palinstrophy-normalization-ratio"
+                                ? options.projective_core_maximum_height : 0,
+                            options.workers)
                             .evaluate(starts.front())
                             .squared_palinstrophy_normalization_power_one;
                 } else if (options.objective ==
@@ -836,6 +860,17 @@ LocalQuarticClosureAdversaryReport LocalQuarticClosureEnsemble::scan(
                     LocalSldProjectiveNormalizationObjective(
                         dynamics,
                         closure_selection(options.selection))
+                        .evaluate(starts.front())
+                        .squared_palinstrophy_normalization_power_one;
+            }
+            if (options.objective ==
+                "projective-open-palinstrophy-normalization-ratio") {
+                row.warm_lift_objective =
+                    LocalSldProjectiveNormalizationObjective(
+                        dynamics,
+                        closure_selection(options.selection),
+                        options.projective_core_maximum_height,
+                        options.workers)
                         .evaluate(starts.front())
                         .squared_palinstrophy_normalization_power_one;
             }

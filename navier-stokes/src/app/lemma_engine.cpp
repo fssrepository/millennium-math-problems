@@ -1464,7 +1464,7 @@ bool self_test(std::ostream& out) {
         projective_height_stretching_objective(
             active_dynamics,
             TriadSelection::local_without_equal_low_doubling(),
-            2, 2);
+            4, 2);
     const LocalSldProjectiveHeightPowerObjective
         projective_height_power_objective(
             active_dynamics,
@@ -1500,6 +1500,11 @@ bool self_test(std::ostream& out) {
         projective_normalization_objective(
             active_dynamics,
             TriadSelection::local_without_equal_low_doubling());
+    const LocalSldProjectiveNormalizationObjective
+        projective_open_normalization_objective(
+            active_dynamics,
+            TriadSelection::local_without_equal_low_doubling(),
+            2, 2);
     const LocalSldProjectiveCrossPowerObjective
         projective_cross_power_objective(
             active_dynamics,
@@ -1979,6 +1984,29 @@ bool self_test(std::ostream& out) {
                 std::abs(projective_normalization_directional_adjoint),
                 std::abs(
                     projective_normalization_directional_finite_difference)));
+    const SpectralIncrement projective_open_normalization_gradient =
+        projective_open_normalization_objective.gradient(partition_state);
+    const Real projective_open_normalization_directional_adjoint =
+        increment_inner_product(
+            projective_open_normalization_gradient, partition_tangent);
+    const Real projective_open_normalization_directional_finite_difference =
+        (projective_open_normalization_objective
+             .evaluate(partition_plus_state)
+             .squared_palinstrophy_normalization_power_one -
+         projective_open_normalization_objective
+             .evaluate(partition_minus_state)
+             .squared_palinstrophy_normalization_power_one) /
+        (2.0L * finite_difference_step);
+    const Real projective_open_normalization_gradient_error = std::abs(
+        projective_open_normalization_directional_adjoint -
+        projective_open_normalization_directional_finite_difference) /
+        std::max(
+            1e-30L,
+            std::max(
+                std::abs(
+                    projective_open_normalization_directional_adjoint),
+                std::abs(
+                    projective_open_normalization_directional_finite_difference)));
     const SpectralIncrement projective_cross_power_gradient =
         projective_cross_power_objective.gradient(partition_state);
     const Real projective_cross_power_directional_adjoint =
@@ -2434,6 +2462,7 @@ bool self_test(std::ostream& out) {
         projective_height_commutator_ratio_gradient_error < 1e-9L &&
         projective_height_dynamic_ratio_gradient_error < 1e-9L &&
         projective_normalization_gradient_error < 1e-9L &&
+        projective_open_normalization_gradient_error < 1e-9L &&
         projective_cross_power_gradient_error < 1e-9L &&
         projective_open_power_gradient_error < 1e-9L &&
         signed_closure_gradient_error < 1e-9L &&
@@ -3373,6 +3402,9 @@ bool self_test(std::ostream& out) {
                projective_height_dynamic_ratio_gradient_error)
         << ", projective normalization gradient error="
         << static_cast<double>(projective_normalization_gradient_error)
+        << ", projective open-normalization gradient error="
+        << static_cast<double>(
+               projective_open_normalization_gradient_error)
         << ", projective cross-power gradient error="
         << static_cast<double>(projective_cross_power_gradient_error)
         << ", projective open-power gradient error="
