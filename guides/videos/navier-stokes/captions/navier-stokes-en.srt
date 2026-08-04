@@ -9,35 +9,40 @@ It chose Navier–Stokes:
 can smooth fluid become infinitely rough?
 
 3
-00:00:06,400 --> 00:00:09,500
-One of six remaining Clay problems,
-worth one million dollars.
+00:00:06,400 --> 00:00:07,900
+They already model weather,
+flight, and blood flow.
 
 4
-00:00:09,500 --> 00:00:13,300
-AI wrote C++, searched counterexamples,
-read failures, and designed each next lemma.
+00:00:07,900 --> 00:00:09,500
+The million-dollar question:
+can the mathematics break?
 
 5
+00:00:09,500 --> 00:00:13,300
+AI wrote C++, searched counterexamples,
+read failures, and designed lemmas.
+
+6
 00:00:13,300 --> 00:00:15,000
 Cheap gates could save weeks.
 
-6
+7
 00:00:15,000 --> 00:00:18,200
 In thirty-three hours, sixteen routes failed;
 L4 remains open.
 
-7
+8
 00:00:18,200 --> 00:00:20,500
 Laptop estimate:
 one to three days.
 
-8
+9
 00:00:20,500 --> 00:00:25,600
-Ten cluster nodes could make parallel sweeps
+Ten cluster nodes could make independent sweeps
 up to ten times faster—not proof.
 
-9
+10
 00:00:25,600 --> 00:00:29,700
-Qualifying publication. Two years.
-General acceptance. Then Clay review.
+Publication. Two years.
+Acceptance. Clay review.

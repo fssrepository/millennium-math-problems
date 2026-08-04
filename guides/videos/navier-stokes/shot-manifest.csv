@@ -1,6 +1,6 @@
 shot,timecode,duration_s,reference,generated_length_s,scout_order,scout_model,generation_resolution,core_camera,overlay,final_status
 S01,00:00.00-00:03.50,3.50,assets/keyframe-01-world.png,5,4,Veo 3.1 Lite,720p,slow 50mm dolly in,full-page AI-executed outside story,pending
-S02,00:03.50-00:09.50,6.00,assets/keyframe-01-world.png,6,1,Veo 3.1 Lite,720p,24mm push then arrest,problem plus fluid mechanism and one-of-six Clay context,pending
+S02,00:03.50-00:09.50,6.00,assets/keyframe-01-world.png,6,1,Veo 3.1 Lite,720p,24mm push then arrest,problem plus fluid mechanism existing applications and one-of-six Clay context,pending
 S03,00:09.50-00:12.40,2.90,assets/keyframe-03-checkpoint.png,5,5,Veo 3.1 Lite,720p,85mm short macro orbit,five-node AI research loop plus method kinship,pending
 S04,00:12.40-00:17.21,4.81,assets/keyframe-01-world.png,8,6,Veo 3.1 Lite,720p,fast 35mm shell flight,T+00:00 to T+12:34 cheap AI-refined failures,pending
 S05,00:17.21-00:21.04,3.83,assets/keyframe-03-checkpoint.png,8,2,Veo 3.1 Lite,720p,slow locked macro scan,T+12:34 to T+22:35 survivor gets deeper search,pending

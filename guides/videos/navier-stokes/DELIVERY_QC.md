@@ -12,6 +12,11 @@
 - [ ] The result is never called an `automated proof` or a `solution`.
 - [ ] S07 says `EXPERT REVIEW`.
 - [ ] The end card says the Clay problem is not solved.
+- [ ] S02 says the equations are `ALREADY USED TO MODEL` the named domains;
+  it does not imply that a prize proof would create those applications.
+- [ ] `CAN THE MATHEMATICS BREAK?` refers to possible singularity formation
+  from smooth 3D incompressible data, not failure of every practical fluid
+  simulation.
 - [ ] The count is 16 rejected candidates (`F000`–`F015`), not 15.
 - [ ] “Proved” modifies only a partial estimate / far-tail lemma.
 - [ ] L4 is explicitly still open.
@@ -43,6 +48,7 @@
 
 - [ ] Runtime is at or below 00:29.70.
 - [ ] S01's value proposition is readable for at least 2.0 seconds.
+- [ ] S02's application/foundation card remains readable from 07.40 to 09.50.
 - [ ] The research clock runs linearly from T+00:00 to T+33:28 between
   00:12.40 and 00:25.20.
 - [ ] Early cheap gates cut quickly; later exact-gradient and K12 work uses

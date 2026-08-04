@@ -112,6 +112,10 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
   saved artifacts; the human set the objective and directed continuation.
 - Expert mathematical review is still required.
 - The Millennium problem is **not solved**.
+- Navier–Stokes equations already support practical fluid models, including
+  weather-related flows, aircraft aerodynamics and blood flow. A regularity
+  proof would settle whether the idealized 3D mathematical model can develop a
+  singularity; do not claim it would instantly solve those application areas.
 - The footage is a **concept visualization**, not the output of the C++ run.
 - `F000`–`F015` means **16 rejected lemma candidates**.
 - A finite search can falsify a candidate or let it survive the tested set; it
@@ -132,9 +136,9 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
 
 ## The short version of the story
 
-`Outside story → fluid problem and Clay context → AI research loop → fast early
-failures → slower deep optimization → laptop/cluster estimate → official prize
-path.`
+`Outside story → fluid problem and why it matters → Clay context → AI research
+loop → fast early failures → slower deep optimization → laptop/cluster estimate
+→ official prize path.`
 
 From 00:12.40 to 00:25.20 the on-screen research clock is a linear compression
 of 33 h 28 min. Early failures arrive quickly; later frames breathe longer as

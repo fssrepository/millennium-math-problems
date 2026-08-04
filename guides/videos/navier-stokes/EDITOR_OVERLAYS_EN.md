@@ -33,9 +33,14 @@ VORTEX: STRETCHES
 VISCOSITY: SMOOTHS
 ```
 
-At 00:07.40:
+At 00:07.40, remove the mechanism labels and show this relevance card:
 
 ```text
+ALREADY USED TO MODEL
+WEATHER • FLIGHT • BLOOD FLOW
+
+A PROOF ASKS: CAN THE MATHEMATICS BREAK?
+
 1 OF 6 UNSOLVED CLAY PROBLEMS • $1M
 ```
 

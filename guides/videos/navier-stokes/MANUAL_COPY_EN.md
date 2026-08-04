@@ -25,6 +25,17 @@ The million-dollar question, in plain language, is whether a flow that starts
 smooth must remain smooth forever—or whether an infinitely rough point can
 form.
 
+## Why does that matter outside mathematics?
+
+Navier–Stokes equations are already used to model fluid behaviour in familiar
+domains: atmospheric and weather-related flows, air around aircraft, and blood
+flow in larger vessels. A solution to the Millennium problem would not
+instantly produce better forecasts, aircraft or medical treatments. It would
+settle a deeper foundation question: whether smooth three-dimensional
+incompressible solutions are guaranteed to remain smooth, or whether the
+mathematical model itself can develop a singularity. A proof gives certainty
+and structure that experiments and finite simulations alone cannot provide.
+
 ## What did the two-day laboratory do?
 
 It did not “test the whole problem.” It ran an AI-executed refinement loop:

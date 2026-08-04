@@ -12,6 +12,11 @@ searched for counterexamples, interpreted each failure, and designed the next
 lemma candidate. Cheap deterministic gates came first; only survivors received
 deeper optimization.
 
+Navier–Stokes equations already underpin models of weather-related flows,
+aircraft aerodynamics and blood flow. The million-dollar problem does not ask
+for a new engineering simulator; it asks whether smooth three-dimensional
+incompressible solutions are guaranteed to stay smooth.
+
 In 33 hours and 28 minutes, the loop rejected 16 candidates, proved one partial
 estimate, and narrowed the still-open L4/PNT-12 frontier. This is not a Clay
 solution or an automated proof. It is blind navigation with formal checkpoints,

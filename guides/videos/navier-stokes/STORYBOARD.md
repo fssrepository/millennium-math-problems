@@ -11,7 +11,7 @@ holds and more restrained camera motion—not because the clock is falsified.
 | Time | Shot | Picture and camera | Post overlay | Narration / purpose |
 | --- | --- | --- | --- | --- |
 | 00:00–00:03.50 | S01 — The outside story | Black resolves into `keyframe-01-world.png`; 4% dolly-in, calm teal flow. | Full page: **`I ASKED AI TO ATTACK MATH I BARELY UNDERSTAND.`** Footer: `HUMAN-DIRECTED • AI-EXECUTED` and `EVIDENCE, NOT TRUST`. | Establish the unusual experiment and the requirement for checkable output. |
-| 00:03.50–00:09.50 | S02 — The problem | Fast push through the cube, then an arrest on the coral vortex bend. Fine cyan ripples soften around it. | Full page for 2.2 s: **`Can a smooth fluid become infinitely rough?`** Then compact labels: `VORTEX: STRETCHES` / `VISCOSITY: SMOOTHS`. At 00:07.40 add `1 OF 6 UNSOLVED CLAY PROBLEMS • $1M`. Thin pointer to the bend. | Explain the unresolved competition and why this particular problem has public significance. |
+| 00:03.50–00:09.50 | S02 — The problem and why it matters | Fast push through the cube, then an arrest on the coral vortex bend. Fine cyan ripples soften around it. | Full page for 2.2 s: **`Can a smooth fluid become infinitely rough?`** Then compact labels: `VORTEX: STRETCHES` / `VISCOSITY: SMOOTHS`. At 00:07.40 replace them with **`ALREADY USED TO MODEL`** / **`WEATHER • FLIGHT • BLOOD FLOW`**, then `A PROOF ASKS: CAN THE MATHEMATICS BREAK?` and the microline `1 OF 6 UNSOLVED CLAY PROBLEMS • $1M`. | Establish practical relevance without implying that a regularity proof would suddenly create these applications: the equations are already used, while the prize asks whether the idealized 3D mathematical model must stay smooth. |
 | 00:09.50–00:12.40 | S03 — The AI loop | Short macro orbit; the coral filament stays centered. No people or portraits. | Header: `AI-EXECUTED RESEARCH LOOP`. Five compact linked squares: `PROOF GAP` → `ARTIFACTS` → `SEARCH` → `AI ANALYSIS` → `NEW LEMMA ↺`. Small qualifier: `METHOD KINSHIP • PROTAS / TAO`. | Show that AI did not merely run a fixed simulation: it interpreted failures and designed the next candidate. |
 | 00:12.40–00:17.21 | S04 — Fast early tests | Rapid flight through transparent spectral shells. Amber pulses land quickly; camera and cuts are fastest here. | Persistent clock: `RESEARCH TIME  T+00:00 → T+12:34`. Small rail: `AI PROPOSES → C++ TESTS → SAVED EVIDENCE → AI REFINES ↺`. Add `CHEAP GATES FIRST`. Event chips: `T+00:35  F002 • SCALING`; `T+06:30  F006 • CANCELLATION`; `T+09:10  F009 • GROWTH`; `T+12:34  F012 • POSITIVE CASE`. Each ends in coral `REJECTED`. | The AI-led loop rejects weak candidates cheaply before they consume weeks of research. |
 | 00:17.21–00:21.04 | S05 — Deeper optimization | Macro checkpoint plate. Exact amber scan over the coral bend; movement is slower, holds are longer. At the end, one-frame black dip marks the crash, followed by the identical saved state. | Clock: `T+12:34 → T+22:35`. Stage label: `SURVIVED → DEEPER SEARCH`. Cards: `EXACT GRADIENT`; `K1 → K8`; `T+19:36  F013 • REJECTED`; `T+20:46  F014 • REJECTED`; `T+22:35  CHECKPOINT → RESUME`. Pointer line lands on the scan intersection. | Only surviving claims receive more compute; saved state prevents a restart from zero. |
@@ -72,6 +72,22 @@ Outlet, at least two years must pass, and it must gain general acceptance in
 the global mathematics community. CMI does not accept direct solution
 submissions. After the public path, it applies its own review process.
 
+## Public wording for practical relevance
+
+Use this distinction whenever the film or description names applications:
+
+> Navier–Stokes equations are already used in fluid modelling, including
+> weather-related flows, aircraft aerodynamics and blood-flow models. Solving
+> the Millennium problem would settle whether smooth three-dimensional
+> incompressible solutions must remain smooth, or whether the mathematical
+> model can develop a singularity. It would strengthen fundamental
+> understanding; it would not instantly solve weather forecasting, aircraft
+> design or medicine.
+
+The mobile overlay compresses this to `ALREADY USED TO MODEL` and `A PROOF
+ASKS: CAN THE MATHEMATICS BREAK?`. Do not write that the prize solution would
+itself “solve weather,” “solve flight,” or “solve blood flow.”
+
 ## Public wording for the method lineage
 
 Use this exact sentence in descriptions or longer cuts:
@@ -86,7 +102,8 @@ work; the comparison is a verified methodological analogy.
 
 ## Composition rules
 
-- S01, the first 2.2 seconds of S02, and S07 may use nearly the whole screen.
+- S01, the first 2.2 seconds and the 7.40–9.50 relevance card of S02, and S07
+  may use nearly the whole screen.
 - S03–S06: no overlay group may exceed 25% of the frame area.
 - Keep essential mid-film text between `y=210` and `y=1570`; reserve the lower
   region for platform UI and subtitles.

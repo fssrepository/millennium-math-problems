@@ -77,6 +77,18 @@ left out of the 30-second narration to keep the scientific story legible.
 
 - Clay Mathematics Institute, official Navier–Stokes problem description:
   https://www.claymath.org/wp-content/uploads/2022/06/navierstokes.pdf
+- Clay Mathematics Institute, public overview explaining that the equations
+  govern water and air and connect to waves, breezes and turbulent jet flight:
+  https://www.claymath.org/millennium/navier-stokes-equation/
+- NASA Glenn, Navier–Stokes and computational-fluid-dynamics use in
+  aeronautics:
+  https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/navier-strokes-equation/
+- NOAA, SLOSH storm-surge modelling based on Navier–Stokes equations of
+  motion:
+  https://vlab.noaa.gov/web/mdl/slosh
+- NIH/PubMed Central review, Navier–Stokes formulation for three-dimensional
+  blood-flow and pressure modelling, including the large-vessel approximation:
+  https://pmc.ncbi.nlm.nih.gov/articles/PMC10299027/
 - Clay Mathematics Institute, official Millennium Prize rules: qualifying
   publication, at least two years and general acceptance before consideration:
   https://www.claymath.org/millennium-problems/rules/
@@ -86,6 +98,12 @@ left out of the 30-second narration to keep the scientific story legible.
 - Clay's current lecture-series description confirms that only the Poincaré
   Conjecture has been resolved, leaving six unresolved:
   https://www.claymath.org/events/millennium-prize-problems-lecture-series/
+
+These sources support the deliberately asymmetric wording in S02: the
+equations are **already used** in practical modelling, while the Millennium
+problem asks a foundational existence-and-smoothness question. The bundle does
+not claim that a proof would instantly improve forecasts, aircraft or medical
+treatments.
 
 ## Compute-scaling source and limitation
 

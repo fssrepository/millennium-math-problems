@@ -41,9 +41,15 @@ slow move with a long terminal hold.
 - 03.50–04.20: 100%.
 - 04.20–05.80: ramp to 450%.
 - 05.80–06.80: ramp down to 35% on the coral bend.
-- 06.80–09.50: 70% macro hold for the two labels and pointer.
-- At 07.40, reduce the mechanism labels to a quiet lower-third and reveal
-  `1 OF 6 UNSOLVED CLAY PROBLEMS • $1M` for the remaining two seconds.
+- 06.80–07.40: 70% macro hold for the two mechanism labels and pointer.
+- At 07.40, remove the mechanism labels and pointer. Place a 58% near-black
+  veil over the moving fluid and reveal `ALREADY USED TO MODEL`, then
+  `WEATHER • FLIGHT • BLOOD FLOW`. Add `A PROOF ASKS: CAN THE MATHEMATICS
+  BREAK?` below it and keep `1 OF 6 UNSOLVED CLAY PROBLEMS • $1M` as a quiet
+  microline. Hold the complete relevance card through 09.50.
+- The word `ALREADY` is essential: the equations have existing applications;
+  a regularity proof would settle a foundational mathematical question rather
+  than instantly solve those application domains.
 
 ### S03 — 00:09.50–00:12.40
 
