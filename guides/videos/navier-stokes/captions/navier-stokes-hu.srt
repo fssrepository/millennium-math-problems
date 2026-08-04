@@ -1,0 +1,48 @@
+1
+00:00:00,200 --> 00:00:03,500
+Egy rossz lemma bukjon el percek,
+ne hetek alatt.
+
+2
+00:00:03,500 --> 00:00:07,600
+Lehet-e egy sima, háromdimenziós folyadék
+végtelenül durva?
+
+3
+00:00:07,600 --> 00:00:09,500
+Az örvény nyújt.
+A viszkozitás simít.
+
+4
+00:00:09,500 --> 00:00:12,400
+Protas szélsőáramlás-keresése.
+Tao számszerű korlát-szemlélete.
+
+5
+00:00:12,400 --> 00:00:14,200
+Itt a köztes lemmákat támadjuk.
+
+6
+00:00:14,200 --> 00:00:17,900
+A tesztek egyre mélyebbek —
+és lassabbak — lettek.
+
+7
+00:00:17,900 --> 00:00:21,400
+Skálázás. Triádok.
+Egzakt gradiensek. K12.
+
+8
+00:00:21,400 --> 00:00:24,200
+Ellenpélda? Stop. Mentés.
+Szűkítés. Újraindítás.
+
+9
+00:00:24,200 --> 00:00:26,700
+16 út elbukott.
+1 részbecslés bizonyítva. L4 nyitott.
+
+10
+00:00:26,700 --> 00:00:29,700
+Következő döntés: 1–3 nap.
+A teljes megoldás nem becsülhető.
