@@ -1,18 +1,22 @@
 # Navier–Stokes short-video production bundle
 
 Status: production guide for a conceptual 9:16 explainer, not a numerical simulation export  
-Target: 1080 × 1920, 30 fps, 29.7 seconds, English narration and captions
+Generation target: 720 × 1280 first; optional upscale only after picture lock
+Timeline target: 1080 × 1920, 30 fps, 29.7 seconds, English narration and captions
 
 ## Recommended route
 
 For this exact film, the strongest workflow is:
 
-1. Use the supplied keyframes as the single visual reference set.
-2. Draft the six clean base clips in **Google Flow / Veo 3.1 Fast**.
-3. Render the chosen takes in **Veo 3.1 Quality**.
-4. If the macro dive or pullback lacks camera precision, remake only that shot in
-   **Higgsfield's basic image-to-video surface with Kling 3.0**.
-5. Add every title, caption, arrow, freeze, time-ramp and counter in a normal
+1. Build the complete 29.7-second still-image animatic before spending credits.
+2. Test only S02, S05, and S06 at 720p with one **Veo 3.1 Lite** output each.
+3. If those pass, generate S01, S03, and S04 one at a time with Lite.
+4. Use **Veo 3.1 Fast** only for a shot that fails visually at Lite quality.
+5. Use **Veo 3.1 Quality** only for one or two hero shots if a phone review
+   shows a visible need; it is not a mandatory final pass.
+6. If a camera still fails after one targeted retry, remake only that shot with
+   **Higgsfield or OpenArt basic image-to-video + Kling 3.0 Standard at 720p**.
+7. Add every title, caption, arrow, freeze, time-ramp and counter in a normal
    editor such as DaVinci Resolve, Premiere or CapCut. Do not ask a video model
    to draw the English text.
 
@@ -24,11 +28,11 @@ character system or third-party plugin is required.
 
 ## Model choice at a glance
 
-| Platform | Draft | Final | Best use here |
+| Platform | Cheapest useful test | Selective upgrade | Best use here |
 | --- | --- | --- | --- |
-| Google Flow | Veo 3.1 Fast | Veo 3.1 Quality | Main fluid footage and coherent atmosphere |
-| Higgsfield | Kling 3.0 basic image-to-video | Kling 3.0 basic image-to-video | Macro orbit, rapid push-in and controlled pullback |
-| OpenArt | Kling 3.0 basic image-to-video | Kling 3.0 basic image-to-video | Alternate start-frame takes |
+| Google Flow | Veo 3.1 Lite, 720p, one output | Fast only when needed; Quality only for a visible hero-shot gain | Main fluid footage |
+| Higgsfield | Kling 3.0 Standard image-to-video, 720p, one output | Higher mode only after a successful scout | Camera rescue for S02/S05/S06 |
+| OpenArt | Kling 3.0 Standard image-to-video, 720p, one output | Higher quality only after a successful scout | Complete fallback or alternate composition |
 
 The recommendation is dated 2026-08-04. Model menus change, so the platform
 guides include a fallback rule: preserve the supplied reference frames and
@@ -71,7 +75,8 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
 
 1. Open `00_START_HERE.md`.
 2. Follow `PRODUCTION_WORKFLOW.md` and `flow/RUNBOOK.md`.
-3. Generate and approve S01–S06 one at a time.
+3. Generate and approve shots in scout order S02 → S05 → S06 → S01 → S03 →
+   S04, one output at a time.
 4. Assemble them according to `STORYBOARD.md` and `EDIT_PLAN.md`.
 5. Import the SRT, record or synthesize `narration/en.md`, then run
    `DELIVERY_QC.md`.

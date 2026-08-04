@@ -42,12 +42,14 @@ visual plates and add typography in CapCut, DaVinci Resolve or Premiere.
 
 ## 3. Model order
 
-1. Flow / Veo 3.1 Fast: four draft outputs per shot.
-2. Flow / Veo 3.1 Quality: two final variants of each selected shot.
-3. If S02, S05 or S06 camera control is weak, remake only that shot with
-   Higgsfield basic Image to Video + Kling 3.0.
-4. Use OpenArt / Kling 3.0 for quick alternative compositions or a complete
-   single-platform workflow.
+1. Flow / Veo 3.1 Lite: one 720p scout at a time.
+2. Inspect before spending on the next generation; make at most one targeted
+   Lite retry for a specific defect.
+3. Use Flow / Veo 3.1 Fast only when a selected Lite take is visibly too weak.
+4. Use Quality only for one or two hero shots after the 720p rough cut passes a
+   phone review.
+5. If S02, S05 or S06 camera control still fails, remake only that shot with
+   Higgsfield or OpenArt basic Image to Video + Kling 3.0 Standard at 720p.
 
 This route does not require Agent, Storyboard Studio, Smart Shot, Director,
 Motion Control, Cast, Soul ID or any third-party plugin.

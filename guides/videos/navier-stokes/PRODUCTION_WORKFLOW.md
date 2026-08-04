@@ -1,79 +1,103 @@
-# Manual video-AI production workflow
+# Cost-efficient manual video-AI production workflow
 
-This is not a one-shot generation. Create six separate clean clips, inspect
-each one, proceed only after it passes review, then build the pacing and English
-information layer in a conventional editor.
+This workflow spends only after the previous result has passed review. It uses
+720p scouts because the film is designed for a phone screen. A higher-quality
+generation is optional and justified shot by shot, never assumed for all six.
 
-## Recommended route
+## Spending logic
 
 ```text
-Keyframes
-  ↓
-Flow / Veo 3.1 Fast: 4 drafts per shot
-  ↓ visual review
-Flow / Veo 3.1 Quality: 2 final candidates
-  ↓ only if the camera fails
-Higgsfield / Kling 3.0: regenerate the problem shot
-  ↓
-Edit + speed ramps + freeze frames
-  ↓
-English overlays + narration + SRT
-  ↓
-Final phone review
+Free still-image animatic
+  ↓ approve timing and copy
+One 720p Lite scout for S02
+  ↓ inspect
+One 720p Lite scout for S05
+  ↓ inspect
+One 720p Lite scout for S06
+  ↓ approve visual world and camera grammar
+One 720p Lite scout each for S01, S03, S04
+  ↓ assemble complete mobile rough cut
+Repair only failed shots
+  ↓ phone review
+Optional Fast or Quality upgrade for visible defects only
 ```
 
-OpenArt is a complete alternative route and a fast composition laboratory. You
-do not need to generate every shot on all three services.
+Do not generate multiple variants by default. One output is a test; the next
+generation is authorized only by a concrete finding from that test.
+
+## Model ladder
+
+1. **Flow / Veo 3.1 Lite, 720p** — default scout for every shot.
+2. **Flow / Veo 3.1 Fast, 720p** — only when the Lite composition works but
+   motion or fidelity is visibly insufficient.
+3. **Higgsfield or OpenArt / Kling 3.0 Standard, 720p** — only when Flow cannot
+   execute a required camera move after one targeted retry.
+4. **Veo 3.1 Quality** — optional for at most one or two hero shots after the
+   complete rough cut passes on a phone. Skip it when the 720p take already reads.
+
+Use only one paid platform at a time. Do not buy OpenArt and Higgsfield access
+in advance; choose one fallback only after a specific Flow failure identifies
+what is missing.
 
 ## No plugin is required
 
 The full film can be made with Flow's standard prompt box, Video → Frames, and
 a conventional editor. Do not use Agent, Storyboard Studio, Smart Shot, AI
-Director, Motion Control, Cast, Soul ID, or a third-party plugin. Platform
-runbooks mention these features only to tell you not to select them.
+Director, Motion Control, Cast, Soul ID, or a third-party plugin.
 
-## 0. Preparation
+## 0. Zero-generation animatic
 
-Open these together:
+Before opening a video generator:
 
-- this file;
-- the selected platform's `RUNBOOK.md`;
-- its `PROMPTS.md` or `READY_TO_PASTE.md`;
-- the `assets/` directory;
-- `REVIEW_SHEET.csv`.
+1. Create a 1080 × 1920, 30 fps editor timeline.
+2. Place the supplied three PNG keyframes as temporary stills for S01–S07.
+3. Set shot lengths from `shot-manifest.csv`.
+4. Add the copy from `EDITOR_OVERLAYS_EN.md`.
+5. Import `captions/navier-stokes-en.srt` and a rough narration from
+   `narration/en.md`.
+6. Watch the still-image cut on a phone.
 
-Download every AI output immediately. Suggested names:
+Do not spend generation credits until the title, narration, final estimate,
+safe margins, and 29.70-second pacing work in this animatic.
 
-```text
-S01_flow_fast_take01.mp4
-S01_flow_quality_take01.mp4
-S02_higgsfield_kling_take03.mp4
-```
+## 1. Generate the three high-risk scouts first
 
-Store them in the matching `renders/` subdirectory. A project preview on the
-service is not a substitute for a local download.
+Generate in this order:
 
-## 1. Shot cycle — repeat for S01–S06
+1. **S02** — fastest push-in and macro endpoint;
+2. **S05** — exact scan/filament intersection;
+3. **S06** — slow pullback and stable final frame.
 
-### 1.1 Input
+For each shot:
 
-1. Check the shot's assigned start frame in the platform runbook.
-2. Set the aspect ratio to 9:16 and use the listed duration.
-3. Paste the shot's complete prompt into the named field.
-4. If there is a separate negative-prompt field, put the negative block there;
-   otherwise leave it at the end of the main prompt.
-5. Never ask the video generator for captions, equations, or interface text.
+1. Select 720p, 9:16, Veo 3.1 Lite, and one output.
+2. Upload the assigned start frame.
+3. Paste the shot's complete prompt.
+4. Generate once and download immediately.
+5. Watch at normal speed and 0.5× speed.
+6. Fill in `REVIEW_SHEET.csv`.
+7. If it passes, stop generating that shot and continue to the next one.
+8. If it fails, identify one defect and make one targeted Lite retry.
+9. If the same defect remains, stop spending on Lite and use one Fast attempt
+   or one Kling 3.0 Standard fallback—not both simultaneously.
 
-### 1.2 Draft generation
+Do not generate S01, S03, or S04 until these three shots establish that the
+cube, filament, liquid material, and camera language are viable.
 
-1. Produce three or four variants from identical inputs.
-2. Do not change the model, prompt, and image at the same time; otherwise you
-   cannot identify which change helped.
-3. Download every variant and watch each at normal speed and 0.5× speed.
+## 2. Complete the first 720p pass
 
-### 1.3 Mandatory review gate
+Generate one Lite scout each for:
 
-Accept the shot only when every relevant condition passes:
+1. S01;
+2. S03;
+3. S04.
+
+Use the same review gate. Do not generate an alternate take when the first take
+passes. S07 costs nothing: it is a hold on the fixed S06 endpoint image.
+
+## 3. Mandatory review gate
+
+Accept a shot only when every relevant condition passes:
 
 - the cube stays rigid and neither melts nor breaks;
 - exactly one coral vortex filament remains;
@@ -81,66 +105,58 @@ Accept the shot only when every relevant condition passes:
 - no generated text, watermark, person, or pseudo-equation appears;
 - the camera stops at the requested final composition;
 - at least 8–12 clean edit frames exist at both ends;
-- the object and crop required by the next shot remain available.
-
-Record the result in a working copy of `REVIEW_SHEET.csv`. A failed shot does
-not proceed to the Quality pass.
-
-### 1.4 Fix one problem at a time
-
-| Problem | Next action |
-| --- | --- |
-| The coral filament duplicates | Keep the start frame and add: `one single continuous coral filament, never duplicate` |
-| The cube deforms | Add: `rigid unchanged glass cube`; reduce camera speed |
-| The flow looks like smoke | Add: `coherent heavy liquid, not smoke, not vapor` |
-| The camera misses its target | Keep model and image; revise only the camera sentence |
-| Motion is excessive | Request a slower camera or use the Higgsfield fallback |
-| Generated writing appears | Start the negative block with: `absolutely no visible text or symbols` |
-| S06 changes the 16 marks | Use generated motion only for the pullback, then cut to the fixed `keyframe-06-frontier.png` |
-
-Make no more than two targeted retries on the same model. If the camera remains
-unstable on the third result, move that shot to Higgsfield/Kling.
-
-### 1.5 Final generation
-
-1. Preserve the accepted start frame, prompt, and seed when available.
-2. Switch to the platform's higher-quality mode.
-3. Produce two final candidates.
-4. Repeat the full review gate.
-5. Choose the winning file before proceeding to the next shot.
-
-## 2. Shot-specific gate
+- the shot-specific requirement below passes.
 
 | Shot | Most important acceptance condition |
 | --- | --- |
 | S01 | The upper 38% is calm and dark enough for the title |
-| S02 | The camera crosses the image plane without breaking the glass and stops on the coral bend at center-right |
+| S02 | The glass stays intact and the coral bend stops at center-right |
 | S03 | The macro bend remains in focus; no person or portrait appears |
-| S04 | This is the fastest camera move; four distinct test pulses and stable shell geometry remain visible |
-| S05 | This is slower and more precise; the amber scan actually crosses the coral filament |
-| S06 | This is the slowest; an open teal path and a long stable final frame remain |
+| S04 | Four distinct test pulses and stable shell geometry remain visible |
+| S05 | The amber scan actually crosses the coral filament |
+| S06 | An open teal path and a long stable final frame remain |
 
-## 3. Editing workflow
+## 4. One-defect retry table
 
-1. Place the accepted clips in the order listed by `shot-manifest.csv`.
+| Problem | Single change for the next attempt |
+| --- | --- |
+| Coral filament duplicates | Add: `one single continuous coral filament, never duplicate` |
+| Cube deforms | Add: `rigid unchanged glass cube`; reduce camera speed |
+| Flow looks like smoke | Add: `coherent heavy liquid, not smoke, not vapor` |
+| Camera misses target | Keep model and image; revise only the camera sentence |
+| Motion is excessive | Reduce camera speed; if it repeats, use Kling Standard |
+| Generated writing appears | Start the negative block with: `absolutely no visible text or symbols` |
+| S06 changes the 16 marks | Use motion only for the pullback, then cut to the fixed `keyframe-06-frontier.png` |
+
+Never change the model, start frame, and prompt together. That makes the failed
+generation diagnostically useless.
+
+## 5. Assemble before upgrading
+
+1. Place the six accepted 720p scouts in a 1080 × 1920 editor timeline.
 2. Cut the sequence to exactly 29.70 seconds.
 3. Apply the speed and freeze points in `EDIT_PLAN.md`.
-4. Counterexamples, `REJECTED` stamps, pointers, and the T+ clock are editor
-   graphics; never regenerate them inside the clip.
+4. Add the English overlays, SRT, rough narration, and temporary sound bed.
 5. At the end of S06, cut or dissolve to `keyframe-06-frontier.png` so the 16
    marks remain exact.
-6. S07 is a 4.5-second hold on that fixed image with a 72% dark veil.
+6. Watch the full rough cut on the target phone at normal brightness.
 
-## 4. Text and audio
+Only a defect visible in this complete phone review justifies another video
+generation. A flaw visible only at 200% desktop zoom does not.
 
-1. Copy the on-screen text from `EDITOR_OVERLAYS_EN.md`.
-2. Import `captions/navier-stokes-en.srt`.
-3. Record or synthesize the script in `narration/en.md`.
-4. Target a narration duration of 29.2–29.7 seconds.
-5. Hide ordinary subtitles during S07 because the full-page card already
-   contains the result and estimate.
+## 6. Selective finishing
 
-## 5. Final acceptance
+- If every 720p scout reads cleanly on a phone, keep them.
+- If one shot lacks motion quality but has the right composition, regenerate
+  only that shot with Veo 3.1 Fast.
+- If a camera path is still wrong, use one Kling 3.0 Standard attempt on one
+  fallback platform.
+- Consider Quality only for S02 or S06, and only when an A/B comparison shows a
+  visible improvement at phone size.
+- Upscale or export to 1080 × 1920 only after picture lock. Do not upscale
+  rejected drafts.
+
+## 7. Final acceptance
 
 Complete `DELIVERY_QC.md`, then watch the export:
 
@@ -149,4 +165,4 @@ Complete `DELIVERY_QC.md`, then watch the export:
 3. at 0.75× speed;
 4. once while reading only the captions.
 
-Export the master and social version only after all four reviews pass.
+Export only after all four reviews pass.

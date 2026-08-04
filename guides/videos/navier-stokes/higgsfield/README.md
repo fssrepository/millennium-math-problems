@@ -1,6 +1,7 @@
 # Higgsfield workflow
 
-Recommended route: the platform's basic **Image to Video + Kling 3.0** surface.
+Recommended route: the platform's basic **Image to Video + Kling 3.0 Standard**
+surface at 720p, one output at a time, and only for a specific failed Flow shot.
 The camera and lens instructions are already in the text prompts. AI Director,
 storyboard, Cast, Soul ID and Motion Control are not required. If the normal
 video panel appears inside a page named Cinema Studio, use only that base panel.
@@ -17,7 +18,7 @@ For literal click-by-click instructions, use `RUNBOOK.md`.
 5. Paste `PROMPTS.md` → shared continuity + one shot prompt into the scene
    prompt. Put the shared negative block in the negative field if present;
    otherwise append it.
-6. Render 3 variants. Change only one control between revisions.
+6. Render one 720p scout. Inspect it before authorizing another generation.
 
 ## Director controls
 

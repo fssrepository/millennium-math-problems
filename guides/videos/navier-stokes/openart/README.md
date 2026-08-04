@@ -1,7 +1,8 @@
 # OpenArt workflow
 
-Recommended OpenArt route: use **Kling 3.0** for the recurring cube and camera
-motion. Use only the basic 9:16 image-to-video/start-frame workflow. Smart Shot,
+Recommended OpenArt route: use **Kling 3.0 Standard at 720p, one output at a
+time**, and only after a Flow scout identifies a reason to switch. Use the basic
+9:16 image-to-video/start-frame workflow. Smart Shot,
 One Click Story, Director and Motion Control are not required.
 
 For literal click-by-click instructions, use `RUNBOOK.md`.
@@ -21,20 +22,21 @@ For literal click-by-click instructions, use `RUNBOOK.md`.
    in the editor; it does not need a separate generation.
 6. Paste the shared continuity block, the selected shot prompt, then the shared
    negative block from `PROMPTS.md` into the prompt field.
-7. Generate 4 variants. Use 8–10 seconds for S04–S06 so the editor has clean
-   handles for fast, medium and slow retiming.
+7. Generate one 720p scout and inspect it. Make one targeted retry only when a
+   specific defect is identified.
 
 ## Where each text goes
 
 | OpenArt field | Paste / choose |
 | --- | --- |
 | Aspect ratio | `9:16` |
-| Video model | `Kling 3.0` |
+| Video model | `Kling 3.0 Standard` |
 | Start image | The shot reference listed above |
 | Prompt | `PROMPTS.md` → shared continuity + one shot block |
 | Negative prompt, if shown | `PROMPTS.md` → shared negative block |
 | Duration | S01/S03 5 s; S02 6 s; S04–S06 8–10 s |
-| Output count | 4 for drafts, 2 for final |
+| Resolution | `720p` for scouts |
+| Output count | 1 per decision cycle |
 
 Do not use One Click Story, Smart Shot or Director. This film depends on
 editor-accurate freezes, counters and English typography. Do not ask OpenArt

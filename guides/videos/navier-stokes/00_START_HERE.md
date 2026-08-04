@@ -27,13 +27,15 @@ Open: https://flow.google
 2. In Flow select: standard prompt box → Video → Frames → 9:16.
 3. Upload the image named for that shot from `assets/`.
 4. Paste the complete matching block from `flow/READY_TO_PASTE.md`.
-5. Generate four drafts, download them, and inspect them with
+5. Generate one 720p Lite scout, download it, and inspect it with
    `PRODUCTION_WORKFLOW.md`.
-6. Make two Quality versions of the accepted draft, then repeat for S01–S06.
-7. Assemble the six accepted clips with `EDIT_PLAN.md`, then add the copy from
+6. Continue only if it passes; otherwise make one targeted retry. Process shots
+   in cost-risk order S02 → S05 → S06 → S01 → S03 → S04.
+7. Assemble the six accepted scouts with `EDIT_PLAN.md`. Upgrade only visibly
+   weak shots, then add the copy from
    `EDITOR_OVERLAYS_EN.md`, the SRT file, and the narration.
 
-If a camera move still fails after two targeted revisions, move only that shot
+If a camera move still fails after one targeted revision, move only that shot
 to `higgsfield/RUNBOOK.md`. The complete OpenArt alternative is documented in
 `openart/RUNBOOK.md`.
 

@@ -20,11 +20,10 @@ character tools are unnecessary.
 
 1. Open https://higgsfield.ai/ai/video and sign in.
 2. Open **Video** or **Image to Video**.
-3. Choose `Kling 3.0`.
+3. Choose `Kling 3.0 Standard`.
 4. Set aspect ratio to `9:16`.
 5. Turn Audio/Sound off.
-6. Set output count to `3` if your plan permits it; otherwise repeat the same
-   generation three times.
+6. Set resolution to `720p` and output count to `1`.
 
 ## For every shot
 
@@ -41,7 +40,7 @@ character tools are unnecessary.
    information.
 7. Click Generate.
 8. Download the result into `../renders/higgsfield/`.
-9. Review it with `../PRODUCTION_WORKFLOW.md`.
+9. Review it with `../PRODUCTION_WORKFLOW.md` before generating again.
 
 | Shot | Start image | Length | Camera/lens if separately available |
 | --- | --- | ---: | --- |
@@ -54,6 +53,7 @@ character tools are unnecessary.
 
 ## Revision rule
 
-Change only the failed camera sentence on a retry. Do not add AI Director,
-storyboard, or Motion Control. The goal is one clean camera plate; exact pacing
-is created later in the editor.
+If the scout passes, stop generating and place it in the rough cut. If it
+fails, change only the failed camera sentence and make one more 720p Standard
+attempt. Do not add AI Director, storyboard, or Motion Control. Upgrade quality
+only if the complete phone rough cut reveals a visible defect.

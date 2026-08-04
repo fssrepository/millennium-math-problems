@@ -16,10 +16,10 @@ surface.
 1. Open https://openart.ai/ai-video-generator/ and sign in.
 2. Open **Create Video**.
 3. Select **Image to Video**. A field labeled only `Start Frame` is also valid.
-4. Choose the normal `Kling 3.0` image-to-video model. Do not choose `Motion
+4. Choose `Kling 3.0 Standard` image-to-video. Do not choose `Motion
    Control`; this film has no human motion reference.
 5. Set aspect ratio to `9:16`.
-6. Set output count to `4` for drafts.
+6. Set resolution to `720p` and output count to `1`.
 7. Turn audio/voice off or choose ambient only.
 
 ## For every shot
@@ -33,8 +33,8 @@ surface.
    does not, append that block to the main prompt.
 5. Set the shot duration.
 6. Click **Generate**.
-7. Download all four results into `../renders/openart/`.
-8. Review them with `../PRODUCTION_WORKFLOW.md`.
+7. Download the result into `../renders/openart/`.
+8. Review it with `../PRODUCTION_WORKFLOW.md` before generating again.
 
 | Shot | Start image | Length |
 | --- | --- | ---: |
@@ -45,13 +45,15 @@ surface.
 | S05 | `../assets/keyframe-03-checkpoint.png` | 8–10 s |
 | S06 | `../assets/keyframe-06-frontier.png` | 8–10 s |
 
-## Finalize the accepted draft
+## After reviewing the scout
 
-1. Record the seed in `../REVIEW_SHEET.csv` when OpenArt exposes one.
-2. Preserve the image, prompt, and seed.
-3. Set output count to 2 and select higher quality when a quality switch exists.
-4. Generate again.
-5. Append `_SELECTED.mp4` to the winning filename.
+1. If the scout passes, stop generating this shot and use it in the rough cut.
+2. If it fails, record the defect and seed in `../REVIEW_SHEET.csv`.
+3. Preserve the image and seed, change one prompt sentence, and make one more
+   720p Standard attempt.
+4. Upgrade quality only after the full phone rough cut demonstrates a visible
+   need in this exact shot.
 
-If the camera remains unstable after two targeted retries, do not open Smart
-Shot. Move only that shot to Higgsfield's basic image-to-video workflow.
+If the camera remains unstable after one targeted retry, do not open Smart
+Shot. Move only that shot back to Flow Fast or to Higgsfield Standard—choose
+one, not both at once.

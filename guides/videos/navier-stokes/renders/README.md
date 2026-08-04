@@ -3,8 +3,8 @@
 Download generated files into these folders using the naming convention in
 `../PRODUCTION_WORKFLOW.md`.
 
-- `flow/drafts/` — Veo Fast trials;
-- `flow/finals/` — selected Veo Quality renders;
+- `flow/drafts/` — one-at-a-time 720p Veo Lite scouts and targeted Fast retries;
+- `flow/finals/` — optional selected upgrades only after the rough cut;
 - `openart/` — OpenArt alternatives;
 - `higgsfield/` — controlled camera retakes;
 - `audio/` — narration, music and sound effects;

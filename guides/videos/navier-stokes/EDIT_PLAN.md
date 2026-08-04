@@ -3,6 +3,8 @@
 ## Sequence setup
 
 - Canvas: 1080 × 1920, 30 fps, Rec.709, progressive.
+- Source scouts: 720 × 1280. Scale them to fill the vertical canvas; do not
+  upscale individual shots before the complete phone rough cut passes review.
 - Duration: 00:29.70 maximum.
 - Keep at least 120 px from left/right edges, 210 px from the top, and 350 px
   from the bottom for critical mid-film copy.
@@ -112,6 +114,8 @@ slow move with a long terminal hold.
 
 - Dialogue peaks: about −3 dBFS.
 - Integrated loudness: approximately −14 LUFS; true peak ≤ −1 dBTP.
+- Finish the complete 720p-source rough cut first. Upscale only the locked
+  timeline, and only if the delivery platform or phone review justifies it.
 - Master: ProRes 422 HQ or DNxHR HQX, 1080 × 1920, 30 fps.
 - Social: H.264 High Profile, 15–25 Mbps, AAC 48 kHz / 320 kbps.
 - Export burned-caption and clean-captionless versions.

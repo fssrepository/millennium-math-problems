@@ -42,6 +42,9 @@
 
 ## Export
 
+- [ ] The complete 720p rough cut passed a phone review before any upscale.
+- [ ] Only shots with a visible phone-sized defect were regenerated at a more
+  expensive model tier.
 - [ ] 1080 × 1920, 30 fps, Rec.709.
 - [ ] H.264 social file plus a high-quality master.
 - [ ] Burned-caption and clean-captionless versions.

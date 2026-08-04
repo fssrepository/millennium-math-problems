@@ -1,9 +1,9 @@
 # Google Flow workflow
 
-Recommended route: **Veo 3.1 Fast** for four-way drafts, then **Veo 3.1
-Quality** for the selected shots. This project has atmosphere, refractive glass
-and non-human motion; it benefits more from visual fidelity than from a
-character-performance model.
+Recommended route: **Veo 3.1 Lite at 720p, one output at a time**. Use Fast only
+when a Lite take has the correct composition but insufficient motion quality.
+Quality is an optional hero-shot upgrade after the complete mobile rough cut,
+not a required pass for every shot.
 
 For literal click-by-click instructions, use `RUNBOOK.md`. This
 route uses only the standard prompt box and Frames; Agent, Storyboard Studio,
@@ -13,14 +13,15 @@ Ingredients and scene automation are not required.
 
 1. Create a project named `Navier Stokes — Falsify Loop — 9x16`.
 2. Use the standard prompt box; turn **Agent** off for the controlled shot pass.
-3. Click the model name, choose **Video**, then choose **Veo 3.1 Fast**.
-4. Set aspect ratio to **9:16**, output count to **4**, and the nearest supported
+3. Click the model name, choose **Video**, then choose **Veo 3.1 Lite**.
+4. Set aspect ratio to **9:16**, resolution to **720p** when exposed, output
+   count to **1**, and the nearest supported
    duration listed in `PROMPTS.md`.
 5. Drag the shot's keyframe into **Add start frame**.
 6. Paste the shared continuity block, one shot block and the negative block into
    the prompt box.
-7. Generate drafts. Move only the chosen compositions to a final pass with
-   **Veo 3.1 Quality**.
+7. Generate once, inspect, and stop when the shot passes. Make one targeted Lite
+   retry for a concrete defect. Escalate only that shot to Fast when necessary.
 
 S07 is an editor-held final frame from S06, not a seventh model generation.
 
@@ -34,10 +35,11 @@ block; do not switch off 9:16. Ingredients are not used in this workflow.
 | --- | --- |
 | Project name | `Navier Stokes — Falsify Loop — 9x16` |
 | Mode | Standard prompt box → `Video` |
-| Draft model | `Veo 3.1 Fast` |
-| Final model | `Veo 3.1 Quality` |
+| Scout model | `Veo 3.1 Lite` |
+| Selective upgrade | `Veo 3.1 Fast`; Quality only for an approved hero shot |
 | Aspect ratio | `9:16` |
-| Outputs | 4 draft, 2 final |
+| Resolution | `720p` for all scouts |
+| Outputs | 1 per decision cycle |
 | Start frame | The reference specified per shot |
 | Main prompt | `PROMPTS.md` → continuity + shot + negative |
 | S07 overlay copy | `../STORYBOARD.md` → S07; add in the editor only |
