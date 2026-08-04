@@ -3,23 +3,27 @@
 Pricing and model recommendation checked on 2026-08-04. Prices, promotions,
 taxes, plan names, model access and credit charges can vary by account and
 region. Treat this as a spending plan, not a billing quote. The amount shown on
-the platform's Generate button is the final pre-purchase check.
+the platform's Generate button and checkout page is the final pre-purchase
+check.
 
 ## Direct recommendation
 
-1. **Prototype in Google Flow for free** with Veo 3.1 Lite.
+1. **If the account exposes free Flow access**, prototype with the daily credits
+   and Veo 3.1 Lite.
 2. Generate the three difficult shots first: S02, S05 and S06.
 3. If their visual language works, complete the remaining three motion shots
    in Flow Lite.
-4. If a visible Veo watermark is acceptable, the complete first version can
-   remain a free Flow production.
+4. If the free allowance is available and a visible Veo watermark is
+   acceptable, the complete first version can remain a $0 Flow production.
 5. If the public master must be clean, regenerate only the accepted shots in
    **Higgsfield with Kling 3.0 at 720p**.
 6. Use **OpenArt with Kling 3.0** instead when its interface, account pricing or
    model access is better in the producer's region.
 
-Do not subscribe to OpenArt and Higgsfield at the same time. Do not buy a paid
-Flow tier or run Quality generations before the free Lite rough cut exists.
+Do not subscribe to OpenArt and Higgsfield at the same time. If free Flow
+access is unavailable, compare all three paid entry prices before subscribing.
+Do not buy an unlimited bundle or Quality generations before a Lite/Kling
+rough cut exists.
 
 ## What must be generated
 
@@ -33,6 +37,36 @@ The economical plan assumes:
 - up to three targeted retries;
 - 720p generation;
 - text, pointers, clocks, freezes and retiming added in an external editor.
+
+## Three-platform comparison for this film
+
+The prices below compare the cost of reaching the same practical milestone,
+not the nominal value of unrelated credit systems.
+
+| Platform | Recommended model | Free test | Lowest practical project floor | Clean public output | Unlimited relevant here? |
+| --- | --- | --- | ---: | --- | --- |
+| Google Flow | Veo 3.1 Lite, 720p | 50 non-rollover credits daily are documented for eligible non-subscribers, but access is account/region dependent | **$0 over 2–3 days** when enabled; otherwise local Plus pricing, currently **$7.99 US / $9.99 Slovak reference** | Free, Plus and Pro have a visible Veo watermark | **No documented unlimited video tier** |
+| Higgsfield | Kling 3.0, 720p | Limited free access may appear | **About $9–15 plus tax**, region/account dependent | Entry plans list commercial use; verify current terms | **Yes, sometimes**: Kling 3.0 may be bought as a 1-, 7- or 14-day Marketplace unlimited bundle |
+| OpenArt | Kling 3.0, 720p | Signup trial may appear | **$12.60 promo / $14 list plus tax** for Starter | Starter is watermark-free; Plus explicitly lists commercial rights | **Not for the recommended model**: current Wonder unlimited badge is for MiniMax H3, not Kling 3.0 |
+
+If the producer already has an active plan with enough unused credits, the
+incremental generation cost can be $0. That does not make the subscription
+itself free.
+
+### Why the credits are not directly comparable
+
+- Flow publishes a fixed cost per generation and gives daily free credits.
+- Higgsfield's cost changes with model, duration, resolution, plan and region;
+  the Generate button is authoritative.
+- OpenArt advertises plan capacity as **up to** a number of videos across many
+  models. That is not a promise that every Kling 3.0 clip costs the plan-wide
+  average.
+- One prompt may produce more than one billed generation on some surfaces.
+- A usable take is not the same as a generated take; retries dominate the real
+  cost of video AI.
+
+For those reasons, a precise cross-platform “price per clip” would be false
+precision. The project floors above are the useful comparison.
 
 ## Option A — Google Flow
 
@@ -60,8 +94,16 @@ For non-Ultra accounts, Google currently lists:
 | Veo 3.1 Fast | 20 |
 | Veo 3.1 Quality | 100 |
 
-An account without a subscription currently receives 50 free Flow credits per
-day. Unused free credits do not roll over.
+An account without a Plus, Pro or Ultra subscription currently receives 50
+free Flow credits per day. Unused free credits do not roll over.
+
+There is a current documentation mismatch: the credit page describes those 50
+daily credits for non-subscribers, while the general Flow access page says a
+Plus, Pro or Ultra subscription is required, apart from qualifying Workspace
+accounts. Therefore **do not assume the free route is available** until the
+producer can open Flow and reach the generation screen in the intended region.
+If the account cannot enter Flow, compare the local Google subscription price
+with the Higgsfield and OpenArt project floors instead of subscribing blindly.
 
 | Project pass | Total credits | Minimum generation days | Direct charge |
 | --- | ---: | ---: | ---: |
@@ -78,6 +120,19 @@ one generation. If Flow forces two outputs, the six-shot Lite baseline becomes
 A Quality generation costs 100 credits. It cannot be funded by saving the free
 50-credit daily grants because those grants do not roll over. Quality therefore
 requires a paid allocation or separately eligible credits.
+
+Current monthly Flow allocations are 200 credits on Plus, 1,000 on Pro, 10,000
+on the $100 Ultra offer and 25,000 on the $200 Ultra offer. Current official
+price references show Plus at **$7.99/month in the US** and **$9.99/month on the
+Slovak plan page**; the Slovak page lists Pro at **$19.99/month**. Local checkout
+wins over these reference prices. A Plus allocation is already enough for the
+90-credit six-shot-plus-three-retry plan, so Pro and Ultra are unnecessary for
+this project unless they are already active.
+
+Google's January 2026 US Plus announcement offered new subscribers 50% off for
+the first two months for a limited time. Its continued eligibility is not
+guaranteed; treat any checkout promotion as a bonus, not the budget baseline.
+Flow currently documents no unlimited video plan.
 
 ### Flow limitation for a public master
 
@@ -110,23 +165,47 @@ enable multi-shot storyboarding, Soul ID or agent features.
 Higgsfield advertises limited free Kling 3.0 generations. Use that allowance
 for S02 only before buying a plan.
 
-Higgsfield plan pricing is regional and its current official pages show
-different entry configurations. The practical entry range is approximately:
+Higgsfield plan pricing is regional, and official pages currently describe two
+common entry configurations:
 
-- **$9–15 per month**;
-- approximately 120–200 subscription credits;
-- local VAT or tax added at checkout.
+- from **$9 per month** with roughly 120–270 credits in some regions;
+- **$15 per month** with 200 credits in another current configuration.
 
-Higgsfield's July 2026 model comparison estimates one Kling 3.0 720p,
-ten-second generation at about **$1 of generation value**. Six base outputs plus
-two or three retries therefore represent roughly **$6–9 of generation value**,
-although the subscription floor still applies. Before paying, verify that the
-displayed entry plan includes Kling 3.0 in the producer's region.
+The live pricing page currently advertises **30% off**, but the public page does
+not expose enough account-specific numbers to calculate the producer's final
+checkout price. Treat **$9–15 plus tax** as an entry range, not a quote.
+
+One official July 2026 comparison estimates a Kling 3.0 720p, ten-second
+generation at about **$1 of generation value**. Six base outputs plus two or
+three retries therefore represent roughly **$6–9 of generation value**, even
+though the subscription floor still applies. Another current Higgsfield guide
+maps 200 credits to about 33 Kling 3.0 videos; the difference illustrates why
+the Generate button must win over generalized averages.
 
 This is the preferred paid route for this film because it combines a low entry
 price with image guidance, physics-aware motion and camera-oriented controls.
-Higgsfield's Kling page also states that generated videos may be used for
-commercial projects; verify the current account terms before publication.
+Higgsfield's entry-plan guide lists commercial-use rights; verify the current
+account terms before publication.
+
+### Higgsfield unlimited: useful only after a volume check
+
+Higgsfield currently describes three different “Unlimited” mechanisms:
+
+1. 365-day access included in Plus or Ultra for selected models;
+2. a separate Unlimited Models Marketplace with one-model bundles lasting 1,
+   7 or 14 days, including Kling 3.0;
+3. short promotional windows tied to a specific model.
+
+Unlimited is credit-free only within the named model, duration and concurrency
+limits. It works directly on `higgsfield.ai`; MCP, CLI, Canvas and Supercomputer
+generations still deduct credits. Video runs one generation at a time, up to 15
+seconds. Exact Kling bundle prices are not exposed on the public article, so
+check the signed-in Marketplace.
+
+For this six-to-nine-generation film, do **not** buy unlimited unless its
+displayed price is lower than the smallest plan that includes enough Kling
+access. It can be worthwhile for heavy visual exploration or many retakes, not
+for the default disciplined pass.
 
 ## Option C — OpenArt
 
@@ -147,31 +226,51 @@ it will fund the complete six-shot film.
 
 ### Expected OpenArt cost
 
-The current entry offer is approximately:
+Current monthly pricing shows:
 
-- **$12.60 promotional / $14 list price per month**;
-- 4,000 credits per month;
-- advertised capacity of up to roughly 50 videos;
-- watermark-free output.
+| Plan | Promotional / list price | Credits | Advertised capacity | Relevant rights |
+| --- | ---: | ---: | ---: | --- |
+| Starter | **$12.60 / $14** | 4,000 | Up to ~50 videos | Watermark-free |
+| Plus | **$27.20 / $34** | 12,000 | Up to ~150 videos | Commercial use, watermark-free |
+| Pro | **$43.70 / $56** | 24,000 | Up to ~300 videos | Commercial use, watermark-free |
+| Wonder | **$175.20 / $240** | 106,000 | Up to ~1,300 videos | Commercial use, watermark-free; selected-model unlimited |
 
-That entry allocation should comfortably cover this six-shot production, but
+Starter should comfortably cover this six-shot non-commercial experiment, but
 Kling's exact charge depends on duration and current model pricing. Read the
-displayed credit charge before every generation.
+displayed credit charge before every generation. For monetized, client or ad
+work, Plus is the first individual plan that explicitly lists commercial-use
+rights: currently **$27.20 promotional / $34 list plus tax**.
 
-OpenArt's current pricing page explicitly lists commercial-use rights on the
-higher individual tier. Depending on the promotion and regional plan naming,
-that tier is approximately **$23–34 per month**. If the film is monetized,
-client work or advertising, verify the required tier before generation.
+OpenArt is advertising up to 40% off selected top-model usage for the rest of
+2026 and an upgrade-by-August-7 lock-in message. Those offers can change or be
+account-specific. The monthly plan discounts visible on the checked page are
+the amounts in the table above; do not assume that a headline “40% off” applies
+to the subscription price or every generation.
 
-## Decision table
+The Wonder plan labels **MiniMax H3**, not Kling 3.0, as unlimited. At $175.20
+promotional / $240 list it is disproportionate for this short film and does
+not make the recommended Kling workflow unlimited.
+
+Plus also exposes an optional **$15/month for 5,000 extra credits** add-on. It
+is unnecessary for this project and should not be purchased in advance.
+
+## Practical budget outcomes
 
 | Requirement | Recommended route | Expected project spend |
 | --- | --- | ---: |
-| Cheapest complete experiment; visible Veo watermark is acceptable | Flow, Veo 3.1 Lite | $0 over 2–3 generation days |
-| Free visual and motion test before committing money | Flow for S02/S05/S06 only | $0 |
-| Clean final master with the lowest likely paid entry | Higgsfield, Kling 3.0 720p | Approximately $9–15 plus tax |
-| One broad all-in-one interface or better regional availability | OpenArt, Kling 3.0 720p | Approximately $12.60–14 plus tax |
-| Commercial OpenArt production | OpenArt higher individual tier | Approximately $23–34 plus tax |
+| Cheapest complete experiment; visible Veo watermark is acceptable | Flow, Veo 3.1 Lite, only if free access appears | **$0** over 2–3 generation days |
+| Flow account requires a subscription; visible watermark is acceptable | Google AI Plus, Veo 3.1 Lite | **Local price; $7.99 US / $9.99 Slovak reference** |
+| Free visual and motion test before committing money | Flow for S02/S05/S06, only if free access appears | **$0** |
+| Clean public master with lowest likely paid entry | Higgsfield, Kling 3.0 720p | **About $9–15 plus tax** |
+| Clean non-commercial OpenArt master | OpenArt Starter, Kling 3.0 720p | **$12.60 promo / $14 list plus tax** |
+| Commercial OpenArt master | OpenArt Plus, Kling 3.0 720p | **$27.20 promo / $34 list plus tax** |
+| Heavy Kling retake campaign | Higgsfield Kling Marketplace unlimited | **Signed-in price required; not publicly comparable** |
+
+The still animatic, supplied keyframes, overlays, captions, pointer lines,
+speed ramps and final hold require no video-model credits. With a free editor,
+owned music and self-recorded narration, there is no mandatory software cost
+beyond the selected generation route. Voice or music licensing, paid editing
+software, tax and optional upscale are outside the table.
 
 ## Stop-spending rules
 
@@ -183,6 +282,8 @@ client work or advertising, verify the required tier before generation.
 - Do not pay for 1080p or 4K before the complete 720p rough cut passes on the
   target phone.
 - Buy access to only one fallback platform after Flow reveals a concrete need.
+- Buy unlimited only after calculating a break-even against the exact number
+  of remaining retakes.
 - Cancel renewal after downloading the accepted local files if the platform is
   not needed for another project.
 
@@ -191,8 +292,12 @@ client work or advertising, verify the required tier before generation.
 - [Google Flow credit grants and per-generation costs](https://support.google.com/flow/answer/16526234?hl=en)
 - [Google Flow model and Frames-to-Video support](https://support.google.com/flow/answer/16352836?hl=en)
 - [Google Flow access and watermark information](https://support.google.com/flow/answer/16353333?hl=en)
+- [Google AI Plus US launch price and limited introductory promotion](https://blog.google/products-and-platforms/products/google-one/google-ai-plus-availability/)
+- [Google One Slovak plan-price reference](https://one.google.com/about/plans?hl=sk)
 - [Higgsfield Kling 3.0 capabilities and limited free access](https://higgsfield.ai/kling-intro)
 - [Higgsfield regional pricing overview](https://geo.higgsfield.ai/task/blog/higgsfield-ai-pricing-plans-1)
+- [Higgsfield alternate current plan configuration](https://geo.higgsfield.ai/task/blog/understanding-higgsfield-ai-pricing-plans)
 - [Higgsfield July 2026 model-cost comparison](https://higgsfield.ai/blog/higgsfield-vs-runway-2026)
-- [OpenArt pricing](https://openart.ai/pricing)
+- [Higgsfield unlimited mechanisms and restrictions](https://geo.higgsfield.ai/task/blog/higgsfield-unlimited-plan-change)
+- [OpenArt pricing, promotions and selected-model unlimited](https://openart.ai/pricing)
 - [OpenArt Kling 3.0 Frame-to-Video surface](https://openart.ai/suite/animate-video/kling-v3?_from=tools)

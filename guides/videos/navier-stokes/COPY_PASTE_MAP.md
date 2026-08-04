@@ -4,7 +4,9 @@ Use this page when producing; it is the shortest route through the bundle.
 
 ## 1. Pick one video platform
 
-Recommended default: **Google Flow**.
+Recommended default: **Google Flow when the account exposes free generation**.
+If it does not, compare Higgsfield and OpenArt in `PLATFORM_COST_GUIDE.md` and
+pay for only one of them.
 
 For the fewest copy operations, follow `00_START_HERE.md` and use the complete
 blocks in `flow/READY_TO_PASTE.md`.

@@ -6,14 +6,15 @@ Resolve, or Premiere.
 ## S01 — 00:00.00–00:03.50
 
 ```text
-BAD LEMMA?
-Make it fail in minutes—not weeks.
+I ASKED AI TO ATTACK MATH
+I BARELY UNDERSTAND.
 ```
 
 Small footer:
 
 ```text
-AI-ASSISTED STRESS TEST
+HUMAN-DIRECTED • AI-EXECUTED
+EVIDENCE, NOT TRUST
 ```
 
 ## S02 — 00:03.50–00:09.50
@@ -34,18 +35,22 @@ VISCOSITY: SMOOTHS
 
 ## S03 — 00:09.50–00:12.40
 
-Small top qualifier:
+Small header:
 
 ```text
-METHODOLOGICAL KINSHIP
+AI-EXECUTED RESEARCH LOOP
 ```
 
-Show these one at a time:
+Show five compact linked squares as one loop:
 
 ```text
-PROTAS • extreme flows
-TAO • quantitative bounds
-HERE • attack intermediate lemmas
+PROOF GAP → ARTIFACTS → SEARCH → AI ANALYSIS → NEW LEMMA ↺
+```
+
+Small qualifier:
+
+```text
+METHOD KINSHIP • PROTAS / TAO
 ```
 
 ## S04 — 00:12.40–00:17.21
@@ -54,6 +59,13 @@ Persistent small clock:
 
 ```text
 RESEARCH TIME  T+00:00 → T+12:34
+```
+
+Small process rail:
+
+```text
+AI PROPOSES → C++ TESTS → SAVED EVIDENCE → AI REFINES ↺
+CHEAP GATES FIRST
 ```
 
 One event card at a time:
@@ -69,6 +81,7 @@ T+12:34  F012 • POSITIVE CASE REJECTED
 
 ```text
 RESEARCH TIME  T+12:34 → T+22:35
+SURVIVED → DEEPER SEARCH
 EXACT GRADIENT
 K1 → K8
 T+19:36  F013 • REJECTED
@@ -80,6 +93,7 @@ T+22:35  CHECKPOINT → RESUME
 
 ```text
 RESEARCH TIME  T+22:35 → T+33:28
+AI-REFINED FRONTIER
 K12 • 4.88 GiB
 T+32:34  F015 / PNT-13 • REJECTED
 T+33:28  PNT-12 • SURVIVED THE TEST
@@ -89,17 +103,16 @@ THIS IS NOT A PROOF
 ## S07 — 00:25.20–00:29.70
 
 ```text
-AFTER TWO DAYS
+AI-EXECUTED CAMPAIGN • 33 h 28 min
 
 16 candidates rejected
 1 partial estimate: proved
 L4 / PNT-12: open
 
 Next decision: ~1–3 days
-Analytic lemma: days–weeks*
 Clay solution: no honest estimate
 
-*no guarantee
+NOT A PROOF • EXPERT REVIEW REQUIRED
 ```
 
 ## Persistent small label in S02–S06

@@ -1,11 +1,12 @@
 1
 00:00:00,200 --> 00:00:03,500
-A bad lemma should fail in minutes,
-not consume weeks.
+I asked AI to attack mathematics
+I barely understand.
 
 2
 00:00:03,500 --> 00:00:07,600
-Can a smooth three-dimensional fluid
+It chose Navier–Stokes:
+can smooth fluid
 become infinitely rough?
 
 3
@@ -14,35 +15,32 @@ Vortices stretch.
 Viscosity smooths.
 
 4
-00:00:09,500 --> 00:00:12,400
-Protas: extreme-flow search.
-Tao: quantitative bounds.
+00:00:09,500 --> 00:00:11,800
+Its method echoes
+Protas and Tao.
 
 5
-00:00:12,400 --> 00:00:14,200
-Here, we attack intermediate lemmas.
+00:00:11,800 --> 00:00:17,200
+It wrote the C++, ran adversarial searches,
+read each failure, and designed the next lemma.
 
 6
-00:00:14,200 --> 00:00:17,900
-The tests became deeper—
-and slower.
+00:00:17,200 --> 00:00:19,300
+I required evidence,
+not trust.
 
 7
-00:00:17,900 --> 00:00:21,400
-Scaling. Triads.
-Exact gradients. K12.
+00:00:19,300 --> 00:00:22,800
+Cheap gates could save weeks;
+only survivors received deeper search.
 
 8
-00:00:21,400 --> 00:00:24,200
-Counterexample? Stop. Save.
-Narrow. Restart.
+00:00:22,800 --> 00:00:26,000
+In thirty-three hours, sixteen routes failed;
+one partial estimate was proved.
 
 9
-00:00:24,200 --> 00:00:26,700
-16 paths failed.
-1 partial estimate proved. L4 remains open.
-
-10
-00:00:26,700 --> 00:00:29,700
+00:00:26,000 --> 00:00:29,700
+L4 remains open.
 Next decision: 1–3 days.
-Full solution: no honest estimate.
+Experts decide.

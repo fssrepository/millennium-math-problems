@@ -18,6 +18,9 @@ system:
   marks represent the rejected candidates F000–F015.
 - **The frontier** — an open cyan gap beyond nested transparent spectral
   shells. It signals an unresolved continuation, not a win.
+- **The AI loop** — five compact linked squares for proof gap, artifacts,
+  adversarial search, AI analysis and a refined lemma. It is an editor graphic,
+  not a humanoid character or glowing brain.
 
 No human character is needed. If a platform asks for “character references,”
 use `assets/keyframe-01-world.png` as the recurring subject/world reference.
@@ -50,6 +53,9 @@ imagery.
 - Status words may be uppercase. Do not use all-uppercase paragraphs.
 - Pointer: 2 px off-white line, 8 px round endpoint, no cartoon arrowhead.
 - Cards: `#07131C` at 84% opacity, 22 px radius, 1 px cyan or coral edge.
+- Five-node loop: 140 px squares with 20–25 px gaps; show all five in S03 and
+  highlight one stage at a time later. Use plain-language node labels on screen
+  and retain the exact guide terminology in documentation.
 
 ## Camera grammar
 
@@ -72,6 +78,9 @@ imagery.
   created in post.
 - Camera energy decreases across S04 → S05 → S06 to make the increasing search
   depth legible while the T+ research clock remains linear.
+- In S04–S06, the five-node loop advances `AI proposes → C++ tests → evidence
+  saved → AI analyzes → refined lemma`. Only surviving candidates move into the
+  slower, more expensive visual phase.
 - Generate no text inside the video model. Current image/video systems may
   misspell copy and drift labels between frames.
 
@@ -108,3 +117,8 @@ The visuals are explanatory metaphors. Add `CONCEPT VISUALIZATION` as a small
 editor overlay from S02 onward. Never call the generated fluid plate “the
 simulation result.” The actual run produced code, certificates, failed-lemma
 records and finite Fourier/Galerkin evidence.
+
+The authorship claim is also precise: the campaign was human-directed and
+AI-executed. Codex wrote and ran the implementation, interpreted failures and
+refined candidates. Do not call the result an automated proof; independent
+expert mathematical review is still required.

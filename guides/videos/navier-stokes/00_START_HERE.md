@@ -1,7 +1,10 @@
 # OPEN THIS FILE FIRST
 
 The default workflow uses Google Flow. It requires no plugin, Agent, or
-Storyboard Studio.
+Storyboard Studio. Free Flow access is account- and region-dependent; if the
+site does not let the account reach the generation screen, do not subscribe
+automatically. Use the comparison in `PLATFORM_COST_GUIDE.md` and select one
+paid fallback instead.
 
 Open: https://flow.google
 
@@ -22,10 +25,12 @@ Open: https://flow.google
 | Narration and TTS direction | `narration/en.md` |
 | Downloaded clip destinations | `renders/` |
 
-## The whole workflow in seven sentences
+## The Flow route in seven steps
 
-1. Read `PLATFORM_COST_GUIDE.md`, then open `flow/RUNBOOK.md` and the Google
-   Flow website.
+1. Read `PLATFORM_COST_GUIDE.md`, then open the Google Flow website. If the
+   generation screen is available, continue with `flow/RUNBOOK.md`. Otherwise
+   stop this list, choose either Higgsfield or OpenArt from the cost table, and
+   follow that platform's `RUNBOOK.md` from top to bottom.
 2. In Flow select: standard prompt box → Video → Frames → 9:16.
 3. Upload the image named for that shot from `assets/`.
 4. Paste the complete matching block from `flow/READY_TO_PASTE.md`.

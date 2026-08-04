@@ -6,7 +6,7 @@
 
 - Main campaign session: `019fbc49-c7f3-7051-8627-e920169afd1b`.
 - Local archive:
-  `/home/raxim/.codex/archived_sessions/rollout-2026-08-01T09-46-19-019fbc49-c7f3-7051-8627-e920169afd1b.jsonl`.
+  `~/.codex/archived_sessions/rollout-2026-08-01T09-46-19-019fbc49-c7f3-7051-8627-e920169afd1b.jsonl`.
 - Session message span: `2026-08-01T07:51:01Z` to
   `2026-08-03T00:10:11Z`. The result used by the film was reported at
   `2026-08-02T17:19:22Z`, exactly 33 h 28 min 21 s after the campaign began.
@@ -17,6 +17,35 @@
 
 The session itself is private local provenance and is not copied into the
 public bundle.
+
+### Author-supplied outside story
+
+The project author supplied the narrative that an earlier AI comparison of the
+seven Millennium Prize Problems selected Navier–Stokes as the computational
+starting point, and that the author followed the resulting work without
+understanding most of the mathematics while requiring reproducible commands,
+tests and artifacts. This is the source for S01 and the narration line `It
+chose Navier–Stokes`.
+
+The main archived campaign inspected here begins after that portfolio-selection
+stage, so that earlier selection is not independently re-audited from this
+JSONL file. The 33 h 28 min timeline, code execution, failures and final state
+are separately grounded in the archived campaign and repository artifacts.
+
+### AI execution audit
+
+The campaign record shows that Codex did more than generate source text or run
+a fixed simulation. Under human direction, it formulated candidate
+obligations, wrote and refactored C++, ran builds and optimization campaigns,
+checked identities and gradients, identified false assumptions, interpreted
+stored counterexamples, designed narrower candidates, and resumed from saved
+states after a memory failure.
+
+The human operator supplied the objective, constraints, laptop access,
+checkpoint review and repeated continuation decisions. The accurate public
+description is `human-directed, AI-executed research loop`. The record does not
+support calling the result an autonomous or automated proof, and every
+mathematical claim still requires expert review.
 
 ### Repository facts used in the film
 
@@ -130,6 +159,35 @@ formal mathematical dependence not present in the repository.
   palette, camera, lens, focal-length and aperture controls, plus the platform's
   role guidance for Kling 3.0 / Veo 3.1 / Seedance 2.0:
   https://higgsfield.ai/blog/most-reliable-ai-video-generators-2026
+- Official regional pricing overview: entry configurations from $9/month,
+  regional variation and plan feature boundaries:
+  https://geo.higgsfield.ai/task/blog/higgsfield-ai-pricing-plans-1
+- Alternate current plan configuration showing $15/month for 200 credits:
+  https://geo.higgsfield.ai/task/blog/understanding-higgsfield-ai-pricing-plans
+- Official explanation of plan-included, Marketplace and promotional
+  Unlimited mechanisms, including direct-site-only restrictions:
+  https://geo.higgsfield.ai/task/blog/higgsfield-unlimited-plan-change
+
+### Current pricing comparison
+
+- Google Flow credit grants and per-generation charges:
+  https://support.google.com/flow/answer/16526234?hl=en
+- Google Flow access and watermark behavior:
+  https://support.google.com/flow/answer/16353333?hl=en
+- Google AI Plus US launch price and limited introductory promotion:
+  https://blog.google/products-and-platforms/products/google-one/google-ai-plus-availability/
+- Google One Slovak plan-price reference:
+  https://one.google.com/about/plans?hl=sk
+- OpenArt plan prices, advertised video capacity, commercial-use tiers,
+  promotions and selected-model Unlimited labeling:
+  https://openart.ai/pricing
+
+Pricing was checked on 2026-08-04. Platform credits are not directly
+comparable: Flow charges a published amount per generation, Higgsfield varies
+by model/duration/resolution/region, and OpenArt publishes plan-wide `up to`
+capacity across many models. `../PLATFORM_COST_GUIDE.md` therefore compares the
+cost of completing this six-plate film rather than inventing a universal
+credit exchange rate.
 
 ## Editorial inference
 

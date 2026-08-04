@@ -2,6 +2,15 @@
 
 ## Facts
 
+- [ ] S01 says `HUMAN-DIRECTED • AI-EXECUTED` and `EVIDENCE, NOT TRUST`.
+- [ ] S03 shows all five linked stages: proof gap, artifacts, search, AI
+  analysis and new lemma.
+- [ ] The film makes clear that Codex wrote and ran the C++, interpreted
+  failures, refined candidates and saved evidence.
+- [ ] The human role is direction, constraints, hardware access and checkpoint
+  review; the film does not imply an unsupervised theorem prover.
+- [ ] The result is never called an `automated proof` or a `solution`.
+- [ ] S07 says `EXPERT REVIEW REQUIRED`.
 - [ ] The end card says the Clay problem is not solved.
 - [ ] The count is 16 rejected candidates (`F000`–`F015`), not 15.
 - [ ] “Proved” modifies only a partial estimate / far-tail lemma.
@@ -27,6 +36,8 @@
 - [ ] S01's value proposition is readable for at least 2.0 seconds.
 - [ ] The research clock runs linearly from T+00:00 to T+33:28 between
   00:12.40 and 00:25.20.
+- [ ] Early cheap gates cut quickly; later exact-gradient and K12 work uses
+  longer holds and slower camera motion without falsifying the linear clock.
 - [ ] Event chips match the film times in `TIMELINE_EVIDENCE.md`.
 - [ ] S04 feels fast, S05 slower, and S06 slowest without altering that clock.
 - [ ] The final estimate card holds for 4.5 seconds.

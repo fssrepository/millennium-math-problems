@@ -27,7 +27,8 @@ generation is authorized only by a concrete finding from that test.
 
 ## Model ladder
 
-1. **Flow / Veo 3.1 Lite, 720p** — default scout for every shot.
+1. **Flow / Veo 3.1 Lite, 720p** — default scout for every shot when free
+   account access is available.
 2. **Flow / Veo 3.1 Fast, 720p** — only when the Lite composition works but
    motion or fidelity is visibly insufficient.
 3. **Higgsfield or OpenArt / Kling 3.0 Standard, 720p** — only when Flow cannot
@@ -38,6 +39,11 @@ generation is authorized only by a concrete finding from that test.
 Use only one paid platform at a time. Do not buy OpenArt and Higgsfield access
 in advance; choose one fallback only after a specific Flow failure identifies
 what is missing.
+
+Google's current help pages both describe 50 daily credits for eligible
+non-subscribers and, elsewhere, subscription-gated Flow access. Test the actual
+account before treating Flow as free. If access is blocked, skip directly to
+one paid Kling route; do not buy Google access merely to preserve this ladder.
 
 ## No plugin is required
 

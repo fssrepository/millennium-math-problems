@@ -4,12 +4,32 @@ Status: production guide for a conceptual 9:16 explainer, not a numerical simula
 Generation target: 720 × 1280 first; optional upscale only after picture lock
 Timeline target: 1080 × 1920, 30 fps, 29.7 seconds, English narration and captions
 
+## What story this bundle tells
+
+The film is not simply a fluid simulation or a list of numerical results. It
+shows a human-directed, AI-executed research workflow. The human supplied the
+question, constraints, laptop and continuation decisions. Codex wrote and ran
+the C++, inspected failures, designed narrower lemma candidates and stored the
+evidence needed to continue after a crash. The result is a reproducible proof
+frontier for expert review—not an automated proof and not a Clay solution.
+
+The five-square loop visible in S03 is the governing structure:
+
+`PROOF GAP → ARTIFACTS → SEARCH → AI ANALYSIS → NEW LEMMA ↺`
+
+The reason for building the repository is practical: a cheap, deterministic
+obstruction can eliminate a weak direction before a researcher spends weeks or
+months trying to prove it. More compute is reserved for the candidates that
+survive the early gates.
+
 ## Recommended route
 
 For this exact film, the strongest workflow is:
 
 1. Build the complete 29.7-second still-image animatic before spending credits.
-2. Test only S02, S05, and S06 at 720p with one **Veo 3.1 Lite** output each.
+2. If the account exposes free Flow generation, test only S02, S05, and S06 at
+   720p with one **Veo 3.1 Lite** output each. Otherwise choose one paid Kling
+   fallback from `PLATFORM_COST_GUIDE.md`.
 3. If those pass, generate S01, S03, and S04 one at a time with Lite.
 4. Use **Veo 3.1 Fast** only for a shot that fails visually at Lite quality.
 5. Use **Veo 3.1 Quality** only for one or two hero shots if a phone review
@@ -86,6 +106,11 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
 
 ## Non-negotiable scientific wording
 
+- The process is **human-directed and AI-executed**. Do not describe it as a
+  fixed simulation, and do not describe it as autonomous proof.
+- Codex wrote and ran the C++, interpreted failures, refined candidates and
+  saved artifacts; the human set the objective and directed continuation.
+- Expert mathematical review is still required.
 - The Millennium problem is **not solved**.
 - The footage is a **concept visualization**, not the output of the C++ run.
 - `F000`–`F015` means **16 rejected lemma candidates**.
@@ -100,8 +125,8 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
 
 ## The short version of the story
 
-`Why → fluid problem → method family → fast early failures → slower deep
-optimization → surviving open frontier → honest estimate.`
+`Outside story → fluid problem → AI research loop → fast early failures →
+slower deep optimization → surviving open frontier → expert handoff.`
 
 From 00:12.40 to 00:25.20 the on-screen research clock is a linear compression
 of 33 h 28 min. Early failures arrive quickly; later frames breathe longer as

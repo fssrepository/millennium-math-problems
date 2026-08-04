@@ -55,7 +55,7 @@ proof or the full problem.
 
 Primary local record:
 
-`/home/raxim/.codex/archived_sessions/rollout-2026-08-01T09-46-19-019fbc49-c7f3-7051-8627-e920169afd1b.jsonl`
+`~/.codex/archived_sessions/rollout-2026-08-01T09-46-19-019fbc49-c7f3-7051-8627-e920169afd1b.jsonl`
 
 Rejected-lemma ledger:
 
@@ -63,3 +63,23 @@ Rejected-lemma ledger:
 
 The private session archive is referenced for auditability but is not copied
 into this production bundle.
+
+## Authorship evidence and public wording
+
+The archived campaign shows a connected AI research loop, not merely AI-written
+boilerplate around a human-run solver. Under human direction, Codex repeatedly:
+
+- turned the current proof gap into candidate statements and finite tests;
+- wrote and refactored the C++ implementation;
+- built and ran deterministic tests and optimization campaigns;
+- identified invalid assumptions and withdrew failed routes;
+- interpreted certificates, traces and counterexamples;
+- proposed narrower obligations and continued from saved checkpoints.
+
+The human operator supplied the goal, constraints, laptop access, review and
+continuation decisions. The safe short form is therefore:
+
+> Human-directed, AI-executed research loop with formal checkpoints.
+
+This wording describes execution and provenance. It does not promote finite
+evidence into a proof; expert mathematical review remains required.

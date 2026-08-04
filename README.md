@@ -1,6 +1,7 @@
 # Millennium Math Problems
 
-> **AI-assisted computational proof search and lemma-falsification laboratory.** The current
+> **Human-directed, AI-executed computational proof search and
+> lemma-falsification laboratory.** The current
 > repository architecture, deterministic C++ laboratory, proof-state
 > documentation, and public guides were produced under human direction by
 > **OpenAI Codex Sol 5.6 at Extra High reasoning effort**. Replayable
@@ -54,6 +55,13 @@ The definitions and solved/unsolved classification below link to the
 | Attack | Fast C++ gates check scaling and identities; exact-gradient adversaries search for hostile finite states. | Witnesses, traces, gradient checks, and certificates. |
 | Falsify or refine | A counterexample is stored and used to narrow the next lemma; a survivor returns to analysis. | Failed-lemma record or sharper proof obligation. |
 | Accumulate | New objectives, adversaries, importers, and restart points remain public. | Future work does not restart from zero. |
+
+In the active campaign, this was one connected AI workflow rather than a fixed
+simulation followed by manual analysis: Codex formulated candidates, wrote and
+ran the C++, read failures, refined the next obligation, and documented the
+frontier. The human operator set the objective and constraints, supplied the
+hardware, reviewed checkpoints, and directed continuation. Experts are still
+required to audit every mathematical claim.
 
 The principal engineering metric is **time to first obstruction**: find the
 cheapest reproducible reason a lemma cannot work before weeks or months are

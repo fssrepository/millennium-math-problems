@@ -30,7 +30,10 @@ slow move with a long terminal hold.
 
 - 12-frame fade from black.
 - 100% stable plate, 4% total dolly.
-- `BAD LEMMA?` appears at 00:00.30; second line at 00:01.00.
+- `I ASKED AI TO ATTACK MATH` appears at 00:00.30; reveal `I BARELY
+  UNDERSTAND` at 00:01.00.
+- Add `HUMAN-DIRECTED • AI-EXECUTED` and `EVIDENCE, NOT TRUST` as quiet footer
+  lines at 00:01.65.
 - Keep the value proposition readable through 00:03.30.
 
 ### S02 — 00:03.50–00:09.50
@@ -43,8 +46,10 @@ slow move with a long terminal hold.
 ### S03 — 00:09.50–00:12.40
 
 - Use a restrained macro orbit, no speed ramp.
-- Show the three lineage cards sequentially for about 0.90 s each.
-- `METHODOLOGICAL KINSHIP` remains as a small qualifier throughout.
+- Build one five-square loop: `PROOF GAP`, `ARTIFACTS`, `SEARCH`, `AI
+  ANALYSIS`, `NEW LEMMA ↺`.
+- Reveal the complete loop by 00:10.15, then pulse through the nodes once. Keep
+  `METHOD KINSHIP • PROTAS / TAO` as a small qualifier, not a headline.
 - Do not show portraits; the visual subject stays the fluid and the method.
 
 ### S04 — 00:12.40–00:17.21: fast early phase
@@ -52,13 +57,16 @@ slow move with a long terminal hold.
 - Use an 8-second shell-flight plate.
 - Retiming curve: 260% → 800% → 320%.
 - Each early event uses: 5-frame white candidate, 4-frame amber pulse,
-  10-frame coral hold, 4-frame exit.
+  10-frame coral hold, a 4-frame teal refinement pulse, then exit.
+- Keep `AI PROPOSES → C++ TESTS → SAVED EVIDENCE → AI REFINES ↺` as a thin
+  process rail and `CHEAP GATES FIRST` as its readable headline.
 - Land chips at 12.63, 14.89, 15.91 and 17.21.
 - The F002 mark may be almost subliminal; F012 gets the longest hold.
 
 ### S05 — 00:17.21–00:21.04: deeper optimization
 
 - Keep the base plate between 55% and 80% speed.
+- Change the stage headline to `SURVIVED → DEEPER SEARCH`.
 - F013: 14-frame hold at 19.89; F014: 16-frame hold at 20.34.
 - At 21.04, make a one-frame black dip plus dry click for the memory failure.
 - Resume on the identical composition with `CHECKPOINT → RESUME`; no
@@ -68,6 +76,7 @@ slow move with a long terminal hold.
 ### S06 — 00:21.04–00:25.20: hardest phase
 
 - Slow the generated pullback to 40–55%.
+- Introduce `AI-REFINED FRONTIER` before the K12 context line.
 - Introduce `K12 • 4.88 GiB` quietly; it is context, not the headline.
 - Hold PNT-13 rejection for 18 frames at 24.86.
 - At 25.03, arrest almost completely on `PNT-12 • SURVIVED THE TEST`.
@@ -78,6 +87,8 @@ slow move with a long terminal hold.
 - Use the wide final frame at 98–100% speed with only a 2% pullback.
 - Place a 72% near-black veil over footage for contrast.
 - Reveal the results as one group at 25.35 and the estimate group at 27.10.
+- Lead with `AI-EXECUTED CAMPAIGN • 33 h 28 min` and close with `NOT A PROOF •
+  EXPERT REVIEW REQUIRED`.
 - Hide regular SRT subtitles in this shot because the card itself carries the
   final words.
 - Keep `Clay solution: no honest estimate` visible for at least 1.8 seconds.
@@ -93,9 +104,10 @@ slow move with a long terminal hold.
 
 | Status | Color | Treatment |
 | --- | --- | --- |
-| Candidate | White | Quiet card, no pulse |
-| Test running | Amber | One short scan pulse |
+| AI-proposed candidate | White | Quiet card, no pulse |
+| Deterministic C++ test | Amber | One short scan pulse |
 | Rejected | Coral | Dry stamp + short hold |
+| Evidence saved / AI refines | Teal | Ledger mark + short forward pulse |
 | Proved partial estimate | Teal | Stable underline, no glow burst |
 | Survived finite test | White + amber edge | Always paired with `not proof` |
 | Open | White + cyan edge | Open-ended line continuing right |

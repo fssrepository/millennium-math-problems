@@ -10,6 +10,13 @@ checks with a small periodic finite-difference solver on `[0, 2π]³`.
 > remaining analytical gap. The numerical solver is a supporting instrument,
 > not the argument.
 
+> **Campaign authorship:** under human direction, Codex executed the connected
+> research loop: it proposed candidate obligations, wrote and ran the C++,
+> interpreted failed searches, refined the next candidate, and recorded
+> reproducible artifacts. The operator supplied the objective, constraints,
+> hardware and continuation decisions. This is not an automated proof;
+> independent mathematical review remains necessary.
+
 The current proof roadmap and restart point are in
 [`PROOF_PLAN.md`](PROOF_PLAN.md).
 

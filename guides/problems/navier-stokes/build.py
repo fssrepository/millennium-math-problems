@@ -419,11 +419,12 @@ def overview_slide_1() -> Image.Image:
     add_glow(image, (-300, -150, 850, 850), BLUE, blur=185, alpha=58)
 
     pill(image, (92, 66), "PUBLIC RESEARCH GUIDE", fill=TEAL, color=INK, size=15)
+    pill(image, (360, 66), "HUMAN-DIRECTED • AI-EXECUTED", fill=PURPLE, color=WHITE, size=15)
     text(image, (92, 150), "Fast falsification.\nShorter research loops.", size=64, weight="bold", max_width=770)
     text(
         image,
         (96, 330),
-        "A C++ computational laboratory for turning proof obligations into reproducible tests, rejecting weak lemma routes early, and carrying the surviving structure back to analysis.",
+        "Under human direction, Codex turns proof gaps into C++ tests, attacks weak lemma routes, reads the failures and carries the surviving structure into the next candidate.",
         size=25,
         color=MUTED,
         max_width=690,
@@ -437,7 +438,7 @@ def overview_slide_1() -> Image.Image:
         [
             "Exact numerical objectives stress a proposed lemma.",
             "Counterexamples and failure certificates become reusable data.",
-            "Researchers spend more time on viable analytic structure.",
+            "AI uses each failure to refine the next proof obligation.",
         ],
         x=124,
         y=646,
@@ -449,7 +450,7 @@ def overview_slide_1() -> Image.Image:
     text(image, (96, 832), "CURRENT ACTIVE LAB", size=14, color=AMBER, weight="bold")
     text(image, (96, 866), "3D Navier–Stokes existence and smoothness", size=28, weight="bold", max_width=690)
     text(image, (96, 922), "Research code and finite evidence — not a Clay solution.", size=18, color=MUTED)
-    footer(image, 1, 5, "project overview", note="Deterministic evidence first; claims remain human-verifiable")
+    footer(image, 1, 5, "project overview", note="AI executes the loop; experts still verify the mathematics")
     return image
 
 
@@ -530,17 +531,17 @@ def overview_slide_3() -> Image.Image:
         image,
         "02",
         "Lemma engine",
-        "Empirical data becomes a sharper proof question",
-        "Deterministic C++ produces the evidence. AI can organize patterns and propose candidate statements; every claim returns to exact tests and conventional proof.",
-        status="AI-READY",
+        "AI executes the research loop",
+        "Under human direction, Codex formulates candidates, writes and runs the C++, interprets failures and designs the next lemma. Every claim returns to exact tests and expert proof review.",
+        status="RUN IN CAMPAIGN",
     )
 
     boxes = [
         ((88, 255, 386, 520), "INPUT 01", "Proof obligation", "A precise inequality, scaling law or closure target from the proof plan.", CYAN, "IMPLEMENTED"),
         ((448, 255, 746, 520), "INPUT 02", "Empirical artifacts", "TSV states, JSON certificates, gradient traces and failed-lemma records.", BLUE, "IMPLEMENTED"),
         ((808, 255, 1106, 520), "ENGINE 03", "Adversarial search", "Exact objectives, JVP/VJP checks, L-BFGS and multistart stress the statement.", PURPLE, "IMPLEMENTED"),
-        ((1168, 255, 1466, 520), "SYNTHESIS 04", "AI pattern analysis", "Rank recurring geometry, scaling and failure modes across machine artifacts.", AMBER, "PLANNED LAYER"),
-        ((1528, 255, 1826, 520), "OUTPUT 05", "Candidate lemma", "A narrower statement with explicit assumptions, constants and falsification tests.", TEAL, "AI-ASSISTED"),
+        ((1168, 255, 1466, 520), "SYNTHESIS 04", "AI pattern analysis", "Read recurring geometry, scaling and failure modes across machine artifacts.", AMBER, "RUN IN CAMPAIGN"),
+        ((1528, 255, 1826, 520), "OUTPUT 05", "New candidate lemma", "Formulate a narrower statement with explicit assumptions, constants and tests.", TEAL, "AI-REFINED"),
     ]
     for box, label, title_value, body, accent, status in boxes:
         flow_box(image, box, label, title_value, body, accent=accent, status=status)
@@ -548,7 +549,7 @@ def overview_slide_3() -> Image.Image:
         arrow(image, (start_x + 10, 387), (start_x + 52, 387), color=CYAN, width=4, head=12)
 
     rounded_card(image, (88, 580, 1832, 925), fill="#0E2733", outline=TEAL, radius=28)
-    text(image, (120, 610), "THE RESEARCH LOOP", size=15, color=TEAL, weight="bold")
+    text(image, (120, 610), "THE HUMAN-DIRECTED, AI-EXECUTED RESEARCH LOOP", size=15, color=TEAL, weight="bold")
     loop = [
         ("1", "FORMULATE", "Write a lemma with a measurable finite analogue."),
         ("2", "ATTACK", "Search for the worst state, not a reassuring example."),
@@ -880,8 +881,8 @@ def brief_slide_3() -> Image.Image:
         image,
         "02",
         "What we built and where we are",
-        "A fast falsification laboratory—not an automated proof",
-        "The C++ engine converts proof ideas into exact finite tests, searches for hostile states and records enough provenance to restart the analysis.",
+        "Human-directed, AI-executed falsification—not an automated proof",
+        "Codex wrote and ran the C++ engine, searched for hostile states, read failed routes and refined the next obligation while preserving restartable evidence.",
         status="NOT SOLVED",
     )
 
@@ -909,7 +910,7 @@ def brief_slide_3() -> Image.Image:
     text(
         image,
         (116, 840),
-        "A weak lemma can be attacked in seconds or minutes, its counterexample stored, and the next candidate redesigned around the structure that survived.",
+        "Codex can attack a weak lemma in seconds or minutes, store its counterexample, read the failure and redesign the next candidate around what survived.",
         size=21,
         weight="medium",
         max_width=980,
