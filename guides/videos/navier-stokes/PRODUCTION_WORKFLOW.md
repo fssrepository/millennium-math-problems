@@ -73,12 +73,14 @@ For each shot:
 1. Select 720p, 9:16, Veo 3.1 Lite, and one output.
 2. Upload the assigned start frame.
 3. Paste the shot's complete prompt.
-4. Generate once and download immediately.
-5. Watch at normal speed and 0.5× speed.
-6. Fill in `REVIEW_SHEET.csv`.
-7. If it passes, stop generating that shot and continue to the next one.
-8. If it fails, identify one defect and make one targeted Lite retry.
-9. If the same defect remains, stop spending on Lite and use one Fast attempt
+4. Check that the interface's displayed charge is for one generation. If it
+   shows multiple outputs, cancel and correct the output setting.
+5. Generate once and download immediately.
+6. Watch at normal speed and 0.5× speed.
+7. Fill in `REVIEW_SHEET.csv`.
+8. If it passes, stop generating that shot and continue to the next one.
+9. If it fails, identify one defect and make one targeted Lite retry.
+10. If the same defect remains, stop spending on Lite and use one Fast attempt
    or one Kling 3.0 Standard fallback—not both simultaneously.
 
 Do not generate S01, S03, or S04 until these three shots establish that the

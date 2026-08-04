@@ -59,15 +59,18 @@ Example: S02.
 3. Copy the complete block between the three backticks.
 4. Paste it into Flow's main prompt box.
 5. Confirm: Video, Frames, 9:16, Lite, 720p, 1 output, 6 s.
-6. Click **Generate**.
-7. Download the result into `../renders/flow/drafts/` as
+6. Read the displayed credit charge before clicking. It must describe one
+   generation. If the interface forces two outputs, cancel and recheck the
+   output setting instead of approving an accidental double generation.
+7. Click **Generate**.
+8. Download the result into `../renders/flow/drafts/` as
    `S02_flow_lite_720p_take01.mp4`.
-8. Watch it at normal speed and 0.5× speed.
-9. Complete the S02 row in `../REVIEW_SHEET.csv`.
-10. If it passes, stop generating S02 and move to S05.
-11. If it fails, choose one repair from `../PRODUCTION_WORKFLOW.md`, change only
+9. Watch it at normal speed and 0.5× speed.
+10. Complete the S02 row in `../REVIEW_SHEET.csv`.
+11. If it passes, stop generating S02 and move to S05.
+12. If it fails, choose one repair from `../PRODUCTION_WORKFLOW.md`, change only
     that sentence, and generate one more Lite output.
-12. If the same defect remains, stop using Lite for this shot. Try one Fast
+13. If the same defect remains, stop using Lite for this shot. Try one Fast
     output or one Kling Standard fallback.
 
 Repeat with the next row. Remove the previous start frame and prompt before
