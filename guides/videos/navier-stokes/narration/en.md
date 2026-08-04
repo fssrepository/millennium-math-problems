@@ -4,14 +4,14 @@ Target delivery: 29.2–29.7 seconds, approximately 160–166 words per minute.
 
 ## Final script
 
-> I asked AI to attack mathematics I barely understand. It chose
-> Navier–Stokes: can smooth fluid become infinitely rough? Vortices stretch;
-> viscosity smooths. Its method echoes Protas and Tao. It wrote the C++, ran
-> adversarial searches, read each failure, and designed the next lemma. I
-> required evidence, not trust. Cheap gates could save weeks; only survivors
-> received deeper search. In thirty-three hours, sixteen routes failed; one
-> partial estimate was proved. L4 remains open. Next decision: one to three
-> days. Experts decide.
+> I asked AI to attack math I barely understand. It chose Navier–Stokes: can
+> smooth fluid become infinitely rough? One of six remaining Clay problems,
+> worth one million dollars. AI wrote C++, searched counterexamples, read
+> failures, and designed each next lemma. Cheap gates could save weeks. In
+> thirty-three hours, sixteen routes failed; L4 remains open. Laptop estimate:
+> one to three days. Ten cluster nodes could make parallel sweeps up to ten
+> times faster—not proof. Qualifying publication. Two years. General
+> acceptance. Then Clay review.
 
 ## Voice / TTS direction — paste into the voice-style field
 
@@ -19,12 +19,13 @@ Target delivery: 29.2–29.7 seconds, approximately 160–166 words per minute.
 Native English voice, candid and conversational, telling a first-person story
 to a curious non-specialist. Clear consonants, warm low-mid tone, no sales voice
 and no melodrama. The admission “I barely understand” is honest, not comic.
-Treat the Protas and Tao line as careful methodological attribution. Emphasize
-that AI wrote, ran, read and designed the iteration; do not imply an automated
-proof. Accelerate through “ran adversarial searches,” then widen the pauses as
-only surviving claims receive deeper work. Become matter-of-fact on “L4
-remains open” and the estimate. Land “Experts decide” without triumph or
-defensiveness. Total duration 29.2 to 29.7 seconds.
+Keep the million-dollar line factual, not sensational. Emphasize that AI wrote,
+searched, read and designed the iteration; do not imply an automated proof.
+Accelerate through the early failures, then widen the pauses around the laptop
+estimate and cluster comparison. “Up to ten times” applies only to independent
+parallel sweeps, not the end-to-end research loop. Deliver the four short Clay
+qualification phrases as sober checkpoints, not as a prize announcement.
+Total duration 29.2 to 29.7 seconds.
 ```
 
 ## Pronunciation

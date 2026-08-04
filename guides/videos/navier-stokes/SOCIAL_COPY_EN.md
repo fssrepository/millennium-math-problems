@@ -17,6 +17,11 @@ estimate, and narrowed the still-open L4/PNT-12 frontier. This is not a Clay
 solution or an automated proof. It is blind navigation with formal checkpoints,
 ready for expert review. The fluid footage is a concept visualization.
 
+The next-decision estimate is roughly one to three days at the observed laptop
+pace. Ten comparable cluster nodes could make independent parallel sweeps up
+to roughly ten times faster, but that is an engineering ceiling—not an
+end-to-end benchmark or proof forecast.
+
 ## One-line version
 
 **Human-directed. AI-executed. Machine-checkable checkpoints. Expert judgment
@@ -27,6 +32,11 @@ still required.**
 `~1–3 days` estimates the next PNT-12 decision cycle, not a proof. The full
 Navier–Stokes Millennium problem remains open and cannot be honestly timed.
 The AI executed the research loop; it did not autonomously prove a theorem.
+
+Clay originally named seven problems; six remain unresolved, with US$1 million
+allocated to each. A prize is not automatic after an unrefuted online post. A
+claim needs a qualifying publication, at least two years, general acceptance
+in the global mathematics community, and then CMI consideration.
 
 ## Research-loop sentence
 

@@ -48,6 +48,13 @@ remains open; surviving a finite computational stress test is not a proof. The
 next PNT-12 decision cycle is estimated at roughly one to three days of focused
 work. There is no honest estimate for a complete Clay solution.
 
+That one-to-three-day figure is laptop pace, not a proof deadline. The campaign
+used a 12-logical-CPU Intel Core i5-1335U. Ten comparable cluster nodes could
+make independent cutoff/restart sweeps up to roughly ten times faster in their
+ideal parallel portion. This is an engineering estimate rather than a measured
+end-to-end benchmark; AI interpretation, memory-bound stages and mathematical
+proof do not scale linearly.
+
 This is a human-directed, AI-executed computational campaign, not an automated
 proof. Experts are still needed to audit the mathematics and decide whether
 the surviving structure matters.
@@ -58,6 +65,16 @@ Methodological kinship: Protas et al.'s adjoint-based search for extreme flows
 and Tao's quantitative a priori bound viewpoint. In this laboratory,
 adversarial search is used primarily to stress-test intermediate lemmas. This
 is a comparison, not a claim that the work combines proofs by those authors.
+
+## Why is there a one-million-dollar prize?
+
+Clay originally selected seven Millennium Prize Problems and allocated US$1
+million to each. The Poincaré Conjecture has been resolved, so six remain
+unresolved. The award is not automatic if a claim sits unrefuted online. Before
+CMI considers it, a proposed solution must be published in a Qualifying Outlet,
+at least two years must pass, and it must gain general acceptance in the global
+mathematics community. CMI does not accept direct solution submissions. After
+the public qualification path, it conducts its own consideration.
 
 ## Required visual disclosure
 

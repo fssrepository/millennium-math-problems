@@ -1,46 +1,43 @@
 1
-00:00:00,200 --> 00:00:03,500
-I asked AI to attack mathematics
+00:00:00,200 --> 00:00:03,200
+I asked AI to attack math
 I barely understand.
 
 2
-00:00:03,500 --> 00:00:07,600
+00:00:03,200 --> 00:00:06,400
 It chose Navier–Stokes:
-can smooth fluid
-become infinitely rough?
+can smooth fluid become infinitely rough?
 
 3
-00:00:07,600 --> 00:00:09,500
-Vortices stretch.
-Viscosity smooths.
+00:00:06,400 --> 00:00:09,500
+One of six remaining Clay problems,
+worth one million dollars.
 
 4
-00:00:09,500 --> 00:00:11,800
-Its method echoes
-Protas and Tao.
+00:00:09,500 --> 00:00:13,300
+AI wrote C++, searched counterexamples,
+read failures, and designed each next lemma.
 
 5
-00:00:11,800 --> 00:00:17,200
-It wrote the C++, ran adversarial searches,
-read each failure, and designed the next lemma.
+00:00:13,300 --> 00:00:15,000
+Cheap gates could save weeks.
 
 6
-00:00:17,200 --> 00:00:19,300
-I required evidence,
-not trust.
+00:00:15,000 --> 00:00:18,200
+In thirty-three hours, sixteen routes failed;
+L4 remains open.
 
 7
-00:00:19,300 --> 00:00:22,800
-Cheap gates could save weeks;
-only survivors received deeper search.
+00:00:18,200 --> 00:00:20,500
+Laptop estimate:
+one to three days.
 
 8
-00:00:22,800 --> 00:00:26,000
-In thirty-three hours, sixteen routes failed;
-one partial estimate was proved.
+00:00:20,500 --> 00:00:25,600
+Ten cluster nodes could make parallel sweeps
+up to ten times faster—not proof.
 
 9
-00:00:26,000 --> 00:00:29,700
-L4 remains open.
-Next decision: 1–3 days.
-Experts decide.
+00:00:25,600 --> 00:00:29,700
+Qualifying publication. Two years.
+General acceptance. Then Clay review.

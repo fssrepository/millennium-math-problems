@@ -1,3 +1,5 @@
 **/build/
 *.csv
+!guides/videos/navier-stokes/REVIEW_SHEET.csv
+!guides/videos/navier-stokes/shot-manifest.csv
 lemma-report.md

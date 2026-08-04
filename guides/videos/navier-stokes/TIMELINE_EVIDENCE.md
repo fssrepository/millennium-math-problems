@@ -51,6 +51,44 @@ The later session estimate was:
 The short therefore says `~1–3 days` only for the **next decision**, not for a
 proof or the full problem.
 
+## Laptop and cluster interpretation
+
+The observed campaign ran on a 13th-generation Intel Core i5-1335U laptop with
+12 logical CPUs. The code already uses 12-worker restart pools, parallel
+multistarts and parallel cutoff/interaction passes. A cluster can distribute
+independent cutoffs, seeds, restarts and parameter sweeps across nodes.
+
+For a concrete mobile comparison, the film uses a **10-node cluster** and says
+`up to ~10×` for **parallel sweeps only**. This is an idealized engineering
+ceiling inferred from ten comparable job groups running concurrently; it is
+not a cluster benchmark. Practical speedup may be lower because of memory,
+I/O, load imbalance and stages that remain serial. In particular:
+
+- do not divide the 33 h 28 min campaign duration by ten;
+- do not convert the `~1–3 days` next-decision estimate mechanically into
+  hours;
+- candidate formulation, AI interpretation, certificate review and analytic
+  proof do not scale linearly with node count;
+- a larger cluster changes search wall time, not the truth of a lemma or the
+  absence of a full-solution estimate.
+
+The exact on-screen qualifier is `COMPUTE ESTIMATE • TESTS ONLY`.
+
+## Clay prize context
+
+Clay established seven Millennium Prize Problems with US$1 million allocated
+to each. The Poincaré Conjecture has been resolved, leaving six unresolved.
+The reward is not automatic after an unrefuted forum post. Before CMI considers
+a proposed solution, the official rules require:
+
+1. publication in a Qualifying Outlet;
+2. at least two years since that publication;
+3. general acceptance in the global mathematics community.
+
+CMI then decides whether the proposal merits its detailed consideration. The
+film compresses this to `QUALIFYING PUBLICATION → ≥2 YEARS → GENERAL ACCEPTANCE
+→ CMI REVIEW`.
+
 ## Provenance
 
 Primary local record:

@@ -77,6 +77,28 @@ left out of the 30-second narration to keep the scientific story legible.
 
 - Clay Mathematics Institute, official Navier–Stokes problem description:
   https://www.claymath.org/wp-content/uploads/2022/06/navierstokes.pdf
+- Clay Mathematics Institute, official Millennium Prize rules: qualifying
+  publication, at least two years and general acceptance before consideration:
+  https://www.claymath.org/millennium-problems/rules/
+- Clay Mathematics Institute, seven original problems and US$1 million
+  allocated to each:
+  https://www.claymath.org/millennium-problems/
+- Clay's current lecture-series description confirms that only the Poincaré
+  Conjecture has been resolved, leaving six unresolved:
+  https://www.claymath.org/events/millennium-prize-problems-lecture-series/
+
+## Compute-scaling source and limitation
+
+The campaign machine exposes 12 logical CPUs on a 13th-generation Intel Core
+i5-1335U. The repository documents 12-worker restart pools, parallel
+multistarts, parallel cutoff scans and kernel-level thread pools. These support
+distributing independent job groups across cluster nodes.
+
+No cluster benchmark exists in the repository. `Up to ~10×` is therefore an
+explicit engineering ceiling for ten comparable nodes running independent
+sweeps—not a measured end-to-end result. Serial AI analysis, candidate design,
+certificate review, memory-bound high-cutoff work and proof remain outside that
+multiplier.
 
 ## Protas / Tao comparison — verified scope
 

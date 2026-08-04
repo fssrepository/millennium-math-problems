@@ -120,13 +120,21 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
   one proved partial far-tail estimate, and a still-open L4 closure.
 - The `~1–3 days` estimate applies only to the next PNT-12 decision, not to a
   proof and not to the Clay problem.
+- That estimate is observed laptop pace. `Up to ~10×` is an engineering ceiling
+  for independent sweeps on ten comparable cluster nodes, not an end-to-end
+  benchmark or proof acceleration factor.
+- Six of the original seven Clay problems remain unresolved, with US$1 million
+  allocated to each. Prize consideration requires a qualifying publication,
+  at least two years, general mathematical acceptance and then CMI review; an
+  unrefuted forum post is insufficient.
 - Protas/Tao is a methodological comparison, not provenance of a combined
   proof; use the exact wording in `STORYBOARD.md`.
 
 ## The short version of the story
 
-`Outside story → fluid problem → AI research loop → fast early failures →
-slower deep optimization → surviving open frontier → expert handoff.`
+`Outside story → fluid problem and Clay context → AI research loop → fast early
+failures → slower deep optimization → laptop/cluster estimate → official prize
+path.`
 
 From 00:12.40 to 00:25.20 the on-screen research clock is a linear compression
 of 33 h 28 min. Early failures arrive quickly; later frames breathe longer as

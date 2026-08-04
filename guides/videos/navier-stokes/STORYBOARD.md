@@ -11,12 +11,12 @@ holds and more restrained camera motion—not because the clock is falsified.
 | Time | Shot | Picture and camera | Post overlay | Narration / purpose |
 | --- | --- | --- | --- | --- |
 | 00:00–00:03.50 | S01 — The outside story | Black resolves into `keyframe-01-world.png`; 4% dolly-in, calm teal flow. | Full page: **`I ASKED AI TO ATTACK MATH I BARELY UNDERSTAND.`** Footer: `HUMAN-DIRECTED • AI-EXECUTED` and `EVIDENCE, NOT TRUST`. | Establish the unusual experiment and the requirement for checkable output. |
-| 00:03.50–00:09.50 | S02 — The problem | Fast push through the cube, then an arrest on the coral vortex bend. Fine cyan ripples soften around it. | Full page for 2.2 s: **`Can a smooth fluid become infinitely rough?`** Then two compact labels: `VORTEX: STRETCHES` / `VISCOSITY: SMOOTHS`. Thin pointer to the bend. | Explain the unresolved competition without an equation. |
+| 00:03.50–00:09.50 | S02 — The problem | Fast push through the cube, then an arrest on the coral vortex bend. Fine cyan ripples soften around it. | Full page for 2.2 s: **`Can a smooth fluid become infinitely rough?`** Then compact labels: `VORTEX: STRETCHES` / `VISCOSITY: SMOOTHS`. At 00:07.40 add `1 OF 6 UNSOLVED CLAY PROBLEMS • $1M`. Thin pointer to the bend. | Explain the unresolved competition and why this particular problem has public significance. |
 | 00:09.50–00:12.40 | S03 — The AI loop | Short macro orbit; the coral filament stays centered. No people or portraits. | Header: `AI-EXECUTED RESEARCH LOOP`. Five compact linked squares: `PROOF GAP` → `ARTIFACTS` → `SEARCH` → `AI ANALYSIS` → `NEW LEMMA ↺`. Small qualifier: `METHOD KINSHIP • PROTAS / TAO`. | Show that AI did not merely run a fixed simulation: it interpreted failures and designed the next candidate. |
 | 00:12.40–00:17.21 | S04 — Fast early tests | Rapid flight through transparent spectral shells. Amber pulses land quickly; camera and cuts are fastest here. | Persistent clock: `RESEARCH TIME  T+00:00 → T+12:34`. Small rail: `AI PROPOSES → C++ TESTS → SAVED EVIDENCE → AI REFINES ↺`. Add `CHEAP GATES FIRST`. Event chips: `T+00:35  F002 • SCALING`; `T+06:30  F006 • CANCELLATION`; `T+09:10  F009 • GROWTH`; `T+12:34  F012 • POSITIVE CASE`. Each ends in coral `REJECTED`. | The AI-led loop rejects weak candidates cheaply before they consume weeks of research. |
 | 00:17.21–00:21.04 | S05 — Deeper optimization | Macro checkpoint plate. Exact amber scan over the coral bend; movement is slower, holds are longer. At the end, one-frame black dip marks the crash, followed by the identical saved state. | Clock: `T+12:34 → T+22:35`. Stage label: `SURVIVED → DEEPER SEARCH`. Cards: `EXACT GRADIENT`; `K1 → K8`; `T+19:36  F013 • REJECTED`; `T+20:46  F014 • REJECTED`; `T+22:35  CHECKPOINT → RESUME`. Pointer line lands on the scan intersection. | Only surviving claims receive more compute; saved state prevents a restart from zero. |
 | 00:21.04–00:25.20 | S06 — Hardest frontier | Very slow pullback from the macro bend to nested shells and the evidence path. Minimal motion; one long hold before the final state. | Clock: `T+22:35 → T+33:28`. Stage label: `AI-REFINED FRONTIER`. Cards: `K12 • 4.88 GiB`; `T+32:34  F015 / PNT-13 • REJECTED`; final: `T+33:28  PNT-12 • SURVIVED THE TEST`. Small qualifier: `THIS IS NOT A PROOF`. | The deepest AI-designed candidate survives only the finite stress test; no victory cue. |
-| 00:25.20–00:29.70 | S07 — Result, estimate and handoff | Full-page dark end card over a nearly still wide frame; 2% pullback only. Suppress normal subtitles here. | `AI-EXECUTED CAMPAIGN • 33 h 28 min`; `16 candidates rejected`; `1 partial estimate: proved`; `L4 / PNT-12: open`; divider; **`Next decision: ~1–3 days`**; `Clay solution: no honest estimate`; footer: `NOT A PROOF • EXPERT REVIEW REQUIRED`. | State what the AI produced, preserve the honest estimate and hand the reproducible frontier to experts. |
+| 00:25.20–00:29.70 | S07 — Result, compute estimate and Clay path | Full-page dark end card over a nearly still wide frame; 2% pullback only. Suppress normal subtitles here. | Microline: `33 h 28 min • 16 rejected • 1 partial proved • L4 open`. Large two-line block: **`LAPTOP PACE`** / **`NEXT DECISION ~1–3 DAYS`**. Then **`10-NODE CLUSTER`** / **`UP TO ~10× FASTER TEST PASSES*`** and `FULL PROOF • UNKNOWN`. Divider: `$1M CLAY PATH`; `QUALIFYING PUBLICATION → ≥2 YEARS → GENERAL ACCEPTANCE → CMI REVIEW`. Footer: `*COMPUTE ESTIMATE • TESTS ONLY • EXPERT REVIEW`. | Distinguish the next laptop-scale computation from the unknowable proof timeline, show what a cluster could parallelize, and state the actual prize path without implying automatic payment. |
 
 ## The falsification grammar
 
@@ -46,6 +46,31 @@ Use this exact distinction:
 The human supplied the objective, constraints, hardware access and continued
 direction. Do not reduce the story to a fixed simulator, and do not inflate it
 to an autonomous theorem prover.
+
+## Public wording for compute scaling
+
+Use this exact distinction:
+
+> The `~1–3 days` figure is the next PNT-12 decision at the observed laptop
+> pace. The campaign ran on a 12-logical-CPU Intel Core i5-1335U laptop. Ten
+> comparable cluster nodes could make independent cutoff/restart sweeps up to
+> roughly ten times faster in the ideal parallel portion. This is an
+> engineering estimate, not a measured end-to-end speedup and not a proof
+> timeline.
+
+Do not divide the full 33 h 28 min by ten. Candidate design, AI analysis,
+certificate review, memory-bound K12 work and mathematical proof are not all
+parallel.
+
+## Public wording for the Clay prize
+
+The original Clay list contained seven problems; six remain unresolved after
+the Poincaré Conjecture was resolved. One million US dollars was allocated to
+each problem. The prize is not awarded because a forum post remains unrefuted.
+Before CMI considers a proposed solution, it must appear in a Qualifying
+Outlet, at least two years must pass, and it must gain general acceptance in
+the global mathematics community. CMI does not accept direct solution
+submissions. After the public path, it applies its own review process.
 
 ## Public wording for the method lineage
 

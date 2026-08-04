@@ -33,6 +33,12 @@ VORTEX: STRETCHES
 VISCOSITY: SMOOTHS
 ```
 
+At 00:07.40:
+
+```text
+1 OF 6 UNSOLVED CLAY PROBLEMS • $1M
+```
+
 ## S03 — 00:09.50–00:12.40
 
 Small header:
@@ -103,16 +109,20 @@ THIS IS NOT A PROOF
 ## S07 — 00:25.20–00:29.70
 
 ```text
-AI-EXECUTED CAMPAIGN • 33 h 28 min
+33 h 28 min • 16 rejected • 1 partial proved • L4 open
 
-16 candidates rejected
-1 partial estimate: proved
-L4 / PNT-12: open
+LAPTOP PACE
+NEXT DECISION ~1–3 DAYS
 
-Next decision: ~1–3 days
-Clay solution: no honest estimate
+10-NODE CLUSTER
+UP TO ~10× FASTER TEST PASSES*
+FULL PROOF • UNKNOWN
 
-NOT A PROOF • EXPERT REVIEW REQUIRED
+$1M CLAY PATH
+QUALIFYING PUBLICATION → ≥2 YEARS
+→ GENERAL ACCEPTANCE → CMI REVIEW
+
+*COMPUTE ESTIMATE • TESTS ONLY • EXPERT REVIEW
 ```
 
 ## Persistent small label in S02–S06

@@ -42,6 +42,8 @@ slow move with a long terminal hold.
 - 04.20–05.80: ramp to 450%.
 - 05.80–06.80: ramp down to 35% on the coral bend.
 - 06.80–09.50: 70% macro hold for the two labels and pointer.
+- At 07.40, reduce the mechanism labels to a quiet lower-third and reveal
+  `1 OF 6 UNSOLVED CLAY PROBLEMS • $1M` for the remaining two seconds.
 
 ### S03 — 00:09.50–00:12.40
 
@@ -86,12 +88,16 @@ slow move with a long terminal hold.
 
 - Use the wide final frame at 98–100% speed with only a 2% pullback.
 - Place a 72% near-black veil over footage for contrast.
-- Reveal the results as one group at 25.35 and the estimate group at 27.10.
-- Lead with `AI-EXECUTED CAMPAIGN • 33 h 28 min` and close with `NOT A PROOF •
-  EXPERT REVIEW REQUIRED`.
+- Reveal the result microline at 25.30, the laptop estimate at 25.55 and the
+  cluster line at 26.05. Keep `FULL PROOF • UNKNOWN` adjacent to the cluster
+  estimate so the multiplier cannot be misread as a proof deadline.
+- Reveal the Clay qualification rail at 27.15. Illuminate its four stages in
+  sequence, but leave the complete rail visible on the final frame.
+- Keep `*COMPUTE ESTIMATE • TESTS ONLY • EXPERT REVIEW` visible throughout the
+  cluster and Clay beats.
 - Hide regular SRT subtitles in this shot because the card itself carries the
   final words.
-- Keep `Clay solution: no honest estimate` visible for at least 1.8 seconds.
+- Keep `FULL PROOF • UNKNOWN` visible through the final frame.
 
 ## Pointer line
 

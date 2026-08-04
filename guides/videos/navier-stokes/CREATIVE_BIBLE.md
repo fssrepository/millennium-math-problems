@@ -56,6 +56,10 @@ imagery.
 - Five-node loop: 140 px squares with 20–25 px gaps; show all five in S03 and
   highlight one stage at a time later. Use plain-language node labels on screen
   and retain the exact guide terminology in documentation.
+- S07 uses four horizontal bands: result microline, laptop/cluster estimate,
+  full-proof guardrail, and Clay qualification rail. The estimate gets the
+  largest type. Keep the Clay rail on two lines and the qualifier at least 30
+  px at 1080 × 1920; do not shrink it into legal-copy size.
 
 ## Camera grammar
 
