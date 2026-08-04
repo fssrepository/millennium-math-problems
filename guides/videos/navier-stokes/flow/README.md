@@ -9,6 +9,12 @@ For literal click-by-click instructions, use `RUNBOOK.md`. This
 route uses only the standard prompt box and Frames; Agent, Storyboard Studio,
 Ingredients and scene automation are not required.
 
+If Flow opens the expanded Agent fallback used in the supervised pass, follow
+`AGENT_READY_TO_PASTE.md`. After the Agent describes the prepared job, send the
+single word `Approve`; then inspect and click `Approve` on Flow's built-in cost
+card. Typing the word does not spend credits, while clicking the built-in
+option does. Never choose `Approve, do not ask again`.
+
 ## One-time setup
 
 1. Create a project named `Navier Stokes — Falsify Loop — 9x16`.

@@ -13,9 +13,9 @@ holds and more restrained camera motion—not because the clock is falsified.
 | 00:00–00:03.50 | S01 — The outside story | Black resolves into `keyframe-01-world.png`; 4% dolly-in, calm teal flow. | Full page: **`I ASKED AI TO ATTACK MATH I BARELY UNDERSTAND.`** Footer: `HUMAN-DIRECTED • AI-EXECUTED` and `EVIDENCE, NOT TRUST`. | Establish the unusual experiment and the requirement for checkable output. |
 | 00:03.50–00:09.50 | S02 — The problem and why it matters | Fast push through the cube, then an arrest on the coral vortex bend. Fine cyan ripples soften around it. | Full page for 2.2 s: **`Can a smooth fluid become infinitely rough?`** Then compact labels: `VORTEX: STRETCHES` / `VISCOSITY: SMOOTHS`. At 00:07.40 replace them with **`ALREADY USED TO MODEL`** / **`WEATHER • FLIGHT • BLOOD FLOW`**, then `A PROOF ASKS: CAN THE MATHEMATICS BREAK?` and the microline `1 OF 6 UNSOLVED CLAY PROBLEMS • $1M`. | Establish practical relevance without implying that a regularity proof would suddenly create these applications: the equations are already used, while the prize asks whether the idealized 3D mathematical model must stay smooth. |
 | 00:09.50–00:12.40 | S03 — The AI loop | Short macro orbit; the coral filament stays centered. No people or portraits. | Header: `AI-EXECUTED RESEARCH LOOP`. Five compact linked squares: `PROOF GAP` → `ARTIFACTS` → `SEARCH` → `AI ANALYSIS` → `NEW LEMMA ↺`. Small qualifier: `METHOD KINSHIP • PROTAS / TAO`. | Show that AI did not merely run a fixed simulation: it interpreted failures and designed the next candidate. |
-| 00:12.40–00:17.21 | S04 — Fast early tests | Rapid flight through transparent spectral shells. Amber pulses land quickly; camera and cuts are fastest here. | Persistent clock: `RESEARCH TIME  T+00:00 → T+12:34`. Small rail: `AI PROPOSES → C++ TESTS → SAVED EVIDENCE → AI REFINES ↺`. Add `CHEAP GATES FIRST`. Event chips: `T+00:35  F002 • SCALING`; `T+06:30  F006 • CANCELLATION`; `T+09:10  F009 • GROWTH`; `T+12:34  F012 • POSITIVE CASE`. Each ends in coral `REJECTED`. | The AI-led loop rejects weak candidates cheaply before they consume weeks of research. |
-| 00:17.21–00:21.04 | S05 — Deeper optimization | Macro checkpoint plate. Exact amber scan over the coral bend; movement is slower, holds are longer. At the end, one-frame black dip marks the crash, followed by the identical saved state. | Clock: `T+12:34 → T+22:35`. Stage label: `SURVIVED → DEEPER SEARCH`. Cards: `EXACT GRADIENT`; `K1 → K8`; `T+19:36  F013 • REJECTED`; `T+20:46  F014 • REJECTED`; `T+22:35  CHECKPOINT → RESUME`. Pointer line lands on the scan intersection. | Only surviving claims receive more compute; saved state prevents a restart from zero. |
-| 00:21.04–00:25.20 | S06 — Hardest frontier | Very slow pullback from the macro bend to nested shells and the evidence path. Minimal motion; one long hold before the final state. | Clock: `T+22:35 → T+33:28`. Stage label: `AI-REFINED FRONTIER`. Cards: `K12 • 4.88 GiB`; `T+32:34  F015 / PNT-13 • REJECTED`; final: `T+33:28  PNT-12 • SURVIVED THE TEST`. Small qualifier: `THIS IS NOT A PROOF`. | The deepest AI-designed candidate survives only the finite stress test; no victory cue. |
+| 00:12.40–00:17.21 | S04 — Fast early tests | Rapid flight through transparent spectral shells. Amber pulses land quickly; camera and cuts are fastest here. Each pulse exposes a different obstruction rather than a generic red failure stamp. | Persistent clock: `RESEARCH TIME  T+00:00 → T+12:34`. Small rail: `AI PROPOSES → C++ TESTS → SAVED EVIDENCE → AI REFINES ↺`. Add `CHEAP GATES FIRST`. Event chips: `F002 • CONCENTRATION BREAKS BOUND`; `F006 • CANCELLATION NOT ZERO`; `F009 • BOTH FACTORS GREW`; `F012 • POSITIVE COUNTEREXAMPLE`. Each ends in coral `REJECTED`. | The AI-led loop rejects different weak claims for different recorded reasons before they consume weeks of research. These are representative examples, not a claim that all failures have one cause. |
+| 00:17.21–00:21.04 | S05 — Deeper optimization | Macro checkpoint plate. Restrained amber measurement pulses follow the coral bend; there is no scan plane or vertical beam. Movement is slower and holds are longer. At the end, one-frame black dip marks the crash, followed by the identical saved state. | Clock: `T+12:34 → T+22:35`. Stage label: `SURVIVED → DEEPER SEARCH`. Cards: `EXACT GRADIENT`; `K1 → K8`; `F013 • BOUND GROWS WITH SCALE → REJECTED`; `F014 • STRONGER BRANCH FOUND → REJECTED`; `CHECKPOINT → RESUME`. Pointer line lands on the measured obstruction. | Only surviving claims receive more compute. The labels state what the optimizer found, while the saved state prevents a restart from zero. |
+| 00:21.04–00:25.20 | S06 — Hero falsification and current frontier | Slow inspection of two separated frequency-shell bands represented inside the fluid. A faint dashed expected envelope fades with shell distance. The measured coral response remains bright in the far band. Freeze and fast-push onto that surviving tail; a thin pointer identifies it. Then pull back as the failed route enters the evidence ledger and an orange frontier marker activates. | Clock: `T+22:35 → T+33:28`. Sequence: `EXPECTED • DISTANT SCALES DECOUPLE`; `FOUND • CORRELATION ≈ 1`; `FREQUENCY-SHELL TAIL STAYED COHERENT`; `F015 / PNT-13 • REJECTED`; `COUNTEREXAMPLE SAVED`; final state `AI REFINED → PNT-12 OPEN`. Small qualifier: `CONCEPT VISUALIZATION • THIS IS NOT A PROOF`. | This is the one rejection explained visually. PNT-13 expected shell correlations to decay roughly with separation; adversarial states reached correlations near one instead. The failure is saved and narrows the next search to the still-open coupled PNT-12 target. |
 | 00:25.20–00:29.70 | S07 — Result, compute estimate and Clay path | Full-page dark end card over a nearly still wide frame; 2% pullback only. Suppress normal subtitles here. | Microline: `33 h 28 min • 16 rejected • 1 partial proved • L4 open`. Large two-line block: **`LAPTOP PACE`** / **`NEXT DECISION ~1–3 DAYS`**. Then **`10-NODE CLUSTER`** / **`UP TO ~10× FASTER TEST PASSES*`** and `FULL PROOF • UNKNOWN`. Divider: `$1M CLAY PATH`; `QUALIFYING PUBLICATION → ≥2 YEARS → GENERAL ACCEPTANCE → CMI REVIEW`. Footer: `*COMPUTE ESTIMATE • TESTS ONLY • EXPERT REVIEW`. | Distinguish the next laptop-scale computation from the unknowable proof timeline, show what a cluster could parallelize, and state the actual prize path without implying automatic payment. |
 
 ## The falsification grammar
@@ -33,6 +33,35 @@ Use the same visual rule for every rejected candidate:
 Only S04 uses rapid repeats. S05 deliberately slows down; S06 is almost a
 single inspection. This makes the increasing optimization cost visible even
 with the real clock compressed proportionally.
+
+## The hero failure: what the viewer actually sees
+
+The film cannot explain all 16 rejected candidates independently in 29.7
+seconds. S04 and S05 therefore show short, evidence-based failure reasons,
+while S06 gives one representative obstruction enough screen time to be
+understood.
+
+Use F015 / PNT-13 for that inspection. The candidate expected correlations
+between separated projective height shells to decay approximately like
+`2^(-gap)`. The adversarial search instead found raw correlations `0.985710`,
+`0.998998` and `0.994971` at gaps 4, 6 and 7. On mobile this becomes the honest
+shorthand `CORRELATION ≈ 1`.
+
+Visual state change:
+
+1. two shell bands glow and a faint expected envelope decays toward the far
+   band;
+2. the actual coral response refuses to fade and stays above that envelope;
+3. motion freezes and a pointer lands on the surviving far-shell response;
+4. `PNT-13 • REJECTED` enters the evidence ledger;
+5. the rejected route dims, while `PNT-12 • OPEN` activates in orange;
+6. camera motion resumes toward the current frontier.
+
+The visible “tail” is a **frequency-shell tail**, not a literal tail in the
+water and not a claim that a physical fluid singularity was observed. The
+fluid render is a concept visualization; the correlation values and rejected
+status come from the repository artifacts. Do not imply that F000–F014 failed
+for this same reason.
 
 ## Public wording for AI execution
 

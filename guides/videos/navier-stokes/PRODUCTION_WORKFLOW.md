@@ -56,7 +56,8 @@ Director, Motion Control, Cast, Soul ID, or a third-party plugin.
 Before opening a video generator:
 
 1. Create a 1080 × 1920, 30 fps editor timeline.
-2. Place the supplied three PNG keyframes as temporary stills for S01–S07.
+2. Place the ten planning frames from `assets/previs-10/` at their three-second
+   story intervals.
 3. Set shot lengths from `shot-manifest.csv`.
 4. Add the copy from `EDITOR_OVERLAYS_EN.md`.
 5. Import `captions/navier-stokes-en.srt` and a rough narration from
@@ -71,8 +72,9 @@ safe margins, and 29.70-second pacing work in this animatic.
 Generate in this order:
 
 1. **S02** — fastest push-in and macro endpoint;
-2. **S05** — exact scan/filament intersection;
-3. **S06** — slow pullback and stable final frame.
+2. **S05** — stable deeper-optimization motion with no scan line or beam;
+3. **S06** — continuous fluid inspection supporting the PNT-13 obstruction
+   and PNT-12 handoff defined in `FALSIFICATION_VISUAL.md`.
 
 For each shot:
 
@@ -121,8 +123,8 @@ Accept a shot only when every relevant condition passes:
 | S02 | The glass stays intact and the coral bend stops at center-right |
 | S03 | The macro bend remains in focus; no person or portrait appears |
 | S04 | Four distinct test pulses and stable shell geometry remain visible |
-| S05 | The amber scan actually crosses the coral filament |
-| S06 | An open teal path and a long stable final frame remain |
+| S05 | The coral filament stays stable and no vertical scan line or beam appears |
+| S06 | One continuous fluid state supports expected decay, a persistent far-shell response and the PNT-12 handoff |
 
 ## 4. One-defect retry table
 
@@ -134,10 +136,21 @@ Accept a shot only when every relevant condition passes:
 | Camera misses target | Keep model and image; revise only the camera sentence |
 | Motion is excessive | Reduce camera speed; if it repeats, use Kling Standard |
 | Generated writing appears | Start the negative block with: `absolutely no visible text or symbols` |
-| S06 changes the 16 marks | Use motion only for the pullback, then cut to the fixed `keyframe-06-frontier.png` |
+| S06 invents markers, percentages or diagrams | Generate clean fluid motion only; build the decay guide, pointer, ledger and PNT-12 marker in post from `FALSIFICATION_VISUAL.md` |
 
 Never change the model, start frame, and prompt together. That makes the failed
 generation diagnostically useless.
+
+### Logged S02 source-repair exception
+
+Take 01 exposed two independent causes that were visible in the evidence: the
+master still already described the coral feature as braided, while the phrase
+`accelerates through the intact front glass` encouraged a physical impact. For
+take 02, keep Veo 3.1 Lite, 720p, duration and output count fixed, but use the
+corrected canonical start frame and the non-contact optical-camera
+sentence in `flow/AGENT_READY_TO_PASTE.md`. This compound repair is intentional
+and logged; it avoids spending another 10 credits on either already-confirmed
+defect. Resume the one-defect retry rule after take 02.
 
 ## 5. Assemble before upgrading
 
@@ -145,8 +158,9 @@ generation diagnostically useless.
 2. Cut the sequence to exactly 29.70 seconds.
 3. Apply the speed and freeze points in `EDIT_PLAN.md`.
 4. Add the English overlays, SRT, rough narration, and temporary sound bed.
-5. At the end of S06, cut or dissolve to `keyframe-06-frontier.png` so the 16
-   marks remain exact.
+5. Composite the S06 expected-decay guide, measured far-shell response,
+   pointer, saved-rejection ledger and orange PNT-12 marker exactly as specified
+   in `FALSIFICATION_VISUAL.md`.
 6. Watch the full rough cut on the target phone at normal brightness.
 
 Only a defect visible in this complete phone review justifies another video

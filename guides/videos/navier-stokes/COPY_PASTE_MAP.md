@@ -2,6 +2,11 @@
 
 Use this page when producing; it is the shortest route through the bundle.
 
+> **CURRENT HOLD:** do not paste the legacy S05/S06 prompts. First read
+> `FALSIFICATION_VISUAL.md` and approve a v02 preview containing the PNT-13
+> failure and PNT-12 state transition. The platform prompt files are marked
+> `HOLD` until that rewrite is complete.
+
 ## 1. Pick one video platform
 
 Recommended default: **Google Flow when the account exposes free generation**.
@@ -32,6 +37,8 @@ Generate only S01–S06. S07 is a held final S06 frame.
 ## 2. Put these texts in the editor—not in the video model
 
 - Shot titles, event chips and final card: `STORYBOARD.md` → **Post overlay**.
+- Expected decay, persistent far-shell response and PNT-12 handoff:
+  `FALSIFICATION_VISUAL.md`.
 - Exact T+ placement: `TIMELINE_EVIDENCE.md` → **Audited milestones**.
 - Speed ramps, freezes, pointer and crash/resume dip: `EDIT_PLAN.md`.
 - Subtitles: import `captions/navier-stokes-en.srt`.

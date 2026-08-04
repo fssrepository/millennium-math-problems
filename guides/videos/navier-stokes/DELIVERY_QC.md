@@ -18,6 +18,12 @@
   from smooth 3D incompressible data, not failure of every practical fluid
   simulation.
 - [ ] The count is 16 rejected candidates (`F000`–`F015`), not 15.
+- [ ] The film does not imply that all 16 candidates failed for the same
+  reason.
+- [ ] S06 shows the PNT-13 expectation, the near-one measured correlation, the
+  saved rejection and the transition to PNT-12 open.
+- [ ] “Tail” is identified as a frequency-shell response, not a literal fluid
+  tail or observed singularity.
 - [ ] “Proved” modifies only a partial estimate / far-tail lemma.
 - [ ] L4 is explicitly still open.
 - [ ] The AI-generated fluid is labeled as a concept visualization.
@@ -39,7 +45,11 @@
 - [ ] Exactly one rigid glass cube is present in every wide shot.
 - [ ] The same teal material and same coral filament recur.
 - [ ] The filament does not turn into smoke, lightning, hair or a creature.
-- [ ] S05's pointer lands on the actual scan/filament intersection.
+- [ ] S05 contains no vertical scan line, laser beam or generated measurement
+  diagram.
+- [ ] S06's pointer lands on the actual far-shell coral response.
+- [ ] The expected-decay guide, measured state, pointer, ledger and orange
+  frontier marker are deterministic editor overlays.
 - [ ] Mid-film overlay groups remain under one quarter of the frame.
 - [ ] No important copy sits under platform controls or outside safe margins.
 - [ ] No text, watermark or pseudo-equation is baked into generated footage.

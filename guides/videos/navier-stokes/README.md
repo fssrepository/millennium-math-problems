@@ -36,9 +36,9 @@ For this exact film, the strongest workflow is:
    shows a visible need; it is not a mandatory final pass.
 6. If a camera still fails after one targeted retry, remake only that shot with
    **Higgsfield or OpenArt basic image-to-video + Kling 3.0 Standard at 720p**.
-7. Add every title, caption, arrow, freeze, time-ramp and counter in a normal
-   editor such as DaVinci Resolve, Premiere or CapCut. Do not ask a video model
-   to draw the English text.
+7. Add every title, caption, arrow, freeze, time-ramp and counter with the
+   reproducible `scripts/` pipeline or a normal editor such as DaVinci Resolve,
+   Premiere or CapCut. Do not ask a video model to draw the English text.
 
 Why this split: the film has no human character, so Flow/Veo's atmosphere and
 scene fidelity matter more than face performance. Higgsfield/Kling is the
@@ -67,7 +67,11 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
 - `PLATFORM_COST_GUIDE.md` — current Flow, Higgsfield and OpenArt model choice,
   free-route limits, watermark warning and project cost estimates.
 - `REVIEW_SHEET.csv` — take-by-take acceptance log.
+- `PRODUCTION_LOG.md` — current accepted sources, local repairs, credit ledger
+  and the exact next supervised action.
 - `STORYBOARD.md` — the complete 29.7-second shot plan.
+- `FALSIFICATION_VISUAL.md` — the exact expected-versus-measured PNT-13 visual,
+  state transition into PNT-12, and acceptance test.
 - `TIMELINE_EVIDENCE.md` — audited T+ milestones, exact screen mapping and the
   honest next-step estimate.
 - `CREATIVE_BIBLE.md` — world, recurring visual “characters,” palette,
@@ -88,6 +92,9 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
 - `flow/READY_TO_PASTE.md` — fully assembled one-block prompts for the default
   Flow workflow.
 - `renders/` — prepared local drop zones for drafts, finals, audio and edits.
+- `scripts/` — deterministic FFmpeg repairs and the complete animatic build.
+- `animatic-overlays.ass` — timed rough-cut typography used by the reproducible
+  animatic render.
 - `assets/` — three consistent 9:16 keyframes and their provenance.
 - `sources/RESEARCH_NOTES.md` — repository/session evidence and current product
   sources.
@@ -96,11 +103,12 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
 ## Fastest way to make it
 
 1. Open `00_START_HERE.md`.
-2. Read `PLATFORM_COST_GUIDE.md`, then follow `PRODUCTION_WORKFLOW.md` and
-   `flow/RUNBOOK.md`.
-3. Generate and approve shots in scout order S02 → S05 → S06 → S01 → S03 →
-   S04, one output at a time.
-4. Assemble them according to `STORYBOARD.md` and `EDIT_PLAN.md`.
+2. Run `scripts/build_animatic.sh` and watch the complete 29.70-second result at
+   `renders/edit/navier-stokes-animatic-v02-raw-plates-720x1280.mp4` on a phone.
+3. Mark each provisional plate or still placeholder `keep`, `repair` or
+   `regenerate` before spending another credit.
+4. Replace only the selected placeholders according to `STORYBOARD.md` and
+   `EDIT_PLAN.md`.
 5. Import the SRT, record or synthesize `narration/en.md`, then run
    `DELIVERY_QC.md`.
 
@@ -118,6 +126,10 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
   singularity; do not claim it would instantly solve those application areas.
 - The footage is a **concept visualization**, not the output of the C++ run.
 - `F000`–`F015` means **16 rejected lemma candidates**.
+- Those candidates failed for different reasons. The film explains F015 /
+  PNT-13 as one representative obstruction: distant frequency-shell
+  correlations stayed near one instead of decaying. Do not apply that visual
+  explanation to F000–F014.
 - A finite search can falsify a candidate or let it survive the tested set; it
   cannot prove the cutoff-independent L4 statement.
 - The demonstrated result is a fast, reproducible lemma-falsification loop,
@@ -137,8 +149,8 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
 ## The short version of the story
 
 `Outside story → fluid problem and why it matters → Clay context → AI research
-loop → fast early failures → slower deep optimization → laptop/cluster estimate
-→ official prize path.`
+loop → fast early failures → one visible PNT-13 obstruction → saved evidence →
+PNT-12 open frontier → laptop/cluster estimate → official prize path.`
 
 From 00:12.40 to 00:25.20 the on-screen research clock is a linear compression
 of 33 h 28 min. Early failures arrive quickly; later frames breathe longer as

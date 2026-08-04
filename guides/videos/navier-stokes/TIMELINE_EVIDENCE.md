@@ -25,7 +25,27 @@ That 12.80-second window is linear: one screen second represents approximately
 | 2026-08-02 04:37:33 | T+20:46 | 00:20.34 | F014 stronger dense branch | `F014 • REJECTED` |
 | 2026-08-02 06:26 approx. | T+22:35 | 00:21.04 | Memory failure / saved-state resume | `CHECKPOINT → RESUME` |
 | 2026-08-02 16:25:18 | T+32:34 | 00:24.86 | F015 / PNT-13 shell-orthogonality route rejected | `PNT-13 • REJECTED` |
-| 2026-08-02 17:19:22 | T+33:28 | 00:25.20 | PNT-12 finite stress campaign reported | `SURVIVED THE TEST` |
+| 2026-08-02 17:19:22 | T+33:28 | 00:25.20 | PNT-12 finite stress campaign reported; cutoff-independent claim remains open | `PNT-12 • OPEN FRONTIER` |
+
+## Why the film inspects F015
+
+F000–F015 are 16 different rejected candidates with different obstructions.
+The short film does not claim that all of them failed because of one tail. It
+uses F015 / PNT-13 as one representative failure that can be made legible on a
+phone.
+
+PNT-13 expected separated projective height-shell correlations to decay like
+`2^(-gap)`. The exact-gradient adversaries instead reached raw correlations
+`0.985710`, `0.998998` and `0.994971` at gaps 4, 6 and 7. The corresponding
+weighted constants rose to `15.7714`, `63.9359` and `127.356`, close to the
+respective `2^gap` maxima. The mobile overlay therefore uses the faithful
+shorthand `FOUND • CORRELATION ≈ 1` and points at a persistent
+**frequency-shell tail**. It is a concept visualization, not literal dye-tail
+evidence from the C++ calculation.
+
+That rejection removed standalone shell almost-orthogonality as the active
+mechanism. The AI loop saved the counterexample and routed the next work to the
+coupled PNT-12 quantity, which remains open.
 
 ## Final state shown in S07
 

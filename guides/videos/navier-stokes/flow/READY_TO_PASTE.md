@@ -1,5 +1,11 @@
 # Flow — complete prompts ready to paste
 
+> **HOLD — NOT READY TO PASTE.** The blocks below are the earlier shot design.
+> They do not yet implement the expected decay → persistent far-shell response
+> → saved PNT-13 rejection → PNT-12 open transition. Follow
+> `../FALSIFICATION_VISUAL.md` and approve no new generation until the v02
+> preview is accepted.
+
 For each shot, paste the entire fenced block into Flow's main prompt field. Do
 not ask the generator to render English captions or interface text.
 
@@ -8,20 +14,24 @@ not ask the generator to render English captions or interface text.
 ```text
 Continue the exact visual world in the uploaded start frame. Preserve one rigid
 transparent glass cube, one coherent luminous turquoise-blue physically
-plausible incompressible fluid flow, one continuous recognizable braided
-coral-red vortex filament, the same dark near-black scientific research space,
+plausible incompressible fluid flow, one continuous compact coral-red
+fluorescent liquid-dye vortex with soft diffusing edges and wispy internal
+flow, the same dark near-black scientific research space,
 subtle cyan grid, restrained amber checkpoint light, glass and water materials,
 and premium science-documentary realism. Portrait 9:16, phone-readable depth.
 
-Slow stable 50mm dolly-in toward the cube. The teal flow circulates with heavy,
-viscous coherence and the coral filament gently tightens once. Preserve calm
-dark negative space across the upper 38 percent for a title added later. No
+Slow stable normal-lens dolly-in toward the cube. The teal flow circulates with heavy,
+viscous coherence and the coral dye vortex gently curls once while retaining
+diffuse liquid edges. Preserve calm
+dark negative space across the upper title-safe area for a title added later. No
 event, no cut, no camera shake. Ambient audio only: very soft glassy water.
 
-No text, letters, numbers, equations, subtitles, logos, watermark, user
+Absolutely no visible text or symbols. No letters, numbers, equations,
+subtitles, logos, watermark, glyphs, HUD, user
 interface, people, hands, scientist, ocean, waves, smoke-only fluid, fire,
-lightning, tentacles, creatures, extra coral filaments, duplicated or deforming
-cube, broken glass, splash, explosion, trophy, checkmark, victory symbolism,
+lightning, tentacles, creatures, rope, braid, ribbon, solid coral object, extra
+coral filaments, duplicated or deforming cube, broken glass, splash, spray,
+outward particles, explosion, trophy, checkmark, victory symbolism,
 fantasy magic, random cuts, camera shake, flicker, material morphing, color
 drift, speech, dialogue or singing.
 ```
@@ -31,21 +41,29 @@ drift, speech, dialogue or singing.
 ```text
 Continue the exact visual world in the uploaded start frame. Preserve one rigid
 transparent glass cube, one coherent luminous turquoise-blue physically
-plausible incompressible fluid flow, one continuous recognizable braided
-coral-red vortex filament, dark near-black scientific space, subtle cyan grid,
+plausible incompressible fluid flow, one continuous compact coral-red
+fluorescent liquid-dye vortex with soft diffusing edges and wispy internal
+flow, dark near-black scientific space, subtle cyan grid,
 restrained amber accents, physically based glass and water, premium
 science-documentary realism. Portrait 9:16, phone-readable depth.
 
-A controlled 24mm camera starts wide, accelerates through the intact front
-glass into the fluid, flies between teal streamlines with strong parallax, then
-decelerates into a macro view of the sharpest bend of the same coral filament.
-The glass never breaks; the fluid remains physically coherent. End on a stable
-readable bend center-right with fine cyan ripples gently losing contrast.
-Ambient audio only, no voice.
+A controlled 24mm virtual camera starts wide and performs a smooth optical
+push-in. Its viewpoint crosses the transparent boundary frictionlessly, with
+no physical contact, impact, force or surface disturbance, then flies between
+teal streamlines with strong parallax and decelerates into a macro view of the
+sharpest bend of the same coral liquid-dye vortex. The cube stays rigid and
+sealed, the calm top surface stays flat, and every drop remains inside. End on
+a stable readable bend center-right with fine cyan ripples gently losing
+contrast. Keep the space above and around the cube clean and near-black: no
+free-floating amber dots, sparks, fireflies, dust or bokeh particles. Ambient
+audio only, no voice.
 
-No text, letters, numbers, equations, subtitles, logos, watermark, UI, people,
-ocean, smoke-only fluid, fire, lightning, tentacles, extra coral filaments,
-duplicated cube, broken glass, splash, explosion, checkmark, victory symbolism,
+Absolutely no visible text or symbols. No letters, numbers, equations,
+subtitles, logos, watermark, glyphs, HUD, UI, people, ocean, smoke-only fluid,
+fire, lightning, tentacles, rope, braid, ribbon, solid coral object, extra coral
+filaments, duplicated cube, broken glass, splash, spray, outward particles,
+explosion, free-floating amber dots, sparks, fireflies, dust, bokeh particles,
+checkmark, victory symbolism,
 fantasy, random cuts, camera shake, flicker, morphing, color drift or speech.
 ```
 
@@ -53,8 +71,9 @@ fantasy, random cuts, camera shake, flicker, morphing, color drift or speech.
 
 ```text
 Continue the exact uploaded scientific world: one rigid transparent glass cube,
-coherent luminous teal incompressible flow, one continuous braided coral-red
-vortex filament, dark near-black space, cyan rim light, restrained amber scan
+coherent luminous teal incompressible flow, one continuous coral-red
+fluorescent liquid-dye vortex with soft diffusing edges and wispy internal
+flow, dark near-black space, cyan rim light, restrained amber scan
 accent, physically based glass and water, rigorous premium documentary style,
 vertical 9:16.
 
@@ -74,8 +93,9 @@ morphing, palette drift, speech or singing.
 
 ```text
 Continue the exact uploaded world. Preserve one rigid glass cube, one coherent
-luminous teal incompressible flow and one recognizable braided coral-red vortex
-filament. Same near-black research space, cyan grid, amber checkpoint accents,
+luminous teal incompressible flow and one recognizable coral-red fluorescent
+liquid-dye vortex with soft diffusing edges and wispy internal flow. Same
+near-black research space, cyan grid, amber checkpoint accents,
 physically based materials and premium science-documentary realism. Portrait
 9:16.
 
@@ -97,8 +117,9 @@ color drift, dialogue or singing.
 
 ```text
 Continue the exact uploaded macro world. Preserve the same coherent luminous
-teal flow, the single continuous braided coral-red vortex filament, near-black
-scientific space, cyan rim light, translucent amber checkpoint plane, physically
+teal flow, the single continuous coral-red fluorescent liquid-dye vortex with
+soft diffusing edges and wispy internal flow, near-black scientific space, cyan
+rim light, translucent amber checkpoint plane, physically
 based water and premium rigorous documentary realism. Portrait 9:16.
 
 Maintain an exceptionally stable, deliberately slow 100mm macro composition of
@@ -110,31 +131,38 @@ beats. Camera energy is distinctly lower than S04. Subtle scan tone only.
 
 Do not add labels, text, numbers, equations, shards, stamps, a crash, cuts, UI,
 people, ocean, smoke, fire, lightning, creatures, extra coral filaments, broken
-glass, explosion, checkmark, victory imagery, camera shake, flicker, geometry
-morphing, color drift, dialogue or singing.
+glass, explosion, checkmark, victory imagery, a cone, wedge, arrow, flashlight
+beam, circular handle, ring or aperture attached to the scan, camera shake,
+flicker, geometry morphing, color drift, dialogue or singing.
 ```
 
 ## S06 — 8 s — start frame: `../assets/keyframe-06-frontier.png`
 
 ```text
 Continue the exact uploaded world. Preserve the central rigid glass cube, the
-coherent luminous teal incompressible flow, one continuous braided coral-red
-vortex filament, transparent cyan spectral shells, near-black research space,
+coherent luminous teal incompressible flow, one continuous coral-red
+fluorescent liquid-dye vortex, transparent cyan spectral shells, near-black research space,
 restrained amber evidence path, physically based materials and premium
 science-documentary realism. Portrait 9:16.
 
-Start close on the central cube and execute a slow, precise, perfectly centered
-24mm dolly-out. Reveal the nested transparent spectral shells and curved amber
-evidence ledger. Preserve exactly sixteen small coral checkpoint crystals. One
-living teal stream continues through the open cyan gap beyond the shells. Use
-the lowest camera energy in the sequence and settle into a long unresolved wide
-frame with calm upper and lower negative space. Ambient audio only.
+Begin from the exact uploaded wide frontier composition. Perform only a barely
+perceptible, perfectly centered optical dolly-out, then settle into a long
+unchanged endpoint. Preserve every existing coral checkpoint crystal in its
+current position. Never animate, recount, create, remove, merge, split, move or
+resize a marker. Keep the portrait frame level on one straight centered optical
+axis with no lateral drift, yaw, pitch, roll, orbit, handheld movement or
+micro-wobble. Teal liquid must flow continuously and visibly through the
+existing cyan gap while the coral dye gently curls and folds inside the cube.
+Only the liquid moves internally. Keep the cube, shells and curved amber
+evidence path geometrically fixed. Use the lowest camera energy in the sequence
+and preserve calm upper and lower negative space. Ambient audio only.
 
 No text, letters, numbers, equations, subtitles, logos, watermark, UI, people,
 ocean, smoke-only fluid, fire, lightning, tentacles, extra coral filaments,
 duplicated or deforming cube, broken glass, explosion, trophy, checkmark,
-triumphant flare, victory symbolism, fantasy, random cuts, camera shake,
-flicker, material morphing, color drift, dialogue or singing.
+triumphant flare, victory symbolism, extra or missing checkpoint crystals,
+free-floating amber dots, sparks, bokeh particles, fantasy, random cuts, camera
+shake, flicker, material morphing, color drift, dialogue or singing.
 ```
 
 ## S07

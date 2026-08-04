@@ -70,25 +70,40 @@ slow move with a long terminal hold.
   process rail and `CHEAP GATES FIRST` as its readable headline.
 - Land chips at 12.63, 14.89, 15.91 and 17.21.
 - The F002 mark may be almost subliminal; F012 gets the longest hold.
+- Give each chip its recorded reason: concentration breaks the bound;
+  cancellation is not zero; both factors grew; a positive counterexample was
+  found. Do not imply a common tail failure.
 
 ### S05 — 00:17.21–00:21.04: deeper optimization
 
 - Keep the base plate between 55% and 80% speed.
 - Change the stage headline to `SURVIVED → DEEPER SEARCH`.
+- Use small measurement pulses on the filament. Do not add a vertical scan
+  line, laser beam or full-frame scan plane.
 - F013: 14-frame hold at 19.89; F014: 16-frame hold at 20.34.
 - At 21.04, make a one-frame black dip plus dry click for the memory failure.
 - Resume on the identical composition with `CHECKPOINT → RESUME`; no
   glitch montage or fake terminal output.
 - Use one thin pointer from the active card to the scan/filament intersection.
 
-### S06 — 00:21.04–00:25.20: hardest phase
+### S06 — 00:21.04–00:25.20: hero falsification
 
-- Slow the generated pullback to 40–55%.
-- Introduce `AI-REFINED FRONTIER` before the K12 context line.
-- Introduce `K12 • 4.88 GiB` quietly; it is context, not the headline.
-- Hold PNT-13 rejection for 18 frames at 24.86.
-- At 25.03, arrest almost completely on `PNT-12 • SURVIVED THE TEST`.
-- Add `THIS IS NOT A PROOF` immediately; no glow, checkmark or resolved chord.
+- 21.04–22.10: slow inspection of the same continuous fluid state. Composite
+  a faint dashed decay envelope toward a separated far-shell band and show
+  `EXPECTED • DISTANT SCALES DECOUPLE`.
+- 22.10–23.20: keep the measured coral response bright beyond the fading
+  envelope. Show `FOUND • CORRELATION ≈ 1`.
+- 23.20–24.15: decelerate to a short freeze, then use one fast controlled push
+  onto that surviving response. Draw one thin pointer and show
+  `FREQUENCY-SHELL TAIL STAYED COHERENT`.
+- 24.15–24.86: turn the route coral, show
+  `F015 / PNT-13 • REJECTED`, then `COUNTEREXAMPLE SAVED`.
+- 24.86–25.20: dim PNT-13, activate one orange marker and show
+  `AI REFINED → PNT-12 OPEN` while the camera begins a restrained pullback.
+- Add `CONCEPT VISUALIZATION • THIS IS NOT A PROOF`; no glow, checkmark,
+  generated diagram, scan beam or resolved chord.
+- The “tail” is a frequency-shell response. It is not a physical tail in the
+  water, a singularity, or a shared explanation for F000–F014.
 
 ### S07 — 00:25.20–00:29.70
 
@@ -108,9 +123,10 @@ slow move with a long terminal hold.
 ## Pointer line
 
 - Card anchor: approximately `(x=180, y=420)`.
-- Target: the amber scan / coral filament intersection in the chosen crop.
+- Target: the measured coral response in the separated far-shell band.
 - Draw a 2 px off-white Bezier line; animate it over 6 frames.
-- Finish with an 8 px hollow coral circle. It must point to the visible bend.
+- Finish with an 8 px hollow coral circle. It must point to the visible
+  far-shell response.
 
 ## Status overlays
 
@@ -122,7 +138,7 @@ slow move with a long terminal hold.
 | Evidence saved / AI refines | Teal | Ledger mark + short forward pulse |
 | Proved partial estimate | Teal | Stable underline, no glow burst |
 | Survived finite test | White + amber edge | Always paired with `not proof` |
-| Open | White + cyan edge | Open-ended line continuing right |
+| Open current frontier | Orange | One active marker and an open-ended line continuing right |
 
 ## Sound design
 
@@ -131,7 +147,8 @@ slow move with a long terminal hold.
 - S02: one Doppler whoosh, then near-silence at the macro arrest.
 - S04: tight dry ticks; let their frequency imply fast iteration.
 - S05: widen the gaps between ticks; use one dry dropout for the crash/resume.
-- S06: one low scan tone and a long airy tail.
+- S06: one restrained comparison pulse, a near-silent freeze, then a long airy
+  continuation. No synthetic scanner sound.
 - S07: no triumphant cadence; voiceover stays 5–6 dB above the bed.
 
 ## Mix and export
