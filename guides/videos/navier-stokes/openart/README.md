@@ -1,9 +1,10 @@
 # OpenArt workflow
 
 Recommended OpenArt route: use **Kling 3.0** for the recurring cube and camera
-motion. OpenArt currently exposes 9:16, start/end-frame, Smart Shot, text-to-
-video and image-to-video workflows. Use Smart Shot only to explore angles; make
-the final clean plates one shot at a time for tighter continuity.
+motion. Use only the basic 9:16 image-to-video/start-frame workflow. Smart Shot,
+One Click Story, Director and Motion Control are not required.
+
+For literal Hungarian click-by-click instructions, use `RUNBOOK_HU.md`.
 
 ## One-time setup
 
@@ -35,9 +36,9 @@ the final clean plates one shot at a time for tighter continuity.
 | Duration | S01/S03 5 s; S02 6 s; S04–S06 8–10 s |
 | Output count | 4 for drafts, 2 for final |
 
-Do not use One Click Story for the final version: it is useful for a rough
-animatic, but this film depends on editor-accurate freezes, counters and
-Hungarian typography. Do not ask OpenArt to render the captions.
+Do not use One Click Story, Smart Shot or Director. This film depends on
+editor-accurate freezes, counters and Hungarian typography. Do not ask OpenArt
+to render the captions.
 
 ## Selection rule
 

@@ -6,6 +6,10 @@ Use this page when producing; it is the shortest route through the bundle.
 
 Recommended default: **Google Flow**.
 
+For the fewest copy operations, follow `00_KEZDD_ITT_HU.md` and use the complete
+blocks in `flow/READY_TO_PASTE.md`.
+For literal button-by-button instructions, open `flow/RUNBOOK_HU.md`.
+
 - Project/settings fields: copy the values from `flow/README.md` →
   **Where each text goes**.
 - Main prompt field: copy `flow/PROMPTS.md` → **Shared continuity**, then the
@@ -15,11 +19,11 @@ Recommended default: **Google Flow**.
 
 Alternative paths:
 
-- OpenArt: use `openart/README.md` field table and
+- OpenArt: follow `openart/RUNBOOK_HU.md`, then use
   `openart/PROMPTS.md` in the same continuity → shot → negative order.
-- Higgsfield: set lens/move from `higgsfield/README.md` → **Director controls**;
-  put continuity + shot into the scene prompt and the negative block into the
-  negative-prompt field.
+- Higgsfield: follow `higgsfield/RUNBOOK_HU.md`; use its basic Image to Video
+  panel, put continuity + shot into the main prompt and the negative block into
+  the negative-prompt field.
 
 Generate only S01–S06. S07 is a held final S06 frame.
 
@@ -41,9 +45,12 @@ visual plates and add typography in CapCut, DaVinci Resolve or Premiere.
 1. Flow / Veo 3.1 Fast: four draft outputs per shot.
 2. Flow / Veo 3.1 Quality: two final variants of each selected shot.
 3. If S02, S05 or S06 camera control is weak, remake only that shot with
-   Higgsfield Cinema Studio 3.5 + Kling 3.0.
+   Higgsfield basic Image to Video + Kling 3.0.
 4. Use OpenArt / Kling 3.0 for quick alternative compositions or a complete
    single-platform workflow.
+
+This route does not require Agent, Storyboard Studio, Smart Shot, Director,
+Motion Control, Cast, Soul ID or any third-party plugin.
 
 The recommendation is a 2026-08-04 snapshot; if menus change, preserve 9:16,
 the supplied start frame and the continuity block, then select the newest model

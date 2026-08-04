@@ -5,6 +5,10 @@ Quality** for the selected shots. This project has atmosphere, refractive glass
 and non-human motion; it benefits more from visual fidelity than from a
 character-performance model.
 
+For literal Hungarian click-by-click instructions, use `RUNBOOK_HU.md`. This
+route uses only the standard prompt box and Frames; Agent, Storyboard Studio,
+Ingredients and scene automation are not required.
+
 ## One-time setup
 
 1. Create a project named `Navier Stokes — Falsify Loop — 9x16`.
@@ -21,9 +25,8 @@ character-performance model.
 S07 is an editor-held final frame from S06, not a seventh model generation.
 
 Flow feature support changes by model. If the selected Quality model does not
-offer a requested start+end-frame or ingredient option, keep the start frame
-and textual continuity block; do not switch off 9:16. Use Ingredients only when
-the selected duration/model combination supports it.
+offer a requested frame option, keep the start frame and textual continuity
+block; do not switch off 9:16. Ingredients are not used in this workflow.
 
 ## Where each text goes
 

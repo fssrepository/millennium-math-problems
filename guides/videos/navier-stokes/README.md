@@ -11,23 +11,24 @@ For this exact film, the strongest workflow is:
 2. Draft the six clean base clips in **Google Flow / Veo 3.1 Fast**.
 3. Render the chosen takes in **Veo 3.1 Quality**.
 4. If the macro dive or pullback lacks camera precision, remake only that shot in
-   **Higgsfield Cinema Studio 3.5 + Kling 3.0**.
+   **Higgsfield's basic image-to-video surface with Kling 3.0**.
 5. Add every title, caption, arrow, freeze, time-ramp and counter in a normal
    editor such as DaVinci Resolve, Premiere or CapCut. Do not ask a video model
    to draw the Hungarian text.
 
 Why this split: the film has no human character, so Flow/Veo's atmosphere and
 scene fidelity matter more than face performance. Higgsfield/Kling is the
-retake path for the fast macro camera moves. OpenArt is the quickest all-in-one
-way to explore the storyboard and alternate angles.
+retake path for camera moves. OpenArt is an optional basic image-to-video
+alternative. No Agent, Storyboard Studio, Smart Shot, Director, Motion Control,
+character system or third-party plugin is required.
 
 ## Model choice at a glance
 
 | Platform | Draft | Final | Best use here |
 | --- | --- | --- | --- |
 | Google Flow | Veo 3.1 Fast | Veo 3.1 Quality | Main fluid footage and coherent atmosphere |
-| Higgsfield | Kling 3.0 | Kling 3.0 through Cinema Studio 3.5 | Macro orbit, rapid push-in and controlled pullback |
-| OpenArt | Kling 3.0 | Kling 3.0; test Seedance 2.5 only as an alternate | Storyboard, Smart Shot angle exploration, start/end-frame takes |
+| Higgsfield | Kling 3.0 basic image-to-video | Kling 3.0 basic image-to-video | Macro orbit, rapid push-in and controlled pullback |
+| OpenArt | Kling 3.0 basic image-to-video | Kling 3.0 basic image-to-video | Alternate start-frame takes |
 
 The recommendation is dated 2026-08-04. Model menus change, so the platform
 guides include a fallback rule: preserve the supplied reference frames and
@@ -35,6 +36,11 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
 
 ## What is in this bundle
 
+- `00_KEZDD_ITT_HU.md` — the first file to open; a plain-language folder map
+  and seven-line workflow.
+- `PRODUCTION_WORKFLOW_HU.md` — the manual generate → inspect → retry → accept
+  workflow with a quality gate after every shot.
+- `REVIEW_SHEET.csv` — take-by-take acceptance log.
 - `STORYBOARD.md` — the complete 29.7-second shot plan.
 - `TIMELINE_EVIDENCE.md` — audited T+ milestones, exact screen mapping and the
   honest next-step estimate.
@@ -43,6 +49,7 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
 - `EDIT_PLAN.md` — exact time-remaps, freeze beats, overlays, arrows, sound and
   export settings.
 - `COPY_PASTE_MAP.md` — the shortest field-by-field production checklist.
+- `EDITOR_OVERLAYS_HU.md` — all Hungarian screen copy grouped by timecode.
 - `MANUAL_COPY_HU.md` — concise, non-specialist Hungarian guide copy.
 - `SOCIAL_COPY_HU.md` — title, post copy, pinned clarification and tags.
 - `narration/hu.md` — final Hungarian voiceover and delivery prompt.
@@ -50,6 +57,11 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
 - `shot-manifest.csv` — production tracking sheet.
 - `openart/`, `flow/`, `higgsfield/` — exact UI workflow and copy/paste prompts
   for each platform.
+- Each platform contains `RUNBOOK_HU.md` with literal field-by-field steps and
+  an explicit list of optional tools not to use.
+- `flow/READY_TO_PASTE.md` — fully assembled one-block prompts for the default
+  Flow workflow.
+- `renders/` — prepared local drop zones for drafts, finals, audio and edits.
 - `assets/` — three consistent 9:16 keyframes and their provenance.
 - `sources/RESEARCH_NOTES.md` — repository/session evidence and current product
   sources.
@@ -57,9 +69,9 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
 
 ## Fastest way to make it
 
-1. Read `CREATIVE_BIBLE.md` once.
-2. Open one platform directory and follow its `README.md`.
-3. Generate shots S01–S06 with its `PROMPTS.md`.
+1. Open `00_KEZDD_ITT_HU.md`.
+2. Follow `PRODUCTION_WORKFLOW_HU.md` and `flow/RUNBOOK_HU.md`.
+3. Generate and approve S01–S06 one at a time.
 4. Assemble them according to `STORYBOARD.md` and `EDIT_PLAN.md`.
 5. Import the SRT, record or synthesize `narration/hu.md`, then run
    `DELIVERY_QC.md`.

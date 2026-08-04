@@ -1,19 +1,19 @@
 # Higgsfield workflow
 
-Recommended route: **Cinema Studio 3.5 + Kling 3.0**. Kling is the primary
-model because this film needs macro stability and deliberate camera movement,
-not a speaking human. Use Veo 3.1 inside Higgsfield only as a final-fidelity
-alternate for S01 or S06 if the chosen plan exposes it with the same reference
-controls.
+Recommended route: the platform's basic **Image to Video + Kling 3.0** surface.
+The camera and lens instructions are already in the text prompts. AI Director,
+storyboard, Cast, Soul ID and Motion Control are not required. If the normal
+video panel appears inside a page named Cinema Studio, use only that base panel.
+
+For literal Hungarian click-by-click instructions, use `RUNBOOK_HU.md`.
 
 ## One-time setup
 
-1. Open **Cinema Studio** and choose **9:16**.
+1. Open **Video / Image to Video** and choose **9:16**.
 2. Choose **Kling 3.0** as the generation model.
 3. Upload the shot's keyframe as image/start-frame reference.
-4. Set the director controls from the table below. If an exact preset name is
-   unavailable, choose its nearest neutral equivalent and keep the written
-   prompt unchanged.
+4. If the base panel exposes lens/camera controls, use the table below. If not,
+   do nothing: the same information is already in the prompt.
 5. Paste `PROMPTS.md` → shared continuity + one shot prompt into the scene
    prompt. Put the shared negative block in the negative field if present;
    otherwise append it.
