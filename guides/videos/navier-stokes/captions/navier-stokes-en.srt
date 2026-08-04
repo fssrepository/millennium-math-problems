@@ -1,0 +1,48 @@
+1
+00:00:00,200 --> 00:00:03,500
+A bad lemma should fail in minutes,
+not consume weeks.
+
+2
+00:00:03,500 --> 00:00:07,600
+Can a smooth three-dimensional fluid
+become infinitely rough?
+
+3
+00:00:07,600 --> 00:00:09,500
+Vortices stretch.
+Viscosity smooths.
+
+4
+00:00:09,500 --> 00:00:12,400
+Protas: extreme-flow search.
+Tao: quantitative bounds.
+
+5
+00:00:12,400 --> 00:00:14,200
+Here, we attack intermediate lemmas.
+
+6
+00:00:14,200 --> 00:00:17,900
+The tests became deeper—
+and slower.
+
+7
+00:00:17,900 --> 00:00:21,400
+Scaling. Triads.
+Exact gradients. K12.
+
+8
+00:00:21,400 --> 00:00:24,200
+Counterexample? Stop. Save.
+Narrow. Restart.
+
+9
+00:00:24,200 --> 00:00:26,700
+16 paths failed.
+1 partial estimate proved. L4 remains open.
+
+10
+00:00:26,700 --> 00:00:29,700
+Next decision: 1–3 days.
+Full solution: no honest estimate.

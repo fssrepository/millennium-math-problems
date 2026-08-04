@@ -17,15 +17,15 @@ That 12.80-second window is linear: one screen second represents approximately
 | Real timestamp (UTC) | Elapsed | Film time | Evidence / event | Public shorthand |
 | --- | ---: | ---: | --- | --- |
 | 2026-08-01 07:51:01 | T+00:00 | 00:12.40 | Campaign begins | `START` |
-| 2026-08-01 08:26:42 | T+00:35 | 00:12.63 | F002 rejected | `SKÁLÁZÁS • ELVETVE` |
-| 2026-08-01 14:21:15 | T+06:30 | 00:14.89 | F006 homochiral-zero claim rejected | `KIOLTÁS • ELVETVE` |
-| 2026-08-01 17:00:57 | T+09:10 | 00:15.91 | F009 stable simultaneous growth | `NÖVEKEDÉS • ELVETVE` |
-| 2026-08-01 20:25:32 | T+12:34 | 00:17.21 | F012 positive K+G counterexample | `POZITÍV ESET • ELVETVE` |
-| 2026-08-02 03:26:41 | T+19:36 | 00:19.89 | F013 rejected by exact-gradient search | `F013 • ELVETVE` |
-| 2026-08-02 04:37:33 | T+20:46 | 00:20.34 | F014 stronger dense branch | `F014 • ELVETVE` |
-| 2026-08-02 06:26 approx. | T+22:35 | 00:21.04 | Memory failure / saved-state resume | `CHECKPOINT → FOLYTATÁS` |
-| 2026-08-02 16:25:18 | T+32:34 | 00:24.86 | F015 / PNT-13 shell-orthogonality route rejected | `PNT-13 • ELVETVE` |
-| 2026-08-02 17:19:22 | T+33:28 | 00:25.20 | PNT-12 finite stress campaign reported | `A TESZTET TÚLÉLTE` |
+| 2026-08-01 08:26:42 | T+00:35 | 00:12.63 | F002 rejected | `SCALING • REJECTED` |
+| 2026-08-01 14:21:15 | T+06:30 | 00:14.89 | F006 homochiral-zero claim rejected | `CANCELLATION • REJECTED` |
+| 2026-08-01 17:00:57 | T+09:10 | 00:15.91 | F009 stable simultaneous growth | `GROWTH • REJECTED` |
+| 2026-08-01 20:25:32 | T+12:34 | 00:17.21 | F012 positive K+G counterexample | `POSITIVE CASE • REJECTED` |
+| 2026-08-02 03:26:41 | T+19:36 | 00:19.89 | F013 rejected by exact-gradient search | `F013 • REJECTED` |
+| 2026-08-02 04:37:33 | T+20:46 | 00:20.34 | F014 stronger dense branch | `F014 • REJECTED` |
+| 2026-08-02 06:26 approx. | T+22:35 | 00:21.04 | Memory failure / saved-state resume | `CHECKPOINT → RESUME` |
+| 2026-08-02 16:25:18 | T+32:34 | 00:24.86 | F015 / PNT-13 shell-orthogonality route rejected | `PNT-13 • REJECTED` |
+| 2026-08-02 17:19:22 | T+33:28 | 00:25.20 | PNT-12 finite stress campaign reported | `SURVIVED THE TEST` |
 
 ## Final state shown in S07
 
@@ -48,7 +48,7 @@ The later session estimate was:
 - even a PNT-12 proof would leave the other channel, RQ-11 and L4→L5→L6 work;
 - a complete Clay solution cannot be estimated honestly.
 
-The short therefore says `~1–3 nap` only for the **next decision**, not for a
+The short therefore says `~1–3 days` only for the **next decision**, not for a
 proof or the full problem.
 
 ## Provenance

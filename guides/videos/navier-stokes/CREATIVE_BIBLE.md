@@ -73,7 +73,7 @@ imagery.
 - Camera energy decreases across S04 → S05 → S06 to make the increasing search
   depth legible while the T+ research clock remains linear.
 - Generate no text inside the video model. Current image/video systems may
-  misspell Hungarian and drift labels between frames.
+  misspell copy and drift labels between frames.
 
 ## Master visual prompt
 
@@ -104,7 +104,7 @@ flicker, morphing materials, random color changes, extra red filaments.
 
 ## Scientific guardrail
 
-The visuals are explanatory metaphors. Add `KONCEPCIÓVIZUALIZÁCIÓ` as a small
+The visuals are explanatory metaphors. Add `CONCEPT VISUALIZATION` as a small
 editor overlay from S02 onward. Never call the generated fluid plate “the
 simulation result.” The actual run produced code, certificates, failed-lemma
 records and finite Fourier/Galerkin evidence.

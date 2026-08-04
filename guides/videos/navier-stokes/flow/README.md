@@ -5,7 +5,7 @@ Quality** for the selected shots. This project has atmosphere, refractive glass
 and non-human motion; it benefits more from visual fidelity than from a
 character-performance model.
 
-For literal Hungarian click-by-click instructions, use `RUNBOOK_HU.md`. This
+For literal click-by-click instructions, use `RUNBOOK.md`. This
 route uses only the standard prompt box and Frames; Agent, Storyboard Studio,
 Ingredients and scene automation are not required.
 
@@ -45,7 +45,7 @@ block; do not switch off 9:16. Ingredients are not used in this workflow.
 ## Audio
 
 If Flow offers generated audio, request only subtle glassy water ambience and
-no speech. The final Hungarian voiceover, score and rhythmic freezes are added
+no speech. The final English voiceover, score and rhythmic freezes are added
 in post so the six shots share one mix.
 
 ## Selection rule

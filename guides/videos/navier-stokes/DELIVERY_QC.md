@@ -8,8 +8,8 @@
 - [ ] L4 is explicitly still open.
 - [ ] The AI-generated fluid is labeled as a concept visualization.
 - [ ] No finite numerical survivor is presented as a proof.
-- [ ] `~1–3 nap` is labeled as the next decision, not a proof estimate.
-- [ ] Protas/Tao is labeled `MÓDSZERTANI ROKONSÁG`, never a combined proof.
+- [ ] `~1–3 days` is labeled as the next decision, not a proof estimate.
+- [ ] Protas/Tao is labeled `METHODOLOGICAL KINSHIP`, never a combined proof.
 
 ## Visual continuity
 
@@ -30,11 +30,11 @@
 - [ ] Event chips match the film times in `TIMELINE_EVIDENCE.md`.
 - [ ] S04 feels fast, S05 slower, and S06 slowest without altering that clock.
 - [ ] The final estimate card holds for 4.5 seconds.
-- [ ] `Clay-megoldás: nem becsülhető` holds at least 1.8 seconds.
+- [ ] `Clay solution: no honest estimate` holds at least 1.8 seconds.
 
 ## Audio
 
-- [ ] Hungarian pronunciation matches `narration/hu.md`.
+- [ ] English pronunciation matches `narration/en.md`.
 - [ ] Voice remains 5–6 dB above music.
 - [ ] Stops use dry ticks, not explosion impacts.
 - [ ] No generated English speech leaks from any base clip.

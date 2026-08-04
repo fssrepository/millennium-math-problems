@@ -10,13 +10,13 @@ holds and more restrained camera motion—not because the clock is falsified.
 
 | Time | Shot | Picture and camera | Post overlay | Narration / purpose |
 | --- | --- | --- | --- | --- |
-| 00:00–00:03.50 | S01 — Why | Black resolves into `keyframe-01-world.png`; 4% dolly-in, calm teal flow. | Full page: **`ROSSZ LEMMA?`** then **`Bukjon el percek — ne hetek alatt.`** Small footer: `AI-SEGÍTETT STRESSZTESZT`. | Lead with why this work matters: discard bad routes early. |
-| 00:03.50–00:09.50 | S02 — The problem | Fast push through the cube, then an arrest on the coral vortex bend. Fine cyan ripples soften around it. | Full page for 2.2 s: **`Lehet-e egy sima folyadék végtelenül durva?`** Then two compact labels: `ÖRVÉNY: NYÚJT` / `VISZKOZITÁS: SIMÍT`. Thin pointer to the bend. | Explain the unresolved competition without an equation. |
-| 00:09.50–00:12.40 | S03 — Method family | Short macro orbit; the coral filament stays centered. No people or portraits. | Top microtitle: `MÓDSZERTANI ROKONSÁG`. Three cards, one at a time: `PROTAS • szélső áramlások`; `TAO • számszerű korlátok`; `ITT • köztes lemmák támadása`. | Accurate analogy, not a claim that their proofs were combined. |
-| 00:12.40–00:17.21 | S04 — Fast early tests | Rapid flight through transparent spectral shells. Amber pulses land quickly; camera and cuts are fastest here. | Persistent clock: `KUTATÁSI IDŐ  T+00:00 → T+12:34`. Event chips: `T+00:35  F002 • SKÁLÁZÁS`; `T+06:30  F006 • KIOLTÁS`; `T+09:10  F009 • NÖVEKEDÉS`; `T+12:34  F012 • POZITÍV ESET`. Each ends in coral `ELVETVE`. | The simple candidates fall quickly. |
-| 00:17.21–00:21.04 | S05 — Deeper optimization | Macro checkpoint plate. Exact amber scan over the coral bend; movement is slower, holds are longer. At the end, one-frame black dip marks the crash, followed by the identical saved state. | Clock: `T+12:34 → T+22:35`. Cards: `EGZAKT GRADIENS`; `K1 → K8`; `T+19:36  F013 • ELVETVE`; `T+20:46  F014 • ELVETVE`; `T+22:35  CHECKPOINT → FOLYTATÁS`. Pointer line lands on the scan intersection. | Deeper optimization costs more time; checkpointing prevents starting over. |
-| 00:21.04–00:25.20 | S06 — Hardest frontier | Very slow pullback from the macro bend to nested shells and the evidence path. Minimal motion; one long hold before the final state. | Clock: `T+22:35 → T+33:28`. Cards: `K12 • 4,88 GiB`; `T+32:34  F015 / PNT-13 • ELVETVE`; final: `T+33:28  PNT-12 • A TESZTET TÚLÉLTE`. Small qualifier: `EZ MÉG NEM BIZONYÍTÁS`. | The deepest candidate survives only the finite stress test; no victory cue. |
-| 00:25.20–00:29.70 | S07 — Result and estimate | Full-page dark end card over a nearly still wide frame; 2% pullback only. Suppress normal subtitles here. | **`2 NAP UTÁN`**; `16 elvetett jelölt`; `1 részbecslés: bizonyítva`; `L4 / PNT-12: nyitott`; divider; **`Következő döntés: ~1–3 nap`**; `Analitikus lemma: napok–hetek*`; `Clay-megoldás: nem becsülhető`; footnote `*garancia nélkül`. | Honest result, next estimate and open-ended scope. |
+| 00:00–00:03.50 | S01 — Why | Black resolves into `keyframe-01-world.png`; 4% dolly-in, calm teal flow. | Full page: **`BAD LEMMA?`** then **`Make it fail in minutes—not weeks.`** Small footer: `AI-ASSISTED STRESS TEST`. | Lead with why this work matters: discard bad routes early. |
+| 00:03.50–00:09.50 | S02 — The problem | Fast push through the cube, then an arrest on the coral vortex bend. Fine cyan ripples soften around it. | Full page for 2.2 s: **`Can a smooth fluid become infinitely rough?`** Then two compact labels: `VORTEX: STRETCHES` / `VISCOSITY: SMOOTHS`. Thin pointer to the bend. | Explain the unresolved competition without an equation. |
+| 00:09.50–00:12.40 | S03 — Method family | Short macro orbit; the coral filament stays centered. No people or portraits. | Top microtitle: `METHODOLOGICAL KINSHIP`. Three cards, one at a time: `PROTAS • extreme flows`; `TAO • quantitative bounds`; `HERE • attack intermediate lemmas`. | Accurate analogy, not a claim that their proofs were combined. |
+| 00:12.40–00:17.21 | S04 — Fast early tests | Rapid flight through transparent spectral shells. Amber pulses land quickly; camera and cuts are fastest here. | Persistent clock: `RESEARCH TIME  T+00:00 → T+12:34`. Event chips: `T+00:35  F002 • SCALING`; `T+06:30  F006 • CANCELLATION`; `T+09:10  F009 • GROWTH`; `T+12:34  F012 • POSITIVE CASE`. Each ends in coral `REJECTED`. | The simple candidates fall quickly. |
+| 00:17.21–00:21.04 | S05 — Deeper optimization | Macro checkpoint plate. Exact amber scan over the coral bend; movement is slower, holds are longer. At the end, one-frame black dip marks the crash, followed by the identical saved state. | Clock: `T+12:34 → T+22:35`. Cards: `EXACT GRADIENT`; `K1 → K8`; `T+19:36  F013 • REJECTED`; `T+20:46  F014 • REJECTED`; `T+22:35  CHECKPOINT → RESUME`. Pointer line lands on the scan intersection. | Deeper optimization costs more time; checkpointing prevents starting over. |
+| 00:21.04–00:25.20 | S06 — Hardest frontier | Very slow pullback from the macro bend to nested shells and the evidence path. Minimal motion; one long hold before the final state. | Clock: `T+22:35 → T+33:28`. Cards: `K12 • 4.88 GiB`; `T+32:34  F015 / PNT-13 • REJECTED`; final: `T+33:28  PNT-12 • SURVIVED THE TEST`. Small qualifier: `THIS IS NOT A PROOF`. | The deepest candidate survives only the finite stress test; no victory cue. |
+| 00:25.20–00:29.70 | S07 — Result and estimate | Full-page dark end card over a nearly still wide frame; 2% pullback only. Suppress normal subtitles here. | **`AFTER TWO DAYS`**; `16 candidates rejected`; `1 partial estimate: proved`; `L4 / PNT-12: open`; divider; **`Next decision: ~1–3 days`**; `Analytic lemma: days–weeks*`; `Clay solution: no honest estimate`; footnote `*no guarantee`. | Honest result, next estimate and open-ended scope. |
 
 ## The falsification grammar
 
@@ -25,7 +25,7 @@ Use the same visual rule for every rejected candidate:
 1. white candidate card;
 2. amber scan or test pulse;
 3. 10–16 frame hold at the obstruction;
-4. coral `ELVETVE` stamp;
+4. coral `REJECTED` stamp;
 5. small coral mark enters the ledger;
 6. camera continues toward the next, narrower claim.
 
@@ -37,12 +37,12 @@ with the real clock compressed proportionally.
 
 Use this exact sentence in descriptions or longer cuts:
 
-> Módszertani rokonság: Protasék adjunkt-alapú szélsőáramlás-keresése és Tao
-> kvantitatív a priori korlát-szemlélete. Itt az adverszárius keresés a köztes
-> lemmákat stresszteszteli.
+> Methodological kinship: Protas et al.'s adjoint-based search for extreme
+> flows and Tao's quantitative a priori bound viewpoint. Here, adversarial
+> search stress-tests intermediate lemmas.
 
-Do not write “Protas és Tao bizonyításának kombinációja” or “rájuk épülő
-bizonyítás.” The local repository contains no documented derivation from their
+Do not write “a combination of Protas and Tao's proofs” or “a proof built on
+their work.” The local repository contains no documented derivation from their
 work; the comparison is a verified methodological analogy.
 
 ## Composition rules
@@ -55,4 +55,4 @@ work; the comparison is a verified methodological analogy.
 - The coral filament must be visible whenever a pointer targets it.
 - Do not depict an explosion, singularity, solved-proof checkmark or portrait
   of Protas/Tao.
-- From S02 onward, keep a tiny `KONCEPCIÓVIZUALIZÁCIÓ` label.
+- From S02 onward, keep a tiny `CONCEPT VISUALIZATION` label.

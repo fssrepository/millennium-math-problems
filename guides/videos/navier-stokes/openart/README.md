@@ -4,7 +4,7 @@ Recommended OpenArt route: use **Kling 3.0** for the recurring cube and camera
 motion. Use only the basic 9:16 image-to-video/start-frame workflow. Smart Shot,
 One Click Story, Director and Motion Control are not required.
 
-For literal Hungarian click-by-click instructions, use `RUNBOOK_HU.md`.
+For literal click-by-click instructions, use `RUNBOOK.md`.
 
 ## One-time setup
 
@@ -37,7 +37,7 @@ For literal Hungarian click-by-click instructions, use `RUNBOOK_HU.md`.
 | Output count | 4 for drafts, 2 for final |
 
 Do not use One Click Story, Smart Shot or Director. This film depends on
-editor-accurate freezes, counters and Hungarian typography. Do not ask OpenArt
+editor-accurate freezes, counters and English typography. Do not ask OpenArt
 to render the captions.
 
 ## Selection rule

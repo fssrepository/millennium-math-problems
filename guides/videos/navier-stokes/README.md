@@ -1,7 +1,7 @@
 # Navier–Stokes short-video production bundle
 
 Status: production guide for a conceptual 9:16 explainer, not a numerical simulation export  
-Target: 1080 × 1920, 30 fps, 29.7 seconds, Hungarian narration and captions
+Target: 1080 × 1920, 30 fps, 29.7 seconds, English narration and captions
 
 ## Recommended route
 
@@ -14,7 +14,7 @@ For this exact film, the strongest workflow is:
    **Higgsfield's basic image-to-video surface with Kling 3.0**.
 5. Add every title, caption, arrow, freeze, time-ramp and counter in a normal
    editor such as DaVinci Resolve, Premiere or CapCut. Do not ask a video model
-   to draw the Hungarian text.
+   to draw the English text.
 
 Why this split: the film has no human character, so Flow/Veo's atmosphere and
 scene fidelity matter more than face performance. Higgsfield/Kling is the
@@ -36,9 +36,9 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
 
 ## What is in this bundle
 
-- `00_KEZDD_ITT_HU.md` — the first file to open; a plain-language folder map
+- `00_START_HERE.md` — the first file to open; a plain-language folder map
   and seven-line workflow.
-- `PRODUCTION_WORKFLOW_HU.md` — the manual generate → inspect → retry → accept
+- `PRODUCTION_WORKFLOW.md` — the manual generate → inspect → retry → accept
   workflow with a quality gate after every shot.
 - `REVIEW_SHEET.csv` — take-by-take acceptance log.
 - `STORYBOARD.md` — the complete 29.7-second shot plan.
@@ -49,15 +49,15 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
 - `EDIT_PLAN.md` — exact time-remaps, freeze beats, overlays, arrows, sound and
   export settings.
 - `COPY_PASTE_MAP.md` — the shortest field-by-field production checklist.
-- `EDITOR_OVERLAYS_HU.md` — all Hungarian screen copy grouped by timecode.
-- `MANUAL_COPY_HU.md` — concise, non-specialist Hungarian guide copy.
-- `SOCIAL_COPY_HU.md` — title, post copy, pinned clarification and tags.
-- `narration/hu.md` — final Hungarian voiceover and delivery prompt.
-- `captions/navier-stokes-hu.srt` — timed subtitles.
+- `EDITOR_OVERLAYS_EN.md` — all English screen copy grouped by timecode.
+- `MANUAL_COPY_EN.md` — concise, non-specialist English guide copy.
+- `SOCIAL_COPY_EN.md` — title, post copy, pinned clarification and tags.
+- `narration/en.md` — final English voiceover and delivery prompt.
+- `captions/navier-stokes-en.srt` — timed subtitles.
 - `shot-manifest.csv` — production tracking sheet.
 - `openart/`, `flow/`, `higgsfield/` — exact UI workflow and copy/paste prompts
   for each platform.
-- Each platform contains `RUNBOOK_HU.md` with literal field-by-field steps and
+- Each platform contains `RUNBOOK.md` with literal field-by-field steps and
   an explicit list of optional tools not to use.
 - `flow/READY_TO_PASTE.md` — fully assembled one-block prompts for the default
   Flow workflow.
@@ -69,11 +69,11 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
 
 ## Fastest way to make it
 
-1. Open `00_KEZDD_ITT_HU.md`.
-2. Follow `PRODUCTION_WORKFLOW_HU.md` and `flow/RUNBOOK_HU.md`.
+1. Open `00_START_HERE.md`.
+2. Follow `PRODUCTION_WORKFLOW.md` and `flow/RUNBOOK.md`.
 3. Generate and approve S01–S06 one at a time.
 4. Assemble them according to `STORYBOARD.md` and `EDIT_PLAN.md`.
-5. Import the SRT, record or synthesize `narration/hu.md`, then run
+5. Import the SRT, record or synthesize `narration/en.md`, then run
    `DELIVERY_QC.md`.
 
 ## Non-negotiable scientific wording
@@ -85,7 +85,7 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
   cannot prove the cutoff-independent L4 statement.
 - The demonstrated result is a fast, reproducible lemma-falsification loop,
   one proved partial far-tail estimate, and a still-open L4 closure.
-- The `~1–3 nap` estimate applies only to the next PNT-12 decision, not to a
+- The `~1–3 days` estimate applies only to the next PNT-12 decision, not to a
   proof and not to the Clay problem.
 - Protas/Tao is a methodological comparison, not provenance of a combined
   proof; use the exact wording in `STORYBOARD.md`.

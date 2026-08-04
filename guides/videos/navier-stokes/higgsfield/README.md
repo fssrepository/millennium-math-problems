@@ -5,7 +5,7 @@ The camera and lens instructions are already in the text prompts. AI Director,
 storyboard, Cast, Soul ID and Motion Control are not required. If the normal
 video panel appears inside a page named Cinema Studio, use only that base panel.
 
-For literal Hungarian click-by-click instructions, use `RUNBOOK_HU.md`.
+For literal click-by-click instructions, use `RUNBOOK.md`.
 
 ## One-time setup
 

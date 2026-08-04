@@ -1,8 +1,7 @@
 # OpenArt copy/paste prompts
 
 Paste `Shared continuity`, then one `Shot`, then `Shared negative` into the
-prompt field. The prompt language is English for better model adherence; all
-Hungarian text is added later in the editor.
+prompt field. All visible English text is added later in the editor.
 
 ## Shared continuity
 

@@ -91,9 +91,9 @@ Prodi–Serrin-related code and L4 objectives, but no explicit Protas or Tao
 citation and no documented derivation from either body of work. Therefore the
 safe public wording is:
 
-> Módszertani rokonság: Protasék adjunkt-alapú szélsőáramlás-keresése és Tao
-> kvantitatív a priori korlát-szemlélete. Itt az adverszárius keresés a köztes
-> lemmákat stresszteszteli.
+> Methodological kinship: Protas et al.'s adjoint-based search for extreme
+> flows and Tao's quantitative a priori bound viewpoint. Here, adversarial
+> search stress-tests intermediate lemmas.
 
 Avoid `Protas + Tao proof`, `built on their proof`, or any wording that implies
 formal mathematical dependence not present in the repository.

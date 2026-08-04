@@ -1,7 +1,7 @@
 # Render drop zones
 
 Download generated files into these folders using the naming convention in
-`../PRODUCTION_WORKFLOW_HU.md`.
+`../PRODUCTION_WORKFLOW.md`.
 
 - `flow/drafts/` — Veo Fast trials;
 - `flow/finals/` — selected Veo Quality renders;

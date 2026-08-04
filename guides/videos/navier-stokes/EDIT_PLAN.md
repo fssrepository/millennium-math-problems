@@ -14,7 +14,7 @@
 - Research window: `00:12.40–00:25.20` = 12.80 s.
 - Real interval: `T+00:00:00–T+33:28:21`.
 - Scale: about 0.382 seconds of film per research hour.
-- Put the persistent `KUTATÁSI IDŐ T+hh:mm` clock near the upper safe edge.
+- Put the persistent `RESEARCH TIME T+hh:mm` clock near the upper safe edge.
 - Animate the clock linearly. Snap event chips only at the film times in
   `TIMELINE_EVIDENCE.md`.
 
@@ -28,7 +28,7 @@ slow move with a long terminal hold.
 
 - 12-frame fade from black.
 - 100% stable plate, 4% total dolly.
-- `ROSSZ LEMMA?` appears at 00:00.30; second line at 00:01.00.
+- `BAD LEMMA?` appears at 00:00.30; second line at 00:01.00.
 - Keep the value proposition readable through 00:03.30.
 
 ### S02 — 00:03.50–00:09.50
@@ -42,7 +42,7 @@ slow move with a long terminal hold.
 
 - Use a restrained macro orbit, no speed ramp.
 - Show the three lineage cards sequentially for about 0.90 s each.
-- `MÓDSZERTANI ROKONSÁG` remains as a small qualifier throughout.
+- `METHODOLOGICAL KINSHIP` remains as a small qualifier throughout.
 - Do not show portraits; the visual subject stays the fluid and the method.
 
 ### S04 — 00:12.40–00:17.21: fast early phase
@@ -59,17 +59,17 @@ slow move with a long terminal hold.
 - Keep the base plate between 55% and 80% speed.
 - F013: 14-frame hold at 19.89; F014: 16-frame hold at 20.34.
 - At 21.04, make a one-frame black dip plus dry click for the memory failure.
-- Resume on the identical composition with `CHECKPOINT → FOLYTATÁS`; no
+- Resume on the identical composition with `CHECKPOINT → RESUME`; no
   glitch montage or fake terminal output.
 - Use one thin pointer from the active card to the scan/filament intersection.
 
 ### S06 — 00:21.04–00:25.20: hardest phase
 
 - Slow the generated pullback to 40–55%.
-- Introduce `K12 • 4,88 GiB` quietly; it is context, not the headline.
+- Introduce `K12 • 4.88 GiB` quietly; it is context, not the headline.
 - Hold PNT-13 rejection for 18 frames at 24.86.
-- At 25.03, arrest almost completely on `PNT-12 • A TESZTET TÚLÉLTE`.
-- Add `EZ MÉG NEM BIZONYÍTÁS` immediately; no glow, checkmark or resolved chord.
+- At 25.03, arrest almost completely on `PNT-12 • SURVIVED THE TEST`.
+- Add `THIS IS NOT A PROOF` immediately; no glow, checkmark or resolved chord.
 
 ### S07 — 00:25.20–00:29.70
 
@@ -78,7 +78,7 @@ slow move with a long terminal hold.
 - Reveal the results as one group at 25.35 and the estimate group at 27.10.
 - Hide regular SRT subtitles in this shot because the card itself carries the
   final words.
-- Keep `Clay-megoldás: nem becsülhető` visible for at least 1.8 seconds.
+- Keep `Clay solution: no honest estimate` visible for at least 1.8 seconds.
 
 ## Pointer line
 

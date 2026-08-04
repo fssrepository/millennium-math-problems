@@ -1,7 +1,7 @@
-# Flow — teljes, egyben másolható promptok
+# Flow — complete prompts ready to paste
 
-Minden snittnél a teljes fenced blokkot másold a Flow fő promptmezőjébe. A
-magyar feliratokat ne add a generátornak.
+For each shot, paste the entire fenced block into Flow's main prompt field. Do
+not ask the generator to render English captions or interface text.
 
 ## S01 — 5 s — start frame: `../assets/keyframe-01-world.png`
 
@@ -139,5 +139,5 @@ flicker, material morphing, color drift, dialogue or singing.
 
 ## S07
 
-Ne generáld. Az S06 utolsó, stabil képkockáját tartsd ki 4,5 másodpercig, és
-add rá az `../EDITOR_OVERLAYS_HU.md` S07 szövegét.
+Do not generate S07. Hold the final stable frame of S06 for 4.5 seconds and add
+the S07 copy from `../EDITOR_OVERLAYS_EN.md`.

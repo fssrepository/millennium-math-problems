@@ -6,9 +6,9 @@ Use this page when producing; it is the shortest route through the bundle.
 
 Recommended default: **Google Flow**.
 
-For the fewest copy operations, follow `00_KEZDD_ITT_HU.md` and use the complete
+For the fewest copy operations, follow `00_START_HERE.md` and use the complete
 blocks in `flow/READY_TO_PASTE.md`.
-For literal button-by-button instructions, open `flow/RUNBOOK_HU.md`.
+For literal button-by-button instructions, open `flow/RUNBOOK.md`.
 
 - Project/settings fields: copy the values from `flow/README.md` →
   **Where each text goes**.
@@ -19,9 +19,9 @@ For literal button-by-button instructions, open `flow/RUNBOOK_HU.md`.
 
 Alternative paths:
 
-- OpenArt: follow `openart/RUNBOOK_HU.md`, then use
+- OpenArt: follow `openart/RUNBOOK.md`, then use
   `openart/PROMPTS.md` in the same continuity → shot → negative order.
-- Higgsfield: follow `higgsfield/RUNBOOK_HU.md`; use its basic Image to Video
+- Higgsfield: follow `higgsfield/RUNBOOK.md`; use its basic Image to Video
   panel, put continuity + shot into the main prompt and the negative block into
   the negative-prompt field.
 
@@ -32,12 +32,12 @@ Generate only S01–S06. S07 is a held final S06 frame.
 - Shot titles, event chips and final card: `STORYBOARD.md` → **Post overlay**.
 - Exact T+ placement: `TIMELINE_EVIDENCE.md` → **Audited milestones**.
 - Speed ramps, freezes, pointer and crash/resume dip: `EDIT_PLAN.md`.
-- Subtitles: import `captions/navier-stokes-hu.srt`.
-- Voice recording/TTS script: `narration/hu.md` → **Final script**.
-- TTS voice-style field: `narration/hu.md` → fenced text under
+- Subtitles: import `captions/navier-stokes-en.srt`.
+- Voice recording/TTS script: `narration/en.md` → **Final script**.
+- TTS voice-style field: `narration/en.md` → fenced text under
   **Voice / TTS direction**.
 
-Never paste Hungarian captions into Flow, OpenArt or Higgsfield. Generate clean
+Never paste English captions into Flow, OpenArt or Higgsfield. Generate clean
 visual plates and add typography in CapCut, DaVinci Resolve or Premiere.
 
 ## 3. Model order
