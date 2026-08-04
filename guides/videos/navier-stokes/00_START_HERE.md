@@ -16,6 +16,7 @@ Open: https://flow.google
 | Platform, model and spending decision | `PLATFORM_COST_GUIDE.md` |
 | Exact Flow button sequence | `flow/RUNBOOK.md` |
 | Complete Flow prompts ready to paste | `flow/READY_TO_PASTE.md` |
+| Exact S02 prompt for the expanded Agent UI | `flow/AGENT_READY_TO_PASTE.md` |
 | Checks to run after every generation | `PRODUCTION_WORKFLOW.md` |
 | Take-selection log | `REVIEW_SHEET.csv` |
 | Exact clip order and duration | `shot-manifest.csv` |

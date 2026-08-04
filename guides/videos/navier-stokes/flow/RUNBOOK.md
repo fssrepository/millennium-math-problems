@@ -4,6 +4,14 @@ This is the primary route. It uses only Flow's standard prompt box and built-in
 **Frames** image-to-video mode. Generate one 720p result, inspect it, and spend
 again only when the result identifies a concrete next action.
 
+If Flow opens an expanded Agent session and the standard prompt box is not
+available, use `AGENT_READY_TO_PASTE.md` for the S02 calibration scout. Its
+exact combined prompt explicitly requests one first-frame video and preserves
+the `Always confirm` credit gate. Do not place the image in `Scenes`: that area
+is for assembling generated clips. Dropping a file onto the project canvas may
+only import it into `All Media`; attach it to the Agent with
+`+ → select asset → Add to Prompt`.
+
 ## Do not open
 
 - Agent;
