@@ -10,6 +10,7 @@ Open: https://flow.google
 | What you need | File or directory |
 | --- | --- |
 | Start-frame images to upload | `assets/` |
+| Platform, model and spending decision | `PLATFORM_COST_GUIDE.md` |
 | Exact Flow button sequence | `flow/RUNBOOK.md` |
 | Complete Flow prompts ready to paste | `flow/READY_TO_PASTE.md` |
 | Checks to run after every generation | `PRODUCTION_WORKFLOW.md` |
@@ -23,7 +24,8 @@ Open: https://flow.google
 
 ## The whole workflow in seven sentences
 
-1. Open `flow/RUNBOOK.md` and the Google Flow website.
+1. Read `PLATFORM_COST_GUIDE.md`, then open `flow/RUNBOOK.md` and the Google
+   Flow website.
 2. In Flow select: standard prompt box → Video → Frames → 9:16.
 3. Upload the image named for that shot from `assets/`.
 4. Paste the complete matching block from `flow/READY_TO_PASTE.md`.

@@ -44,6 +44,8 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
   and seven-line workflow.
 - `PRODUCTION_WORKFLOW.md` — the manual generate → inspect → retry → accept
   workflow with a quality gate after every shot.
+- `PLATFORM_COST_GUIDE.md` — current Flow, Higgsfield and OpenArt model choice,
+  free-route limits, watermark warning and project cost estimates.
 - `REVIEW_SHEET.csv` — take-by-take acceptance log.
 - `STORYBOARD.md` — the complete 29.7-second shot plan.
 - `TIMELINE_EVIDENCE.md` — audited T+ milestones, exact screen mapping and the
@@ -74,7 +76,8 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
 ## Fastest way to make it
 
 1. Open `00_START_HERE.md`.
-2. Follow `PRODUCTION_WORKFLOW.md` and `flow/RUNBOOK.md`.
+2. Read `PLATFORM_COST_GUIDE.md`, then follow `PRODUCTION_WORKFLOW.md` and
+   `flow/RUNBOOK.md`.
 3. Generate and approve shots in scout order S02 → S05 → S06 → S01 → S03 →
    S04, one output at a time.
 4. Assemble them according to `STORYBOARD.md` and `EDIT_PLAN.md`.
