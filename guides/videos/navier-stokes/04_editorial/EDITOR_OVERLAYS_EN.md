@@ -9,6 +9,17 @@ editor-owned and must not be generated as text by Flow.
 
 ## S01 — 00:00.00–00:03.50
 
+Immediate topic identifier, visible during the calm opening move:
+
+```text
+NAVIER–STOKES REGULARITY
+CAN A SMOOTH FLUID BECOME INFINITELY ROUGH?
+```
+
+Keep `NAVIER–STOKES REGULARITY` as the small identifier. Let the question be
+the first clearly readable idea before the hook takes over; do not wait until
+S02 to identify the subject.
+
 ```text
 I ASKED AI TO ATTACK MATH
 I BARELY UNDERSTAND.

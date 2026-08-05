@@ -46,6 +46,11 @@ weather vortex, wing airflow, vessel flow and turbine. This is deterministic
 editor animation in `../04_editorial/OVERLAY_MOTION_PROMPT.md`, not part of the
 Flow prompt, because Veo must not render the exact text or UI.
 
+Opening-title decision, 2026-08-05: the finished edit must identify the topic
+immediately over the calm V01 opening with `NAVIER–STOKES REGULARITY` and the
+question `CAN A SMOOTH FLUID BECOME INFINITELY ROUGH?`. This is deterministic
+post typography and does not justify regenerating an otherwise accepted V01.
+
 Media cleanup on 2026-08-05 removed rejected, failed-repair, review-only and
 superseded MP4 binaries from the working tree. The historical filenames below
 remain as an audit trail only; `REVIEW_SHEET.csv` carries the decisions. Git now

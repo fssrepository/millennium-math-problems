@@ -93,6 +93,10 @@ checkpoint is:
   The exact paste-ready direction is `04_editorial/OVERLAY_MOTION_PROMPT.md` and
   must never be pasted into Flow/Veo.
 
+- The final post pass identifies the subject immediately at the beginning with
+  `NAVIER–STOKES REGULARITY` and `CAN A SMOOTH FLUID BECOME INFINITELY ROUGH?`.
+  This is added over the clean V01 opening and does not require regeneration.
+
 - The user reported refreshed credits. Create a new Flow project named
   `Navier–Stokes — Continuous Morph V01–V04 — 9x16`. Do not use the old
   `Lemma Stress Test` project's visible pending approval card.

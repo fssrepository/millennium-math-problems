@@ -30,10 +30,14 @@ slow move with a long terminal hold.
 
 - 12-frame fade from black.
 - 100% stable plate, 4% total dolly.
-- `I ASKED AI TO ATTACK MATH` appears at 00:00.30; reveal `I BARELY
-  UNDERSTAND` at 00:01.00.
+- Establish the subject immediately in post: small identifier
+  `NAVIER–STOKES REGULARITY`, followed by the readable question
+  `CAN A SMOOTH FLUID BECOME INFINITELY ROUGH?` during the calm opening move.
+- Bring in the identifier at 00:00.20 and the question at 00:00.45. Begin the
+  hook at 00:01.35 with `I ASKED AI TO ATTACK MATH`; reveal `I BARELY
+  UNDERSTAND` at 00:01.80.
 - Add `HUMAN-DIRECTED • AI-EXECUTED` and `EVIDENCE, NOT TRUST` as quiet footer
-  lines at 00:01.65.
+  lines at 00:02.25.
 - Keep the value proposition readable through 00:03.30.
 
 ### S02 — 00:03.50–00:09.50
