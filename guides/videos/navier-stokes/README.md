@@ -29,7 +29,7 @@ For this exact film, the strongest workflow is:
 1. Build the complete 29.7-second still-image animatic before spending credits.
 2. If the account exposes free Flow generation, test only S02, S05, and S06 at
    720p with one **Veo 3.1 Lite** output each. Otherwise choose one paid Kling
-   fallback from `PLATFORM_COST_GUIDE.md`.
+   fallback from `02_production/PLATFORM_COST_GUIDE.md`.
 3. If those pass, generate S01, S03, and S04 one at a time with Lite.
 4. Use **Veo 3.1 Fast** only for a shot that fails visually at Lite quality.
 5. Use **Veo 3.1 Quality** only for one or two hero shots if a phone review
@@ -58,47 +58,25 @@ The recommendation is dated 2026-08-04. Model menus change, so the platform
 guides include a fallback rule: preserve the supplied reference frames and
 choose the newest model that supports 9:16 plus image/start-frame guidance.
 
-## What is in this bundle
+## Folder map
 
 - `00_START_HERE.md` — the first file to open; a plain-language folder map
   and seven-line workflow.
-- `PRODUCTION_WORKFLOW.md` — the manual generate → inspect → retry → accept
-  workflow with a quality gate after every shot.
-- `PLATFORM_COST_GUIDE.md` — current Flow, Higgsfield and OpenArt model choice,
-  free-route limits, watermark warning and project cost estimates.
-- `REVIEW_SHEET.csv` — take-by-take acceptance log.
-- `PRODUCTION_LOG.md` — current accepted sources, local repairs, credit ledger
-  and the exact next supervised action.
-- `STORYBOARD.md` — the complete 29.7-second shot plan.
-- `FALSIFICATION_VISUAL.md` — the exact expected-versus-measured PNT-13 visual,
-  state transition into PNT-12, and acceptance test.
-- `TIMELINE_EVIDENCE.md` — audited T+ milestones, exact screen mapping and the
-  honest next-step estimate.
-- `CREATIVE_BIBLE.md` — world, recurring visual “characters,” palette,
-  continuity and master prompts.
-- `EDIT_PLAN.md` — exact time-remaps, freeze beats, overlays, arrows, sound and
-  export settings.
-- `COPY_PASTE_MAP.md` — the shortest field-by-field production checklist.
-- `EDITOR_OVERLAYS_EN.md` — all English screen copy grouped by timecode.
-- `MANUAL_COPY_EN.md` — concise, non-specialist English guide copy.
-- `SOCIAL_COPY_EN.md` — title, post copy, pinned clarification and tags.
-- `narration/en.md` — final English voiceover and delivery prompt.
-- `captions/navier-stokes-en.srt` — timed subtitles.
-- `shot-manifest.csv` — production tracking sheet.
-- `openart/`, `flow/`, `higgsfield/` — exact UI workflow and copy/paste prompts
-  for each platform.
-- Each platform contains `RUNBOOK.md` with literal field-by-field steps and
-  an explicit list of optional tools not to use.
-- `flow/READY_TO_PASTE.md` — fully assembled one-block prompts for the default
-  Flow workflow.
+- `01_story/` — creative bible, storyboard, scientific evidence and narration.
+- `02_production/` — workflow, edit plan, cost guide, manifests, review sheet
+  and production log.
+- `03_platforms/` — Flow, Higgsfield and OpenArt runbooks and prompts. Each
+  platform has literal field-by-field instructions.
+- `04_editorial/` — English overlays, captions, manual/social copy and timed
+  ASS overlay files.
+- `assets/` — stable reference frames, overlays and previs planning images.
 - `renders/` — prepared local drop zones for drafts, finals, audio and edits.
 - `scripts/` — deterministic FFmpeg repairs and the complete animatic build.
-- `animatic-overlays.ass` — timed rough-cut typography used by the reproducible
-  animatic render.
-- `assets/` — three consistent 9:16 keyframes and their provenance.
 - `sources/RESEARCH_NOTES.md` — repository/session evidence and current product
   sources.
-- `DELIVERY_QC.md` — final fact, visual, audio and platform checks.
+
+Each numbered directory contains its own short `README.md` index. Start with
+`00_START_HERE.md`; use this README for the scientific and creative context.
 
 ## Fastest way to make it
 
@@ -107,10 +85,10 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
    `renders/edit/navier-stokes-animatic-v02-raw-plates-720x1280.mp4` on a phone.
 3. Mark each provisional plate or still placeholder `keep`, `repair` or
    `regenerate` before spending another credit.
-4. Replace only the selected placeholders according to `STORYBOARD.md` and
-   `EDIT_PLAN.md`.
-5. Import the SRT, record or synthesize `narration/en.md`, then run
-   `DELIVERY_QC.md`.
+4. Replace only the selected placeholders according to
+   `01_story/STORYBOARD.md` and `02_production/EDIT_PLAN.md`.
+5. Import the SRT, record or synthesize `01_story/narration/en.md`, then run
+   `02_production/DELIVERY_QC.md`.
 
 ## Non-negotiable scientific wording
 
@@ -144,7 +122,7 @@ choose the newest model that supports 9:16 plus image/start-frame guidance.
   at least two years, general mathematical acceptance and then CMI review; an
   unrefuted forum post is insufficient.
 - Protas/Tao is a methodological comparison, not provenance of a combined
-  proof; use the exact wording in `STORYBOARD.md`.
+  proof; use the exact wording in `01_story/STORYBOARD.md`.
 
 ## The short version of the story
 

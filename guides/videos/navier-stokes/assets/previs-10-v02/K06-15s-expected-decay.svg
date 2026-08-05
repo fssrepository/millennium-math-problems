@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="720" height="1280" viewBox="0 0 720 1280">
+  <defs>
+    <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#02070d" stop-opacity="0"/>
+      <stop offset="0.55" stop-color="#02070d" stop-opacity="0.15"/>
+      <stop offset="1" stop-color="#02070d" stop-opacity="0.94"/>
+    </linearGradient>
+    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="720" height="1280" fill="url(#shade)"/>
+  <rect x="34" y="40" width="282" height="38" rx="19" fill="#03131b" fill-opacity="0.92" stroke="#32d7ff" stroke-opacity="0.7"/>
+  <text x="175" y="66" text-anchor="middle" fill="#c9f7ff" font-family="DejaVu Sans, sans-serif" font-size="17" font-weight="700" letter-spacing="1.2">CONCEPT VISUALIZATION</text>
+  <text x="54" y="815" fill="#91eaff" font-family="DejaVu Sans, sans-serif" font-size="17" font-weight="700" letter-spacing="2">PNT-13 TEST</text>
+  <text x="54" y="860" fill="#ffffff" font-family="DejaVu Sans, sans-serif" font-size="32" font-weight="700">EXPECTED</text>
+  <text x="54" y="894" fill="#d6f8ff" font-family="DejaVu Sans, sans-serif" font-size="23">DISTANT SCALES DECOUPLE</text>
+  <rect x="48" y="930" width="624" height="260" rx="22" fill="#020a10" fill-opacity="0.84" stroke="#207e99" stroke-opacity="0.65"/>
+  <line x1="110" y1="1130" x2="620" y2="1130" stroke="#5ddcf6" stroke-opacity="0.5" stroke-width="2"/>
+  <rect x="118" y="991" width="42" height="139" rx="8" fill="#ff7e66" opacity="0.9" filter="url(#glow)"/>
+  <rect x="325" y="1060" width="42" height="70" rx="8" fill="#56d7e8" opacity="0.72"/>
+  <rect x="555" y="1105" width="42" height="25" rx="8" fill="#56d7e8" opacity="0.46"/>
+  <path d="M139 986 C255 1010 408 1085 576 1102" fill="none" stroke="#79f1c9" stroke-width="5" stroke-dasharray="13 12"/>
+  <text x="139" y="1167" text-anchor="middle" fill="#bdeefa" font-family="DejaVu Sans, sans-serif" font-size="16">NEAR SHELL</text>
+  <text x="576" y="1167" text-anchor="middle" fill="#bdeefa" font-family="DejaVu Sans, sans-serif" font-size="16">FAR SHELL</text>
+  <text x="360" y="1228" text-anchor="middle" fill="#79f1c9" font-family="DejaVu Sans, sans-serif" font-size="18" font-weight="700">EXPECTED DECAY WITH SEPARATION</text>
+</svg>
