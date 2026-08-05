@@ -30,12 +30,12 @@ Dialogue: 5,0:00:00.20,0:00:07.40,TLStatus,,0,0,0,,{\pos(360,207)\fs20\fad(120,1
 Dialogue: 5,0:00:00.20,0:00:07.40,TLStatus,,0,0,0,,{\pos(360,244)\fs20\fad(120,120)}EQUATIONS FORMULATED ~200 YEARS AGO
 Dialogue: 3,0:00:00.20,0:00:07.40,Glass,,0,0,0,,{\an7\pos(0,0)\p1\bord0\shad0\1c&H425B66&\1a&H18&\fad(120,120)}m 105 278 l 615 278 l 615 284 l 105 284
 Dialogue: 5,0:00:00.20,0:00:07.40,TLStatus,,0,0,0,,{\pos(360,323)\fs25\fad(120,120)}PROTAS SEARCH + TAO BOUNDS
-Dialogue: 5,0:00:00.20,0:00:07.40,TLStatus,,0,0,0,,{\pos(360,370)\fs19\c&H00FFD653&\fad(120,120)}OUR DIFFERENCE
+Dialogue: 5,0:00:00.20,0:00:07.40,TLStatus,,0,0,0,,{\pos(360,370)\fs24\c&H00FFD653&\fad(120,120)}OUR DIFFERENCE
 Dialogue: 5,0:00:00.20,0:00:07.40,TLStatus,,0,0,0,,{\pos(360,426)\fs27\fad(120,120)}AI REFINES + TESTS NEW LEMMAS
 
 ; One persistent compact timeline panel from context through the final prize.
 Dialogue: 2,0:00:07.40,0:00:29.70,Glass,,0,0,0,,{\an7\pos(0,0)\p1\bord0\shad0\1c&H071117&\1a&H38&\fad(100,120)}m 42 88 l 678 88 l 678 340 l 42 340
-Dialogue: 5,0:00:07.40,0:00:29.70,TLTitle,,0,0,0,,{\pos(360,125)\fs17\fad(100,100)}HUMAN-SET GOAL • AUTONOMOUS AI LOOP
+Dialogue: 5,0:00:07.40,0:00:29.70,TLTitle,,0,0,0,,{\pos(360,125)\fs22\fad(100,100)}HUMAN-SET GOAL • AUTONOMOUS AI LOOP
 Dialogue: 3,0:00:07.40,0:00:29.70,Glass,,0,0,0,,{\an7\pos(0,0)\p1\bord0\shad0\1c&H425B66&\1a&H18&}m 80 174 l 640 174 l 640 182 l 80 182
 Dialogue: 3,0:00:07.40,0:00:29.70,Glass,,0,0,0,,{\an7\pos(0,0)\p1\bord0\shad0\1c&HFFD653&\1a&H00&}m 80 174 l 640 174 l 640 182 l 80 182
 Dialogue: 4,0:00:07.40,0:00:29.70,Glass,,0,0,0,,{\an7\move(0,0,560,0,0,22300)\clip(80,174,640,182)\p1\bord0\shad0\1c&H425B66&\1a&H00&}m 80 174 l 640 174 l 640 182 l 80 182
