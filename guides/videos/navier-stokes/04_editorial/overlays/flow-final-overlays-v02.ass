@@ -35,24 +35,24 @@ Dialogue: 5,0:00:00.20,0:00:07.40,TLStatus,,0,0,0,,{\pos(360,426)\fs27\fad(120,1
 
 ; One persistent compact timeline panel from context through the final prize.
 Dialogue: 2,0:00:07.40,0:00:29.70,Glass,,0,0,0,,{\an7\pos(0,0)\p1\bord0\shad0\1c&H071117&\1a&H38&\fad(100,120)}m 42 88 l 678 88 l 678 340 l 42 340
-Dialogue: 5,0:00:07.40,0:00:29.70,TLTitle,,0,0,0,,{\pos(360,125)\fs22\fad(100,100)}HUMAN-SET GOAL • AUTONOMOUS AI LOOP
+Dialogue: 5,0:00:07.40,0:00:29.70,TLTitle,,0,0,0,,{\pos(360,125)\fs29\fad(100,100)}AUTONOMOUS AI RESEARCH
 Dialogue: 3,0:00:07.40,0:00:29.70,Glass,,0,0,0,,{\an7\pos(0,0)\p1\bord0\shad0\1c&H425B66&\1a&H18&}m 80 174 l 640 174 l 640 182 l 80 182
 Dialogue: 3,0:00:07.40,0:00:29.70,Glass,,0,0,0,,{\an7\pos(0,0)\p1\bord0\shad0\1c&HFFD653&\1a&H00&}m 80 174 l 640 174 l 640 182 l 80 182
 Dialogue: 4,0:00:07.40,0:00:29.70,Glass,,0,0,0,,{\an7\move(0,0,560,0,0,22300)\clip(80,174,640,182)\p1\bord0\shad0\1c&H425B66&\1a&H00&}m 80 174 l 640 174 l 640 182 l 80 182
 
 ; Large status text changes only six times and always stays in the same place.
 Dialogue: 5,0:00:07.50,0:00:11.55,TLStatus,,0,0,0,,{\pos(360,235)\fad(120,120)}WHY IT MATTERS
-Dialogue: 5,0:00:07.50,0:00:11.55,TLMeta,,0,0,0,,{\pos(360,295)\fad(120,120)}WEATHER • FLIGHT • BLOOD FLOW
+Dialogue: 5,0:00:07.50,0:00:11.55,TLMeta,,0,0,0,,{\pos(360,295)\fs25\fad(120,120)}WEATHER • FLIGHT • BLOOD FLOW
 Dialogue: 5,0:00:11.55,0:00:15.65,TLStatus,,0,0,0,,{\pos(360,235)\fs28\fad(120,120)}AI REFINED ITS OWN SEARCH
-Dialogue: 5,0:00:11.55,0:00:15.65,TLMeta,,0,0,0,,{\pos(360,295)\fs20\fad(120,120)}AUTONOMOUS LOOP • 33 H 28 MIN
+Dialogue: 5,0:00:11.55,0:00:15.65,TLMeta,,0,0,0,,{\pos(360,295)\fs25\fad(120,120)}AUTONOMOUS LOOP • 33 H 28 MIN
 Dialogue: 5,0:00:15.65,0:00:19.75,TLStatus,,0,0,0,,{\pos(360,235)\fs28\fad(120,120)}16 LEMMA CANDIDATES REJECTED
-Dialogue: 5,0:00:15.65,0:00:19.75,TLMeta,,0,0,0,,{\pos(360,295)\fad(120,120)}1 PARTIAL LEMMA PROVED
+Dialogue: 5,0:00:15.65,0:00:19.75,TLMeta,,0,0,0,,{\pos(360,295)\fs25\fad(120,120)}1 PARTIAL LEMMA PROVED
 Dialogue: 5,0:00:19.75,0:00:23.85,TLStatus,,0,0,0,,{\pos(360,235)\fad(120,120)}UNEXPECTED LINK FOUND
-Dialogue: 5,0:00:19.75,0:00:23.85,TLMeta,,0,0,0,,{\pos(360,295)\fs20\fad(120,120)}FAR FREQUENCY SHELLS STAYED CORRELATED
+Dialogue: 5,0:00:19.75,0:00:23.85,TLMeta,,0,0,0,,{\pos(360,295)\fs25\fad(120,120)}FAR FREQUENCY SHELLS STAYED CORRELATED
 Dialogue: 5,0:00:23.85,0:00:27.20,TLStatus,,0,0,0,,{\pos(360,235)\fs29\fad(120,120)}LAPTOP, NOT A SUPERCOMPUTER
-Dialogue: 5,0:00:23.85,0:00:27.20,TLMeta,,0,0,0,,{\pos(360,295)\fs20\fad(120,120)}INTEL i5-1335U • 12 LOGICAL CPUs
+Dialogue: 5,0:00:23.85,0:00:27.20,TLMeta,,0,0,0,,{\pos(360,295)\fs25\fad(120,120)}INTEL i5-1335U • 12 LOGICAL CPUs
 Dialogue: 5,0:00:27.20,0:00:29.70,TLStatus,,0,0,0,,{\pos(360,235)\fs33\c&H0063BAFF&\fad(100,100)}$1 MILLION PRIZE
-Dialogue: 5,0:00:27.20,0:00:29.70,TLMeta,,0,0,0,,{\pos(360,295)\fs19\fad(100,100)}CURRENT STATUS • L4 OPEN • FULL PROOF UNKNOWN
+Dialogue: 5,0:00:27.20,0:00:29.70,TLMeta,,0,0,0,,{\pos(360,295)\fs25\fad(100,100)}STATUS • L4 OPEN • FULL PROOF UNKNOWN
 
 ; Four brief object glints remain, separate from the interface.
 Dialogue: 6,0:00:26.42,0:00:26.50,Glass,,0,0,0,,{\an7\pos(360,410)\p1\bord0\shad0\1c&HFFD653&\blur5\fad(20,30)}m 0 -16 l 3 -3 l 16 0 l 3 3 l 0 16 l -3 3 l -16 0 l -3 -3

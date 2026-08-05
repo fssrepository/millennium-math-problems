@@ -1,0 +1,24 @@
+[Script Info]
+Title: Navier-Stokes final mobile header patch
+ScriptType: v4.00+
+PlayResX: 720
+PlayResY: 1280
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+YCbCr Matrix: TV.709
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Glass,DejaVu Sans,10,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,0,0,7,0,0,0,1
+Style: Header,DejaVu Sans,29,&H00FFD653,&H00FFFFFF,&H90000000,&H00000000,-1,0,0,0,100,100,1.0,0,1,2.4,0,5,35,35,20,1
+Style: Subheader,DejaVu Sans,25,&H00E5E9EA,&H00FFFFFF,&H90000000,&H00000000,-1,0,0,0,100,100,0.2,0,1,2.5,0,5,35,35,20,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 2,0:00:07.40,0:00:29.70,Header,,0,0,0,,{\pos(360,125)\fad(100,100)}AUTONOMOUS AI RESEARCH
+Dialogue: 2,0:00:07.50,0:00:11.55,Subheader,,0,0,0,,{\pos(360,295)\fad(120,120)}WEATHER • FLIGHT • BLOOD FLOW
+Dialogue: 2,0:00:11.55,0:00:15.65,Subheader,,0,0,0,,{\pos(360,295)\fad(120,120)}AUTONOMOUS LOOP • 33 H 28 MIN
+Dialogue: 2,0:00:15.65,0:00:19.75,Subheader,,0,0,0,,{\pos(360,295)\fad(120,120)}1 PARTIAL LEMMA PROVED
+Dialogue: 2,0:00:19.75,0:00:23.85,Subheader,,0,0,0,,{\pos(360,295)\fs25\fad(120,120)}FAR FREQUENCY SHELLS STAYED CORRELATED
+Dialogue: 2,0:00:23.85,0:00:27.20,Subheader,,0,0,0,,{\pos(360,295)\fad(120,120)}INTEL i5-1335U • 12 LOGICAL CPUs
+Dialogue: 2,0:00:27.20,0:00:29.70,Subheader,,0,0,0,,{\pos(360,295)\fs25\fad(100,100)}STATUS • L4 OPEN • FULL PROOF UNKNOWN
