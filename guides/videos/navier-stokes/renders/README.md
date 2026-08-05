@@ -10,28 +10,22 @@ Download generated files into these folders using the naming convention in
 - `audio/` — narration, music and sound effects;
 - `edit/` — preview and final exports.
 
-The current reproducible review export is
-`edit/navier-stokes-animatic-v02-raw-plates-720x1280.mp4`. It is intentionally committed
-with this production pass: 891 frames at 30 fps, exactly 29.70 seconds, with a
-silent AAC track and burned-in rough-cut labels. Rebuild it with
-`../scripts/build_animatic.sh`.
+Git stores only active selected source clips, accepted derivatives and deliberate
+final deliverables. Rejected takes, local repair failures, review compilations,
+morph previs, superseded animatics and backup exports are not retained as
+binaries. Their decisions and defects remain auditable in `../REVIEW_SHEET.csv`
+and `../PRODUCTION_LOG.md`.
 
-`edit/navier-stokes-animatic-v01-720x1280.mp4` is a superseded audit comparison
-that used locally repaired S02 and S05 derivatives. V02 is the review source
-because it preserves raw generated motion at normal speed.
+Current retained motion assets:
 
-`edit/navier-stokes-raw-flow-review-v01-44p2s.mp4` is the current untrimmed
-motion review. It contains the complete eight-second S01, S02, S05 and S06
-generations with source audio, plus labelled still placeholders for missing
-shots. S06 has only its generated percentage label removed.
+- `flow/drafts/S01_flow_lite_720p_take01.mp4` — active opening source;
+- `flow/drafts/S02_flow_lite_720p_take02.mp4` — selected provisional source;
+- `flow/edits/S02_flow_lite_take02_6s_gradient_freeze.mp4` — active edit-safe
+  derivative;
+- `flow/drafts/S05_flow_lite_720p_take01.mp4` — provisional motion reference
+  until its no-scan replacement exists.
 
-The newer primary review is `edit/navier-stokes-four-flow-clips-v01-32s.mp4`.
-It contains only the four original eight-second Flow sources in story order,
-with source audio and no added labels, placeholders, trim, retiming or freeze.
-S06 has only its percentage label removed. S05 retains its generated amber
-beam/ring because local removal damaged the fluid; it is queued for a no-scan
-regeneration instead.
-
-The `.gitkeep` files preserve the empty directory structure. Large generated
-MP4/WAV outputs should only be committed if that is an intentional repository
-policy decision.
+Review and animatic scripts may write local outputs into `edit/`; those exports
+must not be committed merely as backups. Commit a video only when it is the
+current intentional review deliverable or final master. The `.gitkeep` files
+preserve the empty directory structure.

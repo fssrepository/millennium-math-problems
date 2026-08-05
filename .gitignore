@@ -3,3 +3,18 @@
 !guides/videos/navier-stokes/REVIEW_SHEET.csv
 !guides/videos/navier-stokes/shot-manifest.csv
 lemma-report.md
+
+# Generated-media retention: keep active selected sources/finals only. Review,
+# rejected, superseded and backup exports stay local and are represented by the
+# review sheet / production log instead of binary Git objects.
+**/renders/**/*rejected*
+**/renders/**/*discarded*
+**/renders/**/*superseded*
+**/renders/**/*review*.mp4
+**/renders/**/*morph-previs*.mp4
+**/renders/**/*animatic-v01*.mp4
+**/renders/**/backups/
+**/renders/**/archive/
+**/renders/**/*.bak
+**/renders/**/*.orig
+**/renders/**/*.tmp

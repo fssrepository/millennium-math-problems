@@ -8,6 +8,12 @@ Current next action: rebuild the ten-frame story as v02 with the explicit
 PNT-13 falsification sequence; spend no additional Flow credits and do not
 finalize prompts before that review
 
+Media cleanup on 2026-08-05 removed rejected, failed-repair, review-only and
+superseded MP4 binaries from the working tree. The historical filenames below
+remain as an audit trail only; `REVIEW_SHEET.csv` carries the decisions. Git now
+retains only active selected sources, accepted derivatives and deliberate final
+deliverables. No repository history was rewritten.
+
 Superseded continuity-only planning review:
 `renders/edit/navier-stokes-10-frame-morph-previs-v01-30s.mp4` — 720 × 1280,
 24 fps, exactly 30.000 seconds. It cross-morphs ten keyframes at three-second
@@ -47,8 +53,8 @@ no synthetic slowdown or freeze is used. S01/S03-tail/S04/S06 remain explicit
 still placeholders and S07 is the end card. All planned English overlays are
 burned in for timing review. The audio track is intentionally silent.
 
-The earlier `navier-stokes-animatic-v01-720x1280.mp4` is superseded because it
-used locally repaired S02/S05 derivatives. Keep it only as an audit comparison.
+The earlier `navier-stokes-animatic-v01-720x1280.mp4` was superseded because it
+used locally repaired S02/S05 derivatives; its binary has been removed.
 
 ## Current shot state
 
@@ -59,9 +65,8 @@ used locally repaired S02/S05 derivatives. Keep it only as an audit comparison.
 | S06 | `renders/flow/drafts/S06_flow_lite_720p_take01_rejected_text_and_markers.mp4` | Flow take 01 rejected because prompt instructions became visible text and markers morphed; deterministic still animation also rejected because the fluid froze and the synthetic zoom read as unstable | Not accepted | Keep take 02 prompt ready but do not generate before animatic review |
 | S01 | `renders/flow/drafts/S01_flow_lite_720p_take01.mp4` | Raw eight-second opening downloaded and preserved without local motion edits | Raw source itself | Inspect the entire take in the raw Flow sequence before deciding |
 
-The rejected S02 take 01 is preserved at
-`renders/flow/drafts/S02_flow_lite_720p_take01_rejected.mp4`. Exact acceptance
-fields and defect notes remain in `REVIEW_SHEET.csv`.
+The rejected S02 take 01 binary has been removed. Exact acceptance fields and
+defect notes remain in `REVIEW_SHEET.csv`.
 
 ## Reproducible local edits
 

@@ -22,11 +22,9 @@ Open: https://flow.google
 | Current production state and credit ledger | `PRODUCTION_LOG.md` |
 | Current ten-frame visual plan | `assets/previs-10/README.md` |
 | Evidence-driven PNT-13 failure shot | `FALSIFICATION_VISUAL.md` |
-| Superseded continuity-only morph previs | `renders/edit/navier-stokes-10-frame-morph-previs-v01-30s.mp4` |
 | Reproducible local video repairs | `scripts/` |
-| Current 29.70-second animatic | `renders/edit/navier-stokes-animatic-v02-raw-plates-720x1280.mp4` |
-| Current untrimmed Flow review | `renders/edit/navier-stokes-raw-flow-review-v01-44p2s.mp4` |
-| Current four-source Flow review | `renders/edit/navier-stokes-four-flow-clips-v01-32s.mp4` |
+| Rejected/superseded media decisions | `REVIEW_SHEET.csv` and `PRODUCTION_LOG.md` |
+| Local animatic build | `scripts/build_animatic.sh` (review export is not a backup to commit) |
 | Exact clip order and duration | `shot-manifest.csv` |
 | Speed ramps and freeze frames | `EDIT_PLAN.md` |
 | English on-screen copy | `EDITOR_OVERLAYS_EN.md` |
@@ -41,20 +39,18 @@ does. Never select `Approve, do not ask again`.
 
 ## Current review route
 
-Read `FALSIFICATION_VISUAL.md`, then use
-`renders/edit/navier-stokes-10-frame-morph-previs-v01-30s.mp4` only to review
-the broad camera continuity. The v01 morph predates the explicit expected
-decay → surviving tail → saved PNT-13 rejection → PNT-12 open sequence and is
-not story-approved. Do not paste or approve C01/C02/C03 until a v02 preview
-contains those four visible state changes. The first Flow video remains;
-regeneration restarts from the second video piece.
+Read `FALSIFICATION_VISUAL.md`, then inspect the ten-frame plan under
+`assets/previs-10/`. The superseded morph-previs binary was removed during media
+cleanup; its decision remains in `PRODUCTION_LOG.md`. Do not paste or approve
+C01/C02/C03 until a locally built v02 preview contains expected decay →
+surviving tail → saved PNT-13 rejection → PNT-12 open. The first Flow video
+remains; regeneration restarts from the second video piece.
 
-Run `scripts/build_animatic.sh`, then watch
-`renders/edit/navier-stokes-animatic-v01-720x1280.mp4`. It is exactly 29.70
-seconds and labels every shot as either a provisional Flow plate or a still
-placeholder. The current build uses raw S02 and S05 motion without synthetic
-zoom, slowdown or freeze. Do not generate another shot until this complete
-timeline has been reviewed at phone size.
+Run `scripts/build_animatic.sh`, then watch its local 29.70-second output at
+phone size. It labels every shot as either a provisional Flow plate or a still
+placeholder and uses raw S02/S05 motion without synthetic zoom, slowdown or
+freeze. Do not keep superseded review exports in Git; the review decision goes
+in `REVIEW_SHEET.csv`.
 
 ## The Flow route after animatic review
 
