@@ -11,12 +11,17 @@ with four explicit states from `../../01_story/FALSIFICATION_VISUAL.md`:
 | K09 | 24 s | PNT-13 is saved as rejected and PNT-12 becomes open |
 | K10 | 27 s | The fluid morphs continuously into its application forms |
 
-K06-K09 use progressively tighter views of the exact same fluid plate so the
-tail inspection reads as one continuous camera move. K10 is a continuous morph
-target: the same streamlines become weather, an aircraft wake, a blood vessel
-and an energy turbine without a cut or a new scene. All guides, labels,
-pointer, ledger state and impact copy are editor overlays, not instructions for
-the video model.
+K06-K09 use progressively tighter crops of the exact same central fluid form
+that remains visible in K10. The final preview transition is a real scale
+pullback on that one source image: the coral response shrinks into the central
+cube while weather, an aircraft wake, a blood vessel and an energy turbine are
+revealed around it. It is not a dissolve between unrelated scenes. All guides,
+labels, pointer, ledger state and impact copy are editor overlays, not
+instructions for the video model.
+
+`final-scale-pullback-strip.png` samples the last three preview seconds. Across
+all four samples, the same coral response stays visible while the camera widens
+from its close inspection to the complete application field.
 
 Run `../../scripts/build_10_frame_previs_v02.sh`. Review the resulting video at
 phone size against every acceptance item in

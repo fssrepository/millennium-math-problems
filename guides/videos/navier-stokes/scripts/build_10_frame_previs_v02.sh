@@ -19,14 +19,14 @@ for source in "$v02_dir"/K{06,07,08,09,10}-*.svg; do
     convert -background none "$(basename -- "$source")" "$overlay"
   )
   case "$(basename -- "$source")" in
-    K06-*) crop='720x1280+0+0' ;;
-    K07-*) crop='680x1209+20+35' ;;
-    K08-*) crop='640x1138+40+70' ;;
-    K09-*) crop='600x1067+60+105' ;;
+    K06-*) crop='336x597+302+650' ;;
+    K07-*) crop='277x492+332+710' ;;
+    K08-*) crop='220x391+360+760' ;;
+    K09-*) crop='170x302+385+805' ;;
     K10-*) crop='' ;;
   esac
   if [[ -n "$crop" ]]; then
-    convert "$frame_dir/K08-21s-deep-test-macro.png" -crop "$crop" +repage \
+    convert "$frame_dir/K10-27s-impact-applications.png" -crop "$crop" +repage \
       -resize '720x1280!' "$prepared_base"
   else
     convert "$frame_dir/K10-27s-impact-applications.png" \
@@ -85,7 +85,9 @@ ffmpeg -hide_banner -y \
    [6:v]scale=720:1280:force_original_aspect_ratio=increase,crop=720:1280,fps=24,format=yuv420p,setpts=PTS-STARTPTS[k6];
    [7:v]scale=720:1280:force_original_aspect_ratio=increase,crop=720:1280,fps=24,format=yuv420p,setpts=PTS-STARTPTS[k7];
    [8:v]scale=720:1280:force_original_aspect_ratio=increase,crop=720:1280,fps=24,format=yuv420p,setpts=PTS-STARTPTS[k8];
-   [9:v]scale=720:1280:force_original_aspect_ratio=increase,crop=720:1280,fps=24,format=yuv420p,setpts=PTS-STARTPTS[k9];
+   [9:v]scale=720:1280:force_original_aspect_ratio=increase,crop=720:1280,fps=24,format=yuv420p,setpts=PTS-STARTPTS,
+        zoompan=z='max(1,5.535-on*0.06387)':x='max(0,min(iw-iw/zoom,360-iw/(2*zoom)))':y='max(0,min(ih-ih/zoom,732-ih/(2*zoom)))':d=1:s=720x1280:fps=24,
+        trim=duration=3,setpts=PTS-STARTPTS[k9zoom];
    [k0][k1]xfade=transition=fade:duration=0.5:offset=3[t01];
    [t01][k2]xfade=transition=fade:duration=0.5:offset=6[t02];
    [t02][k3]xfade=transition=fade:duration=0.5:offset=9[t03];
@@ -94,8 +96,8 @@ ffmpeg -hide_banner -y \
    [t05][k6]xfade=transition=fade:duration=0.5:offset=18[t06];
    [t06][k7]xfade=transition=fade:duration=0.5:offset=21[t07];
    [t07][k8]xfade=transition=fade:duration=0.5:offset=24[t08];
-   [t08]tpad=stop_mode=clone:stop_duration=3[t08pad];
-   [t08pad][k9]xfade=transition=fade:duration=3:offset=27[v]" \
+   [t08]trim=duration=27,setpts=PTS-STARTPTS[main];
+   [main][k9zoom]concat=n=2:v=1:a=0[v]" \
   -map "[v]" -t 30 \
   -c:v libx264 -preset medium -crf 18 -pix_fmt yuv420p \
   -movflags +faststart \

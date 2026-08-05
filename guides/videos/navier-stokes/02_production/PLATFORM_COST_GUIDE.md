@@ -79,7 +79,9 @@ Use:
 - aspect ratio: **9:16**;
 - duration: the listed 4, 6 or 8 second value nearest to the shot requirement;
 - output count: **1**;
-- audio: off or ambient only.
+- audio for the current V01–V04 Extend chain: generate the locked continuous
+  instrumental score specified in `../03_platforms/flow/CHAIN_32S_RUNBOOK.md`;
+- audio for legacy independent-shot scouts only: off or ambient only.
 
 Use Veo 3.1 Fast only for one shot whose Lite composition is correct but whose
 motion remains visibly weak at phone size. Do not use Quality by default.

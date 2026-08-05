@@ -56,9 +56,16 @@ block; do not switch off 9:16. Ingredients are not used in this workflow.
 
 ## Audio
 
-If Flow offers generated audio, request only subtle glassy water ambience and
-no speech. The final English voiceover, score and rhythmic freezes are added
-in post so the six shots share one mix.
+For the current V01–V04 Extend route, generate the musical bed in V01 and carry
+the exact same cue through every Extend. The locked style is restrained premium
+science-documentary electronica with a mid-tempo low pulse, glassy-water
+texture, sparse dry ticks and a soft airy whoosh. No speech, singing or lyrics.
+The full boundary-safe wording and audio rejection checks are in
+`CHAIN_32S_RUNBOOK.md`.
+
+This removes the need to source or add a separate music track. English
+voiceover, captions and factual graphics remain deterministic editorial
+elements; do not ask Veo to generate them.
 
 ## Selection rule
 

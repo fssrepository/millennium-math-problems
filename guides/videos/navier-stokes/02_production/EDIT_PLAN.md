@@ -108,8 +108,9 @@ slow move with a long terminal hold.
 
 ### S07 — 00:25.20–00:29.70
 
-- Continue the same camera path. Accelerate into the connected application
-  morph, then ease near the final frame without a cut or direction reset.
+- Continue the same camera path through near-arrest into one controlled scale
+  pullback. Keep the observed coral response visible as it shrinks into the
+  central cube and the connected application field is revealed around it.
 - Place a 72% near-black veil over footage for contrast.
 - Reveal the result microline at 25.30, the laptop estimate at 25.55 and the
   cluster line at 26.05. Keep `FULL PROOF • UNKNOWN` adjacent to the cluster
@@ -144,15 +145,21 @@ slow move with a long terminal hold.
 
 ## Sound design
 
-- Bed: restrained 90–105 BPM electronic pulse, no heroic trailer rise.
-- Flow: low glassy water movement and soft broadband whoosh.
+- The current Flow V01–V04 route generates one continuous musical bed in the
+  footage; do not add or replace it with a separate stock-music track when the
+  source passes the audio continuity gate.
+- Locked identity: restrained 90–105 BPM premium science-documentary
+  electronic pulse, warm low synth, low glassy-water movement, sparse dry
+  ticks and soft broadband whoosh; no heroic trailer rise, vocals or lyrics.
 - S02: one Doppler whoosh, then near-silence at the macro arrest.
 - S04: tight dry ticks; let their frequency imply fast iteration.
 - S05: widen the gaps between ticks; use one dry dropout for the crash/resume.
 - S06: one restrained comparison pulse, a near-silent camera near-arrest while
   fluid motion continues, then a long airy continuation. No synthetic scanner
   sound.
-- S07: no triumphant cadence; voiceover stays 5–6 dB above the bed.
+- S07: no triumphant cadence; preserve the generated sustained tail so the
+  32-second master can be trimmed cleanly. Voiceover stays 5–6 dB above the
+  generated bed.
 
 ## Mix and export
 

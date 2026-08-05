@@ -53,15 +53,24 @@ checkpoint is:
   `renders/edit/navier-stokes-10-frame-story-previs-v02-30s.mp4`. FFprobe
   verifies 720×1280, 24 fps and exactly 30.000 seconds. K06–K09 move deeper
   into the same fluid while editor overlays show expected decay → persistent
-  far-shell response → saved PNT-13 rejection → PNT-12 open. K10 plans a
-  no-cut morph from the same flow into weather, flight, blood-flow and energy
-  forms. It still requires user approval after the latest camera-path rebuild.
+  far-shell response → saved PNT-13 rejection → PNT-12 open. The final three
+  seconds now use a true scale pullback on the same source image: the observed
+  coral response remains visible in the central cube while weather, flight,
+  blood-flow and energy forms are revealed around it. It still requires user
+  approval after the latest camera-path rebuild.
 
 - The paid route is now one fresh eight-second Veo 3.1 Lite video followed by
   three sequential **Extend** actions on that same video. These are four fixed
   generation slots, not four scenes. Budget: 40 credits, with the fifth
   10-credit slot reserved for one targeted retry. The complete prompts are in
   `03_platforms/flow/CHAIN_32S_RUNBOOK.md`.
+
+- Audio is now part of the same continuity contract. V01 generates one
+  restrained premium science-documentary electronic score; V02–V04 explicitly
+  continue its tempo, tonal center, instrumentation and ambience without a
+  restart at the Extend boundaries. No separate music track is planned. Veo
+  must not generate voice, speech, singing or lyrics; narration and captions
+  remain editor-controlled.
 
 - The user reported refreshed credits. Create a new Flow project named
   `Navier–Stokes — Continuous Morph V01–V04 — 9x16`. Do not use the old

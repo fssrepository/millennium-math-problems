@@ -39,15 +39,25 @@ stale 10-credit card still visible in the legacy `Lemma Stress Test` project.
 The live confirmation card must still show one Lite generation at no more than
 10 credits before each paid action.
 
+Audio decision, 2026-08-05: the earlier independent-shot prompts intentionally
+requested very soft glassy-water ambience or ambient electronic pulses, but
+they did not define a single full-film musical score. For the current Extend
+chain, V01 now generates one restrained premium science-documentary electronic
+cue and V02–V04 must continue that exact cue without a restart, silence gap,
+tempo/key shift or instrument change. No separate music track is planned. The
+generated footage must contain no voice, speech, singing or lyrics. A broken
+audio seam is a rejection condition and can justify the held 10-credit retry.
+
 Current no-credit story preview:
 `../renders/edit/navier-stokes-10-frame-story-previs-v02-30s.mp4` — 720 ×
 1280, 24 fps, 720 frames and exactly 30.000 seconds. K06–K09 move progressively
 deeper into the same fluid while editor-owned overlays distinguish expected
 decay, the persistent far-shell response, the isolated obstruction, the saved
-PNT-13 rejection and the PNT-12 open state. K10 is the planning target for
-morphing the same flow into its weather, flight, blood-flow and energy
-applications; the local transition is not generated footage. User approval is
-still required after this camera-path revision before paid generation.
+PNT-13 rejection and the PNT-12 open state. The final three seconds use a true
+scale pullback on the same planning image: the observed coral response remains
+visible in the central cube while weather, flight, blood-flow and energy forms
+are revealed around it. This is still planning footage, not a generated Flow
+take. User approval is required before paid generation.
 
 Current primary review:
 `../renders/edit/navier-stokes-four-flow-clips-v01-32s.mp4` — 720 × 1280, 24

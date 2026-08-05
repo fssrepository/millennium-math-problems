@@ -66,8 +66,9 @@ AI REFINED → PNT-12 OPEN
 ## Generator versus editor responsibility
 
 The video model generates one continuous fluid simulation, stable geometry and
-one camera path: deceleration, close inspection, resumed acceleration and the
-final application morph. The editor adds the expected-decay guide, exact
+one camera path: deceleration, close inspection and a continuous scale pullback
+that preserves the observed response while revealing the application field.
+The editor adds the expected-decay guide, exact
 status colors, pointer, clock, labels and ledger markers. This prevents the
 model from inventing percentages, equations, scan lines or unreadable text.
 

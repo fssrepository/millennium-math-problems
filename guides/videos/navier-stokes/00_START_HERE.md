@@ -63,7 +63,10 @@ in `02_production/REVIEW_SHEET.csv`.
    V04. Never create a fresh scene at a slot boundary.
 4. Require a cost of no more than 10 credits for each action. Four actions use
    40 credits; keep the last 10 as one targeted retry reserve.
-5. Add all guides, labels, status graphics, captions and narration in post.
+5. Generate the locked instrumental score in V01 and continue the same cue
+   through V02–V04; do not add a separate music track. Reject an audible
+   restart, click or style change at any Extend boundary.
+6. Add all guides, labels, status graphics, captions and narration in post.
 
 If a camera move still fails after one targeted revision, move only that shot
 to `03_platforms/higgsfield/RUNBOOK.md`. The complete OpenArt alternative is documented in

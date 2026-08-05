@@ -21,7 +21,7 @@ three times:
 | V01 | Generate one 8 s clip | 8 s | outside cube → push toward fluid | 10 |
 | V02 | Extend V01 by 8 s | 16 s | accelerate inside the same liquid | 10 |
 | V03 | Extend V02 by 8 s | 24 s | decelerate onto the observed tail proxy | 10 |
-| V04 | Extend V03 by 8 s | 32 s | resume motion → continuous application morph | 10 |
+| V04 | Extend V03 by 8 s | 32 s | near-arrest → smooth scale pullback and application reveal | 10 |
 
 The planned spend is 40 credits. From a 50-credit daily balance, keep the last
 10 credits untouched as one targeted retry. Do not request variants or multiple
@@ -42,16 +42,30 @@ Costs can change; the live confirmation card is authoritative:
 - V02, V03 and V04 must use **Extend** on the current accepted video. Never
   create a fresh clip from a similar still, never use Scene Builder and never
   ask for four separate scenes.
-- One camera has one uninterrupted forward trajectory. It may accelerate,
-  decelerate and zoom, but it never cuts, teleports, resets its optical axis or
-  reverses merely to start a new slot.
+- One camera has one uninterrupted trajectory. It may accelerate, decelerate
+  and zoom. After the tail inspection it may pass smoothly through zero
+  velocity into one deliberate pullback, but it never cuts, teleports or resets
+  its optical axis at a slot boundary.
 - The exact same coral-red liquid dye and teal fluid persist through every
   extension. Their motion never freezes at a slot boundary.
-- The late weather, wing, vessel and turbine forms grow by a continuous fluid
-  morph from the existing streamlines. They do not pop in as montage panels.
+- During the late pullback, the same central coral response remains visible and
+  shrinks into the central cube while weather, wing, vessel and turbine flow
+  forms are revealed in the widening field. They do not replace it or pop in
+  as montage panels.
 - Generate no text, numbers, percentages, equations, labels, pointer, ledger,
   UI, subtitles or narration. Those are deterministic editor overlays.
-- Prefer a silent source. At minimum: no dialogue, no voice and no music.
+- Generate one continuous original instrumental score together with V01 and
+  preserve that exact score through V02–V04. Its identity is restrained
+  premium science-documentary electronica: a steady mid-tempo pulse, warm low
+  synth, delicate glassy-water texture, sparse dry ticks and a soft airy
+  whoosh. It is intelligent and curious, tense but not ominous.
+- At every Extend boundary, keep the same tempo, tonal center, instrument
+  palette, ambience and musical phrase. Never restart the cue, introduce a new
+  downbeat or fade to silence between slots. No dialogue, narration, spoken
+  words, singing, lyrics or choir.
+- No heroic trailer rise, orchestral boom, EDM drop, pop hook or triumphant
+  cadence. The score follows the camera's acceleration, near-arrest and final
+  pullback without becoming a separate musical sequence.
 
 ## Credit gate before every action
 
@@ -71,7 +85,10 @@ credits. Never choose `Approve, do not ask again`.
 After each slot, watch the boundary at normal speed and 0.5× before spending
 the next 10 credits. Reject on a cut, frozen liquid, camera reset, direction
 change, duplicated coral dye, geometry morph before the final application beat,
-visible text or any new interface graphic.
+visible text or any new interface graphic. Listen on headphones as well: reject
+an audio click, silence gap, cue restart, tempo or key jump, changed instrument
+palette, sudden loudness step, voice, singing or lyrics. An otherwise good
+visual with a broken musical seam is the one justified use of the held retry.
 
 ## V01 — initial generation
 
@@ -101,11 +118,22 @@ pause. Carry clear forward velocity through the final frame so an extension
 can continue the same move immediately. The teal and coral liquid remain alive
 throughout. Only the camera and the existing liquid move. No cut.
 
+Create one original continuous instrumental score as part of the generated
+audio. Use restrained premium science-documentary electronica: a steady
+mid-tempo pulse, warm low synth, delicate glassy-water textures, sparse dry
+percussive ticks and a soft airy whoosh. Keep it intelligent and curious,
+slightly tense but not ominous. Begin sparsely and let its energy rise gently
+with the forward camera motion. This is the opening of one score that the next
+three Extends must continue, so carry the musical phrase and ambience through
+the final audio sample without a cadence, fade or hard stop.
+
 No visible text or symbols. No letters, numbers, percentages, equations,
 subtitles, logos, watermark, HUD or UI. No people, extra objects, scan line,
-beam, ring, pulse, pointer, ledger, markers, scene transition, portal, camera
-shake, micro-wobble, flicker, frozen liquid, duplicated dye, deforming cube,
-geometry jump, color drift or voice.
+beam, ring, radiating visual pulse, pointer, ledger, markers, scene transition,
+portal, camera shake, micro-wobble, flicker, frozen liquid, duplicated dye,
+deforming cube, geometry jump or color drift. No dialogue, narration, spoken
+words, singing, lyrics, choir, heroic trailer rise, orchestral boom, EDM drop
+or pop hook.
 ```
 
 Save the accepted result as `V01_flow_lite_continuous_8s_take01.mp4`.
@@ -128,11 +156,18 @@ slightly without stopping. Preserve one physical fluid simulation and carry
 forward velocity through the final frame so the next Extend continues it.
 Only the camera and existing liquid move. No cut and no new location.
 
+Continue the exact existing instrumental score seamlessly from the current
+last audio sample. Preserve its tempo, tonal center, pulse, warm low synth,
+glassy-water texture, dry ticks, airy whoosh and acoustic space. Increase its
+rhythmic density with the camera acceleration, then ease slightly without a
+new intro, downbeat, cue change, cadence, fade, silence gap or loudness jump.
+
 No visible text or symbols. No letters, numbers, percentages, equations,
 subtitles, logos, watermark, HUD or UI. No people, extra objects, scan line,
-beam, ring, pulse, pointer, ledger, markers, scene transition, portal, camera
-shake, micro-wobble, flicker, frozen liquid, duplicated dye, geometry jump,
-color drift or voice.
+beam, ring, radiating visual pulse, pointer, ledger, markers, scene transition,
+portal, camera shake, micro-wobble, flicker, frozen liquid, duplicated dye,
+geometry jump or color drift. No dialogue, narration, spoken words, singing,
+lyrics, choir, heroic trailer rise, orchestral boom, EDM drop or pop hook.
 ```
 
 Save the accepted extended result as
@@ -156,11 +191,20 @@ deliberate. Use shallow parallax and a gentle optical push-in; never freeze,
 pull back or hold. Carry a small but unmistakable forward velocity through the
 final frame. Only the camera and existing liquid move. No cut.
 
+Continue the exact same score and ambience with no musical boundary. Gradually
+thin the dry ticks and pulse as the camera slows, leaving the warm low tone,
+glassy liquid texture and airy motion nearly exposed at the close inspection.
+Approach near-silence without ever stopping the audio bed. Keep the same tempo,
+tonal center and instruments; no new cue, intro, downbeat, cadence, silence gap
+or loudness jump.
+
 Do not generate the analytical guide or its labels: no spectral bands, graph,
 pointer, status marker, text, numbers, percentages, equations, subtitles,
-logos, watermark, HUD or UI. No scan, beam, ring, pulse, scene transition,
-portal, new location, camera shake, micro-wobble, flicker, frozen liquid,
-duplicated dye, geometry jump, color drift or voice.
+logos, watermark, HUD or UI. No scan, beam, ring, radiating visual pulse, scene
+transition, portal, new location, camera shake, micro-wobble, flicker, frozen
+liquid, duplicated dye, geometry jump or color drift. No dialogue, narration,
+spoken words, singing, lyrics, choir, heroic trailer rise, orchestral boom, EDM
+drop or pop hook.
 ```
 
 Save the accepted extended result as
@@ -175,22 +219,34 @@ Continue directly from the current final frame as the same uninterrupted video.
 Inherit the exact coral feature, teal flow, forward camera direction, optical
 axis, lighting and living fluid velocity. No cut, pause or new scene.
 
-Complete the close inspection while the camera still creeps forward, then
-accelerate smoothly through the coral feature. As the camera gains speed, let
-the existing cyan and coral streamlines transform continuously and physically
-into one connected wide composition: a weather-system spiral, airflow wrapping
-an aircraft wing, branching blood-flow geometry and a turbine flow. Each form
-must grow from the same moving streamlines and remain connected in one dark
-scientific world. This is one fluid morph observed by one moving camera, not a
-montage, grid, sequence of scenes or set of portals. Use camera momentum,
-parallax and scale change to create the spectacle. Ease only near the final
-frame while the flow remains alive.
+Complete the close inspection while the camera still creeps forward. Slow
+smoothly through zero velocity, then perform one fast but controlled optical
+pullback on the same centered axis. Keep the exact coral feature visible and
+identifiable throughout: it becomes smaller inside the same central
+transparent cube as the field of view expands. Never replace it with a new
+object.
+
+The widening view reveals one connected flow world already growing from the
+same cyan and coral streamlines: a weather-system spiral above, airflow
+wrapping an aircraft wing, branching blood-flow geometry, and a turbine flow
+below. The applications arrive through camera scale, parallax and continuous
+fluid transformation around the preserved central cube. This is one morph
+observed by one moving camera, not a montage, grid, sequence of scenes or set
+of portals. Ease only near the final frame while every flow remains alive.
+
+Continue the exact existing score from its current audio sample with no seam.
+Bring back a little of the same restrained pulse and widen the same harmonic
+space as the camera pulls back, while preserving the tonal center, instrument
+palette, glassy-water texture and airy whoosh. During the final portion settle
+into a long stable sustained tail that remains clean if the release edit trims
+the master slightly. Do not start a new cue, restart the rhythm, change genre,
+add a trailer rise or create a triumphant final cadence.
 
 No visible text or symbols. No letters, numbers, percentages, equations,
 subtitles, logos, watermark, HUD or UI. No people, panel borders, split screen,
 hard cut, cross-cut, scene reset, portal, object pop-in, explosion, camera
 shake, micro-wobble, flicker, freeze, duplicated subjects, color drift or
-voice.
+voice. No dialogue, narration, spoken words, singing, lyrics or choir.
 ```
 
 Save the accepted final extended result as
@@ -205,14 +261,17 @@ If the same defect remains, stop and review rather than consuming more credit.
 
 ## Final review
 
-Review the final 32-second result twice:
+Review the final 32-second result three times:
 
 1. with no overlays, to judge camera and fluid continuity;
-2. with the planned editorial overlay timing, to judge the research story.
+2. on headphones, to judge the single continuous score and all three Extend
+   boundaries;
+3. with the planned editorial overlay timing, to judge the research story.
 
 The footage passes only when all four slot boundaries are invisible, the tail
 inspection is readable, the final applications arrive by morph rather than by
-scene change, and no generator-made text or symbolic graphics appear.
+scene change, the score behaves as one uninterrupted cue, and no
+generator-made text or symbolic graphics appear.
 
 Keep the complete 32-second master. The release edit may trim only the tail to
 the locked 29.70-second duration; never cut around a failed slot boundary to

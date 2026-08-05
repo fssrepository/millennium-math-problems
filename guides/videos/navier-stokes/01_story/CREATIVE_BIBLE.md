@@ -73,8 +73,9 @@ imagery.
 - S04: 28–35 mm fast forward flight through nested shells.
 - S06: slow inspection, one fast controlled push onto the far-shell response,
   then continued forward motion as the orange PNT-12 frontier activates.
-- S07: accelerate through the same flow into one continuous application morph,
-  then ease near the final frame; no triumphal tilt-up.
+- S07: pass smoothly through near-arrest into a fast scale pullback; preserve
+  the observed coral response in the central cube while the connected
+  application field is revealed, then ease near the final frame.
 - The full film uses one camera trajectory. Speed changes provide the visual
   punctuation; there are no camera resets at generation-slot boundaries.
 

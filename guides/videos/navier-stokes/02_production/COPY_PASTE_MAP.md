@@ -7,6 +7,12 @@ Use this page when producing; it is the shortest route through the bundle.
 > failure and PNT-12 state transition. The platform prompt files are marked
 > `HOLD` until that rewrite is complete.
 
+> **CURRENT FLOW ROUTE:** for the four-slot continuous camera film, ignore the
+> legacy independent-shot map below and use
+> `../03_platforms/flow/CHAIN_32S_RUNBOOK.md`. Its V01 prompt generates the
+> locked score and V02–V04 continue the same audio without a separate music
+> track.
+
 ## 1. Pick one video platform
 
 Recommended default: **Google Flow when the account exposes free generation**.
@@ -22,7 +28,8 @@ For literal button-by-button instructions, open `../03_platforms/flow/RUNBOOK.md
 - Main prompt field: copy `../03_platforms/flow/PROMPTS.md` → **Shared continuity**, then the
   chosen **S01–S06** block, then **Shared negative**.
 - Start-frame field: upload the PNG named in that shot heading.
-- Generated-audio field, when present: ambient audio only; no speech.
+- Legacy independent-shot generated-audio field, when present: ambient audio
+  only; no speech. Do not use this legacy value for the current Extend chain.
 
 Alternative paths:
 
