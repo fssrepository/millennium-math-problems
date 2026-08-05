@@ -44,6 +44,9 @@ Generate only S01–S06. S07 is a held final S06 frame.
 ## 2. Put these texts in the editor—not in the video model
 
 - Shot titles, event chips and final card: `../01_story/STORYBOARD.md` → **Post overlay**.
+- Expanding caption box, top-to-bottom reveal and tracked object glints:
+  `../04_editorial/OVERLAY_MOTION_PROMPT.md` → editor animation assistant only;
+  never Flow/Veo.
 - Expected decay, persistent far-shell response and PNT-12 handoff:
   `../01_story/FALSIFICATION_VISUAL.md`.
 - Exact T+ placement: `../01_story/TIMELINE_EVIDENCE.md` → **Audited milestones**.

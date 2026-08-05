@@ -56,6 +56,12 @@ imagery.
 - Status words may be uppercase. Do not use all-uppercase paragraphs.
 - Pointer: 2 px off-white line, 8 px round endpoint, no cartoon arrowhead.
 - Cards: `#07131C` at 84% opacity, 22 px radius, 1 px cyan or coral edge.
+- Major S02, S06 and S07 cards may grow quickly from a compact dark-glass box.
+  Use one restrained cyan-to-coral border sweep, then reveal full text lines
+  from top to bottom with a short vertical mask. Never animate letter by letter.
+- During the S07 pullback, one short tracked glint may accent each moving
+  application in sequence. Keep it local to the object; no full-frame flash or
+  strobe.
 - Five-node loop: 140 px squares with 20–25 px gaps; show all five in S03 and
   highlight one stage at a time later. Use plain-language node labels on screen
   and retain the exact guide terminology in documentation.
@@ -74,8 +80,11 @@ imagery.
 - S06: slow inspection, one fast controlled push onto the far-shell response,
   then continued forward motion as the orange PNT-12 frontier activates.
 - S07: pass smoothly through near-arrest into a fast scale pullback; preserve
-  the observed coral response in the central cube while the connected
-  application field is revealed, then ease near the final frame.
+  the same coral structure in the central cube while the connected
+  application field is revealed, then ease near the final frame. The weather
+  vortex is already turning, flow travels around the stable wing, vessel flow
+  pulses, the turbine rotor spins and connected wavefronts propagate throughout
+  the reveal.
 - The full film uses one camera trajectory. Speed changes provide the visual
   punctuation; there are no camera resets at generation-slot boundaries.
 
@@ -88,8 +97,9 @@ imagery.
   cloth, a solid tentacle or many unrelated worms.
 - Stamps, counters and the three restart beats are created in post. The camera
   may nearly arrest, but the generated fluid never freezes.
-- Expected decay, measured persistence, the far-shell pointer and every status
-  label are created in post. Never ask the generator to draw them.
+- Expected decay, measured persistence and every status label are created in
+  post. The S06 frequency-shell card remains separate from the liquid; do not
+  connect it to a spatial point with a pointer or target ring.
 - Camera energy decreases across S04 → S05 → S06 to make the increasing search
   depth legible while the T+ research clock remains linear.
 - In S04–S06, the five-node loop advances `AI proposes → C++ tests → evidence

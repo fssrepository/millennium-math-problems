@@ -4,9 +4,47 @@ This file persists the decisions made during the supervised production pass.
 It is the durable record; chat instructions are not the source of truth.
 
 Last updated: 2026-08-05  
-Current next action: user review of the no-credit v02 story preview at phone
-size; the four-slot Extend prompts are prepared, but spend no Flow credits
-before that approval
+Current next action: step 1 of the supervised Flow run — create the clean new
+project and verify its settings before V01; do not generate or approve a cost
+card ahead of the step-by-step review
+
+Preflight review, 2026-08-05: passed. The V01 anchor exists at 720 × 1280; the
+planning preview is valid H.264 at 720 × 1280, 24 fps and 30.000 seconds; the
+final pullback strip preserves the same coral structure as it shrinks into the
+central cube. V01–V04 each contain the no-cut, no-generated-text, no-voice and
+continuous-score contracts. Current-route documentation contains no active
+silent-source/music-in-post contradiction, and `git diff --check` passes. The
+preview remains a deterministic storyboard/timing reference, so actual camera
+and music continuity must still be accepted after each paid Flow action.
+
+Final-motion clarification, 2026-08-05: the static pullback strip demonstrates
+only framing, scale and preservation of the coral structure. It is not a target
+for frozen V04 scenery. The paid prompt now explicitly requires the weather
+vortex to rotate, wing streamlines to travel, vessel flow to pulse, the turbine
+rotor to spin and connected cyan wavefronts to propagate simultaneously while
+the camera pulls back. Any static application field is rejected.
+
+Tail-pointer correction, 2026-08-05: the preview pointer had landed on the cyan
+vortex core even though no spatial point in the liquid is the mathematical
+tail or a raw C++ field location. Moving it to another decorative feature would
+still imply false precision, so the pointer, circle and fluid target were
+removed completely. The tail now appears only as the far end of the separate
+frequency-shell diagram, explicitly labelled as not a physical wave tail.
+
+Far-shell transition correction, 2026-08-05: the earlier no-credit preview
+crossfaded from the legacy K05 still to a differently framed K06 base, making
+the cube appear to jump backward when the diagram arrived. K04–K09 now use
+progressively tighter crops of one source image. The diagram changes as an
+editor overlay while the planned camera continues forward; the paid Flow route
+uses Extend on the same moving video and must not reproduce a still-image
+crossfade.
+
+Overlay-motion decision, 2026-08-05: major caption cards now use an expanding
+dark-glass box, one restrained border light sweep and a rapid top-to-bottom
+full-line reveal. The final pullback adds brief tracked glints to the moving
+weather vortex, wing airflow, vessel flow and turbine. This is deterministic
+editor animation in `../04_editorial/OVERLAY_MOTION_PROMPT.md`, not part of the
+Flow prompt, because Veo must not render the exact text or UI.
 
 Media cleanup on 2026-08-05 removed rejected, failed-repair, review-only and
 superseded MP4 binaries from the working tree. The historical filenames below
@@ -47,6 +85,10 @@ cue and V02–V04 must continue that exact cue without a restart, silence gap,
 tempo/key shift or instrument change. No separate music track is planned. The
 generated footage must contain no voice, speech, singing or lyrics. A broken
 audio seam is a rejection condition and can justify the held 10-credit retry.
+If Flow exposes a generated-audio toggle, it must remain enabled throughout
+the chain; reject a silent V01. An explicit `Audio Generation Failed` error is
+expected by Google's current help to refund credits, but verify the live
+balance before retrying.
 
 Current no-credit story preview:
 `../renders/edit/navier-stokes-10-frame-story-previs-v02-30s.mp4` — 720 ×
@@ -54,7 +96,7 @@ Current no-credit story preview:
 deeper into the same fluid while editor-owned overlays distinguish expected
 decay, the persistent far-shell response, the isolated obstruction, the saved
 PNT-13 rejection and the PNT-12 open state. The final three seconds use a true
-scale pullback on the same planning image: the observed coral response remains
+scale pullback on the same planning image: the same coral structure remains
 visible in the central cube while weather, flight, blood-flow and energy forms
 are revealed around it. This is still planning footage, not a generated Flow
 take. User approval is required before paid generation.

@@ -91,12 +91,12 @@ slow move with a long terminal hold.
 - 21.04–22.10: slow inspection of the same continuous fluid state. Composite
   a faint dashed decay envelope toward a separated far-shell band and show
   `EXPECTED • DISTANT SCALES DECOUPLE`.
-- 22.10–23.20: keep the measured coral response bright beyond the fading
-  envelope. Show `FOUND • CORRELATION ≈ 1`.
+- 22.10–23.20: in the separate frequency-shell diagram, keep the far-shell
+  response bright beyond the fading envelope. Show `FOUND • CORRELATION ≈ 1`.
 - 23.20–24.15: decelerate the camera almost to rest while the fluid stays
-  alive, then use one fast controlled push onto that surviving response. Draw
-  one thin pointer and show
-  `FREQUENCY-SHELL TAIL STAYED COHERENT`.
+  alive. Keep the frequency-shell diagram separate from the liquid and show
+  `FREQUENCY-SHELL TAIL STAYED COHERENT`. Do not draw a pointer, target circle
+  or connector into the generated fluid.
 - 24.15–24.86: turn the route coral, show
   `F015 / PNT-13 • REJECTED`, then `COUNTEREXAMPLE SAVED`.
 - 24.86–25.20: dim PNT-13, activate one orange marker and show
@@ -104,13 +104,17 @@ slow move with a long terminal hold.
 - Add `CONCEPT VISUALIZATION • THIS IS NOT A PROOF`; no glow, checkmark,
   generated diagram, scan beam or resolved chord.
 - The “tail” is a frequency-shell response. It is not a physical tail in the
-  water, a singularity, or a shared explanation for F000–F014.
+  water, a singularity, or a shared explanation for F000–F014. No point in the
+  generative fluid image is raw numerical output.
 
 ### S07 — 00:25.20–00:29.70
 
 - Continue the same camera path through near-arrest into one controlled scale
-  pullback. Keep the observed coral response visible as it shrinks into the
+  pullback. Keep the same coral structure visible as it shrinks into the
   central cube and the connected application field is revealed around it.
+- Require simultaneous living motion during the pullback: a slowly turning
+  weather vortex, moving airflow around a stable wing, pulsing vessel flow, a
+  turbine rotor spinning on one axis and propagating connected wavefronts.
 - Place a 72% near-black veil over footage for contrast.
 - Reveal the result microline at 25.30, the laptop estimate at 25.55 and the
   cluster line at 26.05. Keep `FULL PROOF • UNKNOWN` adjacent to the cluster
@@ -123,13 +127,13 @@ slow move with a long terminal hold.
   final words.
 - Keep `FULL PROOF • UNKNOWN` visible through the final frame.
 
-## Pointer line
+## S06 diagram separation
 
-- Card anchor: approximately `(x=180, y=420)`.
-- Target: the measured coral response in the separated far-shell band.
-- Draw a 2 px off-white Bezier line; animate it over 6 frames.
-- Finish with an 8 px hollow coral circle. It must point to the visible
-  far-shell response.
+- Keep the expected-decay line, measured bars and glowing far-shell response
+  entirely inside their own frequency-shell card.
+- Draw no line, arrow or target ring from that card into the generated liquid.
+- The liquid remains an abstract moving background, not a spatial rendering of
+  the Fourier-shell data.
 
 ## Status overlays
 
@@ -142,6 +146,18 @@ slow move with a long terminal hold.
 | Proved partial estimate | Teal | Stable underline, no glow burst |
 | Survived finite test | White + amber edge | Always paired with `not proof` |
 | Open current frontier | Orange | One active marker and an open-ended line continuing right |
+
+## Caption light motion
+
+- Use the exact editor-side instruction in
+  `../04_editorial/OVERLAY_MOTION_PROMPT.md`; never paste that text into Flow.
+- Major cards expand from a compact dark-glass box, receive one restrained
+  cyan-to-coral border sweep, then reveal complete lines rapidly from top to
+  bottom with a vertical mask.
+- During S07, track one very brief localized glint to each already-moving
+  application: weather vortex, wing airflow, vessel flow and turbine rotor.
+- Regular subtitles and clocks remain stable. No full-screen flash, strobe,
+  typewriter text, glitch, scan beam, bounce or camera shake.
 
 ## Sound design
 

@@ -1,9 +1,10 @@
 # Flow — one continuous 32-second camera morph in four Lite slots
 
-> **READY FOR FINAL PREVIEW REVIEW — DO NOT SPEND YET.** Watch
-> `../../renders/edit/navier-stokes-10-frame-story-previs-v02-30s.mp4` at phone
-> size. Generate only after the user confirms that the camera path and final
-> application morph read as one uninterrupted video.
+> **PREFLIGHT REVIEW PASSED 2026-08-05 — DO NOT SPEND AHEAD.** The anchor,
+> no-credit planning preview, four prompts, audio contract, file paths and
+> 40+10 credit gate have been checked. The preview is a timing/story plan, not
+> proof that Veo will obey the motion. Proceed one paid action at a time only
+> after the user starts the step-by-step run.
 
 Create a clean Flow project named
 `Navier–Stokes — Continuous Morph V01–V04 — 9x16`. Do not reuse the older
@@ -20,7 +21,7 @@ three times:
 | --- | --- | ---: | --- | ---: |
 | V01 | Generate one 8 s clip | 8 s | outside cube → push toward fluid | 10 |
 | V02 | Extend V01 by 8 s | 16 s | accelerate inside the same liquid | 10 |
-| V03 | Extend V02 by 8 s | 24 s | decelerate onto the observed tail proxy | 10 |
+| V03 | Extend V02 by 8 s | 24 s | decelerate during the far-shell story beat | 10 |
 | V04 | Extend V03 by 8 s | 32 s | near-arrest → smooth scale pullback and application reveal | 10 |
 
 The planned spend is 40 credits. From a 50-credit daily balance, keep the last
@@ -34,6 +35,7 @@ Costs can change; the live confirmation card is authoritative:
 - https://support.google.com/flow/answer/16352836
 - https://support.google.com/flow/answer/16526234
 - https://support.google.com/flow/answer/16935718
+- https://support.google.com/flow/answer/16353333
 
 ## Non-negotiable continuity lock
 
@@ -43,15 +45,20 @@ Costs can change; the live confirmation card is authoritative:
   create a fresh clip from a similar still, never use Scene Builder and never
   ask for four separate scenes.
 - One camera has one uninterrupted trajectory. It may accelerate, decelerate
-  and zoom. After the tail inspection it may pass smoothly through zero
+  and zoom. After the close inspection it may pass smoothly through zero
   velocity into one deliberate pullback, but it never cuts, teleports or resets
   its optical axis at a slot boundary.
 - The exact same coral-red liquid dye and teal fluid persist through every
   extension. Their motion never freezes at a slot boundary.
-- During the late pullback, the same central coral response remains visible and
+- During the late pullback, the same central coral structure remains visible and
   shrinks into the central cube while weather, wing, vessel and turbine flow
   forms are revealed in the widening field. They do not replace it or pop in
   as montage panels.
+- Every revealed application is already in continuous motion as it enters the
+  widening frame: the weather vortex turns, streamlines travel around the
+  fixed wing, blood flow pulses through the vessel, the turbine rotor spins,
+  and the connected cyan wavefronts keep propagating. None is a frozen poster
+  or an animation that starts only when the camera reveals it.
 - Generate no text, numbers, percentages, equations, labels, pointer, ledger,
   UI, subtitles or narration. Those are deterministic editor overlays.
 - Generate one continuous original instrumental score together with V01 and
@@ -66,6 +73,8 @@ Costs can change; the live confirmation card is authoritative:
 - No heroic trailer rise, orchestral boom, EDM drop, pop hook or triumphant
   cadence. The score follows the camera's acceleration, near-arrest and final
   pullback without becoming a separate musical sequence.
+- If Flow exposes a generated-audio control, keep it enabled for V01 and every
+  Extend. A silent V01 is not an accepted source for this route.
 
 ## Credit gate before every action
 
@@ -76,6 +85,7 @@ Proceed only when Flow's built-in card shows all of the following:
 - 720p;
 - 8 seconds;
 - one output;
+- generated audio enabled, if the control is exposed;
 - 10 credits or less.
 
 Reject the card if it proposes multiple outputs, Fast, Quality, Omni Flash, a
@@ -89,6 +99,8 @@ visible text or any new interface graphic. Listen on headphones as well: reject
 an audio click, silence gap, cue restart, tempo or key jump, changed instrument
 palette, sudden loudness step, voice, singing or lyrics. An otherwise good
 visual with a broken musical seam is the one justified use of the held retry.
+For V01 itself, reject silence, an unrelated music style or an intrusive
+melody before creating V02.
 
 ## V01 — initial generation
 
@@ -96,6 +108,7 @@ Configuration:
 
 - mode: Frames to Video → First Frame only;
 - First Frame: `../../assets/flow-chain/chain-anchor-start-s01-first.png`;
+- generated audio: on, if Flow exposes the control;
 - no Last Frame and no Ingredients.
 
 Paste this prompt:
@@ -184,12 +197,13 @@ coral-red liquid dye, teal flow, dark environment, camera axis and forward
 direction.
 
 Follow the same coral structure deeper into macro detail. Gradually decelerate
-from the earlier fast flight into a precise close inspection of one identifiable
-coral fold that will serve as the editor's visual proxy for the far-shell
-response. The fluid stays visibly alive while the camera becomes slow and
-deliberate. Use shallow parallax and a gentle optical push-in; never freeze,
-pull back or hold. Carry a small but unmistakable forward velocity through the
-final frame. Only the camera and existing liquid move. No cut.
+from the earlier fast flight into a precise close inspection of the same living
+fluid structure. This supplies an abstract moving background for a separate
+editor-drawn frequency-shell diagram; no spatial point in the liquid represents
+the mathematical tail. The fluid stays visibly alive while the camera becomes
+slow and deliberate. Use shallow parallax and a gentle optical push-in; never
+freeze, pull back or hold. Carry a small but unmistakable forward velocity
+through the final frame. Only the camera and existing liquid move. No cut.
 
 Continue the exact same score and ambience with no musical boundary. Gradually
 thin the dry ticks and pulse as the camera slows, leaving the warm low tone,
@@ -234,6 +248,16 @@ fluid transformation around the preserved central cube. This is one morph
 observed by one moving camera, not a montage, grid, sequence of scenes or set
 of portals. Ease only near the final frame while every flow remains alive.
 
+All application motion is already underway before each form enters the
+widening frame. The broad galaxy-like weather vortex above turns slowly and
+continuously. The aircraft wing stays geometrically stable while luminous
+streamlines travel around and behind it. Coral and cyan flow pulses forward
+through the branching blood vessel. The turbine or engine rotor below spins
+smoothly around one fixed axis while curved flow lines pass through it.
+Connected cyan wavefronts ripple and propagate across the larger field. Keep
+these motions simultaneous, physically coherent and unbroken through the final
+frame; no static applications, start-stop loops or motion triggered by reveal.
+
 Continue the exact existing score from its current audio sample with no seam.
 Bring back a little of the same restrained pulse and widen the same harmonic
 space as the camera pulls back, while preserving the tonal center, instrument
@@ -259,6 +283,11 @@ specific defect makes the 32-second result unusable. Retry the failed slot or
 extension once with one targeted wording change; do not regenerate all four.
 If the same defect remains, stop and review rather than consuming more credit.
 
+An explicit `Audio Generation Failed` card is different from a completed clip
+with a bad musical seam. Google's Flow help says an audio-generation failure
+should refund the generation credits. Verify the live balance before retrying;
+do not silently count a refunded failure against the held 10-credit reserve.
+
 ## Final review
 
 Review the final 32-second result three times:
@@ -271,8 +300,16 @@ Review the final 32-second result three times:
 The footage passes only when all four slot boundaries are invisible, the tail
 inspection is readable, the final applications arrive by morph rather than by
 scene change, the score behaves as one uninterrupted cue, and no
-generator-made text or symbolic graphics appear.
+generator-made text or symbolic graphics appear. The weather vortex, wing
+flow, vessel flow, turbine rotor and surrounding wavefronts must all remain
+visibly alive during the pullback.
 
 Keep the complete 32-second master. The release edit may trim only the tail to
 the locked 29.70-second duration; never cut around a failed slot boundary to
 hide a continuity defect.
+
+The expanding caption box, top-to-bottom key-text reveal, border light play and
+small tracked glints on the moving application objects are specified in
+`../../04_editorial/OVERLAY_MOTION_PROMPT.md`. They are added after the clean
+master passes. Never paste that overlay-animation prompt into Flow: V01–V04
+must remain free of generated writing and synchronized UI graphics.

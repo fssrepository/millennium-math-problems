@@ -51,11 +51,14 @@ checkpoint is:
 
 - A no-credit v02 story preview now exists at
   `renders/edit/navier-stokes-10-frame-story-previs-v02-30s.mp4`. FFprobe
-  verifies 720×1280, 24 fps and exactly 30.000 seconds. K06–K09 move deeper
+  verifies 720×1280, 24 fps and exactly 30.000 seconds. K04–K09 now use
+  progressively tighter crops of one source, so the far-shell diagram appears
+  over the same forward-moving fluid plan rather than after a background-still
+  swap. K06–K09 move deeper
   into the same fluid while editor overlays show expected decay → persistent
   far-shell response → saved PNT-13 rejection → PNT-12 open. The final three
-  seconds now use a true scale pullback on the same source image: the observed
-  coral response remains visible in the central cube while weather, flight,
+  seconds now use a true scale pullback on the same source image: the same
+  coral structure remains visible in the central cube while weather, flight,
   blood-flow and energy forms are revealed around it. It still requires user
   approval after the latest camera-path rebuild.
 
@@ -72,14 +75,33 @@ checkpoint is:
   must not generate voice, speech, singing or lyrics; narration and captions
   remain editor-controlled.
 
+- The static final preview strip illustrates only composition and camera
+  scale. It is not the intended V04 motion. The paid V04 must keep simultaneous
+  motion in the revealed field: rotating weather vortex, travelling wing
+  streamlines, pulsing vessel flow, spinning turbine rotor and propagating cyan
+  wavefronts. Reject frozen application scenery.
+
+- S06 no longer points to any location in the liquid. The tail is shown only as
+  the far end of the separate frequency-shell diagram, not as a physical wave
+  tail or raw spatial field location. No arrow, target ring or connector into
+  the fluid is allowed.
+
+- Major captions use an editor-owned light animation: a compact dark-glass box
+  enlarges, a restrained cyan/coral sweep crosses its border, and the essential
+  lines appear quickly from top to bottom. In S07, short tracked glints accent
+  the already-moving weather vortex, wing airflow, vessel flow and turbine.
+  The exact paste-ready direction is `04_editorial/OVERLAY_MOTION_PROMPT.md` and
+  must never be pasted into Flow/Veo.
+
 - The user reported refreshed credits. Create a new Flow project named
   `Navier–Stokes — Continuous Morph V01–V04 — 9x16`. Do not use the old
   `Lemma Stress Test` project's visible pending approval card.
 
-1. No additional video-generation credits should be spent yet.
-2. Review the v02 story preview at phone size against every acceptance item in
-   `01_story/FALSIFICATION_VISUAL.md`.
-3. Only after user approval may V01 be generated and extended through V04.
+1. Preflight review of the anchor, v02 story preview, prompt chain, audio
+   contract, file paths and credit gate passed on 2026-08-05.
+2. No generation credits should be spent ahead of the supervised steps.
+3. Create the clean new Flow project and verify its settings before approving
+   V01; then accept each result before moving to the next Extend.
 
 Minimum files for that action:
 
@@ -123,6 +145,7 @@ repository history must not be rewritten for cleanup.
 
 ## Completion condition for the next checkpoint
 
-The next checkpoint is complete only when the user approves the phone-size v02
-planning preview. The four-slot Extend prompts are prepared; paid generation
-remains downstream work.
+The next checkpoint is complete when the clean new Flow project shows Veo 3.1
+Lite, portrait 9:16, 720p, eight seconds, one output and generated audio enabled
+when that control is exposed. Do not approve V01 until those settings and a
+cost of no more than 10 credits are visible.

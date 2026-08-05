@@ -3,6 +3,10 @@
 Do not paste this text into a video generator. Add it in CapCut, DaVinci
 Resolve, or Premiere.
 
+For the locked expanding-box, top-to-bottom reveal, light sweep and localized
+application glints, apply `OVERLAY_MOTION_PROMPT.md`. Those effects are
+editor-owned and must not be generated as text by Flow.
+
 ## S01 — 00:00.00–00:03.50
 
 ```text
@@ -116,6 +120,7 @@ RESEARCH TIME  T+22:35 → T+33:28
 EXPECTED • DISTANT SCALES DECOUPLE
 FOUND • CORRELATION ≈ 1
 FREQUENCY-SHELL TAIL STAYED COHERENT
+TAIL = FAR FREQUENCY SHELLS, NOT A PHYSICAL WAVE TAIL
 T+32:34  F015 / PNT-13 • REJECTED
 COUNTEREXAMPLE SAVED
 AI REFINED → PNT-12 OPEN
@@ -124,10 +129,10 @@ CONCEPT VISUALIZATION • THIS IS NOT A PROOF
 
 Show those lines sequentially, never as one text block. During `EXPECTED`, use
 a faint declining dashed guide. During `FOUND`, let the camera nearly arrest
-while the fluid remains visibly alive; connect the third line to the bright
-far-shell response with one thin pointer. The dashed guide, pointer, labels and
-status colors are deterministic editor overlays; do not ask the video model to
-generate them.
+while the fluid remains visibly alive. Highlight the far-right response only
+inside the separate frequency-shell diagram. Do not draw a pointer, circle or
+line into the fluid. The dashed guide, labels and status colors are
+deterministic editor overlays; do not ask the video model to generate them.
 
 ## S07 — 00:25.20–00:29.70
 
@@ -147,6 +152,12 @@ QUALIFYING PUBLICATION → ≥2 YEARS
 
 *COMPUTE ESTIMATE • TESTS ONLY • EXPERT REVIEW
 ```
+
+Animate the main S07 result/compute card with the expanding dark-glass box and
+fast top-to-bottom line reveal in `OVERLAY_MOTION_PROMPT.md`. During the same
+continuous pullback, add one restrained localized glint in sequence to the
+already-moving weather vortex, wing airflow, vessel flow and turbine. These are
+tracked editor accents, not generator-made object flashes or scene changes.
 
 ## Persistent small label in S02–S06
 

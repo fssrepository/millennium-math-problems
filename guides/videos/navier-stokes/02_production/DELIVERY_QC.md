@@ -47,9 +47,10 @@
 - [ ] The filament does not turn into smoke, lightning, hair or a creature.
 - [ ] S05 contains no vertical scan line, laser beam or generated measurement
   diagram.
-- [ ] S06's pointer lands on the actual far-shell coral response.
-- [ ] The expected-decay guide, measured state, pointer, ledger and orange
-  frontier marker are deterministic editor overlays.
+- [ ] S06 has no pointer, target circle or connector from the frequency-shell
+  diagram into the liquid.
+- [ ] The expected-decay guide, measured state, ledger and orange frontier
+  marker are deterministic editor overlays.
 - [ ] Mid-film overlay groups remain under one quarter of the frame.
 - [ ] No important copy sits under platform controls or outside safe margins.
 - [ ] No text, watermark or pseudo-equation is baked into generated footage.

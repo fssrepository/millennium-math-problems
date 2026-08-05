@@ -54,8 +54,9 @@ The same material audit was applied to the canonical S03/S05 macro and S06
 frontier frames. `keyframe-03-checkpoint.png` still contains the earlier amber
 scan intersection and is now a legacy composition reference only; the final
 S05/S06 route must contain no generated scan line or beam. The deterministic
-expected-decay guide, measured far-shell response, pointer, saved rejection and
-PNT-12 marker are defined in `../01_story/FALSIFICATION_VISUAL.md` and added in post.
+expected-decay guide, measured far-shell response, saved rejection and PNT-12
+marker are defined in `../01_story/FALSIFICATION_VISUAL.md` and added in post.
+The S06 frequency-shell diagram is not connected to the fluid with a pointer.
 `keyframe-06-frontier.png` was visually recounted and still contains exactly 16
 separate checkpoint cubes.
 

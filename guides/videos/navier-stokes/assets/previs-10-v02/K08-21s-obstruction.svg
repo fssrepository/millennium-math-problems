@@ -8,14 +8,11 @@
     <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
       <feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
-    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L0,8 L10,4 z" fill="#ffac68"/>
-    </marker>
   </defs>
   <rect width="720" height="1280" fill="url(#shade)"/>
   <rect x="34" y="40" width="282" height="38" rx="19" fill="#03131b" fill-opacity="0.92" stroke="#32d7ff" stroke-opacity="0.7"/>
   <text x="175" y="66" text-anchor="middle" fill="#c9f7ff" font-family="DejaVu Sans, sans-serif" font-size="17" font-weight="700" letter-spacing="1.2">CONCEPT VISUALIZATION</text>
-  <text x="54" y="815" fill="#ffad71" font-family="DejaVu Sans, sans-serif" font-size="17" font-weight="700" letter-spacing="2">OBSTRUCTION ISOLATED</text>
+  <text x="54" y="815" fill="#ffad71" font-family="DejaVu Sans, sans-serif" font-size="17" font-weight="700" letter-spacing="2">FOURIER-SPACE TEST • CONCEPT DIAGRAM</text>
   <text x="54" y="860" fill="#ffffff" font-family="DejaVu Sans, sans-serif" font-size="31" font-weight="700">FREQUENCY-SHELL TAIL</text>
   <text x="54" y="896" fill="#ff9a83" font-family="DejaVu Sans, sans-serif" font-size="27" font-weight="700">STAYED COHERENT</text>
   <rect x="48" y="930" width="624" height="260" rx="22" fill="#020a10" fill-opacity="0.88" stroke="#8b4a3d" stroke-opacity="0.8"/>
@@ -24,8 +21,6 @@
   <rect x="325" y="1060" width="42" height="70" rx="8" fill="#56d7e8" opacity="0.36"/>
   <rect x="555" y="997" width="42" height="133" rx="8" fill="#ff705c" opacity="1" filter="url(#glow)"/>
   <path d="M139 986 C255 1010 408 1085 576 1102" fill="none" stroke="#79f1c9" stroke-opacity="0.38" stroke-width="4" stroke-dasharray="13 12"/>
-  <path d="M606 900 C620 790 598 680 535 585" fill="none" stroke="#ffac68" stroke-width="5" marker-end="url(#arrow)"/>
-  <circle cx="520" cy="558" r="45" fill="none" stroke="#ffac68" stroke-width="4"/>
-  <text x="576" y="1167" text-anchor="middle" fill="#ffc2a3" font-family="DejaVu Sans, sans-serif" font-size="16" font-weight="700">SURVIVING RESPONSE</text>
-  <text x="360" y="1228" text-anchor="middle" fill="#d7eef4" font-family="DejaVu Sans, sans-serif" font-size="18">STANDALONE PNT-13 ROUTE FAILS</text>
+  <text x="576" y="1167" text-anchor="middle" fill="#ffc2a3" font-family="DejaVu Sans, sans-serif" font-size="14" font-weight="700">SURVIVING FAR-SHELL RESPONSE</text>
+  <text x="360" y="1228" text-anchor="middle" fill="#d7eef4" font-family="DejaVu Sans, sans-serif" font-size="15">TAIL = FAR FREQUENCY SHELLS • NOT A PHYSICAL WAVE TAIL</text>
 </svg>

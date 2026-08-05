@@ -34,20 +34,27 @@ Editor copy: `EXPECTED • DISTANT SCALES DECOUPLE`
 
 ### B — Adversarial result
 
-Keep the same composition. The measured coral response remains bright at the
-far band instead of following the fading guide. Do not create a second cube,
-new diagram plane, explosion or scan beam.
+Keep the same composition. In the separate editor-drawn frequency-shell
+diagram, the measured far-shell response remains bright instead of following
+the fading guide. Do not map that bar to a location in the liquid, create a
+second cube, explosion or scan beam.
 
 Editor copy: `FOUND • CORRELATION ≈ 1`
 
 ### C — Near-arrest on the obstruction
 
 Decelerate the camera almost to rest while the fluid remains visibly alive,
-then perform a fast controlled push onto the surviving far-shell response. Add
-one thin editor-drawn pointer. The pointer must target the coral response, not
-the cube boundary.
+then continue the close inspection without assigning the mathematical result to
+any spatial point in the liquid. The editor-drawn frequency-shell diagram alone
+shows the surviving far-shell response. Do not draw a pointer, target ring or
+line from that diagram into the fluid.
 
-Editor copy: `FREQUENCY-SHELL TAIL STAYED COHERENT`
+Editor copy, shown together:
+
+```text
+FREQUENCY-SHELL TAIL STAYED COHERENT
+TAIL = FAR FREQUENCY SHELLS • NOT A PHYSICAL WAVE TAIL
+```
 
 ### D — Save and refine
 
@@ -67,14 +74,19 @@ AI REFINED → PNT-12 OPEN
 
 The video model generates one continuous fluid simulation, stable geometry and
 one camera path: deceleration, close inspection and a continuous scale pullback
-that preserves the observed response while revealing the application field.
-The editor adds the expected-decay guide, exact
-status colors, pointer, clock, labels and ledger markers. This prevents the
+that preserves the same coral structure while revealing the application field.
+During that reveal, the weather vortex rotates, streamlines move around the
+fixed wing, blood flow pulses, the turbine rotor spins and connected wavefronts
+propagate; none of the application forms may freeze or begin moving only when
+revealed.
+The editor adds the expected-decay guide, exact status colors, clock, labels
+and ledger markers. This prevents the
 model from inventing percentages, equations, scan lines or unreadable text.
 
 Always label the footage `CONCEPT VISUALIZATION`. The animation is a visual
 analogy for frequency-shell behavior; the numerical values and logical status
-come from the checked artifacts.
+come from the checked artifacts. No spatial point in the generated liquid is
+the literal mathematical tail.
 
 ## Acceptance test before spending more credits
 

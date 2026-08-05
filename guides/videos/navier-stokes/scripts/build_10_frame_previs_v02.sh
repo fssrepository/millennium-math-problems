@@ -10,6 +10,27 @@ contact_sheet="$v02_dir/contact-sheet.png"
 render_dir="$(mktemp -d)"
 trap 'rm -rf -- "$render_dir"' EXIT
 
+# K04–K09 share one source and progressively tighter crops so the planning
+# preview reads as one forward camera move. The overlays change; the underlying
+# fluid world does not jump to a different still at the far-shell story beat.
+k04_raw="$render_dir/K04-09s-continuous-fluid-raw.png"
+k05_raw="$render_dir/K05-12s-continuous-fluid-raw.png"
+k04_base="$render_dir/K04-09s-continuous-fluid.png"
+k05_base="$render_dir/K05-12s-continuous-fluid.png"
+pre_application_mask="$render_dir/pre-application-focus-mask.png"
+pre_application_veil="$render_dir/pre-application-focus-veil.png"
+convert "$frame_dir/K10-27s-impact-applications.png" \
+  -crop '400x711+300+512' +repage -resize '720x1280!' "$k04_raw"
+convert "$frame_dir/K10-27s-impact-applications.png" \
+  -crop '365x649+300+591' +repage -resize '720x1280!' "$k05_raw"
+convert -size 720x1280 xc:'gray97' -fill black \
+  -draw 'roundrectangle -40,390 630,1100 60,60' -blur 0x45 \
+  "$pre_application_mask"
+convert -size 720x1280 xc:'#02070d' "$pre_application_mask" -alpha off \
+  -compose copy_opacity -composite "$pre_application_veil"
+convert "$k04_raw" "$pre_application_veil" -compose over -composite "$k04_base"
+convert "$k05_raw" "$pre_application_veil" -compose over -composite "$k05_base"
+
 for source in "$v02_dir"/K{06,07,08,09,10}-*.svg; do
   overlay="$render_dir/$(basename -- "${source%.svg}")-overlay.png"
   prepared_base="$render_dir/$(basename -- "${source%.svg}")-base.png"
@@ -40,8 +61,8 @@ frames=(
   "$frame_dir/K01-00s-opening-world.png"
   "$frame_dir/K02-03s-opening-fast.png"
   "$frame_dir/K03-06s-opening-decelerates.png"
-  "$frame_dir/K04-09s-close-cube.png"
-  "$frame_dir/K05-12s-glass-boundary.png"
+  "$k04_base"
+  "$k05_base"
   "$render_dir/K06-15s-expected-decay.png"
   "$render_dir/K07-18s-persistent-response.png"
   "$render_dir/K08-21s-obstruction.png"

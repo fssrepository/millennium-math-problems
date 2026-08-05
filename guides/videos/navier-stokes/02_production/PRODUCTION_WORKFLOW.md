@@ -136,7 +136,7 @@ Accept a shot only when every relevant condition passes:
 | Camera misses target | Keep model and image; revise only the camera sentence |
 | Motion is excessive | Reduce camera speed; if it repeats, use Kling Standard |
 | Generated writing appears | Start the negative block with: `absolutely no visible text or symbols` |
-| S06 invents markers, percentages or diagrams | Generate clean fluid motion only; build the decay guide, pointer, ledger and PNT-12 marker in post from `../01_story/FALSIFICATION_VISUAL.md` |
+| S06 invents markers, percentages or diagrams | Generate clean fluid motion only; build the separate decay card, ledger and PNT-12 marker in post from `../01_story/FALSIFICATION_VISUAL.md`; do not connect the card to the fluid with a pointer |
 
 Never change the model, start frame, and prompt together. That makes the failed
 generation diagnostically useless.
@@ -159,8 +159,9 @@ defect. Resume the one-defect retry rule after take 02.
 3. Apply the speed and freeze points in `EDIT_PLAN.md`.
 4. Add the English overlays, SRT, rough narration, and temporary sound bed.
 5. Composite the S06 expected-decay guide, measured far-shell response,
-   pointer, saved-rejection ledger and orange PNT-12 marker exactly as specified
-   in `../01_story/FALSIFICATION_VISUAL.md`.
+   saved-rejection ledger and orange PNT-12 marker exactly as specified in
+   `../01_story/FALSIFICATION_VISUAL.md`. Keep the diagram separate from the
+   liquid with no pointer or target ring.
 6. Watch the full rough cut on the target phone at normal brightness.
 
 Only a defect visible in this complete phone review justifies another video

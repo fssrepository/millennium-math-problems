@@ -28,6 +28,7 @@ Open: https://flow.google
 | Exact clip order and duration | `02_production/shot-manifest.csv` |
 | Speed ramps and freeze frames | `02_production/EDIT_PLAN.md` |
 | English on-screen copy | `04_editorial/EDITOR_OVERLAYS_EN.md` |
+| Caption light/reveal animation prompt | `04_editorial/OVERLAY_MOTION_PROMPT.md` |
 | Subtitle file | `04_editorial/captions/navier-stokes-en.srt` |
 | Narration and TTS direction | `01_story/narration/en.md` |
 | Downloaded clip destinations | `renders/` |
@@ -41,8 +42,8 @@ does. Never select `Approve, do not ask again`.
 
 Read `01_story/FALSIFICATION_VISUAL.md`, then inspect
 `renders/edit/navier-stokes-10-frame-story-previs-v02-30s.mp4` at phone size.
-Do not approve V01 until its continuous camera move, tail inspection and final
-application morph are accepted. The paid route then starts fresh: one
+Do not approve V01 until its continuous camera move, far-shell story beat and
+final application morph are accepted. The paid route then starts fresh: one
 eight-second Lite video followed by three Extend actions on the same video.
 
 Run `scripts/build_animatic.sh`, then watch its local 29.70-second output at
@@ -65,7 +66,8 @@ in `02_production/REVIEW_SHEET.csv`.
    40 credits; keep the last 10 as one targeted retry reserve.
 5. Generate the locked instrumental score in V01 and continue the same cue
    through V02–V04; do not add a separate music track. Reject an audible
-   restart, click or style change at any Extend boundary.
+   restart, click or style change at any Extend boundary. If Flow exposes a
+   generated-audio control, keep it enabled for all four actions.
 6. Add all guides, labels, status graphics, captions and narration in post.
 
 If a camera move still fails after one targeted revision, move only that shot
