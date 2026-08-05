@@ -1,7 +1,7 @@
 # Render drop zones
 
 Download generated files into these folders using the naming convention in
-`../PRODUCTION_WORKFLOW.md`.
+`../02_production/PRODUCTION_WORKFLOW.md`.
 
 - `flow/drafts/` — one-at-a-time 720p Veo Lite scouts and targeted Fast retries;
 - `flow/finals/` — optional selected upgrades only after the rough cut;
@@ -13,8 +13,8 @@ Download generated files into these folders using the naming convention in
 Git stores only active selected source clips, accepted derivatives and deliberate
 final deliverables. Rejected takes, local repair failures, review compilations,
 morph previs, superseded animatics and backup exports are not retained as
-binaries. Their decisions and defects remain auditable in `../REVIEW_SHEET.csv`
-and `../PRODUCTION_LOG.md`.
+binaries. Their decisions and defects remain auditable in `../02_production/REVIEW_SHEET.csv`
+and `../02_production/PRODUCTION_LOG.md`.
 
 Current retained motion assets:
 

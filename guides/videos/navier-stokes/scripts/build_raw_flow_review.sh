@@ -8,7 +8,7 @@ drafts_dir="${guide_dir}/renders/flow/drafts"
 edits_dir="${guide_dir}/renders/flow/edits"
 assets_dir="${guide_dir}/assets"
 output_dir="${guide_dir}/renders/edit"
-overlay_file="${guide_dir}/raw-flow-review.ass"
+overlay_file="${guide_dir}/04_editorial/overlays/raw-flow-review.ass"
 output_file="${1:-${output_dir}/navier-stokes-raw-flow-review-v01-44p2s.mp4}"
 work_dir="$(mktemp -d)"
 

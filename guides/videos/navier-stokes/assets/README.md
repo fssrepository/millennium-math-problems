@@ -16,7 +16,7 @@ Navier–Stokes C++ laboratory.
 ## Continuous Flow chain anchors
 
 `flow-chain/` contains exact endpoint frames for the three-generation,
-32-second continuity route documented in `../flow/CHAIN_32S_RUNBOOK.md`.
+32-second continuity route documented in `../03_platforms/flow/CHAIN_32S_RUNBOOK.md`.
 
 | File | Provenance and role |
 | --- | --- |
@@ -31,7 +31,7 @@ unmodified extracted source frames, not locally reconstructed animation.
 `previs-10/` contains the current ten-frame, three-second-step visual plan and
 its own provenance table. It is the source for the 30-second morph preview.
 
-The reusable text prompt is in `../CREATIVE_BIBLE.md` under **Master visual
+The reusable text prompt is in `../01_story/CREATIVE_BIBLE.md` under **Master visual
 prompt** and **Shared negative prompt**. The more detailed motion prompts are in
 the three platform `PROMPTS.md` files.
 
@@ -55,7 +55,7 @@ frontier frames. `keyframe-03-checkpoint.png` still contains the earlier amber
 scan intersection and is now a legacy composition reference only; the final
 S05/S06 route must contain no generated scan line or beam. The deterministic
 expected-decay guide, measured far-shell response, pointer, saved rejection and
-PNT-12 marker are defined in `../FALSIFICATION_VISUAL.md` and added in post.
+PNT-12 marker are defined in `../01_story/FALSIFICATION_VISUAL.md` and added in post.
 `keyframe-06-frontier.png` was visually recounted and still contains exactly 16
 separate checkpoint cubes.
 
@@ -64,5 +64,5 @@ placed above the generated plate and below typography. Its alpha is already
 embedded. CapCut Online flattened both the indexed-alpha and true-RGBA tests to
 an opaque black card on 2026-08-04, so do not use this as a separate CapCut
 track. Use a native editor gradient or the precomposited S02 file documented in
-`../flow/RUNBOOK.md`. Desktop compositors that preserve PNG alpha may leave the
+`../03_platforms/flow/RUNBOOK.md`. Desktop compositors that preserve PNG alpha may leave the
 overlay opacity at 100%. The editable source is the adjacent SVG.

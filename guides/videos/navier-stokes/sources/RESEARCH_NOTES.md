@@ -10,7 +10,7 @@
 - Session message span: `2026-08-01T07:51:01Z` to
   `2026-08-03T00:10:11Z`. The result used by the film was reported at
   `2026-08-02T17:19:22Z`, exactly 33 h 28 min 21 s after the campaign began.
-  See `../TIMELINE_EVIDENCE.md` for the event-level audit and screen mapping.
+  See `../01_story/TIMELINE_EVIDENCE.md` for the event-level audit and screen mapping.
 - The machine crash and resume were visible in the same record; the repository
   certificates and saved states allowed continuation instead of a restart from
   zero.
@@ -50,18 +50,18 @@ mathematical claim still requires expert review.
 ### Repository facts used in the film
 
 - The problem and honest scope:
-  `../../../navier-stokes/README.md`.
+  `../../../../navier-stokes/README.md`.
 - Exact roadmap and still-open L4 step:
-  `../../../navier-stokes/PROOF_PLAN.md`.
+  `../../../../navier-stokes/PROOF_PLAN.md`.
 - Rejected candidates F000–F015:
-  `../../../navier-stokes/proof/failed_lemmas.tsv`.
+  `../../../../navier-stokes/proof/failed_lemmas.tsv`.
 - Partial far-tail result and proof-state index:
-  `../../../navier-stokes/proof/README.md` and the L4 lemma notes.
+  `../../../../navier-stokes/proof/README.md` and the L4 lemma notes.
 - Existing public three-page explainer:
-  `../../problems/navier-stokes/output/Navier_Stokes_Brief_v1.0.0_EN.pdf`.
+  `../../../problems/navier-stokes/output/Navier_Stokes_Brief_v1.0.0_EN.pdf`.
 - Guide source text and original fluid hero:
-  `../../problems/navier-stokes/build.py` and
-  `../../problems/navier-stokes/assets/navier-stokes-flow.png`.
+  `../../../problems/navier-stokes/build.py` and
+  `../../../problems/navier-stokes/assets/navier-stokes-flow.png`.
 
 Snapshot checked on 2026-08-04:
 
@@ -225,7 +225,7 @@ formal mathematical dependence not present in the repository.
 Pricing was checked on 2026-08-04. Platform credits are not directly
 comparable: Flow charges a published amount per generation, Higgsfield varies
 by model/duration/resolution/region, and OpenArt publishes plan-wide `up to`
-capacity across many models. `../PLATFORM_COST_GUIDE.md` therefore compares the
+capacity across many models. `../02_production/PLATFORM_COST_GUIDE.md` therefore compares the
 cost of completing this six-plate film rather than inventing a universal
 credit exchange rate.
 

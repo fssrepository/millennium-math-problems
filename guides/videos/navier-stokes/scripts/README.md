@@ -17,7 +17,7 @@ relative to itself.
   `../renders/edit/navier-stokes-animatic-v02-raw-plates-720x1280.mp4`. It uses
   the complete raw S02 source across S02 plus the first two seconds of S03 and
   a normal-speed raw S05 segment. Canonical stills fill missing shots, and
-  `../animatic-overlays.ass` supplies timed typography.
+  `../04_editorial/overlays/animatic-overlays.ass` supplies timed typography.
 - `render_s02_accept.sh` reproduces the provisional six-second S02 plate.
 - `render_s05_salvage.sh` reproduces the provisional 3.83-second S05 plate.
 - `render_s06_frontier.sh` reproduces a rejected local S06 experiment for

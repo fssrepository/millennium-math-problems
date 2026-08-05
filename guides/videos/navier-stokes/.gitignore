@@ -1,0 +1,7 @@
+# These two production-control CSV files were moved here from the bundle root.
+# Keep them versioned despite the repository-wide *.csv ignore rule.
+!02_production/REVIEW_SHEET.csv
+!02_production/shot-manifest.csv
+
+# User-selected three-second-per-frame reference restored from Git history.
+!renders/edit/navier-stokes-10-frame-morph-previs-v01-30s.mp4

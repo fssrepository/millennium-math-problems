@@ -8,7 +8,7 @@ assets_dir="${guide_dir}/assets"
 drafts_dir="${guide_dir}/renders/flow/drafts"
 edits_dir="${guide_dir}/renders/flow/edits"
 output_dir="${guide_dir}/renders/edit"
-overlay_file="${guide_dir}/animatic-overlays.ass"
+overlay_file="${guide_dir}/04_editorial/overlays/animatic-overlays.ass"
 output_file="${1:-${output_dir}/navier-stokes-animatic-v02-raw-plates-720x1280.mp4}"
 work_dir="$(mktemp -d)"
 
