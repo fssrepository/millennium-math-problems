@@ -72,10 +72,11 @@ imagery.
 - S03/S05: 85–100 mm macro, shallow but readable depth of field.
 - S04: 28–35 mm fast forward flight through nested shells.
 - S06: slow inspection, one fast controlled push onto the far-shell response,
-  then a restrained pullback to the orange PNT-12 frontier.
-- S07: near-still wide frame, no triumphal tilt-up.
-- Use one fast movement followed by a clear arrest. Never let the whole film
-  wobble continuously.
+  then continued forward motion as the orange PNT-12 frontier activates.
+- S07: accelerate through the same flow into one continuous application morph,
+  then ease near the final frame; no triumphal tilt-up.
+- The full film uses one camera trajectory. Speed changes provide the visual
+  punctuation; there are no camera resets at generation-slot boundaries.
 
 ## Motion rules
 
@@ -84,8 +85,8 @@ imagery.
 - The coral dye vortex may stretch, fold and thin, but must retain diffuse
   liquid edges, remain separated from the glass and never become rope, ribbon,
   cloth, a solid tentacle or many unrelated worms.
-- Hard freezes, frame holds, stamps, counters and the three restart beats are
-  created in post.
+- Stamps, counters and the three restart beats are created in post. The camera
+  may nearly arrest, but the generated fluid never freezes.
 - Expected decay, measured persistence, the far-shell pointer and every status
   label are created in post. Never ask the generator to draw them.
 - Camera energy decreases across S04 → S05 → S06 to make the increasing search

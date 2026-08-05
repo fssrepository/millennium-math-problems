@@ -1,13 +1,17 @@
 # Google Flow workflow
 
+> **CURRENT ROUTE:** use `CHAIN_32S_RUNBOOK.md`. It creates one continuous
+> video as V01 plus three Veo 3.1 Lite Extends: four 8-second slots, 40 credits,
+> and a 10-credit retry reserve. The independent-shot files below remain only
+> as production history.
+
 Recommended route: **Veo 3.1 Lite at 720p, one output at a time**. Use Fast only
 when a Lite take has the correct composition but insufficient motion quality.
 Quality is an optional hero-shot upgrade after the complete mobile rough cut,
 not a required pass for every shot.
 
-For literal click-by-click instructions, use `RUNBOOK.md`. This
-route uses only the standard prompt box and Frames; Agent, Storyboard Studio,
-Ingredients and scene automation are not required.
+For current click-by-click instructions and paste-ready prompts, use
+`CHAIN_32S_RUNBOOK.md`.
 
 If Flow opens the expanded Agent fallback used in the supervised pass, follow
 `AGENT_READY_TO_PASTE.md`. After the Agent describes the prepared job, send the

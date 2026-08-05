@@ -1,5 +1,8 @@
 # Flow copy/paste prompts
 
+> **LEGACY INDEPENDENT-SHOT DESIGN.** The active prompts are in
+> `CHAIN_32S_RUNBOOK.md`.
+
 > **HOLD — NOT READY TO PASTE.** These legacy shot prompts predate the
 > evidence-driven PNT-13 falsification sequence and still contain the rejected
 > scan-plane treatment. Rebuild the v02 visual preview from

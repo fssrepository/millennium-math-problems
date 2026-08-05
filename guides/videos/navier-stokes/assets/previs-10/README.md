@@ -19,12 +19,11 @@ interval. K10 remains visible from 27 to 30 seconds.
 
 K01–K03 are extracted from the accepted first video. The current K04–K10 files
 are image-generation planning assets, not mathematical evidence or final video
-output. The existing v01 morph preview predates the explicit PNT-13
-falsification sequence above, so K06–K09 must be rebuilt or composited before
-the next Flow/OpenArt prompt is approved. Do not treat a generic fluid morph as
-proof that the state-change story is present.
+output. The v01 morph preview predates the explicit PNT-13 falsification
+sequence and remains a continuity reference only. The rebuilt v02 boards live
+in `../previs-10-v02/` and plan the one-camera tail inspection plus the final
+continuous application morph.
 
-Run `../../scripts/build_10_frame_previs.sh` to create the silent 30-second
-cross-morph preview. Flow/OpenArt prompts must be revised only after a v02
-preview visibly contains the expected-decay state, the surviving tail, the
-saved rejection and the PNT-12 open-frontier state.
+Run `../../scripts/build_10_frame_previs.sh` only to reproduce v01. Run
+`../../scripts/build_10_frame_previs_v02.sh` for the current no-credit review.
+Paid generation remains held until the user approves that v02.

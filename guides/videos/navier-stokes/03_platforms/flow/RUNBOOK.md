@@ -1,18 +1,15 @@
 # Google Flow — cost-efficient button-by-button workflow
 
+> **LEGACY INDEPENDENT-SHOT ROUTE.** Do not use this for the current film. The
+> active continuous workflow is `CHAIN_32S_RUNBOOK.md`: one V01 generation plus
+> three Extends on the same video.
+
 ## Current primary route
 
-Do not spend the next credit refresh yet. First review the ten-frame,
-30-second visual plan at
-`../../renders/edit/navier-stokes-10-frame-morph-previs-v01-30s.mp4`. Keep the
-accepted first video, then rewrite and generate only the second, third and
-fourth eight-second pieces from `CHAIN_32S_RUNBOOK.md`. The current chain
-prompts are explicitly on hold until the previs is approved.
-
-The standard Flow path is `Video → Frames → First Frame + Last Frame`. If the
-expanded Agent is the only available interface, attach both images and approve
-only when its built-in card explicitly assigns them as the first and last
-frames. Two generic references are not equivalent.
+The current route is fully specified in `CHAIN_32S_RUNBOOK.md`: create a clean
+project, generate V01 from one First Frame, then use Extend three times on the
+same accepted video. The remaining material in this file is retained only as
+the legacy independent-shot record.
 
 This is the primary route. It uses only Flow's standard prompt box and built-in
 **Frames** image-to-video mode. Generate one 720p result, inspect it, and spend

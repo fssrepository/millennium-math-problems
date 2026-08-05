@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="720" height="1280" viewBox="0 0 720 1280">
+  <defs>
+    <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#02070d" stop-opacity="0"/>
+      <stop offset="0.52" stop-color="#02070d" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#02070d" stop-opacity="0.95"/>
+    </linearGradient>
+    <filter id="orangeGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="720" height="1280" fill="url(#shade)"/>
+  <rect x="34" y="40" width="282" height="38" rx="19" fill="#03131b" fill-opacity="0.92" stroke="#32d7ff" stroke-opacity="0.7"/>
+  <text x="175" y="66" text-anchor="middle" fill="#c9f7ff" font-family="DejaVu Sans, sans-serif" font-size="17" font-weight="700" letter-spacing="1.2">CONCEPT VISUALIZATION</text>
+  <text x="54" y="803" fill="#91eaff" font-family="DejaVu Sans, sans-serif" font-size="17" font-weight="700" letter-spacing="2">SAVE AND REFINE</text>
+  <text x="54" y="849" fill="#ffffff" font-family="DejaVu Sans, sans-serif" font-size="31" font-weight="700">COUNTEREXAMPLE SAVED</text>
+  <rect x="48" y="895" width="624" height="142" rx="22" fill="#180a0b" fill-opacity="0.88" stroke="#ff745e" stroke-opacity="0.8"/>
+  <circle cx="93" cy="942" r="15" fill="#ff745e"/>
+  <path d="M85 942 l6 7 l12 -16" fill="none" stroke="#190908" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="126" y="936" fill="#ff9f8c" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="700">F015 / PNT-13</text>
+  <text x="126" y="977" fill="#ffffff" font-family="DejaVu Sans, sans-serif" font-size="30" font-weight="700">REJECTED &#183; SAVED</text>
+  <text x="126" y="1009" fill="#d7b7b3" font-family="DejaVu Sans, sans-serif" font-size="17">ONE ROUTE CLOSED, EVIDENCE RETAINED</text>
+  <rect x="48" y="1055" width="624" height="150" rx="22" fill="#161006" fill-opacity="0.91" stroke="#ff9d35" stroke-width="3" filter="url(#orangeGlow)"/>
+  <circle cx="93" cy="1105" r="16" fill="#ff9d35"/>
+  <circle cx="93" cy="1105" r="6" fill="#fff2d4"/>
+  <text x="126" y="1099" fill="#ffc375" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="700">AI REFINED</text>
+  <text x="126" y="1143" fill="#ffffff" font-family="DejaVu Sans, sans-serif" font-size="32" font-weight="700">PNT-12 OPEN</text>
+  <text x="126" y="1176" fill="#ecd7b9" font-family="DejaVu Sans, sans-serif" font-size="17">COUPLED TARGET &#183; NOT YET PROVED</text>
+</svg>

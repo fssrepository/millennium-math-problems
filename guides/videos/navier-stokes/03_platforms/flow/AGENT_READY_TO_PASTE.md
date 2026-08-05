@@ -1,5 +1,9 @@
 # Flow Agent fallback — exact prompts ready to paste
 
+> **LEGACY SCOUT RECORD.** Do not paste the prompts below for the current film.
+> Use `CHAIN_32S_RUNBOOK.md`, which defines one initial video plus three Extends
+> as a single continuous camera morph within the 40-credit production budget.
+
 Use this file only when Flow opens the expanded Agent session instead of the
 standard prompt box. The standard, preferred `Video → Frames` route remains in
 `READY_TO_PASTE.md`.
@@ -26,15 +30,10 @@ confirmation exchange.
 
 ## Current next action: review before generation
 
-Do not generate yet. First review
-`../../01_story/FALSIFICATION_VISUAL.md`. The existing
-`../../renders/edit/navier-stokes-10-frame-morph-previs-v01-30s.mp4` is only a
-camera-continuity reference and is not story-approved. Keep the accepted first
-Flow video and restart only from the second video piece. After a v02 preview
-shows expected decay, the persistent far-shell response, saved PNT-13
-rejection and the PNT-12 open frontier, rewrite C01, C02 and C03 in
-`CHAIN_32S_RUNBOOK.md`; only then are they ready to paste. The planned maximum
-spend is three eight-second Lite generations at 10 credits each.
+Do not use the archived prompts below. Review the current v02 preview, then use
+`CHAIN_32S_RUNBOOK.md`: one fresh V01 generation followed by three Extend
+actions on that same accepted video. The planned spend is 40 credits, with 10
+credits reserved for one targeted retry.
 
 ## Completed record: S01 opening take 01
 

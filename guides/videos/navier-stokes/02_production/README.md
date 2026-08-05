@@ -11,3 +11,5 @@ Use this directory to plan, generate, review and deliver the film:
 
 Paths stored in `shot-manifest.csv` are relative to the video bundle root, not
 to this directory. This keeps them compatible with the scripts in `../scripts/`.
+The CSV preserves the legacy editorial shot map. Current paid generation is
+one V01 clip plus three Extends; use `../03_platforms/flow/CHAIN_32S_RUNBOOK.md`.

@@ -49,21 +49,34 @@ checkpoint is:
   24 fps and exactly 30.000 seconds. Keep it for visual review, but do not use
   it to approve the still-missing PNT-13/PNT-12 story transition.
 
+- A no-credit v02 story preview now exists at
+  `renders/edit/navier-stokes-10-frame-story-previs-v02-30s.mp4`. FFprobe
+  verifies 720×1280, 24 fps and exactly 30.000 seconds. K06–K09 move deeper
+  into the same fluid while editor overlays show expected decay → persistent
+  far-shell response → saved PNT-13 rejection → PNT-12 open. K10 plans a
+  no-cut morph from the same flow into weather, flight, blood-flow and energy
+  forms. It still requires user approval after the latest camera-path rebuild.
+
+- The paid route is now one fresh eight-second Veo 3.1 Lite video followed by
+  three sequential **Extend** actions on that same video. These are four fixed
+  generation slots, not four scenes. Budget: 40 credits, with the fifth
+  10-credit slot reserved for one targeted retry. The complete prompts are in
+  `03_platforms/flow/CHAIN_32S_RUNBOOK.md`.
+
+- The user reported refreshed credits. Create a new Flow project named
+  `Navier–Stokes — Continuous Morph V01–V04 — 9x16`. Do not use the old
+  `Lemma Stress Test` project's visible pending approval card.
+
 1. No additional video-generation credits should be spent yet.
-2. The superseded ten-frame v01 morph did not visibly explain the PNT-13
-   falsification and must not approve the story.
-3. Rebuild/composite planning states K06–K09 so the v02 previs visibly shows:
-   expected decay → persistent far-shell response → saved PNT-13 rejection →
-   PNT-12 open frontier.
-4. Review that v02 at phone size against every acceptance item in
+2. Review the v02 story preview at phone size against every acceptance item in
    `01_story/FALSIFICATION_VISUAL.md`.
-5. Only after user approval may the Flow/OpenArt/Higgsfield prompts be revised
-   and generation resume from the second video piece.
+3. Only after user approval may V01 be generated and extended through V04.
 
 Minimum files for that action:
 
 - `01_story/FALSIFICATION_VISUAL.md`
-- `assets/previs-10/README.md`
+- `assets/previs-10-v02/README.md`
+- `03_platforms/flow/CHAIN_32S_RUNBOOK.md`
 - `02_production/PRODUCTION_LOG.md` only when an exact prior decision or source
   filename is needed
 
@@ -101,6 +114,6 @@ repository history must not be rewritten for cleanup.
 
 ## Completion condition for the next checkpoint
 
-The next checkpoint is complete only when a phone-size v02 planning preview
-clearly communicates all four PNT-13/PNT-12 states and the user approves it.
-Prompt rewrites and new paid generations remain downstream work.
+The next checkpoint is complete only when the user approves the phone-size v02
+planning preview. The four-slot Extend prompts are prepared; paid generation
+remains downstream work.

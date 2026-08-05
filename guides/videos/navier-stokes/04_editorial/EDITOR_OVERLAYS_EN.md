@@ -123,10 +123,11 @@ CONCEPT VISUALIZATION • THIS IS NOT A PROOF
 ```
 
 Show those lines sequentially, never as one text block. During `EXPECTED`, use
-a faint declining dashed guide. During `FOUND`, freeze on the bright far-shell
-response and connect the third line to it with one thin pointer. The dashed
-guide, pointer, labels and status colors are deterministic editor overlays;
-do not ask the video model to generate them.
+a faint declining dashed guide. During `FOUND`, let the camera nearly arrest
+while the fluid remains visibly alive; connect the third line to the bright
+far-shell response with one thin pointer. The dashed guide, pointer, labels and
+status colors are deterministic editor overlays; do not ask the video model to
+generate them.
 
 ## S07 — 00:25.20–00:29.70
 

@@ -1,5 +1,8 @@
 # Flow — complete prompts ready to paste
 
+> **LEGACY INDEPENDENT-SHOT DESIGN.** The active prompts are in
+> `CHAIN_32S_RUNBOOK.md`.
+
 > **HOLD — NOT READY TO PASTE.** The blocks below are the earlier shot design.
 > They do not yet implement the expected decay → persistent far-shell response
 > → saved PNT-13 rejection → PNT-12 open transition. Follow

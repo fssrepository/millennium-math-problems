@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1280" viewBox="0 0 720 1280">
+  <defs>
+    <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#02070d" stop-opacity="0.12"/>
+      <stop offset="0.58" stop-color="#02070d" stop-opacity="0"/>
+      <stop offset="1" stop-color="#02070d" stop-opacity="0.9"/>
+    </linearGradient>
+  </defs>
+  <rect width="720" height="1280" fill="url(#shade)"/>
+  <rect x="34" y="40" width="282" height="38" rx="19" fill="#03131b" fill-opacity="0.92" stroke="#32d7ff" stroke-opacity="0.7"/>
+  <text x="175" y="66" text-anchor="middle" fill="#c9f7ff" font-family="DejaVu Sans, sans-serif" font-size="17" font-weight="700" letter-spacing="1.2">CONCEPT VISUALIZATION</text>
+  <rect x="42" y="1015" width="636" height="190" rx="24" fill="#020a10" fill-opacity="0.86" stroke="#2389a5" stroke-opacity="0.72"/>
+  <text x="72" y="1064" fill="#91eaff" font-family="DejaVu Sans, sans-serif" font-size="18" font-weight="700" letter-spacing="2">WHY IT MATTERS</text>
+  <text x="72" y="1114" fill="#ffffff" font-family="DejaVu Sans, sans-serif" font-size="29" font-weight="700">WEATHER &#183; FLIGHT &#183; BLOOD FLOW</text>
+  <text x="72" y="1154" fill="#ffffff" font-family="DejaVu Sans, sans-serif" font-size="29" font-weight="700">ENERGY</text>
+  <text x="72" y="1190" fill="#aeefff" font-family="DejaVu Sans, sans-serif" font-size="16">ONE CONTINUOUS CAMERA MORPH &#183; NO CUT</text>
+</svg>

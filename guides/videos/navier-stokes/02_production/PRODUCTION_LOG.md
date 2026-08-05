@@ -4,9 +4,9 @@ This file persists the decisions made during the supervised production pass.
 It is the durable record; chat instructions are not the source of truth.
 
 Last updated: 2026-08-05  
-Current next action: rebuild the ten-frame story as v02 with the explicit
-PNT-13 falsification sequence; spend no additional Flow credits and do not
-finalize prompts before that review
+Current next action: user review of the no-credit v02 story preview at phone
+size; the four-slot Extend prompts are prepared, but spend no Flow credits
+before that approval
 
 Media cleanup on 2026-08-05 removed rejected, failed-repair, review-only and
 superseded MP4 binaries from the working tree. The historical filenames below
@@ -26,12 +26,28 @@ byte-for-byte from commit `46ac16a` after cleanup had removed it. This is a
 deliberate review reference, not a backup and not a reversal of its superseded
 story status.
 
-The accepted first Flow video remains. Future Flow generation restarts from
-the second video piece with three sequential eight-second First Frame + Last
-Frame clips. At the observed Lite price, the planned spend is 30 credits and
-20 credits remain as retry reserve from a 50-credit refresh. Prompts stay on
-hold until a v02 preview implements `../01_story/FALSIFICATION_VISUAL.md` and the complete
-visual route is approved.
+The earlier S01 remains as an audit/reference take, but the new paid route
+starts fresh so all four slots belong to one extension chain. Generate one
+eight-second Veo 3.1 Lite V01, then use Extend on that accepted video three
+times for V02–V04. The four actions are fixed slots, not scenes. At the current
+non-Ultra price the planned spend is 40 credits; the remaining 10 credits from
+a 50-credit refresh are reserved for one targeted retry.
+
+The user reported a refreshed credit balance on 2026-08-05. Use a new project
+named `Navier–Stokes — Continuous Morph V01–V04 — 9x16`; do not approve the
+stale 10-credit card still visible in the legacy `Lemma Stress Test` project.
+The live confirmation card must still show one Lite generation at no more than
+10 credits before each paid action.
+
+Current no-credit story preview:
+`../renders/edit/navier-stokes-10-frame-story-previs-v02-30s.mp4` — 720 ×
+1280, 24 fps, 720 frames and exactly 30.000 seconds. K06–K09 move progressively
+deeper into the same fluid while editor-owned overlays distinguish expected
+decay, the persistent far-shell response, the isolated obstruction, the saved
+PNT-13 rejection and the PNT-12 open state. K10 is the planning target for
+morphing the same flow into its weather, flight, blood-flow and energy
+applications; the local transition is not generated footage. User approval is
+still required after this camera-path revision before paid generation.
 
 Current primary review:
 `../renders/edit/navier-stokes-four-flow-clips-v01-32s.mp4` — 720 × 1280, 24
@@ -108,14 +124,13 @@ pass.
 
 ## Next exact action
 
-1. Read `../01_story/FALSIFICATION_VISUAL.md` and review the v01 morph only for camera
-   continuity.
-2. Rebuild K06–K09 as v02 planning states: expected decay, measured persistent
-   far-shell response, saved PNT-13 rejection and PNT-12 open frontier.
-3. Review v02 at phone size and require every acceptance item in that file.
-4. Only after approval, rewrite the Flow, OpenArt and Higgsfield prompts and
-   regenerate from the second video piece. S05's amber beam/ring remains a
-   rejected reference, not a local-retouch task.
+1. Review
+   `../renders/edit/navier-stokes-10-frame-story-previs-v02-30s.mp4` at phone
+   size against every item in `../01_story/FALSIFICATION_VISUAL.md`.
+2. Only after user approval, follow
+   `../03_platforms/flow/CHAIN_32S_RUNBOOK.md`: V01 plus three Extend actions,
+   40 credits total and a 10-credit retry reserve. S05's amber beam/ring remains
+   a rejected reference, not a local-retouch task.
 
 Do not repair a failed Flow take with synthetic zoom, a freeze frame, geometry warp
 or another local motion effect. A normal timeline cut from the eight-second

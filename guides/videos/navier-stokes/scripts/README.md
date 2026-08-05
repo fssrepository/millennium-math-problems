@@ -6,11 +6,17 @@ relative to itself.
 - `build_10_frame_previs.sh` builds the current primary planning artifact,
   `../renders/edit/navier-stokes-10-frame-morph-previs-v01-30s.mp4`, from ten
   keyframes spaced at three-second story intervals. It spends no Flow credits
-  and must be reviewed before C01/C02/C03 prompts are finalized.
+  and remains a superseded continuity reference.
+- `build_10_frame_previs_v02.sh` builds the story-corrected no-credit review
+  preview, `../renders/edit/navier-stokes-10-frame-story-previs-v02-30s.mp4`.
+  Its K06-K09 boards follow one camera move into the same fluid while editor
+  overlays show expected decay, the persistent far-shell response, the saved
+  PNT-13 rejection and the PNT-12 open state. K10 plans the continuous
+  application morph.
 - `build_anchor_morph_previs.sh` builds the earlier five-anchor, 11-second
   direction test. It is superseded by the ten-frame previs.
-- `build_flow_chain_32s.sh` is reserved for assembling S01 plus the future
-  accepted C01/C02/C03 replacement clips after generation.
+- `build_flow_chain_32s.sh` is a legacy First/Last-frame assembly helper. The
+  current Flow route uses the final V04 extended video directly.
 
 - `build_animatic.sh` builds the complete 720 × 1280, 30 fps, 29.70-second
   review video at

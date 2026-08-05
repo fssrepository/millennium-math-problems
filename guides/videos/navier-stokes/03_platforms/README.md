@@ -1,6 +1,6 @@
 # Generation platforms
 
-- `flow/` — default route and complete prompts ready to paste.
+- `flow/` — default one-video route: an initial Lite clip plus three Extends.
 - `higgsfield/` — targeted camera-move rescue route.
 - `openart/` — full alternative image-to-video route.
 

@@ -93,13 +93,14 @@ slow move with a long terminal hold.
   `EXPECTED • DISTANT SCALES DECOUPLE`.
 - 22.10–23.20: keep the measured coral response bright beyond the fading
   envelope. Show `FOUND • CORRELATION ≈ 1`.
-- 23.20–24.15: decelerate to a short freeze, then use one fast controlled push
-  onto that surviving response. Draw one thin pointer and show
+- 23.20–24.15: decelerate the camera almost to rest while the fluid stays
+  alive, then use one fast controlled push onto that surviving response. Draw
+  one thin pointer and show
   `FREQUENCY-SHELL TAIL STAYED COHERENT`.
 - 24.15–24.86: turn the route coral, show
   `F015 / PNT-13 • REJECTED`, then `COUNTEREXAMPLE SAVED`.
 - 24.86–25.20: dim PNT-13, activate one orange marker and show
-  `AI REFINED → PNT-12 OPEN` while the camera begins a restrained pullback.
+  `AI REFINED → PNT-12 OPEN` while the same camera continues forward.
 - Add `CONCEPT VISUALIZATION • THIS IS NOT A PROOF`; no glow, checkmark,
   generated diagram, scan beam or resolved chord.
 - The “tail” is a frequency-shell response. It is not a physical tail in the
@@ -107,7 +108,8 @@ slow move with a long terminal hold.
 
 ### S07 — 00:25.20–00:29.70
 
-- Use the wide final frame at 98–100% speed with only a 2% pullback.
+- Continue the same camera path. Accelerate into the connected application
+  morph, then ease near the final frame without a cut or direction reset.
 - Place a 72% near-black veil over footage for contrast.
 - Reveal the result microline at 25.30, the laptop estimate at 25.55 and the
   cluster line at 26.05. Keep `FULL PROOF • UNKNOWN` adjacent to the cluster
@@ -147,8 +149,9 @@ slow move with a long terminal hold.
 - S02: one Doppler whoosh, then near-silence at the macro arrest.
 - S04: tight dry ticks; let their frequency imply fast iteration.
 - S05: widen the gaps between ticks; use one dry dropout for the crash/resume.
-- S06: one restrained comparison pulse, a near-silent freeze, then a long airy
-  continuation. No synthetic scanner sound.
+- S06: one restrained comparison pulse, a near-silent camera near-arrest while
+  fluid motion continues, then a long airy continuation. No synthetic scanner
+  sound.
 - S07: no triumphant cadence; voiceover stays 5–6 dB above the bed.
 
 ## Mix and export

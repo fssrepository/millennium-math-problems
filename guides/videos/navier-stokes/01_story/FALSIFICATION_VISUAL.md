@@ -40,11 +40,12 @@ new diagram plane, explosion or scan beam.
 
 Editor copy: `FOUND • CORRELATION ≈ 1`
 
-### C — Freeze the obstruction
+### C — Near-arrest on the obstruction
 
-Decelerate to a short freeze and perform a fast camera push onto the surviving
-far-shell response. Add one thin editor-drawn pointer. The pointer must target
-the coral response, not the cube boundary.
+Decelerate the camera almost to rest while the fluid remains visibly alive,
+then perform a fast controlled push onto the surviving far-shell response. Add
+one thin editor-drawn pointer. The pointer must target the coral response, not
+the cube boundary.
 
 Editor copy: `FREQUENCY-SHELL TAIL STAYED COHERENT`
 
@@ -64,11 +65,11 @@ AI REFINED → PNT-12 OPEN
 
 ## Generator versus editor responsibility
 
-The video model generates only continuous fluid motion, stable geometry,
-camera deceleration, the close inspection and the resumed pullback. The editor
-adds the expected-decay guide, exact status colors, pointer, clock, labels and
-ledger markers. This prevents the model from inventing percentages, equations,
-scan lines or unreadable text.
+The video model generates one continuous fluid simulation, stable geometry and
+one camera path: deceleration, close inspection, resumed acceleration and the
+final application morph. The editor adds the expected-decay guide, exact
+status colors, pointer, clock, labels and ledger markers. This prevents the
+model from inventing percentages, equations, scan lines or unreadable text.
 
 Always label the footage `CONCEPT VISUALIZATION`. The animation is a visual
 analogy for frequency-shell behavior; the numerical values and logical status
