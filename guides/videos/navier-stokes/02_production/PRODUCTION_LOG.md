@@ -4,9 +4,98 @@ This file persists the decisions made during the supervised production pass.
 It is the durable record; chat instructions are not the source of truth.
 
 Last updated: 2026-08-05  
-Current next action: step 1 of the supervised Flow run — create the clean new
-project and verify its settings before V01; do not generate or approve a cost
-card ahead of the step-by-step review
+Current next action: watch the completed caption-led post master at phone size;
+do not spend the held 10-credit retry unless that review finds a defect that
+cannot be repaired deterministically
+
+## V04 review — remove the actual Flow overlap loops — 2026-08-05
+
+V03 still exposed the persistent geometry change because a dissolve cannot
+make two different states continuous. Exact frame matching found the real
+structure of the downloaded Extend chain: frame 359 at 14.958 seconds recurs
+almost identically at frame 383 at 15.958 seconds, and frame 551 at 22.958
+seconds recurs almost identically at frame 575 at 23.958 seconds. These are
+approximately one-second Flow overlap loops, not isolated bad frames.
+
+The current review is
+`../renders/edit/navier-stokes-flow-post-v04-review-720p.mp4`. It removes each
+overlap from the repeated frame to its matching recurrence, then retimes the
+remaining 169-frame continuation back to its eight-second timeline position.
+No visual dissolve remains at 15 or 23 seconds. Contact-strip review shows the
+matched states continuing without a geometry jump. The file is 720 × 1280,
+30 fps, 891 frames and 29.700 seconds; full decode passed and no Flow credits
+were used.
+
+## V03 review after residual 15-second jump — 2026-08-05
+
+User review found that V02 still appeared to jump around 14–15 seconds. The
+two removed source frames were not the complete issue: the geometry on the new
+side remains persistently different, so a two-output-frame blend still visibly
+flipped between states. The current review is
+`../renders/edit/navier-stokes-flow-post-v03-review-720p.mp4`. It keeps the same
+two-frame source removal but widens only the 15-second bridge to six output
+frames (14.80–15.00). Frame-strip review now shows a monotonic dissolve without
+an abrupt geometry change. The accepted two-frame repair at 23 seconds remains
+unchanged. V03 is 720 × 1280, 30 fps, 891 frames and 29.700 seconds; full decode
+passed. No Flow credits were used.
+
+## Native-resolution v02 review after user QC — 2026-08-05
+
+The user rejected v01 after observing another picture jump around 13–14
+seconds and audible distortion at several points. Frame-delta analysis located
+the persistent source geometry change at exactly 15.000 seconds; playback and
+the simultaneous event-card change can make it feel slightly earlier. V02 now
+repairs both source jumps, at 15.000 and 23.000 seconds, by dropping only the
+first two frames of each new state and applying a two-frame dissolve.
+
+Current review file:
+`../renders/edit/navier-stokes-flow-post-v02-review-720p.mp4` — native 720 ×
+1280 picture, 30 fps, 891 frames and 29.700 seconds. It fully decodes without
+error. It intentionally avoids the unnecessary 1080p upscale until picture
+and sound are approved.
+
+V01's broadband de-click processing was removed completely because it could
+mistake the score's dry musical transients for defects. V02 preserves the
+original score: the 7-second join receives only a 12 ms fade-out/fade-in, and
+the 15- and 23-second joins use the same 83 ms equal-power crossfade as the
+picture edit. No other audio repair filter is active. Measured output is about
+−16.28 LUFS with −1.33 dBTP peak. If distortion remains away from those exact
+joins, it is present in the Flow-generated source rather than introduced by
+post.
+
+## Completed continuous Flow chain and first post master — 2026-08-05
+
+The supervised paid route is complete: one Veo 3.1 Lite image-to-video V01 and
+three sequential Extend actions were generated in the new continuous-morph
+project for 40 credits total. The fifth 10-credit slot remains reserved and was
+not spent. The downloaded chain is
+`/home/raxim/Downloads/Initial_Scene_-_2026-08-05_202608051411.mp4`: H.264/AAC,
+720 × 1280, 24 fps and 31.000 seconds. Flow reused approximately one second of
+context at each Extend, so the delivered chain is 31 rather than 32 seconds.
+
+Raw review found continuous camera/fluid motion at the 7- and 15-second
+Extend boundaries. The user identified a small geometry jump at 23 seconds.
+The new post script drops only source frames 552 and 553, bridges the adjacent
+states with a two-frame dissolve, and uses the generated stable tail to retain
+the locked 29.700-second edit. Audio cleanup is restricted to 240 ms around
+the 7- and 15-second joins; the 23-second audio follows the same short
+crossfade as the picture. The rest of the generated score is unchanged apart
+from a safe global gain adjustment.
+
+Superseded caption-led post master:
+`../renders/edit/navier-stokes-flow-post-v01-29.70s.mp4`. FFprobe verifies H.264
+High Profile/AAC, 1080 × 1920, 30 fps, 891 frames and exactly 29.700 seconds.
+The file fully decodes without errors; measured audio is about −16.35 LUFS with
+−1.11 dBTP peak. It includes the immediate topic/question, sequential research
+story, a separate frequency-shell diagram with no pointer into the liquid, the
+expanding glass cards, one cyan-to-coral perimeter sweep and four brief final
+application glints. The original Downloads file remains untouched.
+
+The generated score is the only audio in this caption-led master. A spoken
+narration layer is not baked because no recorded or selected English voice
+asset exists yet. That optional voice pass must lower the score under speech
+and follow `../01_story/narration/en.md`; it does not require another Flow
+generation.
 
 Preflight review, 2026-08-05: passed. The V01 anchor exists at 720 × 1280; the
 planning preview is valid H.264 at 720 × 1280, 24 fps and 30.000 seconds; the

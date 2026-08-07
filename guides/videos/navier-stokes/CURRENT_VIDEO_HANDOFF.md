@@ -40,6 +40,66 @@ minimum context needed for the next action.
 
 ## Current production checkpoint
 
+### Latest checkpoint — supersedes the pre-generation action below
+
+- V03's widened dissolve still could not make two persistent geometries read
+  as one. Exact frame matching identified approximately one-second overlap
+  loops: source frame 359 recurs at 383, and source frame 551 recurs at 575.
+  The current file is
+  `renders/edit/navier-stokes-flow-post-v04-review-720p.mp4`. It removes those
+  two actual repeated intervals and gently retimes each remaining continuation
+  to the same eight-second slot. There is no visual dissolve at either join;
+  boundary contact strips and full decode passed.
+
+- V02's two-frame bridge at the 15-second boundary still appeared to jump in
+  user review. The current file is
+  `renders/edit/navier-stokes-flow-post-v03-review-720p.mp4`. It retains only
+  two dropped source frames but expands that single bridge to six 30 fps output
+  frames from 14.80 to 15.00. Frame-strip and full-decode QC passed. The
+  23-second bridge remains the accepted two-frame version.
+
+- User QC superseded the 1080p post v01: another geometry jump was visible
+  around 13–14 seconds and its de-clicked audio sounded distorted in several
+  places.
+- The current review is
+  `renders/edit/navier-stokes-flow-post-v02-review-720p.mp4`: native 720 ×
+  1280, 30 fps, 891 frames and 29.700 seconds. It repairs the persistent source
+  jumps at exactly 15.000 and 23.000 seconds with two dropped source frames
+  plus a two-frame dissolve at each boundary.
+- V02 removes broadband de-click entirely. Only a 12 ms seam fade at 7 seconds
+  and 83 ms equal-power crossfades at 15 and 23 seconds touch the audio. The
+  remainder is the original Flow score with a safe gain adjustment.
+- Review V02 before any upscale. If an audible defect remains away from those
+  joins, record its exact time because it originates in the Flow master and
+  needs a separate local decision.
+
+- The paid Flow chain is complete: V01 plus three Extend actions used 40
+  credits. The held fifth 10-credit slot remains unspent.
+- The downloaded continuous source is
+  `/home/raxim/Downloads/Initial_Scene_-_2026-08-05_202608051411.mp4`: 720 ×
+  1280, 24 fps, 31.000 seconds with generated stereo audio.
+- The first caption-led post master is
+  `renders/edit/navier-stokes-flow-post-v01-29.70s.mp4`: 1080 × 1920, 30 fps,
+  891 frames and exactly 29.700 seconds. It decodes without error.
+- The only meaningful visual join defect was the user-observed jump at source
+  23 seconds. Post drops two source frames and applies only a two-frame
+  dissolve. The large S06 frequency-shell card naturally reduces the remaining
+  visibility without inventing a new scene.
+- The generated score is preserved. De-click is local to the first two joins;
+  the 23-second sound follows the same short crossfade as picture. Measured
+  peak is −1.11 dBTP.
+- Exact opening/topic copy, research overlays, separate tail diagram,
+  expanding glass cards, border light sweep and final localized glints are now
+  deterministic post effects. A spoken English voice has not been baked
+  because no voice asset is selected; the master is caption-led.
+- Next action: user phone review of that post master. Do not spend the reserve
+  on a retry unless the defect survives local repair and materially harms the
+  film.
+
+The remaining bullets in this section document the earlier planning and
+pre-generation checkpoint; they are retained for audit, not as the current
+instruction.
+
 The durable source of truth is `02_production/PRODUCTION_LOG.md`. Its present
 checkpoint is:
 
@@ -149,7 +209,9 @@ repository history must not be rewritten for cleanup.
 
 ## Completion condition for the next checkpoint
 
-The next checkpoint is complete when the clean new Flow project shows Veo 3.1
-Lite, portrait 9:16, 720p, eight seconds, one output and generated audio enabled
-when that control is exposed. Do not approve V01 until those settings and a
-cost of no more than 10 credits are visible.
+The next checkpoint is complete after the user watches
+`renders/edit/navier-stokes-flow-post-v04-review-720p.mp4` at phone size and either
+accepts it or identifies an exact timecoded defect. Use deterministic post for
+any local typography, mix or join correction. Spend the held 10 credits only
+if a material generative defect cannot be repaired locally and the user
+explicitly approves that targeted retry.
