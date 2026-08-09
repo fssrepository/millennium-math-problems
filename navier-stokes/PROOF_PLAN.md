@@ -1,6 +1,6 @@
 # Proof roadmap and restart point
 
-Last updated: 2026-08-02
+Last updated: 2026-08-09
 
 ## Exact target
 
@@ -35,23 +35,26 @@ accepted terminal step.
 A candidate advances only if all conditions hold:
 
 1. correct amplitude homogeneity and high-frequency Navier–Stokes scaling;
-2. no counterexample among exact finite Fourier triads;
-3. constant independent of the Galerkin frequency cutoff;
-4. right-hand side is time-integrable from previously proved bounds;
-5. no hidden assumption of the regularity being proved;
-6. a reproducible machine-readable certificate is emitted;
-7. after computational screening, every infinite-dimensional estimate has a
+2. an explicit admissible set next to every supremum, identical to the set
+   enforced by the implementation;
+3. no counterexample among exact finite Fourier triads;
+4. constant independent of the Galerkin frequency cutoff;
+5. right-hand side is time-integrable from previously proved bounds;
+6. no hidden assumption of the regularity being proved;
+7. a reproducible machine-readable certificate is emitted;
+8. after computational screening, every infinite-dimensional estimate has a
    conventional human-checkable proof.
 
 ## Work cycle
 
 1. State one lemma candidate as an explicit formula.
-2. Run homogeneity and scaling checks.
-3. Run detailed Fourier-triad counterexample search.
-4. If it survives, derive a proof decomposition and record every dependency.
-5. If it fails, append its first concrete obstruction to
+2. State the admissible set and verify that the code enforces the same set.
+3. Run homogeneity and scaling checks before numerical optimization.
+4. Run detailed Fourier-triad counterexample search.
+5. If it survives, derive a proof decomposition and record every dependency.
+6. If it fails, append its first concrete obstruction to
    `proof/failed_lemmas.tsv`.
-6. Always resume at the lowest-numbered open lemma.
+7. Always resume at the lowest-numbered open lemma.
 
 ## Current result and next action
 
@@ -67,7 +70,40 @@ force the best absorbable estimate to leave at least a `Z³` term. This does not
 exclude finite-time growth of enstrophy. See
 `proof/l2/l2-certificate.json`.
 
-The current restart point is the **frozen-data local L4 trajectory lemma**.
+### Post-audit correction: PNT amplitude and scope
+
+The unrestricted PNT chain printed later in this historical development log
+is not an active lemma. Exact amplitude counting under `u -> alpha u` gives
+
+```text
+S_full, s, t                         -> alpha^3
+B1, T2, D_H                          -> alpha^4
+Z, P                                 -> alpha^2
+R_H                                  -> alpha^0
+PNT-2/4/5 open quotient              -> alpha^(-1)
+PNT-7/8/12/14 Cauchy/Schur quotient  -> alpha^(-2).
+```
+
+The stored stress states have nonzero numerators. Scaling any such state by
+`alpha -> 0` therefore makes the displayed unrestricted quotient diverge.
+The optimizer renormalizes every iterate to fixed energy, so its finite values
+cannot detect this amplitude ray and do not support the unrestricted claims.
+Those computations remain valid fixed-energy stress data only.
+
+The active restart point is now prior to PNT-4/PNT-5: derive a homogeneous
+statement with its admissible set explicit and prove that it still supplies
+the required local/transition closure. A compensating factor must follow from
+that derivation; it must not be inserted only to repair dimensions. If no such
+statement remains sufficient, abandon this lemma branch. The lemma-engine
+self-test records the exact `-1` and `-2` amplitude degrees as a regression.
+
+The chronological material below is retained to explain the fixed-energy
+objectives and certificates. Any later phrase calling unrestricted PNT-8 or
+PNT-12 “active”, “surviving”, or the analytical restart point is superseded by
+this correction.
+
+The surrounding analytical objective remains the **frozen-data local L4
+trajectory lemma**.
 For one initial datum set `k0=sqrt(Z(0)/E(0))`, `B0=E(0)P(0)`, and prove a
 cutoff- and time-uniform upper bound for
 
@@ -670,8 +706,10 @@ passes its centered-difference test at `5.23e-12`. Twelve-start projected
 L-BFGS searches at `T=0.001` find positive increases
 `9.64805e-7, 1.09941e-6, 1.12519e-6, 1.13495e-6` on K3--K6. Time-step errors
 are below `2.5e-14`; top-shell energy decays with fitted exponent `-8.18`, and
-the K5-to-K6 projection residual is `1.74e-3`. F010 therefore rejects the
-nonincreasing-density route. The increase is already flattening in cutoff, so
+the K5-to-K6 projection residual is `1.74e-3`. F010 therefore supplies
+reproducible numerical counterevidence to the nonincreasing-density route;
+rigorous rejection still requires exact or interval sign validation. The
+increase is already flattening in cutoff, so
 the data identify a real transient-growth mechanism but not a singularity or
 a failure of the time-integrated lemma. The next machine task is horizon
 continuation of the refined K6 branch; the analytical restart point remains a
@@ -1020,18 +1058,19 @@ analytic gradients.  Alignment optimization raises `sqrt(A_H)` from
 `0.0832` to `0.7712` while shrinking the actual term by about `4.47e5`, so
 alignment alone is not the lemma.  Direct majorant optimization raises
 `M_H` from `0.006476` to `0.010410` at K8; exact zero padding gives
-`0.010458` at K12 and one K12 gradient step gives `0.010474`.  The height
-scan sharpens this into the explicit candidate
+`0.010458` at K12 and one K12 gradient step gives `0.010474`. Before the
+amplitude audit, the height scan motivated the explicit candidate
 
 ```text
-PNT-8: sup_(K,u,H>=1) H^(1/2) M_H^2 < infinity,
+PNT-8 (withdrawn): sup_(K,u,H>=1) H^(1/2) M_H^2 < infinity,
        equivalently M_H <= C H^(-1/4).
 ```
 
 Independent H=8,16,32,64 optimizations have fitted slopes `-0.4181` at K8,
 `-0.3320` after exact zero padding to K12, and `-0.2754` after one K12 step.
 The last scan keeps `H^(1/4)M_H` between `0.01672` and `0.01899`; an H128
-stress run gives `0.01332`.  This is a finite candidate, not a decay proof.
+stress run gives `0.01332`. These are fixed-energy stress values for the
+withdrawn unrestricted formula, not a decay proof.
 The exact locality condition excludes strongly separated low/high satellites;
 a dense comparable-frequency high band activates the tail but plateaus and
 then decreases from K8 through K12.  Thus the next analytic task is a local
@@ -1048,13 +1087,13 @@ Across the K8/K12 H=8,16,32,64 scans, `R_H<=1.66034`, all inter-shell Gram
 terms have the same sign, and the Schur bound is 89--98% sharp.  Cancellation
 therefore does not explain the height decay.  The squared diagonal and Schur
 slopes at K12 are `-0.4569` and `-0.5787`, and their maximum H-half-compensated
-values are `2.67e-4` and `3.89e-4`.  The next conventional proof attempt is
-the joint PNT-12 bound on `H^(1/2) S_full^2 B1 R_H D_H/(Z^3P^5)`; neither a
-uniform `R_H` bound nor diagonal height decay is yet proved.  The overall
-palinstrophy target remains
-PNT-4: a cutoff-uniform joint bound for
-`|S_full(s*t_tail+s_tail*t_core)|/(Z^2 P^3)`.  Separate H2-tail or alignment
-estimates are intentionally not substituted for this joint target.
+values are `2.67e-4` and `3.89e-4`. Before the amplitude audit, the next
+conventional proof attempt was the joint PNT-12 bound on
+`H^(1/2) S_full^2 B1 R_H D_H/(Z^3P^5)`; neither a uniform `R_H` bound nor
+diagonal height decay was proved. The underlying PNT-4 factorization remains
+algebraically useful, but its printed unrestricted quotient is also
+amplitude-inhomogeneous. No PNT formula in this chain is an active analytical
+lemma until its admissible set and homogeneous normalization are re-derived.
 The normalized height-gap estimate
 `|<A b_i,A b_j>| <= C 2^(-|i-j|)||A b_i||||A b_j||` (PNT-13) has now failed
 its exact-gradient adversarial screen.  Raw correlations reach `0.985710`,
@@ -1072,17 +1111,18 @@ For the dominant K8 mode the shell-2/shell-8 effective interaction counts are
 stays concentrated on the Galerkin wall.  No sparse cutoff-scalable
 counterexample has therefore been extracted from these states.
 
-The PNT-13 adversaries strengthen rather than weaken the routing evidence for
-the joint PNT-12 target.  Their largest compensated Schur majorant is
+The PNT-13 adversaries remain useful fixed-energy routing evidence for the
+joint tradeoff that motivated PNT-12. Their largest compensated Schur majorant is
 `3.56e-13`, about nine orders below the `3.89e-4` PNT-majorant stress value.
 Their common normalized factors collapse to between `2.19e-24` and
-`1.59e-17` even while the raw shell correlation approaches one.  The next
-conventional proof attempt must therefore retain
-`S_full^2 B1 R_H D_H/(Z^3P^5)` as one coupled quantity.  Separate uniform
-correlation decay is no longer an active sublemma.
+`1.59e-17` even while the raw shell correlation approaches one. Any
+homogeneous replacement should preserve this coupling rather than split it
+into loose factor bounds. Separate uniform correlation decay is no longer an
+active sublemma.
 
-PNT-12 is now optimized directly rather than only inherited from the
-aggregate Cauchy objective.  For a fixed tail row `i`, the C++ objective is
+The historical fixed-energy PNT-12 objective was optimized directly rather
+than only inherited from the aggregate Cauchy objective. For a fixed tail row
+`i`, the C++ objective is
 `J_(H,i)=H^(1/2) 9 S_full^2 B1 R_(H,i)D_H/(4Z^3P^5)` and its exact gradient
 contains every Gram-row, diagonal-tail, and common-normalization derivative.
 Sixteen K8 steps raise the H8 row-5 value from `3.44363e-4` to `3.63935e-4`.
@@ -1090,16 +1130,16 @@ At H16, row 6 rises from `3.71126e-4` to `3.97807e-4`; zero padding gives
 `4.12917e-4`, and one K12 step reaches the new finite record `4.18215e-4`.
 This is `7.46%` above the previous proxy-derived K12 record.  The final K12
 directional-gradient error is `1.21e-10`.  The increase means the old decimal
-plateau was optimizer-dependent, not a bound; it does not show that PNT-12 is
-unbounded.
+plateau was optimizer-dependent, not a bound. These values test only the
+fixed-energy objective and have no bearing on the elementary unrestricted
+amplitude divergence.
 
 The new group-index `vjp_sum` removes aggregate interaction copies and lowers
 the K12 peak RSS from `7.94 GiB` to `4.88 GiB`.  Direct K8 searches use about
-`0.51 GiB` and roughly ten CPU cores.  The analytical restart point remains
-the joint PNT-12 inequality itself.  Further computation should test its
-height/cutoff scaling row by row, while the proof attempt must couple the
-projective diagonal count and Gram row to the falling
-`S_full^2B1/(Z^3P^5)` factor.
+`0.51 GiB` and roughly ten CPU cores. The post-audit analytical restart point
+is to re-derive the PNT-4/PNT-5 chain with an explicit admissible set and
+correct amplitude homogeneity. No further height/cutoff scan of the old
+objective is warranted until that symbolic gate passes.
 See `proof/l4/lemmas/shifted-local-density/PALINSTROPHY_NORMALIZATION_TAIL.md`.
 
 The absolute closure ratio was subsequently reverse-differentiated and

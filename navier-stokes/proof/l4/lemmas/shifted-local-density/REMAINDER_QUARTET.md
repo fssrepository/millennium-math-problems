@@ -6,6 +6,11 @@ that absolute-value route is too strong, and reduces the required one-sided
 bound to a sign-aware commutator absorption inequality. It does not prove the
 remainder bound or the full local SLD lemma.
 
+Post-audit scope note (2026-08-09): the later PNT-4 routing paragraph is
+historical fixed-energy evidence. The printed unrestricted PNT-4 quotient has
+amplitude degree `-1` and is withdrawn; see
+[PALINSTROPHY_NORMALIZATION_TAIL.md](PALINSTROPHY_NORMALIZATION_TAIL.md).
+
 ## Fixed projective rays already close
 
 For a primitive squared-length shape `(a,b,c)`, fixing an input or target
@@ -374,9 +379,9 @@ The value is exactly invariant under zero padding to K12 even though its raw
 Cauchy norm bound increases; one full K12 step reaches `0.000575812`.  The
 canonical identity `s*t_tail+s_tail*t_core` removes the H-dependent three-way
 dominance.  Optimizing its first channel raises the K8 record to `0.000590223`
-and supplies `91.3%` of the result.  This narrows the
-palinstrophy-normalization restart point to the joint two-channel estimate
-PNT-4 in
+and supplies `91.3%` of the result. Before the amplitude audit, this narrowed
+the fixed-energy search to the joint two-channel PNT-4 objective. PNT-4 is not
+an active unrestricted lemma; its current status is recorded in
 [PALINSTROPHY_NORMALIZATION_TAIL.md](PALINSTROPHY_NORMALIZATION_TAIL.md).
 
 ## Reproduction

@@ -1,5 +1,11 @@
 # Local critical-density increase
 
+> **Post-audit status (2026-08-09):** the stored states and directly evaluated
+> Galerkin derivatives give reproducible positive floating-point values. They
+> are numerical counterexample candidates. A rigorous rejection of universal
+> Galerkin monotonicity requires exact or interval validation of the sign;
+> RK4 step refinement alone is not a proof.
+
 This experiment tests whether the remaining coupled local density could be
 controlled by a pointwise monotonicity lemma. Define
 
@@ -37,10 +43,11 @@ time step changes the objective by less than `2.5e-14` relatively. The fitted
 top-shell energy exponent is `-8.18`; the K5-to-K6 projective residual is
 `1.74e-3`.
 
-Therefore the universal statement "`C_local` is nonincreasing" is false
-(F010). The branch is smooth and its increase flattens with cutoff, so the
-calculation does not show a singularity and does not falsify the desired
-time-integrated bound.
+This is strong numerical counterevidence to the universal statement
+"`C_local` is nonincreasing" (F010), but it is not yet a rigorous disproof.
+The branch is smooth and its increase flattens with cutoff, so the calculation
+does not show a singularity and does not falsify the desired time-integrated
+bound.
 
 ## K6 optimizer refinement
 

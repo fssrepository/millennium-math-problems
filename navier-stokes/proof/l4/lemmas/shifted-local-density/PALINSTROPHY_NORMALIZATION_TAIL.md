@@ -1,10 +1,44 @@
 # Palinstrophy-normalization tail tradeoff
 
-This note isolates the smallest currently visible palinstrophy-normalization
-subproblem in RQ-11.  The algebraic factorization and the zero-padding lemma
-below are proved exactly.  The cutoff-uniform tail estimate is not proved, so
-this note does not prove RQ-11, the local SLD lemma, L4 regularity, or the Clay
-problem.
+This note preserves the algebraic factorization, fixed-energy stress results,
+and post-audit status of the palinstrophy-normalization branch in RQ-11. The
+factorization and zero-padding lemma below are exact finite-dimensional
+identities. No cutoff-uniform local estimate, L4 regularity result, or Clay
+solution is proved.
+
+## Post-audit status: unrestricted PNT chain withdrawn
+
+The unrestricted quotients printed in the original
+PNT-2/4/5/7/8/12/14 development are not active lemmas. Under the amplitude
+rescaling `u -> alpha u`,
+
+```text
+S_full, s_c, s_t, t_c, t_t             -> alpha^3
+B1, T2, D_H                             -> alpha^4
+Z, P                                    -> alpha^2
+R_H                                     -> alpha^0
+PNT-2/4/5 open quotient                 -> alpha^(-1)
+PNT-7/8/12/14 Cauchy/Schur quotient     -> alpha^(-2).
+```
+
+The stored stress states have nonzero numerators. Scaling any such state by
+`alpha -> 0` therefore makes every displayed negative-degree PNT quotient
+diverge. The optimizer preserves fixed energy, so its admissible set excludes
+this amplitude ray. Its finite values remain valid evaluations of the
+implemented fixed-energy objectives, but they do not support the unrestricted
+analytical statements.
+
+The branch must restart before PNT-4/PNT-5. Any replacement must state its
+admissible set, have exact amplitude degree zero, and still imply the required
+local/transition closure. The missing degree cannot be repaired by inserting
+an unmotivated factor; the entire chain must be re-derived. If no such
+formulation remains sufficient, this branch is to be recorded as a dead end.
+
+`navier_stokes_lab self-test` contains a rational amplitude/scope regression
+for the `-1` open quotient and `-2` Schur quotient. The remainder of this note
+is retained as a historical account of exact identities and fixed-energy
+computational evidence; later language calling an unrestricted PNT formula
+“active” or “surviving” is superseded by this section.
 
 ## Exact core--tail factorization
 
@@ -30,7 +64,8 @@ With `s=s_c+s_t`, the same identity has the canonical two-term form
 s t-s_c t_c = s t_t+s_t t_c.                      (PNT-1b)
 ```
 
-After multiplication by the power-one scale, its absolute objective is
+After multiplication by the power-one scale, the implemented fixed-energy
+absolute objective is
 
 ```text
 N_H(u)=3 |S_full| |s_c t_t+s_t t_c+s_t t_t|
@@ -143,7 +178,8 @@ Then the selected-channel PNT value factors exactly as
 3 |S_full s t_t|/(2 Z^2 P^3) = M_H sqrt(A_H).       (PNT-6)
 ```
 
-The engine now has independent exact-gradient objectives for both factors.
+On the fixed-energy admissible set, the engine has independent exact-gradient
+objectives for both factors.
 `projective-normalization-alignment-ratio` maximizes `A_H`, while
 `projective-normalization-cauchy-ratio` maximizes
 
@@ -173,19 +209,21 @@ central-difference error is `7.14e-12` in the self-test.  The cutoff behavior
 of `M_H`, not alignment alone, is therefore the sharper computational target
 for a PNT-5 lemma.
 
-## Height-decay candidate and locality stress
+## Historical height-decay candidate and locality stress
 
-The current explicit sufficient target for the selected/tail channel is
+Before the amplitude audit, the explicit fixed-energy target for the
+selected/tail channel was
 
 ```text
 sup_(K,u,H>=1) H^(1/2) M_H^2
  = sup_(K,u,H>=1) 9 H^(1/2) S_full^2 B1 T2/(4 Z^3 P^5)
- < infinity.                                               (PNT-8)
+ < infinity.                                               (PNT-8, withdrawn)
 ```
 
-Equivalently, `M_H <= C H^(-1/4)`.  Since `0 <= A_H <= 1`, PNT-8 would
-control the PNT-5 tail with explicit height decay.  It would not control the
-second PNT-4 channel, and it is not proved.
+Equivalently, `M_H <= C H^(-1/4)`. This quotient has amplitude degree `-2`,
+so its unrestricted form is false. Conditional on a correctly scoped
+replacement, the same height decay would control the corresponding PNT-5
+tail but not the second PNT-4 channel.
 
 Independent 24-step K8 optimizations at `H=8,16,32,64` give
 
@@ -200,15 +238,15 @@ the fitted slope to `-0.33196`; one K12 gradient step at each height changes
 it to `-0.27537`.  On those one-step K12 states, `H^(1/4)M_H` stays between
 `0.01672` and `0.01899`, with compensated fitted slope `-0.02537`.  A separate
 four-step H128 K12 stress run reaches `M_H=0.00396002` and
-`H^(1/4)M_H=0.0133199`.  These values motivate PNT-8 but do not establish its
-exponent or a uniform constant.
+`H^(1/4)M_H=0.0133199`. These values describe the fixed-energy objective but
+do not establish an exponent or an unrestricted uniform constant.
 
 Zero padding preserves `Z`, `P`, and `S_full` exactly but increases the
 aggregate norm factors.  At H=8,16,32,64, respectively, K8-to-K12 padding
 raises `B1` by `0.16%,0.61%,2.84%,6.32%`, raises `T2` by
 `0.76%,2.66%,12.36%,36.15%`, and raises `M_H` by
-`0.46%,1.63%,7.49%,20.32%`.  Therefore a proof of PNT-8 cannot infer tail
-decay from fixed-cutoff output support.
+`0.46%,1.63%,7.49%,20.32%`. Therefore any correctly scoped replacement cannot
+infer tail decay from fixed-cutoff output support.
 
 The most obvious low/high counterexample is blocked by the exact local-triad
 condition
@@ -223,9 +261,10 @@ local remainder.  A dense comparable-frequency satellite does activate
 high/high interactions.  Its H64 majorant is `1.32e-7,7.27e-7,2.13e-6,
 2.76e-6,2.08e-6` at K=5,6,8,10,12.  The increase is a tail-entry threshold;
 the K8--K12 rows plateau and then decrease, while actual/Cauchy is at most
-`1.25e-5`.  Thus this bounded scan neither falsifies PNT-8 nor supplies the
-missing proof.  It identifies the analytic bottleneck as a local high/high
-band estimate for `T2`, coupled to the common `Z,P,S_full,B1` normalization.
+`1.25e-5`. Thus this bounded scan neither resolves the fixed-energy height
+behavior nor supplies a valid unrestricted lemma. It identifies the analytic
+bottleneck as a local high/high band estimate for `T2`, coupled to the common
+`Z,P,S_full,B1` normalization.
 
 ## Exact tail Gram--Schur reduction
 
@@ -245,16 +284,18 @@ test gives the exact algebraic reduction
 T2 = ||A sum_(j>H)b_j||_2^2 <= R_H D_H.                    (PNT-11)
 ```
 
-Consequently the joint estimate
+Before the amplitude audit, the Schur reduction motivated the joint estimate
 
 ```text
 sup_(K,u,H) H^(1/2)
-  9 S_full^2 B1 R_H D_H/(4 Z^3 P^5) < infinity             (PNT-12)
+  9 S_full^2 B1 R_H D_H/(4 Z^3 P^5) < infinity             (PNT-12, withdrawn)
 ```
 
-is sufficient for PNT-8.  A uniform bound on `R_H` together with the
-corresponding diagonal estimate is a stronger sufficient split, not a proved
-claim.
+This expression has amplitude degree `-2`, so the unrestricted statement is
+false. The Schur inequality PNT-11 remains exact and may be reused only after
+a homogeneous analytical target and its admissible set are derived. A
+uniform bound on `R_H` together with a diagonal estimate was a stronger
+sufficient split for the old fixed-energy objective, not a proved claim.
 
 The new C++ ledger reconstructs `T2` both from the signed Gram sum and from
 the independent Cauchy objective.  On all four independently optimized K8
@@ -304,13 +345,14 @@ earlier `0.74` plateau.  These finite adversaries invalidate PNT-13 as the
 next proof route; a rigorous theorem that no uniform constant exists would
 still require an explicit scalable family.
 
-Crucially, the same states do not invalidate the necessary joint PNT-12
-tradeoff.  Their maximum `H^(1/2)`-compensated Schur majorant is only
+The same fixed-energy states do not numerically stress the coupled tradeoff
+that motivated PNT-12. Their maximum `H^(1/2)`-compensated Schur majorant is only
 `3.56102e-13`, compared with `3.89149e-4` on the direct PNT-majorant stress
 states.  The three normalization common factors
 `9 S_full^2 B1/(4 Z^3 P^5)` are `1.03104e-21`, `1.59369e-17`, and
 `2.19156e-24`; near-perfect shell alignment is bought by collapsing the
-common normalized factor.  Thus PNT-12, not PNT-13, is the active lemma.
+common normalized factor. This remains useful design evidence for a future
+homogeneous replacement, but neither PNT-12 nor PNT-13 is an active lemma.
 
 A mode-resolved ledger shows why the false route is easy to realize at finite
 cutoff.  On the K8 gap-six state, output pairs `(8,-1,8)` and `(8,1,8)` carry
@@ -328,11 +370,11 @@ interactions, with effective counts `1.09` and `6.75`.  The shell-2 pair has
 primitive shape `(1,2,3)`.  At K12, the dominant `(-12,12,0)` output has 19
 shell-2 and 968 shell-9 interactions, with effective counts `4.11` and
 `43.43`.  Thus the common output remains concentrated while the high-shell
-generator becomes denser.  This rules out declaring a sparse scalable
-counterexample from the present data and reinforces the need for the coupled
-normalization in PNT-12.
+generator becomes denser. This rules out declaring a sparse scalable
+counterexample from the present data and suggests retaining the coupled
+normalization structure in any re-derived candidate.
 
-## Direct coupled PNT-12 adversary
+## Historical fixed-energy PNT-12 adversary
 
 The engine now differentiates the actual fixed-row Schur quantity
 
@@ -361,11 +403,11 @@ the previous `3.89149e-4` maximum inherited from Cauchy-majorant optimization.
 On the H16 K8 branch, `D_H` rises by `9.30%` and the chosen Gram row by
 `2.56%`, while the common normalization falls by `4.37%`; the joint objective
 still rises by `7.19%`.  The K12 step repeats the same competition and gains
-another `1.283%`.  This is direct evidence that optimizing a proxy left room
-in PNT-12.  It neither proves growth without bound nor supplies a uniform
-constant.  An independent full Gram ledger confirms that shell 6 remains the
-maximal row (`R_H=1.52102`) and reconstructs the final `4.18215e-4` value
-exactly.
+another `1.283%`. This is direct evidence that optimizing a proxy left room
+in the fixed-energy objective. It neither tests the unrestricted amplitude
+direction nor supplies a uniform constant. An independent full Gram ledger
+confirms that shell 6 remains the maximal row (`R_H=1.52102`) and reconstructs
+the final `4.18215e-4` value exactly.
 
 To keep this exact search within workstation memory, the triad engine now has
 a direct `vjp_sum` kernel over group-index lists.  It avoids materializing
@@ -373,32 +415,31 @@ copied aggregate interaction families.  On the same K12 check, peak RSS fell
 from `7.94 GiB` to `4.88 GiB` with the objective unchanged; deterministic
 `static,1` shell scheduling also makes the saved L-BFGS trace replayable.
 
-## Narrow candidate lemma
+## Withdrawn unrestricted candidate formulas
 
-Every fixed projective ray is already controlled by the finite-family
-plane--sphere argument, but that fact alone does not bound a fixed-core
-factor paired with the complete tail.  The correct open target retains both
-disjoint PNT-1b channels:
+Every fixed projective ray is controlled by the finite-family plane--sphere
+argument, but that fact alone does not bound a fixed-core factor paired with
+the complete tail. The pre-audit candidate retained both disjoint PNT-1b
+channels:
 
 ```text
 sup_(K,u) 3 |S_full| |s t_t+s_t t_c|
-           / (2 Z^2 P^3) < infinity.               (PNT-4)
+           / (2 Z^2 P^3) < infinity.               (PNT-4, withdrawn)
 ```
 
 The numerically dominant high-derivative subtarget is
 
 ```text
-sup_(K,u) 3 |S_full s t_t|/(2 Z^2 P^3) < infinity. (PNT-5)
+sup_(K,u) 3 |S_full s t_t|/(2 Z^2 P^3) < infinity. (PNT-5, withdrawn)
 ```
 
-The complementary `S_full s_t t_c` estimate is still required and is not
-marked proved.  Bounding `T2` alone asks for an unavailable higher derivative,
-while bounding the alignments alone was falsified by the alignment adversary.
-A successful proof must retain the tradeoff among the H1/H2 tail size, the
-two pairings, and the common `Z,P,S_full` normalization.  Even PNT-4 would
-close only the open palinstrophy-normalization part; the global response
-weight and enstrophy normalization in RQ-11 still require their stated
-estimates.
+Both quotients have amplitude degree `-1` and are withdrawn in this
+unrestricted form. Their exact two-channel factorization remains useful:
+bounding `T2` alone asks for an unavailable higher derivative, while bounding
+the alignments alone was falsified by the alignment adversary. A successful
+replacement must retain the tradeoff among the H1/H2 tail size, the two
+pairings, and the common `Z,P,S_full` normalization, and must still connect to
+the global response weight and enstrophy normalization in RQ-11.
 
 ## Reproduction
 

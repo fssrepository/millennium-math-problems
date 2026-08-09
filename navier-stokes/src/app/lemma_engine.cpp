@@ -246,6 +246,8 @@ int run(const Options& options, std::ostream& out) {
         ScalingAnalyzer::analyze_concentration();
     const StrongL4Reduction strong_l4 =
         ScalingAnalyzer::analyze_strong_l4_reduction();
+    const PalinstrophyNormalizationScaling pnt_scaling =
+        ScalingAnalyzer::analyze_palinstrophy_normalization();
     const DyadicTailScaling dyadic_tail =
         ScalingAnalyzer::analyze_dyadic_tail();
     const DyadicShellRandomCertificate dyadic_shell_bounds =
@@ -365,6 +367,28 @@ int run(const Options& options, std::ostream& out) {
         strong_l4.exact_density_factorization;
     report.uniform_q_closes_l4 =
         strong_l4.closes_integrated_l4_from_uniform_q;
+    report.pnt_open_numerator_amplitude_degree =
+        pnt_scaling.open_numerator_amplitude_degree.str();
+    report.pnt_open_denominator_amplitude_degree =
+        pnt_scaling.open_denominator_amplitude_degree.str();
+    report.pnt_open_quotient_amplitude_degree =
+        pnt_scaling.open_quotient_amplitude_degree.str();
+    report.pnt_open_required_compensating_amplitude_degree =
+        pnt_scaling.open_required_compensating_amplitude_degree.str();
+    report.pnt_open_unrestricted_amplitude_homogeneous =
+        pnt_scaling.unrestricted_open_claim_is_amplitude_homogeneous;
+    report.pnt_schur_numerator_amplitude_degree =
+        pnt_scaling.numerator_amplitude_degree.str();
+    report.pnt_schur_denominator_amplitude_degree =
+        pnt_scaling.denominator_amplitude_degree.str();
+    report.pnt_schur_quotient_amplitude_degree =
+        pnt_scaling.quotient_amplitude_degree.str();
+    report.pnt_schur_required_compensating_amplitude_degree =
+        pnt_scaling.required_compensating_amplitude_degree.str();
+    report.pnt_schur_unrestricted_amplitude_homogeneous =
+        pnt_scaling.unrestricted_claim_is_amplitude_homogeneous;
+    report.pnt_fixed_energy_search_covers_amplitude_ray =
+        pnt_scaling.fixed_energy_search_covers_amplitude_ray;
     report.dyadic_advecting_gap_decay =
         dyadic_tail.low_advecting_gap_decay.str();
     report.dyadic_target_gap_decay =
@@ -447,6 +471,29 @@ int run(const Options& options, std::ostream& out) {
                         concentration.integrated_candidate_scale_critical &&
                         strong_l4.exact_density_factorization &&
                         strong_l4.closes_integrated_l4_from_uniform_q &&
+                        pnt_scaling.open_numerator_amplitude_degree ==
+                            Rational(9) &&
+                        pnt_scaling.open_denominator_amplitude_degree ==
+                            Rational(10) &&
+                        pnt_scaling.open_quotient_amplitude_degree ==
+                            Rational(-1) &&
+                        pnt_scaling
+                                .open_required_compensating_amplitude_degree ==
+                            Rational(1) &&
+                        !pnt_scaling
+                             .unrestricted_open_claim_is_amplitude_homogeneous &&
+                        pnt_scaling.numerator_amplitude_degree ==
+                            Rational(14) &&
+                        pnt_scaling.denominator_amplitude_degree ==
+                            Rational(16) &&
+                        pnt_scaling.quotient_amplitude_degree ==
+                            Rational(-2) &&
+                        pnt_scaling.required_compensating_amplitude_degree ==
+                            Rational(2) &&
+                        !pnt_scaling
+                             .unrestricted_claim_is_amplitude_homogeneous &&
+                        !pnt_scaling
+                             .fixed_energy_search_covers_amplitude_ray &&
                         dyadic_tail.frequency_tail_is_summable &&
                         !dyadic_tail.energy_identity_closes_time_integral &&
                         dyadic_tail.moving_gap_closes_far_tail &&
@@ -480,6 +527,8 @@ bool self_test(std::ostream& out) {
         ScalingAnalyzer::analyze_concentration();
     const StrongL4Reduction strong_l4 =
         ScalingAnalyzer::analyze_strong_l4_reduction();
+    const PalinstrophyNormalizationScaling pnt_scaling =
+        ScalingAnalyzer::analyze_palinstrophy_normalization();
     const ShiftedCriticalDensityCertificate shifted_density =
         ShiftedCriticalDensityLemma::analyze();
     const DyadicTailScaling dyadic_tail =
@@ -509,6 +558,19 @@ bool self_test(std::ostream& out) {
         concentration.integrated_candidate_scale_critical;
     const bool strong_l4_ok = strong_l4.exact_density_factorization &&
                               strong_l4.closes_integrated_l4_from_uniform_q;
+    const bool pnt_scaling_ok =
+        pnt_scaling.open_numerator_amplitude_degree == Rational(9) &&
+        pnt_scaling.open_denominator_amplitude_degree == Rational(10) &&
+        pnt_scaling.open_quotient_amplitude_degree == Rational(-1) &&
+        pnt_scaling.open_required_compensating_amplitude_degree ==
+            Rational(1) &&
+        !pnt_scaling.unrestricted_open_claim_is_amplitude_homogeneous &&
+        pnt_scaling.numerator_amplitude_degree == Rational(14) &&
+        pnt_scaling.denominator_amplitude_degree == Rational(16) &&
+        pnt_scaling.quotient_amplitude_degree == Rational(-2) &&
+        pnt_scaling.required_compensating_amplitude_degree == Rational(2) &&
+        !pnt_scaling.unrestricted_claim_is_amplitude_homogeneous &&
+        !pnt_scaling.fixed_energy_search_covers_amplitude_ray;
     const bool shifted_density_ok = shifted_density.shift_matches_density &&
         shifted_density.gronwall_coefficient_is_critical &&
         shifted_density.energy_identity_closes_conditionally &&
@@ -3210,6 +3272,17 @@ bool self_test(std::ostream& out) {
         << ")\n"
         << "strong L4 reduction test: " << (strong_l4_ok ? "PASS" : "FAIL")
         << " (integral D4Z2 <= sup(Q)*E0/(2nu))\n"
+        << "PNT amplitude/scope test: "
+        << (pnt_scaling_ok ? "PASS" : "FAIL")
+        << " (open quotient="
+        << pnt_scaling.open_quotient_amplitude_degree.str()
+        << ", Schur numerator="
+        << pnt_scaling.numerator_amplitude_degree.str()
+        << ", denominator="
+        << pnt_scaling.denominator_amplitude_degree.str()
+        << ", quotient="
+        << pnt_scaling.quotient_amplitude_degree.str()
+        << ", fixed-energy search excludes amplitude ray)\n"
         << "shifted local density scaling test: "
         << (shifted_density_ok ? "PASS" : "FAIL")
         << " (C and E0P0 amplitude="
@@ -4016,6 +4089,7 @@ bool self_test(std::ostream& out) {
         << " (energy residual="
         << static_cast<double>(evolution.energy_balance_residual) << ")\n";
     return rational_ok && scaling_ok && concentration_ok && strong_l4_ok &&
+           pnt_scaling_ok &&
            shifted_density_ok &&
            dyadic_tail_scaling_ok && dyadic_shell_bounds_ok &&
            periodic_shell_geometry_ok && periodic_tail_bound_ok &&
