@@ -11,9 +11,10 @@
 > **Ask the repository instead of reading it front to back.** Clone it, open
 > the repository root in VS Code with the Codex plugin, and let Codex inspect
 > the workspace. For example, ask: *"What does this project do? Explain the
-> current proof route and PNT-12, and distinguish proved statements, finite
-> numerical evidence, falsified routes, and open claims. Link every answer to
-> the relevant source, certificate, state, or reproduction command."*
+> current proof route, why the unrestricted PNT chain was withdrawn, and the
+> next open analytical step. Distinguish proved statements, finite numerical
+> evidence, falsified routes, and open claims. Link every answer to the
+> relevant source, certificate, state, or reproduction command."*
 
 Public computational research laboratories organized by Millennium Prize
 Problem. The active Navier–Stokes project uses deterministic C++ tests to reject
@@ -23,6 +24,10 @@ counterexamples as reproducible public knowledge.
 > **Research status:** this repository has not solved the Navier–Stokes
 > Millennium Problem. Finite numerical evidence is not a cutoff-independent
 > proof.
+
+Rejected candidates and numerical counterexample candidates awaiting rigorous
+validation are tracked separately in the machine-readable
+[`failed_lemmas.tsv`](navier-stokes/proof/failed_lemmas.tsv) ledger.
 
 ## Public guides
 
@@ -40,7 +45,7 @@ The definitions and solved/unsolved classification below link to the
 |---|---|---|---|
 | [Birch and Swinnerton–Dyer conjecture](https://www.claymath.org/millennium/birch-and-swinnerton-dyer-conjecture/) | Relate the rank of an elliptic curve to its L-function. | Unsolved | Planned. |
 | [Hodge conjecture](https://www.claymath.org/millennium/hodge-conjecture/) | Characterize which topological classes arise from algebraic cycles. | Unsolved | Planned. |
-| [Navier–Stokes existence and smoothness](https://www.claymath.org/millennium/navier-stokes-equation/) | Decide whether every smooth, physically reasonable 3D flow stays smooth, or exhibit finite-time breakdown. | **Unsolved · active here** | Built a spectral exact-gradient adversarial engine, proved a partial far-tail lemma, falsified standalone PNT-13 decorrelation, and is stress-testing PNT-12. <br> [`navier-stokes/`](navier-stokes/) |
+| [Navier–Stokes existence and smoothness](https://www.claymath.org/millennium/navier-stokes-equation/) | Decide whether every smooth, physically reasonable 3D flow stays smooth, or exhibit finite-time breakdown. | **Unsolved · active here** | Built a spectral exact-gradient adversarial engine and a cutoff-independent far-tail component for expert review. An amplitude audit withdrew the unrestricted PNT chain; the open work is to re-derive a homogeneous local/transition lemma or abandon that branch. <br> [`navier-stokes/`](navier-stokes/) |
 | [P versus NP](https://www.claymath.org/millennium/p-vs-np/) | Decide whether every efficiently verifiable problem is efficiently solvable. | Unsolved | Planned. |
 | [Poincaré conjecture](https://www.claymath.org/millennium/poincare-conjecture/) | Characterize the three-sphere among closed simply connected three-manifolds. | Solved | No active laboratory planned. |
 | [Riemann hypothesis](https://www.claymath.org/millennium/riemann-hypothesis/) | Locate every nontrivial zero of the zeta function on the critical line. | Unsolved | Planned. |
