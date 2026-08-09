@@ -184,8 +184,9 @@ top-shell E      5.013e-4     1.253e-4     2.259e-5     1.408e-6
 
 The time-step refinement error is below `2.5e-14` at every cutoff. The fitted
 top-shell energy exponent is `-8.18`, and the K5-to-K6 projection residual is
-`1.74e-3`. Thus F010 rejects universal pointwise monotonicity with a smooth,
-cutoff-stabilizing positive-growth branch. The increase itself also flattens
+`1.74e-3`. Thus F010 supplies a smooth, cutoff-stabilizing numerical
+counterexample candidate to universal pointwise monotonicity; exact or
+interval sign validation is still required for a rigorous rejection. The increase itself also flattens
 from K4 to K6, so this run does not exhibit blow-up scaling and does not reject
 the time-integrated L4 lemma.
 

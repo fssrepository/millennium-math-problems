@@ -112,6 +112,46 @@ StrongL4Reduction ScalingAnalyzer::analyze_strong_l4_reduction() {
     return result;
 }
 
+PalinstrophyNormalizationScaling
+ScalingAnalyzer::analyze_palinstrophy_normalization() {
+    PalinstrophyNormalizationScaling result;
+    result.open_numerator_amplitude_degree =
+        result.stretching + result.selected_stretching +
+        result.tail_cross_pairing;
+    result.open_denominator_amplitude_degree =
+        Rational(2) * result.enstrophy +
+        Rational(3) * result.palinstrophy;
+    result.open_quotient_amplitude_degree =
+        result.open_numerator_amplitude_degree -
+        result.open_denominator_amplitude_degree;
+    result.open_required_compensating_amplitude_degree =
+        result.open_denominator_amplitude_degree -
+        result.open_numerator_amplitude_degree;
+    result.numerator_amplitude_degree =
+        Rational(2) * result.stretching +
+        result.bilinear_h1_norm_squared +
+        result.normalized_gram_row + result.diagonal_tail;
+    result.denominator_amplitude_degree =
+        Rational(3) * result.enstrophy +
+        Rational(5) * result.palinstrophy;
+    result.quotient_amplitude_degree =
+        result.numerator_amplitude_degree -
+        result.denominator_amplitude_degree;
+    result.required_compensating_amplitude_degree =
+        result.denominator_amplitude_degree -
+        result.numerator_amplitude_degree;
+    result.unrestricted_open_claim_is_amplitude_homogeneous =
+        result.open_quotient_amplitude_degree == Rational(0);
+    result.unrestricted_claim_is_amplitude_homogeneous =
+        result.quotient_amplitude_degree == Rational(0);
+
+    // The implemented adversary renormalizes every iterate to fixed energy.
+    // It therefore cannot traverse u -> alpha u and cannot test an
+    // unrestricted amplitude claim.
+    result.fixed_energy_search_covers_amplitude_ray = false;
+    return result;
+}
+
 DyadicTailScaling ScalingAnalyzer::analyze_dyadic_tail() {
     DyadicTailScaling result;
     const Rational four(4);

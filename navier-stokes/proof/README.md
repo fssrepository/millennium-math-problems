@@ -9,7 +9,9 @@ stage:
 - `l4/states/<experiment>/static/`: replayable static-search winners;
 - `l4/states/<experiment>/dynamic/`: replayable trajectory-search winners;
 - `l4/analysis/`: shell, Sobolev, active-mode, and projectivity certificates;
-- `failed_lemmas.tsv`: the global rejection ledger.
+- `failed_lemmas.tsv`: the global candidate-status ledger; rows distinguish
+  exact rejections from numerical counterexample candidates awaiting rigorous
+  validation.
 
 The adversary root contains no loose artifacts. Its families are `baseline`,
 `critical-integral`, `far-nonlocal`, `gap-tail`, `gradient`, `helical`,
@@ -20,6 +22,12 @@ named experiment directories rather than directly under `l4/analysis/`.
 JSON and TSV files are computational evidence or exact finite algebra checks.
 Their presence does not replace the infinite-dimensional estimates required by
 `PROOF_PLAN.md`.
+
+The 2026-08-09 amplitude audit withdraws the unrestricted
+PNT-2/4/5/7/8/12/14 formulas. Their stored values are fixed-energy stress data,
+not evidence for the unrestricted suprema. The exact scope regression is part of
+`navier_stokes_lab self-test`; the current restart point is
+[`../CURRENT_HANDOFF.md`](../CURRENT_HANDOFF.md).
 
 `l4/adversary/gradient/l4s-fft-gradient-K5-smoke.json` is the first certificate produced
 through the complete FFT forward/adjoint path. It records a fixed-energy
@@ -92,11 +100,12 @@ coupled factorization `A_sig^4 R^2/(Z P^3)`. A true 12-worker dynamic
 multistart in `l4/analysis/local-signature-coupled-integral/` converges to the
 same smooth K3--K6 branch and does not expose cutoff concentration.
 
-`l4/analysis/local-critical-increase/` uses the exact discrete endpoint
-gradient to reject monotonic decay of the coupled local density (F010). Its
-positive-growth K3--K6 branch is time-step stable and spectrally convergent,
-but its increase flattens with cutoff and therefore supplies a mechanism test,
-not a blow-up certificate.
+`l4/analysis/local-critical-increase/` uses the exact derivative of the
+implemented floating-point Galerkin/RK4 objective to produce positive-growth
+K3--K6 states for the coupled local density (F010). Direct evaluation of the
+instantaneous Galerkin derivative is also positive. This is a reproducible
+numerical counterexample candidate, not a rigorous rejection, until exact or
+interval arithmetic encloses the sign.
 
 `l4/lemmas/shifted-local-density/` states the next explicit analytical
 candidate. The initial shift `B0=E(0)P(0)` has exactly the same amplitude and

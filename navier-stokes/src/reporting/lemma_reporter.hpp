@@ -33,6 +33,17 @@ struct LemmaReport {
     bool integrated_l4_scale_critical = false;
     bool exact_strong_l4_factorization = false;
     bool uniform_q_closes_l4 = false;
+    std::string pnt_open_numerator_amplitude_degree;
+    std::string pnt_open_denominator_amplitude_degree;
+    std::string pnt_open_quotient_amplitude_degree;
+    std::string pnt_open_required_compensating_amplitude_degree;
+    bool pnt_open_unrestricted_amplitude_homogeneous = false;
+    std::string pnt_schur_numerator_amplitude_degree;
+    std::string pnt_schur_denominator_amplitude_degree;
+    std::string pnt_schur_quotient_amplitude_degree;
+    std::string pnt_schur_required_compensating_amplitude_degree;
+    bool pnt_schur_unrestricted_amplitude_homogeneous = false;
+    bool pnt_fixed_energy_search_covers_amplitude_ray = false;
     std::string dyadic_advecting_gap_decay;
     std::string dyadic_target_gap_decay;
     std::string dyadic_l4_density_gap_decay;

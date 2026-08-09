@@ -76,6 +76,28 @@ struct StrongL4Reduction {
     bool closes_integrated_l4_from_uniform_q = true;
 };
 
+struct PalinstrophyNormalizationScaling {
+    Rational stretching{3};
+    Rational selected_stretching{3};
+    Rational tail_cross_pairing{3};
+    Rational bilinear_h1_norm_squared{4};
+    Rational normalized_gram_row{0};
+    Rational diagonal_tail{4};
+    Rational enstrophy{2};
+    Rational palinstrophy{2};
+    Rational open_numerator_amplitude_degree{9};
+    Rational open_denominator_amplitude_degree{10};
+    Rational open_quotient_amplitude_degree{-1};
+    Rational open_required_compensating_amplitude_degree{1};
+    Rational numerator_amplitude_degree{14};
+    Rational denominator_amplitude_degree{16};
+    Rational quotient_amplitude_degree{-2};
+    Rational required_compensating_amplitude_degree{2};
+    bool unrestricted_open_claim_is_amplitude_homogeneous = false;
+    bool unrestricted_claim_is_amplitude_homogeneous = false;
+    bool fixed_energy_search_covers_amplitude_ray = false;
+};
+
 struct DyadicTailScaling {
     Rational low_advecting_gap_decay{1, 2};
     Rational low_advected_gap_decay{1, 2};
@@ -103,6 +125,8 @@ public:
     static ScalingCertificate analyze_monomials(int denominator);
     static ConcentrationScaling analyze_concentration();
     static StrongL4Reduction analyze_strong_l4_reduction();
+    static PalinstrophyNormalizationScaling
+    analyze_palinstrophy_normalization();
     static DyadicTailScaling analyze_dyadic_tail();
 };
 

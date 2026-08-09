@@ -37,6 +37,35 @@ void LemmaReporter::write_console(const LemmaReport& report, std::ostream& out) 
         << (report.exact_strong_l4_factorization ? "verified" : "FAILED")
         << "\n  uniform trajectory Q closes L4 via E:    "
         << (report.uniform_q_closes_l4 ? "verified" : "FAILED") << "\n\n"
+        << "PNT amplitude and admissible-scope audit\n"
+        << "  PNT-2/4/5 numerator / denominator:      "
+        << report.pnt_open_numerator_amplitude_degree << " / "
+        << report.pnt_open_denominator_amplitude_degree
+        << "\n  PNT-2/4/5 unrestricted quotient degree: "
+        << report.pnt_open_quotient_amplitude_degree
+        << "\n  PNT-2/4/5 unrestricted form:            "
+        << (report.pnt_open_unrestricted_amplitude_homogeneous
+                ? "homogeneous"
+                : "REJECTED")
+        << "\n  open-form compensating degree required:  "
+        << report.pnt_open_required_compensating_amplitude_degree
+        << " (must be re-derived, not guessed)\n"
+        << "  PNT-7/8/12/14 numerator / denominator: "
+        << report.pnt_schur_numerator_amplitude_degree << " / "
+        << report.pnt_schur_denominator_amplitude_degree
+        << "\n  PNT-7/8/12/14 quotient degree:          "
+        << report.pnt_schur_quotient_amplitude_degree
+        << "\n  PNT-7/8/12/14 unrestricted form:        "
+        << (report.pnt_schur_unrestricted_amplitude_homogeneous
+                ? "homogeneous"
+                : "REJECTED")
+        << "\n  fixed-energy search covers alpha-ray:    "
+        << (report.pnt_fixed_energy_search_covers_amplitude_ray
+                ? "yes"
+                : "no")
+        << "\n  required compensating amplitude degree:  "
+        << report.pnt_schur_required_compensating_amplitude_degree
+        << " (must be re-derived, not guessed)\n\n"
         << "Dyadic far-tail scaling\n"
         << "  advecting/advected gap decay:           2^(-"
         << report.dyadic_advecting_gap_decay << " m)\n"
@@ -218,6 +247,41 @@ void LemmaReporter::write_json(const LemmaReport& report, std::ostream& out) {
         << "    \"conditional_bound\": \"integral D^4 Z^2 dt <= (sup Q) E(0)/(2 nu)\",\n"
         << "    \"uniform_Q_closes_L4\": "
         << (report.uniform_q_closes_l4 ? "true" : "false") << "\n  },\n"
+        << "  \"pnt_amplitude_scope_audit\": {\n"
+        << "    \"printed_open_formula\": \"3 |S_full| |s t_t+s_t t_c|/(2 Z^2 P^3)\",\n"
+        << "    \"open_numerator_amplitude_degree\": \""
+        << report.pnt_open_numerator_amplitude_degree
+        << "\",\n    \"open_denominator_amplitude_degree\": \""
+        << report.pnt_open_denominator_amplitude_degree
+        << "\",\n    \"open_quotient_amplitude_degree\": \""
+        << report.pnt_open_quotient_amplitude_degree
+        << "\",\n    \"open_required_compensating_amplitude_degree\": \""
+        << report.pnt_open_required_compensating_amplitude_degree
+        << "\",\n    \"open_unrestricted_claim_is_amplitude_homogeneous\": "
+        << (report.pnt_open_unrestricted_amplitude_homogeneous
+                ? "true"
+                : "false")
+        << ",\n"
+        << "    \"printed_schur_formula\": \"H^(1/2) 9 S_full^2 B1 R_H D_H/(4 Z^3 P^5)\",\n"
+        << "    \"schur_family\": \"PNT-7/8/12/14\",\n"
+        << "    \"schur_numerator_amplitude_degree\": \""
+        << report.pnt_schur_numerator_amplitude_degree
+        << "\",\n    \"schur_denominator_amplitude_degree\": \""
+        << report.pnt_schur_denominator_amplitude_degree
+        << "\",\n    \"schur_quotient_amplitude_degree\": \""
+        << report.pnt_schur_quotient_amplitude_degree
+        << "\",\n    \"schur_required_compensating_amplitude_degree\": \""
+        << report.pnt_schur_required_compensating_amplitude_degree
+        << "\",\n    \"schur_unrestricted_claim_is_amplitude_homogeneous\": "
+        << (report.pnt_schur_unrestricted_amplitude_homogeneous
+                ? "true"
+                : "false")
+        << ",\n    \"optimizer_admissible_set\": \"fixed energy\",\n"
+        << "    \"fixed_energy_search_covers_amplitude_ray\": "
+        << (report.pnt_fixed_energy_search_covers_amplitude_ray
+                ? "true"
+                : "false")
+        << ",\n    \"status\": \"unrestricted formula withdrawn; homogeneous replacement not yet derived\"\n  },\n"
         << "  \"dyadic_tail_scaling\": {\n"
         << "    \"low_advecting_gap_decay\": \""
         << report.dyadic_advecting_gap_decay

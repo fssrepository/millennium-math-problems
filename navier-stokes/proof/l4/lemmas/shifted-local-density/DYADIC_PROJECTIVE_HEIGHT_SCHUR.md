@@ -5,6 +5,11 @@ RQ-11 to one cutoff-uniform joint dyadic estimate. It does not prove that
 uniform estimate and therefore does not prove RQ-11, the local SLD lemma, or
 the Clay problem.
 
+Post-audit scope note (2026-08-09): the later PNT-4 routing paragraph is
+historical fixed-energy evidence. The printed unrestricted PNT-4 quotient has
+amplitude degree `-1` and is withdrawn; see
+[PALINSTROPHY_NORMALIZATION_TAIL.md](PALINSTROPHY_NORMALIZATION_TAIL.md).
+
 ## Exact height matrix
 
 Partition the primitive feasible squared-length shapes by
@@ -292,9 +297,9 @@ unchanged but raises the aggregate-norm Cauchy majorant from `0.00844764` to
 `0.00849852`; one K12 component/open step reaches `0.000575812`.  The exact
 two-term identity `s*t_tail+s_tail*t_core` removes the H-dependent three-way
 dominance.  Optimizing its first channel raises the K8 record to `0.000590223`
-and supplies `91.3%` of the result.  The active normalization target is
-consequently the joint two-channel estimate PNT-4, not separate tail-norm or
-alignment decay.  See
+and supplies `91.3%` of the result. Before the amplitude audit, this selected
+the joint two-channel PNT-4 objective over separate tail-norm or alignment
+objectives. PNT-4 is not an active unrestricted lemma. See
 [PALINSTROPHY_NORMALIZATION_TAIL.md](PALINSTROPHY_NORMALIZATION_TAIL.md).
 
 ## Reproduction
