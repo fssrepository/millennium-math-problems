@@ -1,0 +1,182 @@
+[
+  {
+    "repository": "millennium-math-problems",
+    "original_commit": "a5b402c329b2eeb6f2c5b9e04faa7684c165a7a2",
+    "task_commit": "6afa4de9e8c7e36ade682f1368fb785814f1253a",
+    "task_ids": [
+      "MATH-1"
+    ],
+    "original_source_tree": "ecf48a8d3c6b4f32ab735837fe8a34e60d5d01e8",
+    "original_execution_start": "2026-08-01T09:44:11+02:00",
+    "original_execution_end": "2026-08-01T15:49:10+02:00",
+    "original_commit_count": 16
+  },
+  {
+    "repository": "millennium-math-problems",
+    "original_commit": "204a00ba2e87a0935667cebc341e0894e221e4b2",
+    "task_commit": "40fc02d65c073862082bf98e041079d9a7f2fdb5",
+    "task_ids": [
+      "MATH-2"
+    ],
+    "original_source_tree": "069511219ec52d2752933bf3e0f3e087a4dba86b",
+    "original_execution_start": "2026-08-01T15:58:20+02:00",
+    "original_execution_end": "2026-08-01T17:29:04+02:00",
+    "original_commit_count": 10
+  },
+  {
+    "repository": "millennium-math-problems",
+    "original_commit": "ab5e08b5bb679a3b5397ff0cab1d232603328156",
+    "task_commit": "2b2ec6a23ce4f063a89057ae61e25d9853f42b6b",
+    "task_ids": [
+      "MATH-3"
+    ],
+    "original_source_tree": "b42c59eda7a2bb03f1b624b4fd9f9d5bda9acdd8",
+    "original_execution_start": "2026-08-01T17:47:20+02:00",
+    "original_execution_end": "2026-08-01T19:41:11+02:00",
+    "original_commit_count": 11
+  },
+  {
+    "repository": "millennium-math-problems",
+    "original_commit": "2dd8fb944051c99dd88c0f7dda8d4444f81194d4",
+    "task_commit": "1a89316408d46b9a4590d96f9fd98c2d99b0caf6",
+    "task_ids": [
+      "MATH-4"
+    ],
+    "original_source_tree": "31597b09ba754e2a6f1e17d4ce5930dfe568a8f2",
+    "original_execution_start": "2026-08-01T20:06:47+02:00",
+    "original_execution_end": "2026-08-02T03:01:07+02:00",
+    "original_commit_count": 13
+  },
+  {
+    "repository": "millennium-math-problems",
+    "original_commit": "4014a5d2fd6a56c883717bd695be3519d748b79f",
+    "task_commit": "c16aa71720194d3f03e199db3ff93b7452c4b652",
+    "task_ids": [
+      "MATH-5"
+    ],
+    "original_source_tree": "20edce0aebd7e5b62c06b6897f195dcac5383d40",
+    "original_execution_start": "2026-08-02T03:28:51+02:00",
+    "original_execution_end": "2026-08-02T07:20:04+02:00",
+    "original_commit_count": 8
+  },
+  {
+    "repository": "millennium-math-problems",
+    "original_commit": "c1a339fdc8e82a1386a629b5820cd74002c984cd",
+    "task_commit": "c1d3bc5858c008b0164de418cdd88ccf11be2543",
+    "task_ids": [
+      "MATH-6"
+    ],
+    "original_source_tree": "f2fe84d356494c53bbf34abe91e90e94e1a4e66e",
+    "original_execution_start": "2026-08-02T07:33:17+02:00",
+    "original_execution_end": "2026-08-02T09:12:09+02:00",
+    "original_commit_count": 6
+  },
+  {
+    "repository": "millennium-math-problems",
+    "original_commit": "326f6b36a12161c22f3e0b0c902c36aecda9771f",
+    "task_commit": "0d4b6ce15a06d88659c6fac00c8f52a3a7f3201c",
+    "task_ids": [
+      "MATH-7"
+    ],
+    "original_source_tree": "a804ebf4267c743b773fa06969af0d3fdfe0a4da",
+    "original_execution_start": "2026-08-02T09:37:41+02:00",
+    "original_execution_end": "2026-08-02T13:06:34+02:00",
+    "original_commit_count": 13
+  },
+  {
+    "repository": "millennium-math-problems",
+    "original_commit": "d2d296078d838ae1e868fa76fce7fdc39c9ec501",
+    "task_commit": "0fb5fd4c0d933ceb68eb9f46b455a40f05a23198",
+    "task_ids": [
+      "MATH-8"
+    ],
+    "original_source_tree": "2171dc0d3dadb98a885423bbf4828a459c2b50c5",
+    "original_execution_start": "2026-08-02T13:45:02+02:00",
+    "original_execution_end": "2026-08-02T13:51:08+02:00",
+    "original_commit_count": 5
+  },
+  {
+    "repository": "millennium-math-problems",
+    "original_commit": "09f57178163ce339a33e29184c33433fb5cf2bea",
+    "task_commit": "296a935e6f18a8d2deaf93ded8027bb3fcf4a3aa",
+    "task_ids": [
+      "MATH-9"
+    ],
+    "original_source_tree": "49abaef4045599712de36c0a5854e823a8aef83b",
+    "original_execution_start": "2026-08-02T14:00:03+02:00",
+    "original_execution_end": "2026-08-02T16:46:39+02:00",
+    "original_commit_count": 14
+  },
+  {
+    "repository": "millennium-math-problems",
+    "original_commit": "50ddaa690b1ef28a0c9de72d291a69fb3abb40cb",
+    "task_commit": "ff094aac535ae9f41745fad1d6d2d1445fd396e3",
+    "task_ids": [
+      "MATH-10"
+    ],
+    "original_source_tree": "36ba6ee4096ee295d5f5dcaece5f215bd0e49179",
+    "original_execution_start": "2026-08-02T16:51:00+02:00",
+    "original_execution_end": "2026-08-02T22:04:39+02:00",
+    "original_commit_count": 5
+  },
+  {
+    "repository": "millennium-math-problems",
+    "original_commit": "67da2ae3875384cf4556f6e2488d2dcf2178ca67",
+    "task_commit": "a5c853cf4aebcbeca92fa486c6f8805ec5710a34",
+    "task_ids": [
+      "MATH-11"
+    ],
+    "original_source_tree": "3ffe78291a82392e99009be1831ce067d5613e66",
+    "original_execution_start": "2026-08-02T23:24:01+02:00",
+    "original_execution_end": "2026-08-03T00:38:45+02:00",
+    "original_commit_count": 11
+  },
+  {
+    "repository": "millennium-math-problems",
+    "original_commit": "c2a3ea86cbfb802612ffaa6e71809045142f97cc",
+    "task_commit": "c85cb5284c5f6927c5b6be92f563838a33e70bd2",
+    "task_ids": [
+      "MATH-12"
+    ],
+    "original_source_tree": "0311b663a529b21a5b0d93b0176bfc716dd800a0",
+    "original_execution_start": "2026-08-04T05:40:06+02:00",
+    "original_execution_end": "2026-08-04T19:21:08+02:00",
+    "original_commit_count": 11
+  },
+  {
+    "repository": "millennium-math-problems",
+    "original_commit": "907e8bc10a0b2359b9e24affe1298debff051046",
+    "task_commit": "9b6a747af5f3bfe309ddd40d3a6574583d311559",
+    "task_ids": [
+      "MATH-15"
+    ],
+    "original_source_tree": "7a24910a7986c6a805a80892a32dbca62fd75425",
+    "original_execution_start": "2026-08-05T09:34:29+02:00",
+    "original_execution_end": "2026-08-05T14:12:01+02:00",
+    "original_commit_count": 6
+  },
+  {
+    "repository": "millennium-math-problems",
+    "original_commit": "966bccea9075f98908e19cd2b02fe1a99240e2a9",
+    "task_commit": "42a7f184ceb7b9c57e84c4669da3ed81b4f93802",
+    "task_ids": [
+      "MATH-16"
+    ],
+    "original_source_tree": "5ba8f3300858fc61815cc68964b78b58740a651a",
+    "original_execution_start": "2026-08-05T16:48:23+02:00",
+    "original_execution_end": "2026-08-07T16:23:30+02:00",
+    "original_commit_count": 6
+  },
+  {
+    "repository": "millennium-math-problems",
+    "original_commit": "4357ce484f08028514fa7ca33d85c87812e4f765",
+    "task_commit": "ce78ae714189fac287cef0d7613dda14b18b7f8f",
+    "task_ids": [
+      "MATH-14"
+    ],
+    "original_source_tree": "ca24e2cdeb2e3156ceb5552155aedbc537386912",
+    "original_execution_start": "2026-08-09T03:16:27+02:00",
+    "original_execution_end": "2026-08-09T19:28:34+02:00",
+    "original_commit_count": 2
+  }
+]

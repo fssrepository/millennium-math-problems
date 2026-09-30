@@ -1,0 +1,609 @@
+{
+  "schema_version": 1,
+  "project_totals": {
+    "tasks": 17,
+    "tokens_estimate": 1285697303,
+    "api_standard_usd_estimate": 727.24,
+    "allocated_hours_estimate": 43.4383168334718,
+    "manual_effort_unknown": false,
+    "workstreams": {
+      "Mathematical research": {
+        "tokens": 969307188,
+        "api_equivalent_usd": 515.9499999999999,
+        "hours": 33.91097666660944
+      },
+      "Research communication": {
+        "tokens": 313724532,
+        "api_equivalent_usd": 207.19,
+        "hours": 9.360948426116396
+      },
+      "Project administration (AI-assisted)": {
+        "tokens": 2665583,
+        "api_equivalent_usd": 4.1,
+        "hours": 0.16639174074596827
+      }
+    }
+  },
+  "account_control": {
+    "account_tokens": 38488016278,
+    "allocated_tokens_estimate": 37993843589,
+    "unassigned_tokens": 494172689
+  },
+  "valuation_date": "2026-10-01",
+  "rates_per_million": {
+    "gpt-5.2": [
+      1.75,
+      0.175,
+      14,
+      0
+    ],
+    "gpt-5.4": [
+      2.5,
+      0.25,
+      15,
+      0
+    ],
+    "gpt-5.5": [
+      5,
+      0.5,
+      30,
+      0
+    ],
+    "gpt-5.3-codex": [
+      1.75,
+      0.175,
+      14,
+      0
+    ],
+    "gpt-5.6-sol": [
+      4,
+      0.4,
+      20,
+      5
+    ],
+    "gpt-5.6-terra": [
+      2,
+      0.2,
+      12,
+      2.5
+    ],
+    "gpt-6-astra": [
+      10,
+      1,
+      50,
+      12.5
+    ],
+    "gpt-6-sol": [
+      2,
+      0.2,
+      10,
+      2.5
+    ],
+    "gpt-6-luna": [
+      0.1,
+      0.01,
+      0.5,
+      0.125
+    ]
+  },
+  "pricing_source": "https://developers.openai.com/api/docs/pricing",
+  "observed_token_mix": {
+    "input_tokens": 0.9963307585649178,
+    "cached_input_tokens": 0.9617906844276427,
+    "cache_write_input_tokens": 0.0,
+    "output_tokens": 0.0031954733323304777,
+    "reasoning_output_tokens": 0.0010898946512413721,
+    "total_tokens": 1.0
+  },
+  "tasks": [
+    {
+      "task_id": "MATH-1",
+      "tokens": 160722512,
+      "api_standard_usd_estimate": 86.79,
+      "active_hours": 7.2,
+      "allocated_hours": 7.185781944460339,
+      "manual_effort_unknown": false,
+      "token_basis": "Estimated task allocation of measured daily account totals",
+      "duration_basis": "Union of recorded root task intervals; includes tool/network waits, not human labor time",
+      "allocated_time_basis": "Observed task intervals, overlap divided equally across concurrent tasks",
+      "models": {
+        "gpt-5.6-sol|xhigh": {
+          "input_tokens": 160071805.87647453,
+          "cached_input_tokens": 157364692.37235543,
+          "cache_write_input_tokens": 0.0,
+          "output_tokens": 650706.1235254667,
+          "reasoning_output_tokens": 178948.89472386084,
+          "total_tokens": 160722512.0
+        }
+      },
+      "repository_allocations": {
+        "millennium-math-problems": {
+          "hours": 7.185781944460339,
+          "tokens": 160722512,
+          "api_equivalent_usd": 86.79
+        }
+      }
+    },
+    {
+      "task_id": "MATH-2",
+      "tokens": 26780230,
+      "api_standard_usd_estimate": 14.9,
+      "active_hours": 0.7,
+      "allocated_hours": 0.7034391666120953,
+      "manual_effort_unknown": false,
+      "token_basis": "Estimated task allocation of measured daily account totals",
+      "duration_basis": "Union of recorded root task intervals; includes tool/network waits, not human labor time",
+      "allocated_time_basis": "Observed task intervals, overlap divided equally across concurrent tasks",
+      "models": {
+        "gpt-5.6-sol|xhigh": {
+          "input_tokens": 26652669.86950672,
+          "cached_input_tokens": 26183445.32659314,
+          "cache_write_input_tokens": 0.0,
+          "output_tokens": 127560.13049327917,
+          "reasoning_output_tokens": 40706.994110955355,
+          "total_tokens": 26780230.0
+        }
+      },
+      "repository_allocations": {
+        "millennium-math-problems": {
+          "hours": 0.7034391666120953,
+          "tokens": 26780230,
+          "api_equivalent_usd": 14.9
+        }
+      }
+    },
+    {
+      "task_id": "MATH-3",
+      "tokens": 71944832,
+      "api_standard_usd_estimate": 38.23,
+      "active_hours": 2.4,
+      "allocated_hours": 2.3557286111513775,
+      "manual_effort_unknown": false,
+      "token_basis": "Estimated task allocation of measured daily account totals",
+      "duration_basis": "Union of recorded root task intervals; includes tool/network waits, not human labor time",
+      "allocated_time_basis": "Observed task intervals, overlap divided equally across concurrent tasks",
+      "models": {
+        "gpt-5.6-sol|xhigh": {
+          "input_tokens": 71747525.35122976,
+          "cached_input_tokens": 70197102.66837835,
+          "cache_write_input_tokens": 0.0,
+          "output_tokens": 197306.64877024808,
+          "reasoning_output_tokens": 52224.535847624575,
+          "total_tokens": 71944832.0
+        }
+      },
+      "repository_allocations": {
+        "millennium-math-problems": {
+          "hours": 2.3557286111513775,
+          "tokens": 71944832,
+          "api_equivalent_usd": 38.23
+        }
+      }
+    },
+    {
+      "task_id": "MATH-4",
+      "tokens": 125332394,
+      "api_standard_usd_estimate": 67.95,
+      "active_hours": 16.2,
+      "allocated_hours": 15.94930805557304,
+      "manual_effort_unknown": false,
+      "token_basis": "Estimated task allocation of measured daily account totals",
+      "duration_basis": "Union of recorded root task intervals; includes tool/network waits, not human labor time",
+      "allocated_time_basis": "Observed task intervals, overlap divided equally across concurrent tasks",
+      "models": {
+        "gpt-5.6-sol|xhigh": {
+          "input_tokens": 124906298.81402798,
+          "cached_input_tokens": 122277788.022168,
+          "cache_write_input_tokens": 0.0,
+          "output_tokens": 426095.18597200856,
+          "reasoning_output_tokens": 125270.46638650831,
+          "total_tokens": 125332394.0
+        }
+      },
+      "repository_allocations": {
+        "millennium-math-problems": {
+          "hours": 15.94930805557304,
+          "tokens": 125332394,
+          "api_equivalent_usd": 67.95
+        }
+      }
+    },
+    {
+      "task_id": "MATH-10",
+      "tokens": 75946113,
+      "api_standard_usd_estimate": 40.08,
+      "active_hours": 0.9,
+      "allocated_hours": 0.8743358333905538,
+      "manual_effort_unknown": false,
+      "token_basis": "Estimated task allocation of measured daily account totals",
+      "duration_basis": "Union of recorded root task intervals; includes tool/network waits, not human labor time",
+      "allocated_time_basis": "Observed task intervals, overlap divided equally across concurrent tasks",
+      "models": {
+        "gpt-5.6-sol|xhigh": {
+          "input_tokens": 75712390.91590117,
+          "cached_input_tokens": 74288895.86491813,
+          "cache_write_input_tokens": 0.0,
+          "output_tokens": 233722.0840988252,
+          "reasoning_output_tokens": 59914.45227200802,
+          "total_tokens": 75946113.0
+        }
+      },
+      "repository_allocations": {
+        "millennium-math-problems": {
+          "hours": 0.8743358333905538,
+          "tokens": 75946113,
+          "api_equivalent_usd": 40.08
+        }
+      }
+    },
+    {
+      "task_id": "MATH-5",
+      "tokens": 359541069,
+      "api_standard_usd_estimate": 183.13,
+      "active_hours": 0.3,
+      "allocated_hours": 0.1837943055563503,
+      "manual_effort_unknown": false,
+      "token_basis": "Estimated task allocation of measured daily account totals",
+      "duration_basis": "Union of recorded root task intervals; includes tool/network waits, not human labor time",
+      "allocated_time_basis": "Observed task intervals, overlap divided equally across concurrent tasks",
+      "models": {
+        "gpt-5.6-sol|xhigh": {
+          "input_tokens": 358472445.9994782,
+          "cached_input_tokens": 353368919.91870284,
+          "cache_write_input_tokens": 0.0,
+          "output_tokens": 1068623.000521807,
+          "reasoning_output_tokens": 258771.8803901021,
+          "total_tokens": 359541069.0
+        }
+      },
+      "repository_allocations": {
+        "millennium-math-problems": {
+          "hours": 0.1837943055563503,
+          "tokens": 359541069,
+          "api_equivalent_usd": 183.13
+        }
+      }
+    },
+    {
+      "task_id": "MATH-6",
+      "tokens": 3595085,
+      "api_standard_usd_estimate": 2.76,
+      "active_hours": 0.3,
+      "allocated_hours": 0.13432875000768238,
+      "manual_effort_unknown": false,
+      "token_basis": "Estimated task allocation of measured daily account totals",
+      "duration_basis": "Union of recorded root task intervals; includes tool/network waits, not human labor time",
+      "allocated_time_basis": "Observed task intervals, overlap divided equally across concurrent tasks",
+      "models": {
+        "gpt-5.6-sol|xhigh": {
+          "input_tokens": 3566197.610186619,
+          "cached_input_tokens": 3355759.550382459,
+          "cache_write_input_tokens": 0.0,
+          "output_tokens": 28887.389813380767,
+          "reasoning_output_tokens": 15712.089802052406,
+          "total_tokens": 3595085.0
+        }
+      },
+      "repository_allocations": {
+        "millennium-math-problems": {
+          "hours": 0.13432875000768238,
+          "tokens": 3595085,
+          "api_equivalent_usd": 2.76
+        }
+      }
+    },
+    {
+      "task_id": "MATH-7",
+      "tokens": 20000000,
+      "api_standard_usd_estimate": 11.74,
+      "active_hours": 0.7,
+      "allocated_hours": 0.7,
+      "manual_effort_unknown": false,
+      "token_basis": "Analogy estimate from comparable tasks; reserved from unassigned account balance, daily attribution unavailable",
+      "duration_basis": "Comparable-task estimate; historical timing not individually logged",
+      "allocated_time_basis": "Estimated task time; placement and overlap are unobserved",
+      "models": {
+        "gpt-5.6-sol|estimated": {
+          "input_tokens": 19926615.171298355,
+          "cached_input_tokens": 19235813.688552853,
+          "cache_write_input_tokens": 0.0,
+          "output_tokens": 63909.46664660955,
+          "reasoning_output_tokens": 21797.89302482744,
+          "total_tokens": 20000000.0
+        }
+      },
+      "repository_allocations": {
+        "millennium-math-problems": {
+          "hours": 0.7,
+          "tokens": 20000000,
+          "api_equivalent_usd": 11.74
+        }
+      }
+    },
+    {
+      "task_id": "MATH-8",
+      "tokens": 20000000,
+      "api_standard_usd_estimate": 11.74,
+      "active_hours": 0.7,
+      "allocated_hours": 0.7,
+      "manual_effort_unknown": false,
+      "token_basis": "Analogy estimate from comparable tasks; reserved from unassigned account balance, daily attribution unavailable",
+      "duration_basis": "Comparable-task estimate; historical timing not individually logged",
+      "allocated_time_basis": "Estimated task time; placement and overlap are unobserved",
+      "models": {
+        "gpt-5.6-sol|estimated": {
+          "input_tokens": 19926615.171298355,
+          "cached_input_tokens": 19235813.688552853,
+          "cache_write_input_tokens": 0.0,
+          "output_tokens": 63909.46664660955,
+          "reasoning_output_tokens": 21797.89302482744,
+          "total_tokens": 20000000.0
+        }
+      },
+      "repository_allocations": {
+        "millennium-math-problems": {
+          "hours": 0.7,
+          "tokens": 20000000,
+          "api_equivalent_usd": 11.74
+        }
+      }
+    },
+    {
+      "task_id": "MATH-9",
+      "tokens": 63093895,
+      "api_standard_usd_estimate": 31.65,
+      "active_hours": 4.1,
+      "allocated_hours": 4.085879444413715,
+      "manual_effort_unknown": false,
+      "token_basis": "Estimated task allocation of measured daily account totals",
+      "duration_basis": "Union of recorded root task intervals; includes tool/network waits, not human labor time",
+      "allocated_time_basis": "Observed task intervals, overlap divided equally across concurrent tasks",
+      "models": {
+        "gpt-5.6-sol|xhigh": {
+          "input_tokens": 62925248.074347675,
+          "cached_input_tokens": 62063284.35434692,
+          "cache_write_input_tokens": 0.0,
+          "output_tokens": 168646.92565232745,
+          "reasoning_output_tokens": 39527.937057656236,
+          "total_tokens": 63093895.0
+        }
+      },
+      "repository_allocations": {
+        "millennium-math-problems": {
+          "hours": 4.085879444413715,
+          "tokens": 63093895,
+          "api_equivalent_usd": 31.65
+        }
+      }
+    },
+    {
+      "task_id": "MATH-11",
+      "tokens": 33337645,
+      "api_standard_usd_estimate": 21.69,
+      "active_hours": 0.7,
+      "allocated_hours": 0.7383805554442936,
+      "manual_effort_unknown": false,
+      "token_basis": "Estimated task allocation of measured daily account totals",
+      "duration_basis": "Union of recorded root task intervals; includes tool/network waits, not human labor time",
+      "allocated_time_basis": "Observed task intervals, overlap divided equally across concurrent tasks",
+      "models": {
+        "gpt-5.6-sol|medium": {
+          "input_tokens": 1945474.1105095276,
+          "cached_input_tokens": 1700832.8891281013,
+          "cache_write_input_tokens": 0.0,
+          "output_tokens": 3225.6951903828544,
+          "reasoning_output_tokens": 1604.7428334065457,
+          "total_tokens": 1948699.8056999105
+        },
+        "gpt-5.6-sol|xhigh": {
+          "input_tokens": 31267949.498019747,
+          "cached_input_tokens": 29867861.757365875,
+          "cache_write_input_tokens": 0.0,
+          "output_tokens": 120995.69628034468,
+          "reasoning_output_tokens": 51081.275758717486,
+          "total_tokens": 31388945.19430009
+        }
+      },
+      "repository_allocations": {
+        "millennium-math-problems": {
+          "hours": 0.7383805554442936,
+          "tokens": 33337645,
+          "api_equivalent_usd": 21.69
+        }
+      }
+    },
+    {
+      "task_id": "MATH-12",
+      "tokens": 111660960,
+      "api_standard_usd_estimate": 81.4,
+      "active_hours": 6.4,
+      "allocated_hours": 3.600510092521155,
+      "manual_effort_unknown": false,
+      "token_basis": "Estimated task allocation of measured daily account totals",
+      "duration_basis": "Union of recorded root task intervals; includes tool/network waits, not human labor time",
+      "allocated_time_basis": "Observed task intervals, overlap divided equally across concurrent tasks",
+      "models": {
+        "gpt-5.6-sol|xhigh": {
+          "input_tokens": 110992282.95101675,
+          "cached_input_tokens": 104427887.2383647,
+          "cache_write_input_tokens": 0.0,
+          "output_tokens": 668677.0489832471,
+          "reasoning_output_tokens": 268326.06318179274,
+          "total_tokens": 111660960.0
+        }
+      },
+      "repository_allocations": {
+        "millennium-math-problems": {
+          "hours": 3.600510092521155,
+          "tokens": 111660960,
+          "api_equivalent_usd": 81.4
+        }
+      }
+    },
+    {
+      "task_id": "MATH-15",
+      "tokens": 38445893,
+      "api_standard_usd_estimate": 26.92,
+      "active_hours": 2.3,
+      "allocated_hours": 1.513136389023728,
+      "manual_effort_unknown": false,
+      "token_basis": "Estimated task allocation of measured daily account totals",
+      "duration_basis": "Union of recorded root task intervals; includes tool/network waits, not human labor time",
+      "allocated_time_basis": "Observed task intervals, overlap divided equally across concurrent tasks",
+      "models": {
+        "gpt-5.6-sol|xhigh": {
+          "input_tokens": 38229698.58013323,
+          "cached_input_tokens": 36200410.66183086,
+          "cache_write_input_tokens": 0.0,
+          "output_tokens": 216194.41986677152,
+          "reasoning_output_tokens": 90344.32364331052,
+          "total_tokens": 38445893.0
+        }
+      },
+      "repository_allocations": {
+        "millennium-math-problems": {
+          "hours": 1.513136389023728,
+          "tokens": 38445893,
+          "api_equivalent_usd": 26.92
+        }
+      }
+    },
+    {
+      "task_id": "MATH-16",
+      "tokens": 29488849,
+      "api_standard_usd_estimate": 23.37,
+      "active_hours": 1.8,
+      "allocated_hours": 1.4791531946261725,
+      "manual_effort_unknown": false,
+      "token_basis": "Estimated task allocation of measured daily account totals",
+      "duration_basis": "Union of recorded root task intervals; includes tool/network waits, not human labor time",
+      "allocated_time_basis": "Observed task intervals, overlap divided equally across concurrent tasks",
+      "models": {
+        "gpt-5.6-sol|xhigh": {
+          "input_tokens": 29322850.98956658,
+          "cached_input_tokens": 27012152.510534756,
+          "cache_write_input_tokens": 0.0,
+          "output_tokens": 165998.01043341975,
+          "reasoning_output_tokens": 72043.72818380539,
+          "total_tokens": 29488849.0
+        }
+      },
+      "repository_allocations": {
+        "millennium-math-problems": {
+          "hours": 1.4791531946261725,
+          "tokens": 29488849,
+          "api_equivalent_usd": 23.37
+        }
+      }
+    },
+    {
+      "task_id": "MATH-13",
+      "tokens": 134128830,
+      "api_standard_usd_estimate": 75.5,
+      "active_hours": 3.6,
+      "allocated_hours": 2.76814874994534,
+      "manual_effort_unknown": false,
+      "token_basis": "Estimated task allocation of measured daily account totals",
+      "duration_basis": "Union of recorded root task intervals; includes tool/network waits, not human labor time",
+      "allocated_time_basis": "Observed task intervals, overlap divided equally across concurrent tasks",
+      "models": {
+        "gpt-5.6-sol|xhigh": {
+          "input_tokens": 133649868.45102058,
+          "cached_input_tokens": 130187667.31232657,
+          "cache_write_input_tokens": 0.0,
+          "output_tokens": 478961.54897940747,
+          "reasoning_output_tokens": 172344.27204102062,
+          "total_tokens": 134128830.0
+        }
+      },
+      "repository_allocations": {
+        "millennium-math-problems": {
+          "hours": 2.76814874994534,
+          "tokens": 134128830,
+          "api_equivalent_usd": 75.5
+        }
+      }
+    },
+    {
+      "task_id": "MATH-14",
+      "tokens": 9013413,
+      "api_standard_usd_estimate": 5.29,
+      "active_hours": 0.3,
+      "allocated_hours": 0.3,
+      "manual_effort_unknown": false,
+      "token_basis": "Analogy estimate from comparable tasks; reserved from unassigned account balance, daily attribution unavailable",
+      "duration_basis": "Comparable-task estimate; historical timing not individually logged",
+      "allocated_time_basis": "Estimated task time; placement and overlap are unobserved",
+      "models": {
+        "gpt-5.6-sol|estimated": {
+          "input_tokens": 8980340.611548891,
+          "cached_input_tokens": 8669016.658299012,
+          "cache_write_input_tokens": 0.0,
+          "output_tokens": 28802.12087478085,
+          "reasoning_output_tokens": 9823.67061812945,
+          "total_tokens": 9013413.0
+        }
+      },
+      "repository_allocations": {
+        "millennium-math-problems": {
+          "hours": 0.3,
+          "tokens": 9013413,
+          "api_equivalent_usd": 5.29
+        }
+      }
+    },
+    {
+      "task_id": "MATH-17",
+      "tokens": 2665583,
+      "api_standard_usd_estimate": 4.1,
+      "active_hours": 0.166,
+      "allocated_hours": 0.16639174074596827,
+      "manual_effort_unknown": false,
+      "token_basis": "Measured maintenance-session tokens; estimated allocation by backup snapshot ownership (9:2:2:2 across four Projects)",
+      "duration_basis": "Measured active root intervals; same project allocation weights; includes tool/network waits, not human labor",
+      "allocated_time_basis": "Measured active root intervals; same project allocation weights; includes tool/network waits, not human labor",
+      "models": {
+        "gpt-6-astra|high": {
+          "input_tokens": 2649641.0666666664,
+          "cached_input_tokens": 2576571.7333333334,
+          "cache_write_input_tokens": 0.0,
+          "output_tokens": 15941.333333333334,
+          "reasoning_output_tokens": 4857.6,
+          "total_tokens": 2665582.4
+        }
+      },
+      "repository_allocations": {
+        "millennium-math-problems": {
+          "hours": 0.16639174074596827,
+          "tokens": 2665583.0,
+          "api_equivalent_usd": 4.1
+        }
+      }
+    }
+  ],
+  "maintenance_run": {
+    "cutoff_utc": "2026-09-30T23:16:07.594000+00:00",
+    "measured_tokens": 19991868,
+    "measured_active_hours": 1.2479380555947621,
+    "project_weights": {
+      "myscoutee": 0.6,
+      "myscoutee-old": 0.13333333333333333,
+      "e-kozig": 0.13333333333333333,
+      "math": 0.13333333333333333
+    },
+    "previous_msc108_tokens_removed": 8473514,
+    "previous_msc108_hours_removed": 0.46417527781592477,
+    "net_additional_account_allocation": 11518354,
+    "daily_attribution": "Not individually reconciled; allocated against remaining account allowance",
+    "models": {
+      "gpt-6-astra|high": {
+        "input_tokens": 19872308,
+        "cached_input_tokens": 19324288,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 119560,
+        "reasoning_output_tokens": 36432,
+        "total_tokens": 19991868
+      }
+    }
+  }
+}

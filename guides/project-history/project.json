@@ -1,0 +1,590 @@
+{
+  "schema_version": 1,
+  "scope": "complete-project",
+  "project": {
+    "repositories": [
+      "fssrepository/millennium-math-problems",
+      "fssrepository/myscoutee-roadmap"
+    ],
+    "owner": "fssrepository",
+    "title": "Millennium Math Problems",
+    "url": "https://github.com/users/fssrepository/projects/5",
+    "public": true,
+    "shortDescription": "17 tasks \u00b7 1,285.7M tokens \u00b7 43.4h AI activity \u00b7 API equivalent $727 (estimates) \u00b7 Navier\u2013Stokes research",
+    "readme": "# Millennium Math Problems\n\n17 retrospective tasks. This Project is separate from the other portfolio Projects.\n\n[Complete Git backup](https://github.com/fssrepository/myscoutee-roadmap/tree/master/guides/project-history/math) \u00b7 [Measurement method](https://github.com/fssrepository/myscoutee-roadmap#measurement-method)\n\nEstimated task allocation: 1.286 B tokens, 43.4 h of activity after removing observed overlap, approximately $727 at Standard API rates. These are estimates, not human hours or an invoice.\n\n## Budget by workstream\n\n| Workstream | Tokens (M) | Allocated activity (h) | API equivalent (USD) |\n| --- | ---: | ---: | ---: |\n| Mathematical research | 969.31 | 33.91 | $515.95 |\n| Research communication | 313.72 | 9.36 | $207.19 |\n| Project administration (AI-assisted) | 2.67 | 0.17 | $4.10 |\n\nNumerical and finite-model experiments are research artifacts, not a solution of the continuous Millennium problem. The withdrawal of normalization claims is preserved as MATH-14.\n\n## Repositories\n\n- [millennium-math-problems](https://github.com/fssrepository/millennium-math-problems)\n- [myscoutee-roadmap](https://github.com/fssrepository/myscoutee-roadmap)\n"
+  },
+  "fields": [
+    {
+      "name": "Title",
+      "dataType": "TITLE",
+      "options": []
+    },
+    {
+      "name": "Status",
+      "dataType": "SINGLE_SELECT",
+      "options": [
+        {
+          "name": "Todo",
+          "color": "GRAY",
+          "description": ""
+        },
+        {
+          "name": "In Progress",
+          "color": "GRAY",
+          "description": ""
+        },
+        {
+          "name": "Done",
+          "color": "GRAY",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "Task ID",
+      "dataType": "TEXT",
+      "options": []
+    },
+    {
+      "name": "Workstream",
+      "dataType": "TEXT",
+      "options": []
+    },
+    {
+      "name": "Started",
+      "dataType": "DATE",
+      "options": []
+    },
+    {
+      "name": "Finished",
+      "dataType": "DATE",
+      "options": []
+    },
+    {
+      "name": "Tokens M",
+      "dataType": "NUMBER",
+      "options": []
+    },
+    {
+      "name": "API equiv USD",
+      "dataType": "NUMBER",
+      "options": []
+    },
+    {
+      "name": "Active h",
+      "dataType": "NUMBER",
+      "options": []
+    },
+    {
+      "name": "Allocated h",
+      "dataType": "NUMBER",
+      "options": []
+    },
+    {
+      "name": "Models",
+      "dataType": "TEXT",
+      "options": []
+    },
+    {
+      "name": "Reasoning",
+      "dataType": "TEXT",
+      "options": []
+    },
+    {
+      "name": "Evidence",
+      "dataType": "TEXT",
+      "options": []
+    }
+  ],
+  "views": [
+    {
+      "name": "Delivery history",
+      "layout": "TABLE_LAYOUT",
+      "visibleFields": [
+        "Task ID",
+        "Title",
+        "Workstream",
+        "Status",
+        "Started",
+        "Finished",
+        "Evidence"
+      ]
+    },
+    {
+      "name": "AI usage and effort",
+      "layout": "TABLE_LAYOUT",
+      "visibleFields": [
+        "Task ID",
+        "Title",
+        "Tokens M",
+        "API equiv USD",
+        "Active h",
+        "Allocated h",
+        "Models",
+        "Reasoning",
+        "Evidence"
+      ]
+    }
+  ],
+  "items": [
+    {
+      "task_id": "MATH-1",
+      "title": "MATH-1: research: establish the Navier-Stokes numerical experiment suite",
+      "body": "Retrospective record of **research: establish the Navier-Stokes numerical experiment suite**.\n\nHistorical execution: **2026-08-01 \u2192 2026-08-01 (UTC dates)**. This issue was created retrospectively on 2026-10-01; its creation/closure time is not the historical execution time.\n\nWorkstream: **Mathematical research**\n\n| Metric | Value |\n| --- | --- |\n| Tokens, including cached input | 160.72 M |\n| Standard API list-price equivalent | approximately $87 USD |\n| Active task time | approximately 7.2 h |\n| Model(s) | gpt-5.6-sol |\n| Reasoning effort | xhigh |\n\nToken basis: Estimated task allocation of measured daily account totals.\nTime basis: Union of recorded root task intervals; includes tool/network waits, not human labor time.\n\nThe USD figure is an estimate using the 2026-10-01 Standard short-context API rate card. It is not a subscription invoice or a verified payment. Missing model/mix data is estimated; quota-driven model switches may be unobserved. Image/video provider credits are separate.\n\n[Accounting method and limitations](https://github.com/fssrepository/myscoutee-roadmap#measurement-method)\n\nDelivery evidence:\n- millennium-math-problems: [research: establish the Navier-Stokes numerical experiment suite](https://github.com/fssrepository/millennium-math-problems/commit/6afa4de9e8c7e36ade682f1368fb785814f1253a)\n\nThe commits record delivered work. This retrospective does not claim a fresh test run. Some consolidated commits cover several tasks; the references preserve that relationship without splitting their code changes. Private source repositories retain their access restrictions.\n\nResearch status: finite-model experiments, numerical diagnostics and partial lemmas do not establish a solution of the continuous Navier\u2013Stokes Millennium problem. The later withdrawal of amplitude-inhomogeneous normalization claims is recorded separately (MATH-14).\n\nTime allocated to project totals after removing observed overlap: approximately **7.19 h**. Observed task intervals, overlap divided equally across concurrent tasks.\n\nProject: https://github.com/users/fssrepository/projects/5\n",
+      "state": "CLOSED",
+      "state_reason": "completed",
+      "issue": {
+        "repository": "fssrepository/myscoutee-roadmap",
+        "number": 127,
+        "url": "https://github.com/fssrepository/myscoutee-roadmap/issues/127",
+        "node_id": "I_kwDOU1_9-s8AAAABUQMRPw"
+      },
+      "values": {
+        "Task ID": "MATH-1",
+        "Workstream": "Mathematical research",
+        "Started": "2026-08-01",
+        "Finished": "2026-08-01",
+        "Tokens M": 160.72,
+        "API equiv USD": 87,
+        "Active h": 7.2,
+        "Models": "gpt-5.6-sol",
+        "Reasoning": "xhigh",
+        "Evidence": "Estimated allocation",
+        "Allocated h": 7.19,
+        "Status": "Done"
+      }
+    },
+    {
+      "task_id": "MATH-2",
+      "title": "MATH-2: research: investigate helical sectors and local triad geometry",
+      "body": "Retrospective record of **research: investigate helical sectors and local triad geometry**.\n\nHistorical execution: **2026-08-01 \u2192 2026-08-01 (UTC dates)**. This issue was created retrospectively on 2026-10-01; its creation/closure time is not the historical execution time.\n\nWorkstream: **Mathematical research**\n\n| Metric | Value |\n| --- | --- |\n| Tokens, including cached input | 26.78 M |\n| Standard API list-price equivalent | approximately $15 USD |\n| Active task time | approximately 0.7 h |\n| Model(s) | gpt-5.6-sol |\n| Reasoning effort | xhigh |\n\nToken basis: Estimated task allocation of measured daily account totals.\nTime basis: Union of recorded root task intervals; includes tool/network waits, not human labor time.\n\nThe USD figure is an estimate using the 2026-10-01 Standard short-context API rate card. It is not a subscription invoice or a verified payment. Missing model/mix data is estimated; quota-driven model switches may be unobserved. Image/video provider credits are separate.\n\n[Accounting method and limitations](https://github.com/fssrepository/myscoutee-roadmap#measurement-method)\n\nDelivery evidence:\n- millennium-math-problems: [research: investigate helical sectors and local triad geometry](https://github.com/fssrepository/millennium-math-problems/commit/40fc02d65c073862082bf98e041079d9a7f2fdb5)\n\nThe commits record delivered work. This retrospective does not claim a fresh test run. Some consolidated commits cover several tasks; the references preserve that relationship without splitting their code changes. Private source repositories retain their access restrictions.\n\nResearch status: finite-model experiments, numerical diagnostics and partial lemmas do not establish a solution of the continuous Navier\u2013Stokes Millennium problem. The later withdrawal of amplitude-inhomogeneous normalization claims is recorded separately (MATH-14).\n\nTime allocated to project totals after removing observed overlap: approximately **0.70 h**. Observed task intervals, overlap divided equally across concurrent tasks.\n\nProject: https://github.com/users/fssrepository/projects/5\n",
+      "state": "CLOSED",
+      "state_reason": "completed",
+      "issue": {
+        "repository": "fssrepository/myscoutee-roadmap",
+        "number": 128,
+        "url": "https://github.com/fssrepository/myscoutee-roadmap/issues/128",
+        "node_id": "I_kwDOU1_9-s8AAAABUQMRvw"
+      },
+      "values": {
+        "Task ID": "MATH-2",
+        "Workstream": "Mathematical research",
+        "Started": "2026-08-01",
+        "Finished": "2026-08-01",
+        "Tokens M": 26.78,
+        "API equiv USD": 15,
+        "Active h": 0.7,
+        "Models": "gpt-5.6-sol",
+        "Reasoning": "xhigh",
+        "Evidence": "Estimated allocation",
+        "Allocated h": 0.7,
+        "Status": "Done"
+      }
+    },
+    {
+      "task_id": "MATH-3",
+      "title": "MATH-3: research: develop local-signature and coupled-integral searches",
+      "body": "Retrospective record of **research: develop local-signature and coupled-integral searches**.\n\nHistorical execution: **2026-08-01 \u2192 2026-08-01 (UTC dates)**. This issue was created retrospectively on 2026-10-01; its creation/closure time is not the historical execution time.\n\nWorkstream: **Mathematical research**\n\n| Metric | Value |\n| --- | --- |\n| Tokens, including cached input | 71.94 M |\n| Standard API list-price equivalent | approximately $38 USD |\n| Active task time | approximately 2.4 h |\n| Model(s) | gpt-5.6-sol |\n| Reasoning effort | xhigh |\n\nToken basis: Estimated task allocation of measured daily account totals.\nTime basis: Union of recorded root task intervals; includes tool/network waits, not human labor time.\n\nThe USD figure is an estimate using the 2026-10-01 Standard short-context API rate card. It is not a subscription invoice or a verified payment. Missing model/mix data is estimated; quota-driven model switches may be unobserved. Image/video provider credits are separate.\n\n[Accounting method and limitations](https://github.com/fssrepository/myscoutee-roadmap#measurement-method)\n\nDelivery evidence:\n- millennium-math-problems: [research: develop local-signature and coupled-integral searches](https://github.com/fssrepository/millennium-math-problems/commit/2b2ec6a23ce4f063a89057ae61e25d9853f42b6b)\n\nThe commits record delivered work. This retrospective does not claim a fresh test run. Some consolidated commits cover several tasks; the references preserve that relationship without splitting their code changes. Private source repositories retain their access restrictions.\n\nResearch status: finite-model experiments, numerical diagnostics and partial lemmas do not establish a solution of the continuous Navier\u2013Stokes Millennium problem. The later withdrawal of amplitude-inhomogeneous normalization claims is recorded separately (MATH-14).\n\nTime allocated to project totals after removing observed overlap: approximately **2.36 h**. Observed task intervals, overlap divided equally across concurrent tasks.\n\nProject: https://github.com/users/fssrepository/projects/5\n",
+      "state": "CLOSED",
+      "state_reason": "completed",
+      "issue": {
+        "repository": "fssrepository/myscoutee-roadmap",
+        "number": 129,
+        "url": "https://github.com/fssrepository/myscoutee-roadmap/issues/129",
+        "node_id": "I_kwDOU1_9-s8AAAABUQMSIQ"
+      },
+      "values": {
+        "Task ID": "MATH-3",
+        "Workstream": "Mathematical research",
+        "Started": "2026-08-01",
+        "Finished": "2026-08-01",
+        "Tokens M": 71.94,
+        "API equiv USD": 38,
+        "Active h": 2.4,
+        "Models": "gpt-5.6-sol",
+        "Reasoning": "xhigh",
+        "Evidence": "Estimated allocation",
+        "Allocated h": 2.36,
+        "Status": "Done"
+      }
+    },
+    {
+      "task_id": "MATH-4",
+      "title": "MATH-4: research: explore shifted local density and cyclic closure models",
+      "body": "Retrospective record of **research: explore shifted local density and cyclic closure models**.\n\nHistorical execution: **2026-08-01 \u2192 2026-08-02 (UTC dates)**. This issue was created retrospectively on 2026-10-01; its creation/closure time is not the historical execution time.\n\nWorkstream: **Mathematical research**\n\n| Metric | Value |\n| --- | --- |\n| Tokens, including cached input | 125.33 M |\n| Standard API list-price equivalent | approximately $68 USD |\n| Active task time | approximately 16.2 h |\n| Model(s) | gpt-5.6-sol |\n| Reasoning effort | xhigh |\n\nToken basis: Estimated task allocation of measured daily account totals.\nTime basis: Union of recorded root task intervals; includes tool/network waits, not human labor time.\n\nThe USD figure is an estimate using the 2026-10-01 Standard short-context API rate card. It is not a subscription invoice or a verified payment. Missing model/mix data is estimated; quota-driven model switches may be unobserved. Image/video provider credits are separate.\n\n[Accounting method and limitations](https://github.com/fssrepository/myscoutee-roadmap#measurement-method)\n\nDelivery evidence:\n- millennium-math-problems: [research: explore shifted local density and cyclic closure models](https://github.com/fssrepository/millennium-math-problems/commit/1a89316408d46b9a4590d96f9fd98c2d99b0caf6)\n\nThe commits record delivered work. This retrospective does not claim a fresh test run. Some consolidated commits cover several tasks; the references preserve that relationship without splitting their code changes. Private source repositories retain their access restrictions.\n\nResearch status: finite-model experiments, numerical diagnostics and partial lemmas do not establish a solution of the continuous Navier\u2013Stokes Millennium problem. The later withdrawal of amplitude-inhomogeneous normalization claims is recorded separately (MATH-14).\n\nTime allocated to project totals after removing observed overlap: approximately **15.95 h**. Observed task intervals, overlap divided equally across concurrent tasks.\n\nProject: https://github.com/users/fssrepository/projects/5\n",
+      "state": "CLOSED",
+      "state_reason": "completed",
+      "issue": {
+        "repository": "fssrepository/myscoutee-roadmap",
+        "number": 130,
+        "url": "https://github.com/fssrepository/myscoutee-roadmap/issues/130",
+        "node_id": "I_kwDOU1_9-s8AAAABUQMSeg"
+      },
+      "values": {
+        "Task ID": "MATH-4",
+        "Workstream": "Mathematical research",
+        "Started": "2026-08-01",
+        "Finished": "2026-08-02",
+        "Tokens M": 125.33,
+        "API equiv USD": 68,
+        "Active h": 16.2,
+        "Models": "gpt-5.6-sol",
+        "Reasoning": "xhigh",
+        "Evidence": "Estimated allocation",
+        "Allocated h": 15.95,
+        "Status": "Done"
+      }
+    },
+    {
+      "task_id": "MATH-10",
+      "title": "MATH-10: research: extend normalization alignment and tail diagnostics",
+      "body": "Retrospective record of **research: extend normalization alignment and tail diagnostics**.\n\nHistorical execution: **2026-08-02 \u2192 2026-08-02 (UTC dates)**. This issue was created retrospectively on 2026-10-01; its creation/closure time is not the historical execution time.\n\nWorkstream: **Mathematical research**\n\n| Metric | Value |\n| --- | --- |\n| Tokens, including cached input | 75.95 M |\n| Standard API list-price equivalent | approximately $40 USD |\n| Active task time | approximately 0.9 h |\n| Model(s) | gpt-5.6-sol |\n| Reasoning effort | xhigh |\n\nToken basis: Estimated task allocation of measured daily account totals.\nTime basis: Union of recorded root task intervals; includes tool/network waits, not human labor time.\n\nThe USD figure is an estimate using the 2026-10-01 Standard short-context API rate card. It is not a subscription invoice or a verified payment. Missing model/mix data is estimated; quota-driven model switches may be unobserved. Image/video provider credits are separate.\n\n[Accounting method and limitations](https://github.com/fssrepository/myscoutee-roadmap#measurement-method)\n\nDelivery evidence:\n- millennium-math-problems: [research: extend normalization alignment and tail diagnostics](https://github.com/fssrepository/millennium-math-problems/commit/ff094aac535ae9f41745fad1d6d2d1445fd396e3)\n\nThe commits record delivered work. This retrospective does not claim a fresh test run. Some consolidated commits cover several tasks; the references preserve that relationship without splitting their code changes. Private source repositories retain their access restrictions.\n\nResearch status: finite-model experiments, numerical diagnostics and partial lemmas do not establish a solution of the continuous Navier\u2013Stokes Millennium problem. The later withdrawal of amplitude-inhomogeneous normalization claims is recorded separately (MATH-14).\n\nTime allocated to project totals after removing observed overlap: approximately **0.87 h**. Observed task intervals, overlap divided equally across concurrent tasks.\n\nProject: https://github.com/users/fssrepository/projects/5\n",
+      "state": "CLOSED",
+      "state_reason": "completed",
+      "issue": {
+        "repository": "fssrepository/myscoutee-roadmap",
+        "number": 131,
+        "url": "https://github.com/fssrepository/myscoutee-roadmap/issues/131",
+        "node_id": "I_kwDOU1_9-s8AAAABUQMS_A"
+      },
+      "values": {
+        "Task ID": "MATH-10",
+        "Workstream": "Mathematical research",
+        "Started": "2026-08-02",
+        "Finished": "2026-08-02",
+        "Tokens M": 75.95,
+        "API equiv USD": 40,
+        "Active h": 0.9,
+        "Models": "gpt-5.6-sol",
+        "Reasoning": "xhigh",
+        "Evidence": "Estimated allocation",
+        "Allocated h": 0.87,
+        "Status": "Done"
+      }
+    },
+    {
+      "task_id": "MATH-5",
+      "title": "MATH-5: research: organize response tensors and remainder-quartet experiments",
+      "body": "Retrospective record of **research: organize response tensors and remainder-quartet experiments**.\n\nHistorical execution: **2026-08-02 \u2192 2026-08-02 (UTC dates)**. This issue was created retrospectively on 2026-10-01; its creation/closure time is not the historical execution time.\n\nWorkstream: **Mathematical research**\n\n| Metric | Value |\n| --- | --- |\n| Tokens, including cached input | 359.54 M |\n| Standard API list-price equivalent | approximately $183 USD |\n| Active task time | approximately 0.3 h |\n| Model(s) | gpt-5.6-sol |\n| Reasoning effort | xhigh |\n\nToken basis: Estimated task allocation of measured daily account totals.\nTime basis: Union of recorded root task intervals; includes tool/network waits, not human labor time.\n\nThe USD figure is an estimate using the 2026-10-01 Standard short-context API rate card. It is not a subscription invoice or a verified payment. Missing model/mix data is estimated; quota-driven model switches may be unobserved. Image/video provider credits are separate.\n\n[Accounting method and limitations](https://github.com/fssrepository/myscoutee-roadmap#measurement-method)\n\nDelivery evidence:\n- millennium-math-problems: [research: organize response tensors and remainder-quartet experiments](https://github.com/fssrepository/millennium-math-problems/commit/c16aa71720194d3f03e199db3ff93b7452c4b652)\n\nThe commits record delivered work. This retrospective does not claim a fresh test run. Some consolidated commits cover several tasks; the references preserve that relationship without splitting their code changes. Private source repositories retain their access restrictions.\n\nResearch status: finite-model experiments, numerical diagnostics and partial lemmas do not establish a solution of the continuous Navier\u2013Stokes Millennium problem. The later withdrawal of amplitude-inhomogeneous normalization claims is recorded separately (MATH-14).\n\nTime allocated to project totals after removing observed overlap: approximately **0.18 h**. Observed task intervals, overlap divided equally across concurrent tasks.\n\nProject: https://github.com/users/fssrepository/projects/5\n",
+      "state": "CLOSED",
+      "state_reason": "completed",
+      "issue": {
+        "repository": "fssrepository/myscoutee-roadmap",
+        "number": 132,
+        "url": "https://github.com/fssrepository/myscoutee-roadmap/issues/132",
+        "node_id": "I_kwDOU1_9-s8AAAABUQMTxg"
+      },
+      "values": {
+        "Task ID": "MATH-5",
+        "Workstream": "Mathematical research",
+        "Started": "2026-08-02",
+        "Finished": "2026-08-02",
+        "Tokens M": 359.54,
+        "API equiv USD": 183,
+        "Active h": 0.3,
+        "Models": "gpt-5.6-sol",
+        "Reasoning": "xhigh",
+        "Evidence": "Estimated allocation",
+        "Allocated h": 0.18,
+        "Status": "Done"
+      }
+    },
+    {
+      "task_id": "MATH-6",
+      "title": "MATH-6: research: explore projective quartet and cross-power structure",
+      "body": "Retrospective record of **research: explore projective quartet and cross-power structure**.\n\nHistorical execution: **2026-08-02 \u2192 2026-08-02 (UTC dates)**. This issue was created retrospectively on 2026-10-01; its creation/closure time is not the historical execution time.\n\nWorkstream: **Mathematical research**\n\n| Metric | Value |\n| --- | --- |\n| Tokens, including cached input | 3.60 M |\n| Standard API list-price equivalent | approximately $3 USD |\n| Active task time | approximately 0.3 h |\n| Model(s) | gpt-5.6-sol |\n| Reasoning effort | xhigh |\n\nToken basis: Estimated task allocation of measured daily account totals.\nTime basis: Union of recorded root task intervals; includes tool/network waits, not human labor time.\n\nThe USD figure is an estimate using the 2026-10-01 Standard short-context API rate card. It is not a subscription invoice or a verified payment. Missing model/mix data is estimated; quota-driven model switches may be unobserved. Image/video provider credits are separate.\n\n[Accounting method and limitations](https://github.com/fssrepository/myscoutee-roadmap#measurement-method)\n\nDelivery evidence:\n- millennium-math-problems: [research: explore projective quartet and cross-power structure](https://github.com/fssrepository/millennium-math-problems/commit/c1d3bc5858c008b0164de418cdd88ccf11be2543)\n\nThe commits record delivered work. This retrospective does not claim a fresh test run. Some consolidated commits cover several tasks; the references preserve that relationship without splitting their code changes. Private source repositories retain their access restrictions.\n\nResearch status: finite-model experiments, numerical diagnostics and partial lemmas do not establish a solution of the continuous Navier\u2013Stokes Millennium problem. The later withdrawal of amplitude-inhomogeneous normalization claims is recorded separately (MATH-14).\n\nTime allocated to project totals after removing observed overlap: approximately **0.13 h**. Observed task intervals, overlap divided equally across concurrent tasks.\n\nProject: https://github.com/users/fssrepository/projects/5\n",
+      "state": "CLOSED",
+      "state_reason": "completed",
+      "issue": {
+        "repository": "fssrepository/myscoutee-roadmap",
+        "number": 133,
+        "url": "https://github.com/fssrepository/myscoutee-roadmap/issues/133",
+        "node_id": "I_kwDOU1_9-s8AAAABUQMUxQ"
+      },
+      "values": {
+        "Task ID": "MATH-6",
+        "Workstream": "Mathematical research",
+        "Started": "2026-08-02",
+        "Finished": "2026-08-02",
+        "Tokens M": 3.6,
+        "API equiv USD": 3,
+        "Active h": 0.3,
+        "Models": "gpt-5.6-sol",
+        "Reasoning": "xhigh",
+        "Evidence": "Estimated allocation",
+        "Allocated h": 0.13,
+        "Status": "Done"
+      }
+    },
+    {
+      "task_id": "MATH-7",
+      "title": "MATH-7: research: investigate projective height and commutator bounds",
+      "body": "Retrospective record of **research: investigate projective height and commutator bounds**.\n\nHistorical execution: **2026-08-02 \u2192 2026-08-02 (UTC dates)**. This issue was created retrospectively on 2026-10-01; its creation/closure time is not the historical execution time.\n\nWorkstream: **Mathematical research**\n\n| Metric | Value |\n| --- | --- |\n| Tokens, including cached input | 20.00 M |\n| Standard API list-price equivalent | approximately $12 USD |\n| Active task time | approximately 0.7 h |\n| Model(s) | gpt-5.6-sol (est.) |\n| Reasoning effort | unrecorded |\n\nToken basis: Analogy estimate from comparable tasks; reserved from unassigned account balance, daily attribution unavailable.\nTime basis: Comparable-task estimate; historical timing not individually logged.\n\nThe USD figure is an estimate using the 2026-10-01 Standard short-context API rate card. It is not a subscription invoice or a verified payment. Missing model/mix data is estimated; quota-driven model switches may be unobserved. Image/video provider credits are separate.\n\n[Accounting method and limitations](https://github.com/fssrepository/myscoutee-roadmap#measurement-method)\n\nDelivery evidence:\n- millennium-math-problems: [research: investigate projective height and commutator bounds](https://github.com/fssrepository/millennium-math-problems/commit/0d4b6ce15a06d88659c6fac00c8f52a3a7f3201c)\n\nThe commits record delivered work. This retrospective does not claim a fresh test run. Some consolidated commits cover several tasks; the references preserve that relationship without splitting their code changes. Private source repositories retain their access restrictions.\n\nResearch status: finite-model experiments, numerical diagnostics and partial lemmas do not establish a solution of the continuous Navier\u2013Stokes Millennium problem. The later withdrawal of amplitude-inhomogeneous normalization claims is recorded separately (MATH-14).\n\nTime allocated to project totals after removing observed overlap: approximately **0.70 h**. Estimated task time; placement and overlap are unobserved.\n\nProject: https://github.com/users/fssrepository/projects/5\n",
+      "state": "CLOSED",
+      "state_reason": "completed",
+      "issue": {
+        "repository": "fssrepository/myscoutee-roadmap",
+        "number": 134,
+        "url": "https://github.com/fssrepository/myscoutee-roadmap/issues/134",
+        "node_id": "I_kwDOU1_9-s8AAAABUQMVQw"
+      },
+      "values": {
+        "Task ID": "MATH-7",
+        "Workstream": "Mathematical research",
+        "Started": "2026-08-02",
+        "Finished": "2026-08-02",
+        "Tokens M": 20.0,
+        "API equiv USD": 12,
+        "Active h": 0.7,
+        "Models": "gpt-5.6-sol (est.)",
+        "Reasoning": "unrecorded",
+        "Evidence": "Estimated allocation",
+        "Allocated h": 0.7,
+        "Status": "Done"
+      }
+    },
+    {
+      "task_id": "MATH-8",
+      "title": "MATH-8: refactor: organize local-density research modules",
+      "body": "Retrospective record of **refactor: organize local-density research modules**.\n\nHistorical execution: **2026-08-02 \u2192 2026-08-02 (UTC dates)**. This issue was created retrospectively on 2026-10-01; its creation/closure time is not the historical execution time.\n\nWorkstream: **Mathematical research**\n\n| Metric | Value |\n| --- | --- |\n| Tokens, including cached input | 20.00 M |\n| Standard API list-price equivalent | approximately $12 USD |\n| Active task time | approximately 0.7 h |\n| Model(s) | gpt-5.6-sol (est.) |\n| Reasoning effort | unrecorded |\n\nToken basis: Analogy estimate from comparable tasks; reserved from unassigned account balance, daily attribution unavailable.\nTime basis: Comparable-task estimate; historical timing not individually logged.\n\nThe USD figure is an estimate using the 2026-10-01 Standard short-context API rate card. It is not a subscription invoice or a verified payment. Missing model/mix data is estimated; quota-driven model switches may be unobserved. Image/video provider credits are separate.\n\n[Accounting method and limitations](https://github.com/fssrepository/myscoutee-roadmap#measurement-method)\n\nDelivery evidence:\n- millennium-math-problems: [refactor: organize local-density research modules](https://github.com/fssrepository/millennium-math-problems/commit/0fb5fd4c0d933ceb68eb9f46b455a40f05a23198)\n\nThe commits record delivered work. This retrospective does not claim a fresh test run. Some consolidated commits cover several tasks; the references preserve that relationship without splitting their code changes. Private source repositories retain their access restrictions.\n\nResearch status: finite-model experiments, numerical diagnostics and partial lemmas do not establish a solution of the continuous Navier\u2013Stokes Millennium problem. The later withdrawal of amplitude-inhomogeneous normalization claims is recorded separately (MATH-14).\n\nTime allocated to project totals after removing observed overlap: approximately **0.70 h**. Estimated task time; placement and overlap are unobserved.\n\nProject: https://github.com/users/fssrepository/projects/5\n",
+      "state": "CLOSED",
+      "state_reason": "completed",
+      "issue": {
+        "repository": "fssrepository/myscoutee-roadmap",
+        "number": 135,
+        "url": "https://github.com/fssrepository/myscoutee-roadmap/issues/135",
+        "node_id": "I_kwDOU1_9-s8AAAABUQMV0w"
+      },
+      "values": {
+        "Task ID": "MATH-8",
+        "Workstream": "Mathematical research",
+        "Started": "2026-08-02",
+        "Finished": "2026-08-02",
+        "Tokens M": 20.0,
+        "API equiv USD": 12,
+        "Active h": 0.7,
+        "Models": "gpt-5.6-sol (est.)",
+        "Reasoning": "unrecorded",
+        "Evidence": "Estimated allocation",
+        "Allocated h": 0.7,
+        "Status": "Done"
+      }
+    },
+    {
+      "task_id": "MATH-9",
+      "title": "MATH-9: research: explore projective normalization and tail tradeoffs",
+      "body": "Retrospective record of **research: explore projective normalization and tail tradeoffs**.\n\nHistorical execution: **2026-08-02 \u2192 2026-08-02 (UTC dates)**. This issue was created retrospectively on 2026-10-01; its creation/closure time is not the historical execution time.\n\nWorkstream: **Mathematical research**\n\n| Metric | Value |\n| --- | --- |\n| Tokens, including cached input | 63.09 M |\n| Standard API list-price equivalent | approximately $32 USD |\n| Active task time | approximately 4.1 h |\n| Model(s) | gpt-5.6-sol |\n| Reasoning effort | xhigh |\n\nToken basis: Estimated task allocation of measured daily account totals.\nTime basis: Union of recorded root task intervals; includes tool/network waits, not human labor time.\n\nThe USD figure is an estimate using the 2026-10-01 Standard short-context API rate card. It is not a subscription invoice or a verified payment. Missing model/mix data is estimated; quota-driven model switches may be unobserved. Image/video provider credits are separate.\n\n[Accounting method and limitations](https://github.com/fssrepository/myscoutee-roadmap#measurement-method)\n\nDelivery evidence:\n- millennium-math-problems: [research: explore projective normalization and tail tradeoffs](https://github.com/fssrepository/millennium-math-problems/commit/296a935e6f18a8d2deaf93ded8027bb3fcf4a3aa)\n\nThe commits record delivered work. This retrospective does not claim a fresh test run. Some consolidated commits cover several tasks; the references preserve that relationship without splitting their code changes. Private source repositories retain their access restrictions.\n\nResearch status: finite-model experiments, numerical diagnostics and partial lemmas do not establish a solution of the continuous Navier\u2013Stokes Millennium problem. The later withdrawal of amplitude-inhomogeneous normalization claims is recorded separately (MATH-14).\n\nTime allocated to project totals after removing observed overlap: approximately **4.09 h**. Observed task intervals, overlap divided equally across concurrent tasks.\n\nProject: https://github.com/users/fssrepository/projects/5\n",
+      "state": "CLOSED",
+      "state_reason": "completed",
+      "issue": {
+        "repository": "fssrepository/myscoutee-roadmap",
+        "number": 136,
+        "url": "https://github.com/fssrepository/myscoutee-roadmap/issues/136",
+        "node_id": "I_kwDOU1_9-s8AAAABUQMWYg"
+      },
+      "values": {
+        "Task ID": "MATH-9",
+        "Workstream": "Mathematical research",
+        "Started": "2026-08-02",
+        "Finished": "2026-08-02",
+        "Tokens M": 63.09,
+        "API equiv USD": 32,
+        "Active h": 4.1,
+        "Models": "gpt-5.6-sol",
+        "Reasoning": "xhigh",
+        "Evidence": "Estimated allocation",
+        "Allocated h": 4.09,
+        "Status": "Done"
+      }
+    },
+    {
+      "task_id": "MATH-11",
+      "title": "MATH-11: docs: publish the project overview and Navier-Stokes briefs",
+      "body": "Retrospective record of **docs: publish the project overview and Navier-Stokes briefs**.\n\nHistorical execution: **2026-08-02 \u2192 2026-08-03 (UTC dates)**. This issue was created retrospectively on 2026-10-01; its creation/closure time is not the historical execution time.\n\nWorkstream: **Mathematical research**\n\n| Metric | Value |\n| --- | --- |\n| Tokens, including cached input | 33.34 M |\n| Standard API list-price equivalent | approximately $22 USD |\n| Active task time | approximately 0.7 h |\n| Model(s) | gpt-5.6-sol |\n| Reasoning effort | xhigh; medium |\n\nToken basis: Estimated task allocation of measured daily account totals.\nTime basis: Union of recorded root task intervals; includes tool/network waits, not human labor time.\n\nThe USD figure is an estimate using the 2026-10-01 Standard short-context API rate card. It is not a subscription invoice or a verified payment. Missing model/mix data is estimated; quota-driven model switches may be unobserved. Image/video provider credits are separate.\n\n[Accounting method and limitations](https://github.com/fssrepository/myscoutee-roadmap#measurement-method)\n\nDelivery evidence:\n- millennium-math-problems: [docs: publish the project overview and Navier-Stokes briefs](https://github.com/fssrepository/millennium-math-problems/commit/a5c853cf4aebcbeca92fa486c6f8805ec5710a34)\n\nThe commits record delivered work. This retrospective does not claim a fresh test run. Some consolidated commits cover several tasks; the references preserve that relationship without splitting their code changes. Private source repositories retain their access restrictions.\n\nResearch status: finite-model experiments, numerical diagnostics and partial lemmas do not establish a solution of the continuous Navier\u2013Stokes Millennium problem. The later withdrawal of amplitude-inhomogeneous normalization claims is recorded separately (MATH-14).\n\nTime allocated to project totals after removing observed overlap: approximately **0.74 h**. Observed task intervals, overlap divided equally across concurrent tasks.\n\nProject: https://github.com/users/fssrepository/projects/5\n",
+      "state": "CLOSED",
+      "state_reason": "completed",
+      "issue": {
+        "repository": "fssrepository/myscoutee-roadmap",
+        "number": 137,
+        "url": "https://github.com/fssrepository/myscoutee-roadmap/issues/137",
+        "node_id": "I_kwDOU1_9-s8AAAABUQMW1A"
+      },
+      "values": {
+        "Task ID": "MATH-11",
+        "Workstream": "Mathematical research",
+        "Started": "2026-08-02",
+        "Finished": "2026-08-03",
+        "Tokens M": 33.34,
+        "API equiv USD": 22,
+        "Active h": 0.7,
+        "Models": "gpt-5.6-sol",
+        "Reasoning": "xhigh; medium",
+        "Evidence": "Estimated allocation",
+        "Allocated h": 0.74,
+        "Status": "Done"
+      }
+    },
+    {
+      "task_id": "MATH-12",
+      "title": "MATH-12: Prepare the Navier\u2013Stokes research video and presentation",
+      "body": "Retrospective record of **prepare the Navier\u2013Stokes research video and presentation**.\n\nHistorical execution: **2026-08-04 \u2192 2026-08-04 (UTC dates)**. This issue was created retrospectively on 2026-10-01; its creation/closure time is not the historical execution time.\n\nWorkstream: **Research communication**\n\n| Metric | Value |\n| --- | --- |\n| Tokens, including cached input | 111.66 M |\n| Standard API list-price equivalent | approximately $81 USD |\n| Active task time | approximately 6.4 h |\n| Model(s) | gpt-5.6-sol |\n| Reasoning effort | xhigh |\n\nToken basis: Estimated task allocation of measured daily account totals.\nTime basis: Union of recorded root task intervals; includes tool/network waits, not human labor time.\n\nThe USD figure is an estimate using the 2026-10-01 Standard short-context API rate card. It is not a subscription invoice or a verified payment. Missing model/mix data is estimated; quota-driven model switches may be unobserved. Image/video provider credits are separate.\n\n[Accounting method and limitations](https://github.com/fssrepository/myscoutee-roadmap#measurement-method)\n\nDelivery evidence:\n- millennium-math-problems: [docs: develop the Navier-Stokes video production package](https://github.com/fssrepository/millennium-math-problems/commit/c85cb5284c5f6927c5b6be92f563838a33e70bd2)\n\nThe commits record delivered work. This retrospective does not claim a fresh test run. Some consolidated commits cover several tasks; the references preserve that relationship without splitting their code changes. Private source repositories retain their access restrictions.\n\nResearch status: finite-model experiments, numerical diagnostics and partial lemmas do not establish a solution of the continuous Navier\u2013Stokes Millennium problem. The later withdrawal of amplitude-inhomogeneous normalization claims is recorded separately (MATH-14).\n\nTime allocated to project totals after removing observed overlap: approximately **3.60 h**. Observed task intervals, overlap divided equally across concurrent tasks.\n\nRelated tasks (separate effort records):\n- [MATH-15](https://github.com/fssrepository/myscoutee-roadmap/issues/140) \u2014 Prepare research video assets and production handoff\n- [MATH-16](https://github.com/fssrepository/myscoutee-roadmap/issues/141) \u2014 Finalize the research video and publication package\n- [MATH-13](https://github.com/fssrepository/myscoutee-roadmap/issues/138) \u2014 Review research correspondence and document claim limitations\n\nProject: https://github.com/users/fssrepository/projects/5\n",
+      "state": "CLOSED",
+      "state_reason": "completed",
+      "issue": {
+        "repository": "fssrepository/myscoutee-roadmap",
+        "number": 54,
+        "url": "https://github.com/fssrepository/myscoutee-roadmap/issues/54",
+        "node_id": "I_kwDOU1_9-s8AAAABUQCm9A"
+      },
+      "values": {
+        "Task ID": "MATH-12",
+        "Workstream": "Research communication",
+        "Started": "2026-08-04",
+        "Finished": "2026-08-04",
+        "Tokens M": 111.66,
+        "API equiv USD": 81,
+        "Active h": 6.4,
+        "Models": "gpt-5.6-sol",
+        "Reasoning": "xhigh",
+        "Evidence": "Estimated allocation",
+        "Allocated h": 3.6,
+        "Status": "Done"
+      }
+    },
+    {
+      "task_id": "MATH-15",
+      "title": "MATH-15: Prepare research video assets and production handoff",
+      "body": "Retrospective record of **prepare research video assets and production handoff**.\n\nHistorical execution: **2026-08-05 \u2192 2026-08-05 (UTC dates)**. This issue was created retrospectively on 2026-10-01; its creation/closure time is not the historical execution time.\n\nWorkstream: **Research communication**\n\n| Metric | Value |\n| --- | --- |\n| Tokens, including cached input | 38.45 M |\n| Standard API list-price equivalent | approximately $27 USD |\n| Active task time | approximately 2.3 h |\n| Model(s) | gpt-5.6-sol |\n| Reasoning effort | xhigh |\n\nToken basis: Estimated task allocation of measured daily account totals.\nTime basis: Union of recorded root task intervals; includes tool/network waits, not human labor time.\n\nThe USD figure is an estimate using the 2026-10-01 Standard short-context API rate card. It is not a subscription invoice or a verified payment. Missing model/mix data is estimated; quota-driven model switches may be unobserved. Image/video provider credits are separate.\n\n[Accounting method and limitations](https://github.com/fssrepository/myscoutee-roadmap#measurement-method)\n\nDelivery evidence:\n- millennium-math-problems: [chore: organize video production assets and handoff](https://github.com/fssrepository/millennium-math-problems/commit/9b6a747af5f3bfe309ddd40d3a6574583d311559)\n\nThe commits record delivered work. This retrospective does not claim a fresh test run. Some consolidated commits cover several tasks; the references preserve that relationship without splitting their code changes. Private source repositories retain their access restrictions.\n\nResearch status: finite-model experiments, numerical diagnostics and partial lemmas do not establish a solution of the continuous Navier\u2013Stokes Millennium problem. The later withdrawal of amplitude-inhomogeneous normalization claims is recorded separately (MATH-14).\n\nTime allocated to project totals after removing observed overlap: approximately **1.51 h**. Observed task intervals, overlap divided equally across concurrent tasks.\n\nRelated tasks (separate effort records):\n- [MATH-12](https://github.com/fssrepository/myscoutee-roadmap/issues/54) \u2014 Prepare the Navier\u2013Stokes research video and presentation\n- [MATH-16](https://github.com/fssrepository/myscoutee-roadmap/issues/141) \u2014 Finalize the research video and publication package\n\nProject: https://github.com/users/fssrepository/projects/5\n",
+      "state": "CLOSED",
+      "state_reason": "completed",
+      "issue": {
+        "repository": "fssrepository/myscoutee-roadmap",
+        "number": 140,
+        "url": "https://github.com/fssrepository/myscoutee-roadmap/issues/140",
+        "node_id": "I_kwDOU1_9-s8AAAABUQQX2g"
+      },
+      "values": {
+        "Task ID": "MATH-15",
+        "Workstream": "Research communication",
+        "Started": "2026-08-05",
+        "Finished": "2026-08-05",
+        "Tokens M": 38.45,
+        "API equiv USD": 27,
+        "Active h": 2.3,
+        "Models": "gpt-5.6-sol",
+        "Reasoning": "xhigh",
+        "Evidence": "Estimated allocation",
+        "Allocated h": 1.51,
+        "Status": "Done"
+      }
+    },
+    {
+      "task_id": "MATH-16",
+      "title": "MATH-16: Finalize the research video and publication package",
+      "body": "Retrospective record of **finalize the research video and publication package**.\n\nHistorical execution: **2026-08-05 \u2192 2026-08-07 (UTC dates)**. This issue was created retrospectively on 2026-10-01; its creation/closure time is not the historical execution time.\n\nWorkstream: **Research communication**\n\n| Metric | Value |\n| --- | --- |\n| Tokens, including cached input | 29.49 M |\n| Standard API list-price equivalent | approximately $23 USD |\n| Active task time | approximately 1.8 h |\n| Model(s) | gpt-5.6-sol |\n| Reasoning effort | xhigh |\n\nToken basis: Estimated task allocation of measured daily account totals.\nTime basis: Union of recorded root task intervals; includes tool/network waits, not human labor time.\n\nThe USD figure is an estimate using the 2026-10-01 Standard short-context API rate card. It is not a subscription invoice or a verified payment. Missing model/mix data is estimated; quota-driven model switches may be unobserved. Image/video provider credits are separate.\n\n[Accounting method and limitations](https://github.com/fssrepository/myscoutee-roadmap#measurement-method)\n\nDelivery evidence:\n- millennium-math-problems: [media: finalize the research video and publication materials](https://github.com/fssrepository/millennium-math-problems/commit/42a7f184ceb7b9c57e84c4669da3ed81b4f93802)\n\nThe commits record delivered work. This retrospective does not claim a fresh test run. Some consolidated commits cover several tasks; the references preserve that relationship without splitting their code changes. Private source repositories retain their access restrictions.\n\nResearch status: finite-model experiments, numerical diagnostics and partial lemmas do not establish a solution of the continuous Navier\u2013Stokes Millennium problem. The later withdrawal of amplitude-inhomogeneous normalization claims is recorded separately (MATH-14).\n\nTime allocated to project totals after removing observed overlap: approximately **1.48 h**. Observed task intervals, overlap divided equally across concurrent tasks.\n\nRelated tasks (separate effort records):\n- [MATH-12](https://github.com/fssrepository/myscoutee-roadmap/issues/54) \u2014 Prepare the Navier\u2013Stokes research video and presentation\n- [MATH-15](https://github.com/fssrepository/myscoutee-roadmap/issues/140) \u2014 Prepare research video assets and production handoff\n- [MATH-14](https://github.com/fssrepository/myscoutee-roadmap/issues/139) \u2014 fix: withdraw amplitude-inhomogeneous normalization claims\n\nProject: https://github.com/users/fssrepository/projects/5\n",
+      "state": "CLOSED",
+      "state_reason": "completed",
+      "issue": {
+        "repository": "fssrepository/myscoutee-roadmap",
+        "number": 141,
+        "url": "https://github.com/fssrepository/myscoutee-roadmap/issues/141",
+        "node_id": "I_kwDOU1_9-s8AAAABUQQYHQ"
+      },
+      "values": {
+        "Task ID": "MATH-16",
+        "Workstream": "Research communication",
+        "Started": "2026-08-05",
+        "Finished": "2026-08-07",
+        "Tokens M": 29.49,
+        "API equiv USD": 23,
+        "Active h": 1.8,
+        "Models": "gpt-5.6-sol",
+        "Reasoning": "xhigh",
+        "Evidence": "Estimated allocation",
+        "Allocated h": 1.48,
+        "Status": "Done"
+      }
+    },
+    {
+      "task_id": "MATH-13",
+      "title": "MATH-13: Review research correspondence and document claim limitations",
+      "body": "Retrospective record of **review research correspondence and document claim limitations**.\n\nHistorical execution: **2026-08-07 \u2192 2026-09-08 (UTC dates)**. This issue was created retrospectively on 2026-10-01; its creation/closure time is not the historical execution time.\n\nWorkstream: **Research communication**\n\n| Metric | Value |\n| --- | --- |\n| Tokens, including cached input | 134.13 M |\n| Standard API list-price equivalent | approximately $76 USD |\n| Active task time | approximately 3.6 h |\n| Model(s) | gpt-5.6-sol |\n| Reasoning effort | xhigh |\n\nToken basis: Estimated task allocation of measured daily account totals.\nTime basis: Union of recorded root task intervals; includes tool/network waits, not human labor time.\n\nThe USD figure is an estimate using the 2026-10-01 Standard short-context API rate card. It is not a subscription invoice or a verified payment. Missing model/mix data is estimated; quota-driven model switches may be unobserved. Image/video provider credits are separate.\n\n[Accounting method and limitations](https://github.com/fssrepository/myscoutee-roadmap#measurement-method)\n\nDelivery evidence:\n- Historical conversation and delivered-artifact records; no standalone Git commit was identified for this task.\n- This record summarizes the historical work; it does not claim a new publication or deployment.\n\nResearch status: finite-model experiments, numerical diagnostics and partial lemmas do not establish a solution of the continuous Navier\u2013Stokes Millennium problem. The later withdrawal of amplitude-inhomogeneous normalization claims is recorded separately (MATH-14).\n\nTime allocated to project totals after removing observed overlap: approximately **2.77 h**. Observed task intervals, overlap divided equally across concurrent tasks.\n\nRelated tasks (separate effort records):\n- [MATH-14](https://github.com/fssrepository/myscoutee-roadmap/issues/139) \u2014 fix: withdraw amplitude-inhomogeneous normalization claims\n- [MATH-12](https://github.com/fssrepository/myscoutee-roadmap/issues/54) \u2014 Prepare the Navier\u2013Stokes research video and presentation\n\nProject: https://github.com/users/fssrepository/projects/5\n",
+      "state": "CLOSED",
+      "state_reason": "completed",
+      "issue": {
+        "repository": "fssrepository/myscoutee-roadmap",
+        "number": 138,
+        "url": "https://github.com/fssrepository/myscoutee-roadmap/issues/138",
+        "node_id": "I_kwDOU1_9-s8AAAABUQMXkQ"
+      },
+      "values": {
+        "Task ID": "MATH-13",
+        "Workstream": "Research communication",
+        "Started": "2026-08-07",
+        "Finished": "2026-09-08",
+        "Tokens M": 134.13,
+        "API equiv USD": 76,
+        "Active h": 3.6,
+        "Models": "gpt-5.6-sol",
+        "Reasoning": "xhigh",
+        "Evidence": "Estimated allocation",
+        "Allocated h": 2.77,
+        "Status": "Done"
+      }
+    },
+    {
+      "task_id": "MATH-14",
+      "title": "MATH-14: fix: withdraw amplitude-inhomogeneous normalization claims",
+      "body": "Retrospective record of **fix: withdraw amplitude-inhomogeneous normalization claims**.\n\nHistorical execution: **2026-08-09 \u2192 2026-08-09 (UTC dates)**. This issue was created retrospectively on 2026-10-01; its creation/closure time is not the historical execution time.\n\nWorkstream: **Mathematical research**\n\n| Metric | Value |\n| --- | --- |\n| Tokens, including cached input | 9.01 M |\n| Standard API list-price equivalent | approximately $5 USD |\n| Active task time | approximately 0.3 h |\n| Model(s) | gpt-5.6-sol (est.) |\n| Reasoning effort | unrecorded |\n\nToken basis: Analogy estimate from comparable tasks; reserved from unassigned account balance, daily attribution unavailable.\nTime basis: Comparable-task estimate; historical timing not individually logged.\n\nThe USD figure is an estimate using the 2026-10-01 Standard short-context API rate card. It is not a subscription invoice or a verified payment. Missing model/mix data is estimated; quota-driven model switches may be unobserved. Image/video provider credits are separate.\n\n[Accounting method and limitations](https://github.com/fssrepository/myscoutee-roadmap#measurement-method)\n\nDelivery evidence:\n- millennium-math-problems: [fix: withdraw amplitude-inhomogeneous normalization claims](https://github.com/fssrepository/millennium-math-problems/commit/ce78ae714189fac287cef0d7613dda14b18b7f8f)\n\nThe commits record delivered work. This retrospective does not claim a fresh test run. Some consolidated commits cover several tasks; the references preserve that relationship without splitting their code changes. Private source repositories retain their access restrictions.\n\nResearch status: finite-model experiments, numerical diagnostics and partial lemmas do not establish a solution of the continuous Navier\u2013Stokes Millennium problem. The later withdrawal of amplitude-inhomogeneous normalization claims is recorded separately (MATH-14).\n\nTime allocated to project totals after removing observed overlap: approximately **0.30 h**. Estimated task time; placement and overlap are unobserved.\n\nRelated tasks (separate effort records):\n- [MATH-16](https://github.com/fssrepository/myscoutee-roadmap/issues/141) \u2014 Finalize the research video and publication package\n- [MATH-13](https://github.com/fssrepository/myscoutee-roadmap/issues/138) \u2014 Review research correspondence and document claim limitations\n\nProject: https://github.com/users/fssrepository/projects/5\n",
+      "state": "CLOSED",
+      "state_reason": "completed",
+      "issue": {
+        "repository": "fssrepository/myscoutee-roadmap",
+        "number": 139,
+        "url": "https://github.com/fssrepository/myscoutee-roadmap/issues/139",
+        "node_id": "I_kwDOU1_9-s8AAAABUQMYYQ"
+      },
+      "values": {
+        "Task ID": "MATH-14",
+        "Workstream": "Mathematical research",
+        "Started": "2026-08-09",
+        "Finished": "2026-08-09",
+        "Tokens M": 9.01,
+        "API equiv USD": 5,
+        "Active h": 0.3,
+        "Models": "gpt-5.6-sol (est.)",
+        "Reasoning": "unrecorded",
+        "Evidence": "Estimated allocation",
+        "Allocated h": 0.3,
+        "Status": "Done"
+      }
+    },
+    {
+      "task_id": "MATH-17",
+      "title": "MATH-17: Reconstruct the Project and preserve restorable Git records",
+      "body": "Reconstruct and organize the **math** Project, recover historical tasks and model/token/time evidence, add task references to commit messages, and preserve a restorable Git snapshot under `guides/project-history/`. This is current AI-assisted administration, separate from the original development.\n\nExecution: September 30\u2013October 1, 2026 (Europe/Bratislava). Measurement closes at **2026-09-30T23:16:07.594000+00:00**. The final publication/accounting tail after that cutoff is deliberately excluded to avoid recursive self-accounting.\n\n| Metric | Value |\n| --- | --- |\n| Tokens allocated to this Project | 2.666 M |\n| Active/allocated task time | 0.166 h |\n| Standard API equivalent | $4.10 USD |\n| Model | gpt-6-astra |\n| Reasoning | high |\n\nThe complete shared maintenance run recorded 19,991,868 local tokens and 1.248 active hours. These totals are partitioned once by the 15 retained backup snapshots: nine MyScoutee snapshots and two for each other Project. The per-Project split is an estimate, not four independent measurements. The model and whole-run token count come from the session log. Previously assigned overlap was removed from MSC-108; the remaining allocation uses the previously unassigned account allowance and has no exact daily billing reconciliation. USD is an API list-price equivalent, not credits paid or a subscription invoice.\n\nValidation: offline snapshot/checksum restoration checks, source-tree comparison and preservation of release-tag targets. Application code was not rebuilt or retested.\n\n[Restorable snapshot](https://github.com/fssrepository/myscoutee-roadmap/tree/master/guides/project-history/math)\n\nRelated administration tasks with separately allocated effort:\n- [MSC-110](https://github.com/fssrepository/myscoutee-roadmap/issues/142)\n- [OLD-5](https://github.com/fssrepository/myscoutee-roadmap/issues/143)\n- [EKO-15](https://github.com/fssrepository/myscoutee-roadmap/issues/144)\n\nProject: https://github.com/users/fssrepository/projects/5\n",
+      "state": "CLOSED",
+      "state_reason": "completed",
+      "issue": {
+        "repository": "fssrepository/myscoutee-roadmap",
+        "number": 145,
+        "url": "https://github.com/fssrepository/myscoutee-roadmap/issues/145",
+        "node_id": "I_kwDOU1_9-s8AAAABUQVYQQ"
+      },
+      "values": {
+        "Task ID": "MATH-17",
+        "Workstream": "Project administration (AI-assisted)",
+        "Started": "2026-09-30",
+        "Finished": "2026-10-01",
+        "Tokens M": 2.666,
+        "API equiv USD": 4.1,
+        "Active h": 0.166,
+        "Allocated h": 0.166,
+        "Models": "gpt-6-astra",
+        "Reasoning": "high",
+        "Evidence": "Measured run; estimated project split",
+        "Status": "Done"
+      }
+    }
+  ]
+}
