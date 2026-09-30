@@ -10,8 +10,8 @@
     "title": "Millennium Math Problems",
     "url": "https://github.com/users/fssrepository/projects/5",
     "public": true,
-    "shortDescription": "17 tasks \u00b7 1,285.7M tokens \u00b7 43.4h AI activity \u00b7 API equivalent $727 (estimates) \u00b7 Navier\u2013Stokes research",
-    "readme": "# Millennium Math Problems\n\n17 retrospective tasks. This Project is separate from the other portfolio Projects.\n\n[Complete Git backup](https://github.com/fssrepository/myscoutee-roadmap/tree/master/guides/project-history/math) \u00b7 [Measurement method](https://github.com/fssrepository/myscoutee-roadmap#measurement-method)\n\nEstimated task allocation: 1.286 B tokens, 43.4 h of activity after removing observed overlap, approximately $727 at Standard API rates. These are estimates, not human hours or an invoice.\n\n## Budget by workstream\n\n| Workstream | Tokens (M) | Allocated activity (h) | API equivalent (USD) |\n| --- | ---: | ---: | ---: |\n| Mathematical research | 969.31 | 33.91 | $515.95 |\n| Research communication | 313.72 | 9.36 | $207.19 |\n| Project administration (AI-assisted) | 2.67 | 0.17 | $4.10 |\n\nNumerical and finite-model experiments are research artifacts, not a solution of the continuous Millennium problem. The withdrawal of normalization claims is preserved as MATH-14.\n\n## Repositories\n\n- [millennium-math-problems](https://github.com/fssrepository/millennium-math-problems)\n- [myscoutee-roadmap](https://github.com/fssrepository/myscoutee-roadmap)\n"
+    "shortDescription": "18 tasks \u00b7 1,286.0M tokens \u00b7 43.5h AI activity \u00b7 API equivalent $728 (estimates) \u00b7 Navier\u2013Stokes research",
+    "readme": "# Millennium Math Problems\n\n18 retrospective tasks. This Project is separate from the other portfolio Projects.\n\n[Complete Git backup](https://github.com/fssrepository/myscoutee-roadmap/tree/master/guides/project-history/math) \u00b7 [Measurement method](https://github.com/fssrepository/myscoutee-roadmap#measurement-method)\n\nEstimated task allocation: 1.286 B tokens, 43.5 h of activity after removing observed overlap, approximately $728 at Standard API rates. These are estimates, not human hours or an invoice.\n\n## Budget by workstream\n\n| Workstream | Tokens (M) | Allocated activity (h) | API equivalent (USD) |\n| --- | ---: | ---: | ---: |\n| Mathematical research | 969.31 | 33.91 | $515.95 |\n| Research communication | 313.72 | 9.36 | $207.19 |\n| Project administration (AI-assisted) | 2.67 | 0.17 | $4.10 |\n| Documentation (AI-assisted) | 0.25 | 0.02 | $0.44 |\n\nNumerical and finite-model experiments are research artifacts, not a solution of the continuous Millennium problem. The withdrawal of normalization claims is preserved as MATH-14.\n\n## Repositories\n\n- [millennium-math-problems](https://github.com/fssrepository/millennium-math-problems)\n- [myscoutee-roadmap](https://github.com/fssrepository/myscoutee-roadmap)\n"
   },
   "fields": [
     {
@@ -583,6 +583,33 @@
         "Models": "gpt-6-astra",
         "Reasoning": "high",
         "Evidence": "Measured run; estimated project split",
+        "Status": "Done"
+      }
+    },
+    {
+      "task_id": "MATH-18",
+      "title": "MATH-18: Publish the project effort summary in the repository README",
+      "body": "Add a project-specific task, token, activity and API-equivalent summary to the README, linked to the existing Project and restorable measurement records. Preserve the existing research-status qualifications.\n\n| Metric | Value |\n| --- | ---: |\n| Allocated tokens | 0.254 M |\n| Allocated activity | 0.017 h |\n| Standard API equivalent | $0.44 USD |\n| Model / reasoning | gpt-6-astra / high |\n\nThe shared documentation window recorded 2,541,738 tokens from 2026-09-30T23:34:24.557000+00:00 to 2026-09-30T23:44:47.957000+00:00. Its effort is split once across EKO-16 (60%), OLD-6 (30%) and MATH-18 (10%); these are estimated shares of one measured session, not independent measurements. The bounded cutoff excludes the final publishing/accounting tail. Token components, model and reasoning come from the local session records. The allocation reserves part of the portfolio's previously unassigned allowance, without claiming exact reconciliation to the earlier account-wide daily snapshot. API equivalent is a list-price comparison, not an invoice or credits paid.\n\nValidation: documentation links, original Hungarian asset preservation, SVG text positions and PNG preview, and offline restore/checksum checks. No application behavior changed.\n\nProject: https://github.com/users/fssrepository/projects/5\n\nRelated documentation tasks (separately allocated effort):\n- [EKO-16](https://github.com/fssrepository/myscoutee-roadmap/issues/146)\n- [OLD-6](https://github.com/fssrepository/myscoutee-roadmap/issues/147)\n",
+      "state": "CLOSED",
+      "state_reason": "completed",
+      "issue": {
+        "repository": "fssrepository/myscoutee-roadmap",
+        "number": 148,
+        "url": "https://github.com/fssrepository/myscoutee-roadmap/issues/148",
+        "node_id": "I_kwDOU1_9-s8AAAABUQlPVQ"
+      },
+      "values": {
+        "Task ID": "MATH-18",
+        "Workstream": "Documentation (AI-assisted)",
+        "Started": "2026-10-01",
+        "Finished": "2026-10-01",
+        "Tokens M": 0.254,
+        "API equiv USD": 0.44,
+        "Active h": 0.017,
+        "Allocated h": 0.017,
+        "Models": "gpt-6-astra",
+        "Reasoning": "high",
+        "Evidence": "Measured session; estimated project split",
         "Status": "Done"
       }
     }

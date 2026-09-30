@@ -236,5 +236,19 @@
     "models": "gpt-6-astra",
     "reasoning": "high",
     "evidence": "Measured maintenance-session tokens; estimated allocation by backup snapshot ownership (9:2:2:2 across four Projects)"
+  },
+  {
+    "task_id": "MATH-18",
+    "title": "Publish the project effort summary in the repository README",
+    "workstream": "Documentation (AI-assisted)",
+    "started": "2026-10-01",
+    "finished": "2026-10-01",
+    "tokens_million": 0.25,
+    "api_equivalent_usd_estimate": 0.44,
+    "active_hours": 0.01731666666931576,
+    "allocated_hours": 0.02,
+    "models": "gpt-6-astra",
+    "reasoning": "high",
+    "evidence": "Measured shared documentation-session tokens; estimated allocation 60% E-Kozig, 30% MyScoutee Old, 10% math"
   }
 ]

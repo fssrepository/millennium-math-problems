@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "project_totals": {
-    "tasks": 17,
-    "tokens_estimate": 1285697303,
-    "api_standard_usd_estimate": 727.24,
-    "allocated_hours_estimate": 43.4383168334718,
+    "tasks": 18,
+    "tokens_estimate": 1285951477,
+    "api_standard_usd_estimate": 727.68,
+    "allocated_hours_estimate": 43.45563350014112,
     "manual_effort_unknown": false,
     "workstreams": {
       "Mathematical research": {
@@ -21,13 +21,18 @@
         "tokens": 2665583,
         "api_equivalent_usd": 4.1,
         "hours": 0.16639174074596827
+      },
+      "Documentation (AI-assisted)": {
+        "tokens": 254174,
+        "api_equivalent_usd": 0.44,
+        "hours": 0.01731666666931576
       }
     }
   },
   "account_control": {
     "account_tokens": 38488016278,
-    "allocated_tokens_estimate": 37993843589,
-    "unassigned_tokens": 494172689
+    "allocated_tokens_estimate": 37996385327,
+    "unassigned_tokens": 491630951
   },
   "valuation_date": "2026-10-01",
   "rates_per_million": {
@@ -578,6 +583,41 @@
           "tokens": 2665583.0,
           "api_equivalent_usd": 4.1
         }
+      }
+    },
+    {
+      "task_id": "MATH-18",
+      "tokens": 254174,
+      "api_standard_usd_estimate": 0.44,
+      "active_hours": 0.01731666666931576,
+      "allocated_hours": 0.01731666666931576,
+      "manual_effort_unknown": false,
+      "token_basis": "Measured shared documentation-session tokens; estimated allocation 60% E-Kozig, 30% MyScoutee Old, 10% math",
+      "duration_basis": "Observed active session window, including tool waits; estimated project split, not human labor",
+      "allocated_time_basis": "Observed active session window, including tool waits; estimated project split, not human labor",
+      "models": {
+        "gpt-6-astra|high": {
+          "input_tokens": 252331.30000000002,
+          "cached_input_tokens": 241408.0,
+          "cache_write_input_tokens": 0.0,
+          "output_tokens": 1842.5,
+          "reasoning_output_tokens": 637.5,
+          "total_tokens": 254173.80000000002
+        }
+      },
+      "repository_allocations": {
+        "millennium-math-problems": {
+          "hours": 0.01731666666931576,
+          "tokens": 254174,
+          "api_equivalent_usd": 0.44
+        }
+      },
+      "frozen_phase": {
+        "start_utc": "2026-09-30T23:34:24.557000+00:00",
+        "cutoff_utc": "2026-09-30T23:44:47.957000+00:00",
+        "shared_tokens": 2541738,
+        "shared_hours": 0.1731666666931576,
+        "allocation_share": 0.1
       }
     }
   ],

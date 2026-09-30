@@ -72,3 +72,24 @@ The principal engineering metric is **time to first obstruction**: find the
 cheapest reproducible reason a lemma cannot work before weeks or months are
 spent trying to prove it. Optional empirical data can seed the same loop, but
 the active Navier–Stokes campaign starts from the lowest open proof gap.
+
+<!-- project-effort-summary -->
+
+---
+
+## Project effort and delivery
+
+[View tasks and AI usage](https://github.com/users/fssrepository/projects/5) · [Restorable records and methodology](guides/project-history/README.md)
+
+| Measure | This project |
+| --- | ---: |
+| Completed tasks | 18 |
+| AI tokens, including cached input | 1,285.95 M |
+| Allocated AI activity | 43.46 h |
+| Standard API list-price equivalent | $727.68 USD |
+
+These are retrospective estimates, combining recorded session usage with
+labeled task allocations. Activity includes tool and network waits; it is not
+human working time. The USD figure is an API-price comparison, not actual
+spending or a subscription invoice. Each project has its own allocation;
+shared work is split rather than counted in full more than once.
