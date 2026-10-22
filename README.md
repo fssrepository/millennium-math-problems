@@ -79,7 +79,7 @@ the active Navier–Stokes campaign starts from the lowest open proof gap.
 
 ## Project effort and delivery
 
-[View tasks and AI usage](https://github.com/users/fssrepository/projects/5) · [Restorable records and methodology](guides/project-history/README.md)
+[View tasks and AI usage](https://github.com/users/fssrepository/projects/5) · [Restorable records and methodology](guides/statistics/README.md)
 
 | Measure | This project |
 | --- | ---: |

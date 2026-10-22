@@ -1,14 +1,17 @@
-# Repository agent instructions
+# Agent instructions
 
-## Navier–Stokes session continuity
+Before project work, load and apply
+[the millennium-math-problems instructions](../myscoutee-skills/instructions/projects/millennium-math-problems.md)
+and the shared documents they require. Resolve project paths from this repository
+root, not from the shared checkout. Current user instructions take precedence.
 
-When resuming the active Navier–Stokes research campaign, read
-[`navier-stokes/CURRENT_HANDOFF.md`](navier-stokes/CURRENT_HANDOFF.md) first.
-Treat its resume block as the current checkpoint and load only the canonical
-files it links. Do not reread the archived Codex JSONL or reconstruct completed
-searches from conversation history unless the task is an explicit provenance or
-timestamp audit.
+Use the existing sibling `../myscoutee-skills` checkout. If it is absent, clone it
+from this repository root:
 
-The handoff does not relax claim discipline: finite Galerkin stress tests,
-exact gradients of the discrete model and partial lemmas are not a solution of
-the continuous Navier–Stokes Millennium problem.
+```sh
+git clone -- https://github.com/fssrepository/myscoutee-skills.git ../myscoutee-skills
+```
+
+If that path already exists but the required instructions are missing, report the
+problem; do not overwrite it. Do not automatically pull, reset or replace an
+existing checkout. A clone failure is a missing-instructions blocker; report it.
