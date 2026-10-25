@@ -42,6 +42,38 @@ computational evidence; later language calling an unrestricted PNT formula
 
 ## Exact core--tail factorization
 
+### MATH-19 formal check
+
+The Lean package at `navier-stokes/lean` proves unconditional finite Fourier
+counterexamples to the unrestricted PNT-2/7/8/12/14 bounds. On a divergence-free,
+conjugate-symmetric six-mode family with positive amplitude `a` and height-one
+core, it proves `E=8a^2`, `Z=18a^2`, `P=46a^2`, `S=2a^3`, `T=6a^3`,
+and `PNT-2=1/(876024a)`. Every finite proposed uniform bound is exceeded.
+Run `./navier-stokes/lean/verify.sh` from the repository root.
+
+The full cutoff-one output computation includes the additional output waves
+`±(1,-1,-1)`. It proves `B1=22a^4`, `T2=D_H=50a^4`, and an actual normalized
+Gram row and maximum row equal to one. Only tail shell 2 is nonzero; all other
+natural shell indices are proved zero. At `H=1`, all four squared/compensated
+majorants equal `275/(33366002112a^2)`, so their unboundedness no longer assumes
+an unrealized positive base value. This allowed height/cutoff slice suffices to
+refute a purported uniform bound on the larger admissible set.
+
+The package also proves the scalar factorization, both amplitude scaling laws,
+the Cauchy alignment factorization and squared-majorant formula with explicit
+positivity assumptions, and the general finite Gram-Schur vector inequality,
+including zero rows. The full-cube zero extension, admissibility, norms and
+pairings are verified. The single verifier passed locally on 2026-10-25:
+75 named theorems in 7 modules, 259 audited declarations, four expected proof
+rejections, and comparisons with the original C++ normalization/Cauchy/Schur
+owners. C++ comparisons are separate regressions, not Lean proof premises.
+
+This does not certify gradients, C++ program correctness, fixed-energy
+suprema, PNT-13 standalone height-shell decorrelation, or continuous-PDE
+regularity. No hosted CI run or pushed commit is implied by the local result.
+
+### Algebraic identity
+
 Fix a primitive-projective core of maximum height `H`.  Write the selected
 bilinear field as
 

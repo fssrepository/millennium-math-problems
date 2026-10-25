@@ -645,5 +645,159 @@
         "total_tokens": 19991868
       }
     }
+  },
+  "post_control_task_usage": [
+    {
+      "task_id": "MATH-19",
+      "tokens": 14834641,
+      "cutoff_utc": "2026-10-25T16:43:58.451Z",
+      "unique_response_ids": 141,
+      "token_components": {
+        "input_tokens": 14746131,
+        "cached_input_tokens": 14535680,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 88510,
+        "reasoning_output_tokens": 24025,
+        "total_tokens": 14834641
+      },
+      "models": {
+        "gpt-6-astra|high": {
+          "input_tokens": 14746131,
+          "cached_input_tokens": 14535680,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 88510,
+          "reasoning_output_tokens": 24025,
+          "total_tokens": 14834641
+        }
+      },
+      "started": "2026-10-25",
+      "finished": "2026-10-25",
+      "active_hours": 0.8235211111439599,
+      "allocated_hours": 0.7982494444979562,
+      "previously_allocated_overlap_hours": 0.025271666646003724,
+      "active_intervals_utc": [
+        [
+          "2026-10-25T15:46:46.202000+00:00",
+          "2026-10-25T15:47:50.748000+00:00"
+        ],
+        [
+          "2026-10-25T15:49:46.532000+00:00",
+          "2026-10-25T15:50:04.866000+00:00"
+        ],
+        [
+          "2026-10-25T15:50:22.278000+00:00",
+          "2026-10-25T15:50:44.180000+00:00"
+        ],
+        [
+          "2026-10-25T15:51:16.370000+00:00",
+          "2026-10-25T15:51:27.604000+00:00"
+        ],
+        [
+          "2026-10-25T15:52:49.625000+00:00",
+          "2026-10-25T16:21:46.662000+00:00"
+        ],
+        [
+          "2026-10-25T16:23:47.160000+00:00",
+          "2026-10-25T16:23:55.430000+00:00"
+        ],
+        [
+          "2026-10-25T16:24:27.803000+00:00",
+          "2026-10-25T16:24:38.263000+00:00"
+        ],
+        [
+          "2026-10-25T16:24:57.491000+00:00",
+          "2026-10-25T16:43:03.835000+00:00"
+        ],
+        [
+          "2026-10-25T16:43:12.160000+00:00",
+          "2026-10-25T16:43:18.709000+00:00"
+        ]
+      ],
+      "api_standard_usd_estimate": 21.07,
+      "valuation_date": "2026-10-01",
+      "rates_per_million": {
+        "gpt-6-astra": [
+          10,
+          1,
+          50,
+          12.5
+        ]
+      },
+      "pricing_source": "https://developers.openai.com/api/docs/pricing",
+      "rate_basis": "Frozen existing Standard API-equivalent rates; not an invoice or new price lookup.",
+      "daily_tokens": {
+        "2026-10-25": 14834641
+      },
+      "sources": [
+        {
+          "source_kind": "root",
+          "source_sha256": "68c5773826c97d02",
+          "selection_windows_utc": [
+            [
+              "2026-10-25T15:46:46.202Z",
+              "2026-10-25T16:43:58.451Z"
+            ]
+          ],
+          "tokens": 14834641,
+          "unique_responses": 141,
+          "first_usage_utc": "2026-10-25T15:46:52.337000+00:00",
+          "last_usage_utc": "2026-10-25T16:43:18.703000+00:00"
+        }
+      ],
+      "note": "Dedicated Lean/PNT root session, from the initial introduction request through completion confirmation, ending at the accounting request. Includes assessment, initial PNT-2 delivery, scope clarification, full-cube/Cauchy/Schur continuation, failed attempts and corrections, tests, documentation, task updates and local commits. Response IDs are deduplicated; only source-thread usage counts. Active time is the union of recorded root turns, including tool/network waits and excluding idle gaps. Previous recorded portfolio allocations are subtracted from overlapping time. Cached input is inside input; reasoning is inside output. Frozen Standard API equivalents are estimates, not invoices. This accounting/publication turn is excluded; the previously reported 18 minutes described only the continuation, not the complete MATH-19 task. Account totals are separate overlapping controls."
+    }
+  ],
+  "current_project_totals": {
+    "updated_at_utc": "2026-10-25T16:43:58.451Z",
+    "tracked_tasks": 19,
+    "measured_tasks": 19,
+    "tracked_task_ids": [
+      "MATH-1",
+      "MATH-2",
+      "MATH-3",
+      "MATH-4",
+      "MATH-10",
+      "MATH-5",
+      "MATH-6",
+      "MATH-7",
+      "MATH-8",
+      "MATH-9",
+      "MATH-11",
+      "MATH-12",
+      "MATH-15",
+      "MATH-16",
+      "MATH-13",
+      "MATH-14",
+      "MATH-17",
+      "MATH-18",
+      "MATH-19"
+    ],
+    "unmeasured_task_ids": [],
+    "tokens_estimate": 1300786118,
+    "api_standard_usd_estimate": 748.75,
+    "allocated_hours_estimate": 44.253882944639074,
+    "workstreams": {
+      "Mathematical research": {
+        "tokens": 984141829,
+        "api_equivalent_usd": 537.02,
+        "hours": 34.7092261111074
+      },
+      "Research communication": {
+        "tokens": 313724532,
+        "api_equivalent_usd": 207.19,
+        "hours": 9.360948426116396
+      },
+      "Project administration (AI-assisted)": {
+        "tokens": 2665583,
+        "api_equivalent_usd": 4.1,
+        "hours": 0.16639174074596827
+      },
+      "Documentation (AI-assisted)": {
+        "tokens": 254174,
+        "api_equivalent_usd": 0.44,
+        "hours": 0.01731666666931576
+      }
+    },
+    "method": "Frozen October 1 reconstruction plus measured MATH-19, counted once by stable task ID. Root interval union; prior recorded portfolio allocation removed from overlapping time. Cached input is included in input. Accounting after cutoff is excluded. Account and task totals overlap and are never added."
   }
 }

@@ -1,8 +1,23 @@
 # Restorable Project history
 
-Complete Project; 18 tasks. [Live Project](https://github.com/users/fssrepository/projects/5) · [Canonical complete backup](https://github.com/fssrepository/myscoutee-roadmap/tree/master/guides/statistics/math).
+Complete Project; 19 tasks. [Live Project](https://github.com/users/fssrepository/projects/5) · [Canonical complete backup](https://github.com/fssrepository/myscoutee-roadmap/tree/master/guides/statistics/math).
 
 `project.json` preserves full issue bodies, statuses, typed field values and views. `measurements.json` preserves model/token/cost/time components and assumptions. `commit-map.json` links original and task-prefixed commit IDs. CSV/JSON provide convenient presentation exports. Recorded root intervals are retained in compressed JSON for timing reconstruction; there are no private chat texts.
+
+## Latest measured task
+
+MATH-19 is Done: **14,834,641 tokens**, **0.823521 active / 0.798249 allocated h**,
+**$21.07 estimated Standard API equivalent**, **gpt-6-astra / high**, 141 responses
+through `2026-10-25T16:43:58.451Z`. The complete session includes initial PNT-2
+work and the continuation; the earlier 18 minutes covered only the continuation.
+
+Current Project allocation: **1,300,786,118 tokens**,
+**44.253883 allocated h**, **$748.75 API equivalent**.
+The historical reconstruction is preserved separately. Account and task totals
+overlap and are never added.
+
+Reproduce usage from retained local history in the roadmap checkout:
+`python3 guides/statistics/math/measure-math19.py`.
 
 ## Validate offline
 

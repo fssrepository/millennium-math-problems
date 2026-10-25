@@ -155,7 +155,7 @@
   },
   {
     "task_id": "MATH-12",
-    "title": "Prepare the Navier\u2013Stokes research video and presentation",
+    "title": "Prepare the Navier–Stokes research video and presentation",
     "workstream": "Research communication",
     "started": "2026-08-04",
     "finished": "2026-08-04",
@@ -250,5 +250,19 @@
     "models": "gpt-6-astra",
     "reasoning": "high",
     "evidence": "Measured shared documentation-session tokens; estimated allocation 60% E-Kozig, 30% MyScoutee Old, 10% math"
+  },
+  {
+    "task_id": "MATH-19",
+    "title": "Lean PNT counterexamples and finite Schur verification",
+    "workstream": "Mathematical research",
+    "started": "2026-10-25",
+    "finished": "2026-10-25",
+    "tokens_million": 14.834641,
+    "api_equivalent_usd_estimate": 21.07,
+    "active_hours": 0.8235211111439599,
+    "allocated_hours": 0.7982494444979562,
+    "models": "gpt-6-astra",
+    "reasoning": "high",
+    "evidence": "Measured 141 responses through 2026-10-25T16:43:58.451Z; 14,834,641 tokens; verify.sh PASS, 75 theorems / 259 audited declarations, four expected rejections and C++ agreement. Commits e56a906, aedbb07."
   }
 ]

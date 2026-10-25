@@ -3,6 +3,17 @@
 Updated: 2026-08-09. This is the post-audit resume point for the Codex
 campaign archived as session `019fbc49-c7f3-7051-8627-e920169afd1b`.
 
+## Formal verification update — 2026-10-25
+
+MATH-19 now has Lean-checked Fourier counterexamples to unrestricted
+PNT-2/7/8/12/14. The completed package is `navier-stokes/lean`; run
+`./navier-stokes/lean/verify.sh` from the repository root. It includes the full
+cutoff-one output cube, actual Gram rows, Cauchy identities and the finite
+Gram-Schur inequality. The exact majorant is `275/(33366002112a^2)` at H=1.
+The folder layout and numbered completion record are in that package. This
+confirms the withdrawn bounds; it does not reopen their optimization campaign
+or resolve PNT-13, fixed-energy bounds, gradients, or the continuous PDE.
+
 ## Resume here
 
 1. Read the post-audit status at the top of

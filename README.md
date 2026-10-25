@@ -83,13 +83,18 @@ the active Navier–Stokes campaign starts from the lowest open proof gap.
 
 | Measure | This project |
 | --- | ---: |
-| Completed tasks | 18 |
-| AI tokens, including cached input | 1,285.95 M |
-| Allocated AI activity | 43.46 h |
-| Standard API list-price equivalent | $727.68 USD |
+| Completed tasks | 19 |
+| AI tokens, including cached input | 1,300.786118 M |
+| Allocated AI activity | 44.253883 h |
+| Standard API list-price equivalent | $748.75 USD |
 
-These are retrospective estimates, combining recorded session usage with
-labeled task allocations. Activity includes tool and network waits; it is not
-human working time. The USD figure is an API-price comparison, not actual
+These totals combine the preserved retrospective estimates with measured
+MATH-19 usage. MATH-19 is Done: 14,834,641 tokens, 0.823521 active /
+0.798249 allocated hours, $21.07 API equivalent, gpt-6-astra / high, through
+2026-10-25T16:43:58.451Z. The complete task includes both implementation
+stages; the earlier 18 minutes described only the continuation.
+
+The historical reconstruction remains separately recorded. Activity includes
+tool and network waits; it is not human working time. The USD figure is an API-price comparison, not actual
 spending or a subscription invoice. Each project has its own allocation;
 shared work is split rather than counted in full more than once.

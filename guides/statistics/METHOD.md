@@ -15,3 +15,24 @@ Model date sources: [GPT-5.3-Codex](https://openai.com/index/introducing-gpt-5-3
 
 - Four independent Projects separate MyScoutee, the manually developed legacy archive, e-kozig and mathematical research. Shared account tokens are allocated once across all four; a Project total is never an additional account total. Historical legacy AI usage is unverified and left blank. The current AI-assisted Project-administration task is measured separately. A final shared maintenance-run measurement is apportioned by snapshot ownership; its overlap with MSC-108 is removed and its net allocation uses the unassigned account allowance, without exact daily billing reconciliation.
 - Mathematical experiments and videos do not establish a solution of the continuous Navier–Stokes problem. The claim withdrawal is a first-class task.
+
+- Combined daily usage is published as anonymous totals only. The original task calibration remains separate: additional measurements may overlap existing task evidence and are not automatically added to task tokens, hours or costs.
+
+## MATH-19 measured closure — 2026-10-25
+
+The full dedicated Lean/PNT session is measured from 15:46:46.202 UTC through
+16:43:58.451 UTC, ending at the accounting request: **14,834,641 tokens**,
+**141 unique responses**, **0.823521 active h**, **0.798249 allocated h**,
+**$21.07 frozen Standard API equivalent**, **gpt-6-astra / high**. Prior recorded
+portfolio overlap removes 0.025272 h. The earlier 18-minute report covered only
+the continuation; it was not the total task effort.
+
+The canonical roadmap helper `measure-math19.py` reuses the existing
+`myscoutee/measure-msc119.py` extractor. Only usage belonging to the selected
+thread counts; response IDs are deduplicated. Recorded root intervals are
+unioned, including tool/network waits and excluding idle gaps. Input includes
+cached input; output includes reasoning. The October 1 rate card is reused,
+not repriced. Source thread identity is hashed; no private text is published.
+The final accounting/publication turn is outside the cutoff. The historical
+18-task reconstruction remains frozen under `project_totals`; current totals
+add MATH-19 once. Account controls and the heatmap are unchanged.
