@@ -33,9 +33,9 @@ ASSETS = HERE / "assets"
 OVERVIEW_OUT = HERE / "output"
 NAVIER_OUT = HERE / "output"
 
-VERSION = "1.0.0"
+VERSION = "1.0.0"  # Stable artifact filename; Git tracks document revisions.
 LANGUAGE = "EN"
-RELEASE_DATE = "AUG 2026"
+RELEASE_DATE = "OCT 2026"
 W, H = 1920, 1080
 
 OVERVIEW_STEM = f"Millennium_Math_Problems_Project_Overview_v{VERSION}_{LANGUAGE}"
@@ -251,7 +251,7 @@ def footer(image: Image.Image, page: int, total: int, label: str, *, note: str |
     text(
         image,
         (88, 1043),
-        f"MILLENNIUM MATH PROBLEMS  •  {label.upper()}  •  V{VERSION}  •  {RELEASE_DATE}",
+        f"MILLENNIUM MATH PROBLEMS  •  {label.upper()}  •  UPDATED {RELEASE_DATE}",
         size=13,
         color=MUTED_2,
         weight="medium",
@@ -436,8 +436,8 @@ def overview_slide_1() -> Image.Image:
     bullet_list(
         image,
         [
-            "Exact numerical objectives stress a proposed lemma.",
-            "Counterexamples and failure certificates become reusable data.",
+            "C++ searches stress proposed lemmas on finite models.",
+            "Lean checks exact counterexamples to false bounds.",
             "AI uses each failure to refine the next proof obligation.",
         ],
         x=124,
@@ -449,7 +449,7 @@ def overview_slide_1() -> Image.Image:
     )
     text(image, (96, 832), "CURRENT ACTIVE LAB", size=14, color=AMBER, weight="bold")
     text(image, (96, 866), "3D Navier–Stokes existence and smoothness", size=28, weight="bold", max_width=690)
-    text(image, (96, 922), "Research code and finite evidence — not a Clay solution.", size=18, color=MUTED)
+    text(image, (96, 922), "Finite formal results and research code — not a Clay solution.", size=18, color=MUTED)
     footer(image, 1, 5, "project overview", note="AI executes the loop; experts still verify the mathematics")
     return image
 
@@ -468,7 +468,7 @@ def overview_slide_2() -> Image.Image:
     rows = (
         ("Birch–Swinnerton-Dyer", "Number theory", "NOT STARTED", "Planned"),
         ("Hodge conjecture", "Algebraic geometry", "NOT STARTED", "Planned"),
-        ("Navier–Stokes", "PDE / fluid dynamics", "ACTIVE", "C++ lemma lab"),
+        ("Navier–Stokes", "PDE / fluid dynamics", "ACTIVE", "C++ and Lean audit"),
         ("P vs NP", "Complexity theory", "NOT STARTED", "Planned"),
         ("Poincaré conjecture", "Topology", "SOLVED EXTERNALLY", "No lab needed"),
         ("Riemann hypothesis", "Number theory", "NOT STARTED", "Planned"),
@@ -568,7 +568,7 @@ def overview_slide_3() -> Image.Image:
     text(
         image,
         (120, 890),
-        "Guardrail: a finite certificate may reject a proposed route; it cannot by itself establish a uniform theorem.",
+        "Lean now proves finite counterexamples; a continuous PDE theorem still needs separate analysis.",
         size=17,
         color=AMBER,
         weight="medium",
@@ -604,44 +604,44 @@ def overview_slide_4() -> Image.Image:
         image,
         "03",
         "Navier–Stokes case study",
-        "The engine already changes which lemmas are worth pursuing",
-        "One route was rejected by exact adversarial evidence; the surviving route became a narrower joint normalization problem.",
-        status="ACTIVE",
+        "Lean verifies counterexamples to unrestricted PNT bounds",
+        "A six-mode Fourier family disproves the proposed uniform PNT-2/7/8/12/14 bounds. The result is exact but finite-dimensional.",
+        status="FORMAL AUDIT",
     )
 
     rounded_card(image, (88, 235, 906, 930), fill=CARD, outline=RED, radius=28)
-    pill(image, (120, 266), "FALSIFIED ROUTE", fill=RED, color=WHITE, size=13)
-    text(image, (120, 320), "PNT-13: standalone shell decorrelation", size=27, weight="bold", max_width=730)
+    pill(image, (120, 266), "LEAN-CHECKED COUNTEREXAMPLE", fill=RED, color=WHITE, size=13)
+    text(image, (120, 320), "The unrestricted PNT bounds fail", size=27, weight="bold", max_width=730)
     text(
         image,
         (120, 383),
-        "The proposed exponential height-gap decay is contradicted by optimized finite states with near-perfect normalized shell correlation.",
+        "Lean proves the witness is admissible and computes its full cutoff-one Fourier output. Let a > 0 be its amplitude.",
         size=18,
         color=MUTED,
         max_width=720,
     )
-    text(image, (120, 490), "NORMALIZED CORRELATION", size=14, color=RED, weight="bold")
-    bar(image, 120, 536, 360, 0.985710, 1.0, color=RED, label="gap 4 • K8", value_label="0.985710")
-    bar(image, 120, 588, 360, 0.998998, 1.0, color=RED, label="gap 6 • K8", value_label="0.998998")
-    bar(image, 120, 640, 360, 0.994971, 1.0, color=RED, label="gap 7 • K12", value_label="0.994971")
+    rounded_card(image, (120, 505, 872, 680), fill="#321F2C", outline=RED, radius=18, shadow=False)
+    text(image, (146, 526), "EXACT SCALING", size=13, color=RED, weight="bold")
+    text(image, (146, 565), "PNT-2 = 1 / (876024 a)", size=22, weight="bold", mono=True)
+    text(image, (146, 610), "PNT-7/8/12/14 grow as 1 / a²", size=19, weight="medium")
     rounded_card(image, (120, 720, 872, 875), fill="#321F2C", outline=RED, radius=18, shadow=False)
-    text(image, (146, 742), "RESEARCH TIME SAVED", size=13, color=RED, weight="bold")
+    text(image, (146, 742), "WHAT THE RESULT RULES OUT", size=13, color=RED, weight="bold")
     text(
         image,
         (146, 778),
-        "Stop trying to prove correlation decay in isolation. Preserve the full coupled normalization instead.",
+        "As a approaches zero, no finite uniform bound survives. Fixed-energy searches ask a different question.",
         size=20,
         weight="medium",
         max_width=680,
     )
 
     rounded_card(image, (946, 235, 1832, 930), fill=CARD, outline=TEAL, radius=28)
-    pill(image, (978, 266), "SURVIVING TARGET", fill=TEAL, color=INK, size=13)
-    text(image, (978, 320), "PNT-12: joint normalized tail bound", size=27, weight="bold", max_width=760)
+    pill(image, (978, 266), "ALSO CHECKED IN LEAN", fill=TEAL, color=INK, size=13)
+    text(image, (978, 320), "Finite identities and inequalities", size=27, weight="bold", max_width=760)
     text(
         image,
         (978, 383),
-        "The direct exact-gradient objective keeps the Gram row, tail mass and common normalization coupled. This route is still open.",
+        "The package verifies the Cauchy identities and a general finite Gram-Schur estimate. It audits the theorems and tests deliberate proof failures.",
         size=18,
         color=MUTED,
         max_width=770,
@@ -651,9 +651,9 @@ def overview_slide_4() -> Image.Image:
         (978, 485, 1800, 758),
         ("Evidence", "Result", "Meaning"),
         (
-            ("H16, K12", "4.18215e-4", "New finite stress record"),
-            ("Gradient check", "1.21e-10", "Directional error"),
-            ("Peak RSS", "4.88 GiB", "Down from 7.94 GiB"),
+            ("Fourier witness", "6 modes", "Full cutoff-one cube"),
+            ("Proof library", "75 theorems", "259 declarations audited"),
+            ("Negative tests", "4 rejected", "False or unfinished proofs"),
         ),
         (245, 205, 372),
         row_height=69,
@@ -661,9 +661,9 @@ def overview_slide_4() -> Image.Image:
         body_size=15,
     )
     rounded_card(image, (978, 790, 1800, 875), fill="#10352F", outline=TEAL, radius=18, shadow=False)
-    text(image, (1004, 811), "STATUS", size=13, color=TEAL, weight="bold")
-    text(image, (1120, 805), "Bounded-looking finite evidence; no uniform proof yet.", size=19, weight="medium", max_width=640)
-    footer(image, 4, 5, "project overview", note="Finite values are experimental certificates, not theorem constants")
+    text(image, (1004, 811), "VERIFY", size=13, color=TEAL, weight="bold")
+    text(image, (1120, 805), "./navier-stokes/lean/verify.sh", size=18, weight="medium", mono=True, max_width=640)
+    footer(image, 4, 5, "project overview", note="No fixed-energy supremum or continuous-PDE regularity is proved")
     return image
 
 
@@ -698,13 +698,13 @@ def overview_slide_5() -> Image.Image:
         image,
         "04",
         "Roadmap and guardrails",
-        "A useful engine is honest about the distance to a proof",
-        "The project has produced exact reductions, a proved partial tail lemma and strong falsification tooling. The central closure chain remains open.",
+        "Research status after the Lean audit",
+        "Formal finite counterexamples retire the unrestricted PNT bounds. The continuous Navier–Stokes regularity argument remains open.",
     )
     gates = [
-        ("01", "Dynamic far tail", "A cutoff-independent partial lemma removes sufficiently separated shells.", "PROVED"),
-        ("02", "PNT-12", "Prove the coupled tail/Gram/normalization bound uniformly in height and cutoff.", "ACTIVE"),
-        ("03", "PNT-4 + RQ-11", "Close the complementary channel and the local/transition remainder.", "OPEN"),
+        ("01", "Lean PNT audit", "Unrestricted PNT-2/7/8/12/14 bounds are false; finite Schur is proved.", "PROVED"),
+        ("02", "PNT reformulation", "Re-derive the admissible set or a homogeneous normalization.", "OPEN"),
+        ("03", "Local closure", "Validate the sign candidate and close gap-zero and transition terms.", "OPEN"),
         ("04", "L4 regularity", "Convert the local decomposition into the required trajectory estimate.", "OPEN"),
         ("05", "L5 to L6", "Complete the remaining regularity and limit-passage steps.", "LATER"),
     ]
@@ -721,16 +721,16 @@ def overview_slide_5() -> Image.Image:
         (120, 572, 1148, 852),
         ("Work item", "Purpose", "Exit condition"),
         (
-            ("Height/cutoff scans", "Stress PNT-12 row by row", "Stable or growing branch classified"),
-            ("AI artifact schema", "Compare JSON/TSV evidence", "Ranked candidate lemmas with provenance"),
-            ("Analytic restart", "Prove joint normalization", "Cutoff-independent inequality"),
+            ("Exact sign check", "Test the local derivative candidate", "Certified sign or rejected claim"),
+            ("PNT reformulation", "Separate fixed-energy from unrestricted claims", "Valid lemma or failed route"),
+            ("Analytic closure", "Control the local and transition blocks", "Cutoff-independent estimate"),
         ),
         (290, 330, 408),
         row_height=71,
         header_height=66,
         body_size=15,
     )
-    text(image, (122, 873), "All machine claims remain reproducible from repository commands and certificates.", size=16, color=MUTED_2)
+    text(image, (122, 873), "Lean proofs: navier-stokes/lean/README.md  •  Run: ./navier-stokes/lean/verify.sh", size=16, color=MUTED_2)
 
     rounded_card(image, (1220, 492, 1832, 918), fill="#2B1D28", outline=RED, radius=28)
     text(image, (1254, 524), "NON-CLAIM", size=15, color=RED, weight="bold")
@@ -738,7 +738,7 @@ def overview_slide_5() -> Image.Image:
     text(
         image,
         (1254, 646),
-        "A proof still requires cutoff-independent analysis, the full local closure, the complementary normalization channel, and the remaining L4–L6 argument.",
+        "The Lean result concerns a finite Fourier model and proposed PNT bounds. A solution still needs the continuous local estimates and the remaining L4–L6 argument.",
         size=20,
         color=MUTED,
         max_width=520,
@@ -932,7 +932,7 @@ def save_pdf(slide_paths: Sequence[Path], destination: Path, *, title: str, subj
     pdf.setTitle(title)
     pdf.setAuthor("Millennium Math Problems")
     pdf.setSubject(subject)
-    pdf.setKeywords(f"Millennium Prize Problems, Navier-Stokes, lemma engine, version {VERSION}, {LANGUAGE}")
+    pdf.setKeywords(f"Millennium Prize Problems, Navier-Stokes, Lean audit, updated October 2026, {LANGUAGE}")
     for slide_path in slide_paths:
         pdf.drawImage(str(slide_path), 0, 0, width=width_points, height=height_points)
         pdf.showPage()

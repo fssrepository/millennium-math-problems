@@ -33,8 +33,8 @@ validation are tracked separately in the machine-readable
 
 | Guide | PDF | Slides | Purpose |
 |---|---|---|---|
-| Project overview | [Download PDF](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/pitches/output/Millennium_Math_Problems_Project_Overview_v1.0.0_EN.pdf) | [Download PPTX](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/pitches/output/Millennium_Math_Problems_Project_Overview_v1.0.0_EN.pptx) | What this repository does, the fast-falsification loop, optional empirical input, present evidence, and the proof roadmap. |
-| Navier–Stokes brief | [Download PDF](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/problems/navier-stokes/output/Navier_Stokes_Brief_v1.0.0_EN.pdf) | [Download PPTX](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/problems/navier-stokes/output/Navier_Stokes_Brief_v1.0.0_EN.pptx) | The problem, why it is difficult, what the C++ laboratory tests, and how far the project has reached. |
+| Project overview | [Download PDF](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/pitches/output/Millennium_Math_Problems_Project_Overview_v1.0.0_EN.pdf) | [Download PPTX](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/pitches/output/Millennium_Math_Problems_Project_Overview_v1.0.0_EN.pptx) | The research loop, Lean-checked PNT counterexamples, and the remaining proof work. |
+| Navier–Stokes brief | [Download PDF](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/problems/navier-stokes/output/Navier_Stokes_Brief_v1.0.0_EN.pdf) | [Download PPTX](https://raw.githubusercontent.com/fssrepository/millennium-math-problems/master/guides/problems/navier-stokes/output/Navier_Stokes_Brief_v1.0.0_EN.pptx) | The problem, the C++ experiments, what Lean proves, and what remains open. |
 
 ## Problem portfolio
 

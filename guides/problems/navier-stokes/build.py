@@ -33,9 +33,9 @@ ASSETS = HERE / "assets"
 OVERVIEW_OUT = HERE / "output"
 NAVIER_OUT = HERE / "output"
 
-VERSION = "1.0.0"
+VERSION = "1.0.0"  # Stable artifact filename; Git tracks document revisions.
 LANGUAGE = "EN"
-RELEASE_DATE = "AUG 2026"
+RELEASE_DATE = "OCT 2026"
 W, H = 1920, 1080
 
 OVERVIEW_STEM = f"Millennium_Math_Problems_Project_Overview_v{VERSION}_{LANGUAGE}"
@@ -251,7 +251,7 @@ def footer(image: Image.Image, page: int, total: int, label: str, *, note: str |
     text(
         image,
         (88, 1043),
-        f"MILLENNIUM MATH PROBLEMS  •  {label.upper()}  •  V{VERSION}  •  {RELEASE_DATE}",
+        f"MILLENNIUM MATH PROBLEMS  •  {label.upper()}  •  UPDATED {RELEASE_DATE}",
         size=13,
         color=MUTED_2,
         weight="medium",
@@ -782,7 +782,7 @@ def brief_slide_1() -> Image.Image:
         color=TEXT,
         max_width=550,
     )
-    text(image, (94, 894), "Our repository investigates one proof route computationally.", size=20, weight="medium")
+    text(image, (94, 894), "Our repository tests proof routes with C++ and Lean.", size=20, weight="medium")
     text(image, (94, 934), "It has not solved the Millennium Problem.", size=18, color=AMBER, weight="bold")
     footer(image, 1, 3, "Navier–Stokes brief", note="Conceptual illustration — not a simulation result")
     return image
@@ -880,9 +880,9 @@ def brief_slide_3() -> Image.Image:
     section_header(
         image,
         "02",
-        "What we built and where we are",
-        "Human-directed, AI-executed falsification—not an automated proof",
-        "Codex wrote and ran the C++ engine, searched for hostile states, read failed routes and refined the next obligation while preserving restartable evidence.",
+        "C++ experiments and Lean proofs",
+        "Lean has formally rejected five proposed unrestricted PNT bounds",
+        "A six-mode Fourier witness makes PNT-2/7/8/12/14 unbounded as its amplitude tends to zero. The continuous Clay problem remains open.",
         status="NOT SOLVED",
     )
 
@@ -891,26 +891,26 @@ def brief_slide_3() -> Image.Image:
         (88, 246, 1832, 735),
         ("Layer", "What the project does", "Current result", "Status"),
         (
-            ("Spectral engine", "Finite Fourier / Galerkin Navier–Stokes algebra", "Reproducible C++20 kernels and certificates", "VERIFIED"),
-            ("Gradient engine", "JVP/VJP, RK4 adjoint checks and L-BFGS search", "Fast adversarial state optimization", "VERIFIED"),
-            ("Far-tail analysis", "Separate sufficiently distant frequency shells", "Cutoff-independent partial lemma", "PROVED"),
-            ("PNT-13", "Test standalone shell decorrelation", "Near-perfect gap correlations found", "FALSIFIED"),
-            ("PNT-12", "Keep tail mass, Gram row and normalization coupled", "Finite record 4.18215e-4; no theorem", "OPEN"),
+            ("C++ spectral lab", "Search finite Fourier states and compare outputs", "Numerical consistency checks; not a proof premise", "VERIFIED"),
+            ("Lean witness", "Exact six-mode and full-cube calculations", "Unrestricted PNT-2/7/8/12/14 bounds refuted", "PROVED"),
+            ("Lean identities", "Cauchy chain and finite Gram-Schur estimate", "75 theorems; 259 declarations audited", "PROVED"),
+            ("PNT-13", "Standalone shell decorrelation", "Strong finite counterevidence; no theorem", "OPEN"),
+            ("Continuous PDE", "Local closure and L4–L6 regularity chain", "No solution of the Millennium Problem", "OPEN"),
         ),
         (285, 610, 525, 324),
         row_height=85,
         header_height=64,
         body_size=16,
-        highlight_rows={3, 4},
+        highlight_rows={1, 2},
         status_column=3,
     )
 
     rounded_card(image, (88, 775, 1155, 936), fill="#0F2E38", outline=CYAN, radius=22)
-    text(image, (116, 800), "WHY THIS CAN SHORTEN RESEARCH", size=14, color=CYAN, weight="bold")
+    text(image, (116, 800), "HOW TO VERIFY THE LEAN RESULT", size=14, color=CYAN, weight="bold")
     text(
         image,
         (116, 840),
-        "Codex can attack a weak lemma in seconds or minutes, store its counterexample, read the failure and redesign the next candidate around what survived.",
+        "Run ./navier-stokes/lean/verify.sh. It checks the proof library, audits axioms and rejects four deliberate bad proofs.",
         size=21,
         weight="medium",
         max_width=980,
@@ -921,12 +921,12 @@ def brief_slide_3() -> Image.Image:
     text(
         image,
         (1224, 840),
-        "Prove PNT-12, close PNT-4 and RQ-11, then complete the L4 to L5 to L6 chain.",
+        "Reformulate PNT, certify the local sign candidate, and close the continuous L4–L6 argument.",
         size=21,
         weight="medium",
         max_width=550,
     )
-    footer(image, 3, 3, "Navier–Stokes brief", note="Full technical roadmap: navier-stokes/PROOF_PLAN.md")
+    footer(image, 3, 3, "Navier–Stokes brief", note="Proof scope and limits: navier-stokes/lean/README.md")
     return image
 
 
@@ -937,7 +937,7 @@ def save_pdf(slide_paths: Sequence[Path], destination: Path, *, title: str, subj
     pdf.setTitle(title)
     pdf.setAuthor("Millennium Math Problems")
     pdf.setSubject(subject)
-    pdf.setKeywords(f"Millennium Prize Problems, Navier-Stokes, lemma engine, version {VERSION}, {LANGUAGE}")
+    pdf.setKeywords(f"Millennium Prize Problems, Navier-Stokes, Lean audit, updated October 2026, {LANGUAGE}")
     for slide_path in slide_paths:
         pdf.drawImage(str(slide_path), 0, 0, width=width_points, height=height_points)
         pdf.showPage()
